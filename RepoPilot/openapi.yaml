@@ -1,0 +1,282 @@
+openapi: 3.1.0
+info:
+  title: RepoPilot API
+  version: 1.0.0
+  description: Reference contract. All non-webhook endpoints require a user session and tenant/repository authorization.
+servers:
+  - url: https://api.repopilot.example
+security:
+  - sessionCookie: []
+tags:
+  - name: Account
+  - name: Repositories
+  - name: Investigations
+  - name: Proposals
+  - name: Operations
+paths:
+  /v1/me:
+    get:
+      tags: [Account]
+      summary: Current signed-in user
+      responses:
+        '200': {description: User profile, content: {application/json: {schema: {$ref: '#/components/schemas/User'}}}}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+  /v1/installations:
+    get:
+      tags: [Account]
+      summary: List installations the user is authorized to access
+      responses:
+        '200': {description: Visible installations, content: {application/json: {schema: {type: array, items: {type: object}}}}}
+  /v1/repositories:
+    get:
+      tags: [Repositories]
+      parameters:
+        - {name: tenant_id, in: query, required: true, schema: {type: string, format: uuid}}
+      responses:
+        '200': {description: Tenant repositories, content: {application/json: {schema: {type: array, items: {$ref: '#/components/schemas/Repository'}}}}}
+        '403': {$ref: '#/components/responses/Forbidden'}
+  /v1/repositories/{repository_id}/sync:
+    post:
+      tags: [Repositories]
+      summary: Queue code indexing on the latest default-branch commit
+      parameters:
+        - {$ref: '#/components/parameters/RepositoryId'}
+        - {$ref: '#/components/parameters/IdempotencyKey'}
+      responses:
+        '202': {description: Indexing job accepted, content: {application/json: {schema: {$ref: '#/components/schemas/JobAccepted'}}}}
+        '409': {description: Repository is already syncing}
+        '429': {$ref: '#/components/responses/RateLimited'}
+  /v1/repositories/{repository_id}/issues:
+    get:
+      tags: [Repositories]
+      parameters:
+        - {$ref: '#/components/parameters/RepositoryId'}
+        - {name: cursor, in: query, schema: {type: string}}
+        - {name: limit, in: query, schema: {type: integer, minimum: 1, maximum: 100, default: 25}}
+      responses:
+        '200': {description: Paginated issues, content: {application/json: {schema: {type: object, required: [items], properties: {items: {type: array, items: {$ref: '#/components/schemas/Issue'}}, next_cursor: {type: [string, 'null']}}}}}}
+  /v1/issues/{issue_id}/investigations:
+    post:
+      tags: [Investigations]
+      summary: Create an evidence-grounded investigation
+      parameters:
+        - {$ref: '#/components/parameters/IssueId'}
+        - {$ref: '#/components/parameters/IdempotencyKey'}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                force_refresh: {type: boolean, default: false}
+                mode: {type: string, enum: [triage], default: triage}
+      responses:
+        '202': {description: Accepted, content: {application/json: {schema: {$ref: '#/components/schemas/JobAccepted'}}}}
+        '422': {description: Repository snapshot not ready or unsupported content}
+        '429': {$ref: '#/components/responses/RateLimited'}
+  /v1/investigations/{investigation_id}:
+    get:
+      tags: [Investigations]
+      parameters:
+        - {$ref: '#/components/parameters/InvestigationId'}
+      responses:
+        '200': {description: Investigation status and findings, content: {application/json: {schema: {$ref: '#/components/schemas/Investigation'}}}}
+        '404': {$ref: '#/components/responses/NotFound'}
+  /v1/investigations/{investigation_id}/evidence:
+    get:
+      tags: [Investigations]
+      parameters:
+        - {$ref: '#/components/parameters/InvestigationId'}
+      responses:
+        '200': {description: Source citations, content: {application/json: {schema: {type: array, items: {$ref: '#/components/schemas/Evidence'}}}}}
+  /v1/investigations/{investigation_id}/feedback:
+    post:
+      tags: [Investigations]
+      parameters:
+        - {$ref: '#/components/parameters/InvestigationId'}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [verdict]
+              properties:
+                verdict: {type: string, enum: [helpful, incorrect, incomplete]}
+                comment: {type: string, maxLength: 2000}
+      responses:
+        '204': {description: Feedback recorded}
+  /v1/investigations/{investigation_id}/proposals:
+    post:
+      tags: [Proposals]
+      summary: Phase 3 feature - generate a patch proposal; does not publish it
+      parameters:
+        - {$ref: '#/components/parameters/InvestigationId'}
+        - {$ref: '#/components/parameters/IdempotencyKey'}
+      responses:
+        '202': {description: Proposal job accepted, content: {application/json: {schema: {$ref: '#/components/schemas/JobAccepted'}}}}
+        '403': {$ref: '#/components/responses/Forbidden'}
+  /v1/proposals/{proposal_id}/decision:
+    post:
+      tags: [Proposals]
+      summary: Approve or reject proposal, subject to current GitHub authorization
+      parameters:
+        - {$ref: '#/components/parameters/ProposalId'}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [decision, expected_base_sha]
+              properties:
+                decision: {type: string, enum: [approve, reject]}
+                expected_base_sha: {type: string, minLength: 7, maxLength: 64}
+                reason: {type: string, maxLength: 2000}
+      responses:
+        '200': {description: Recorded decision}
+        '409': {description: Base SHA stale or proposal already decided}
+  /v1/proposals/{proposal_id}/draft-pr:
+    post:
+      tags: [Proposals]
+      summary: Phase 3 - publish an approved proposal as a draft PR
+      parameters:
+        - {$ref: '#/components/parameters/ProposalId'}
+        - {$ref: '#/components/parameters/IdempotencyKey'}
+      responses:
+        '202': {description: Publication job accepted, content: {application/json: {schema: {$ref: '#/components/schemas/JobAccepted'}}}}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '409': {description: Approval missing or target ref changed}
+  /v1/metrics/overview:
+    get:
+      tags: [Operations]
+      summary: Tenant-scoped usage, performance, feedback, and cost aggregates
+      parameters:
+        - {name: tenant_id, in: query, required: true, schema: {type: string, format: uuid}}
+        - {name: from, in: query, schema: {type: string, format: date}}
+        - {name: to, in: query, schema: {type: string, format: date}}
+      responses:
+        '200': {description: Metrics overview, content: {application/json: {schema: {type: object}}}}
+  /v1/tenants/{tenant_id}/data:
+    delete:
+      tags: [Operations]
+      summary: Request tenant data deletion (owner only)
+      parameters:
+        - {name: tenant_id, in: path, required: true, schema: {type: string, format: uuid}}
+      responses:
+        '202': {description: Deletion accepted and access disabled}
+  /v1/webhooks/github:
+    post:
+      security: []
+      tags: [Operations]
+      summary: Verify HMAC from raw request body, persist delivery/outbox atomically, then return
+      parameters:
+        - {name: X-Hub-Signature-256, in: header, required: true, schema: {type: string}}
+        - {name: X-GitHub-Delivery, in: header, required: true, schema: {type: string, format: uuid}}
+        - {name: X-GitHub-Event, in: header, required: true, schema: {type: string}}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {type: object}
+      responses:
+        '202': {description: Accepted for asynchronous processing}
+        '200': {description: Already received or explicitly ignored}
+        '401': {description: Signature mismatch}
+  /health/live:
+    get:
+      security: []
+      tags: [Operations]
+      responses:
+        '200': {description: Process running}
+  /health/ready:
+    get:
+      security: []
+      tags: [Operations]
+      responses:
+        '200': {description: Critical dependencies usable}
+        '503': {description: Not ready}
+components:
+  securitySchemes:
+    sessionCookie:
+      type: apiKey
+      in: cookie
+      name: repopilot_session
+      description: Secure, HttpOnly, SameSite cookie; mutating routes require CSRF defenses.
+  parameters:
+    RepositoryId: {name: repository_id, in: path, required: true, schema: {type: string, format: uuid}}
+    IssueId: {name: issue_id, in: path, required: true, schema: {type: string, format: uuid}}
+    InvestigationId: {name: investigation_id, in: path, required: true, schema: {type: string, format: uuid}}
+    ProposalId: {name: proposal_id, in: path, required: true, schema: {type: string, format: uuid}}
+    IdempotencyKey: {name: Idempotency-Key, in: header, required: true, schema: {type: string, maxLength: 128}}
+  responses:
+    Unauthorized: {description: Login required}
+    Forbidden: {description: No permission for this tenant or repository}
+    NotFound: {description: Not found or not visible to this user}
+    RateLimited: {description: Rate limit or budget exceeded, headers: {Retry-After: {schema: {type: integer}}}}
+  schemas:
+    User:
+      type: object
+      required: [id, github_login]
+      properties:
+        id: {type: string, format: uuid}
+        github_login: {type: string}
+    Repository:
+      type: object
+      required: [id, full_name, enabled, index_status]
+      properties:
+        id: {type: string, format: uuid}
+        full_name: {type: string}
+        enabled: {type: boolean}
+        index_status: {type: string, enum: [not_indexed, queued, indexing, ready, failed]}
+        latest_indexed_sha: {type: [string, 'null']}
+    Issue:
+      type: object
+      required: [id, number, title, state]
+      properties:
+        id: {type: string, format: uuid}
+        number: {type: integer}
+        title: {type: string}
+        state: {type: string, enum: [open, closed]}
+    JobAccepted:
+      type: object
+      required: [job_id, status]
+      properties:
+        job_id: {type: string, format: uuid}
+        status: {type: string, enum: [queued]}
+        status_url: {type: string}
+    Evidence:
+      type: object
+      required: [source_kind, github_url, source_sha]
+      properties:
+        id: {type: string, format: uuid}
+        source_kind: {type: string, enum: [code, issue, pull_request, documentation]}
+        github_url: {type: string, format: uri}
+        source_sha: {type: string}
+        path: {type: [string, 'null']}
+        start_line: {type: [integer, 'null']}
+        end_line: {type: [integer, 'null']}
+        cited_claim: {type: [string, 'null']}
+    Investigation:
+      type: object
+      required: [id, status, findings, evidence]
+      properties:
+        id: {type: string, format: uuid}
+        status: {type: string, enum: [queued, running, completed, insufficient_evidence, failed, canceled]}
+        snapshot_sha: {type: [string, 'null']}
+        findings:
+          type: array
+          items:
+            type: object
+            required: [statement, evidence_ids, verification_state]
+            properties:
+              statement: {type: string}
+              evidence_ids: {type: array, items: {type: string, format: uuid}}
+              verification_state: {type: string, enum: [observed, hypothesis, unverified]}
+              confidence_band: {type: string, enum: [low, medium, high]}
+        missing_information: {type: array, items: {type: string}}
+        evidence: {type: array, items: {$ref: '#/components/schemas/Evidence'}}
+        regression_test_suggestion: {type: [string, 'null']}
+        cost_usd: {type: number}
+        duration_ms: {type: integer}
