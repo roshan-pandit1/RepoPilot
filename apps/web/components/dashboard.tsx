@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import type { IssuePage, Repository } from "@/lib/types";
 import { StatusBadge } from "./status-badge";
@@ -23,6 +23,7 @@ export function Dashboard({ demo }: { demo: boolean }) {
   const [ready, setReady] = useState<boolean | null>(null);
   const [refresh, setRefresh] = useState(0);
   const [offset, setOffset] = useState(0);
+  const handleConnected = useCallback(() => setRefresh(v => v + 1), []);
   useEffect(() => {
     const controller = new AbortController();
     let busy = false;
@@ -60,14 +61,14 @@ export function Dashboard({ demo }: { demo: boolean }) {
     <main className="min-w-0 px-5 py-7 sm:px-10 lg:px-12">
       <header className="mb-9 flex flex-wrap items-center justify-between gap-4 border-b border-slate-200 pb-6"><p className="text-sm text-slate-500">Workspace <span className="mx-2 text-slate-300">/</span> <span className="text-slate-800">Issue inbox</span></p><StatusBadge tone={ready ? "good" : "warn"}>{ready === null ? "Checking system" : ready ? "API & storage ready" : "System unavailable"}</StatusBadge></header>
       <div className="flex flex-wrap items-end justify-between gap-4"><div><p className="eyebrow">YOUR REPOSITORY, IN FOCUS</p><h1 id="inbox" className="mt-2 text-3xl font-semibold tracking-tight sm:text-4xl">Issue inbox</h1><p className="mt-3 text-sm text-slate-500">Verified GitHub events. One reliable place to start investigating.</p></div><button className="button" onClick={() => { setLoading(true); setRefresh(v => v + 1); }}>↻ Refresh</button></div>
-      <GitHubAccount onConnected={() => setRefresh(v => v + 1)} />
+      <GitHubAccount onConnected={handleConnected} connectedIds={repositories.map(repo => repo.id)} />
       {demo && <p className="mt-6 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">Development demo · Shared demo identity. Repository fixtures are explicitly seeded; issues arrive through signed webhooks.</p>}
       <section aria-label="Ingestion overview" className="my-7 grid gap-4 sm:grid-cols-3">
         {[ ["Connected repositories", repositories.length], ["Awaiting ingestion", page?.ingestion.pending ?? "—"], ["Failed deliveries", page?.ingestion.failed ?? "—"] ].map(([label, value]) => <div key={label} className="panel px-5 py-5"><p className="text-xs font-medium text-slate-500">{label}</p><p className="mt-3 text-3xl font-semibold tracking-tight">{value}</p></div>)}
       </section>
       <section id="repositories" className="panel overflow-hidden">
         <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-200 p-5"><div><h2 className="font-semibold">Connected repositories</h2><p className="mt-1 text-xs text-slate-500">{current?.full_name ?? "No repository selected"}</p></div><label className="text-sm"><span className="sr-only">Select repository</span><select id="repository-selector" name="repository" value={selected} onChange={e => { setSelected(e.target.value); setOffset(0); setPage(null); setLoading(true); }} className="max-w-full rounded-lg border border-slate-200 bg-white p-2.5" disabled={!repositories.length}><option value="" disabled>Select a repository</option>{repositories.map(r => <option key={r.id} value={r.id}>{r.full_name}</option>)}</select></label></div>
-        <IssueList error={error} loading={loading} page={page} hasRepositories={repositories.length > 0} onRetry={() => { setLoading(true); setRefresh(v => v + 1); }} />
+        <IssueList error={error} loading={loading} page={page} hasRepositories={repositories.length > 0} demo={demo} onRetry={() => { setLoading(true); setRefresh(v => v + 1); }} />
         <footer className="flex flex-wrap items-center justify-between gap-3 border-t border-slate-200 px-5 py-3 text-xs text-slate-400"><span>Signed delivery → durable queue → issue record</span><div className="flex items-center gap-3"><button disabled={offset === 0} onClick={() => { setOffset(v => Math.max(0, v - 100)); setLoading(true); }}>Previous</button><span>Page {offset / 100 + 1}</span><button disabled={page?.items.length !== 100} onClick={() => { setOffset(v => v + 100); setLoading(true); }}>Next</button></div></footer>
       </section>
       <p className="mt-5 text-xs text-slate-400">Refreshes every 5 seconds · At-least-once delivery with idempotent processing</p>

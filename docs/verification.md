@@ -1,5 +1,42 @@
 # Verification record
 
+## Sprint 2A real-service verification follow-up — 2026-10-28
+
+Subsequent user screenshots show a real GitHub sign-in as `roshan-pandit1`, an eligible
+personal installation listing public repositories, two connected repositories, and the UI
+message “Initial issue synchronization completed.” The selected repository showed an empty
+issue list. **PASS with limitation:** provider sign-in and onboarding were observed through the
+UI; database job records, actual synchronized issues, and a real GitHub webhook remain to be
+verified. No credentials or webhook payloads were supplied.
+
+**PASS with limitation — real sync jobs:** The user queried PostgreSQL after sign-in. The
+`Mini-Css-Project` and `To_Do_list` jobs were `processed`, each with one dispatch attempt and
+a processing timestamp. Both repositories had zero stored issues; the demo repository retained
+five. The UI and database evidence show job completion, but do not establish that a real issue
+was imported, that an issue webhook was received, or that a browser rendered a real issue.
+
+**PASS with limitation — real issue rendered:** The user created `To_Do_list` issue #1,
+enabled the Issues event, and edited its title. GitHub showed an `issues.edited` delivery.
+The relay initially reported HTTP 401 and PostgreSQL had no corresponding delivery or issue.
+A later dashboard screenshot showed the edited issue as processed. The intervening fix and
+the corresponding PostgreSQL delivery/outbox record have not yet been confirmed, so the
+precise ingestion path and end-to-end webhook processing are still unverified.
+
+| Check | Status | Evidence and limitations |
+| --- | --- | --- |
+| Commit and push | PASS, host-reported | The user ran `git commit` and `git push origin main`; commit `337967b` was pushed to `roshan-pandit1/RepoPilot`. This supersedes the earlier sandbox publication failure below. |
+| Stack | PASS with limitation, host-reported | `docker compose ps` showed PostgreSQL, Redis, API and web healthy; worker and dispatcher were running without reported health checks. |
+| Backend tests | PASS with limitation, host-reported | `docker compose exec api pytest -q -ra`: 58 passed, 2 skipped. Both skipped tests require PostgreSQL row locks; without `TEST_DATABASE_URL` the fixture uses SQLite. These tests use injected GitHub clients, not real GitHub. |
+| PostgreSQL migration | BLOCKED | The user ran `docker compose run --rm migrate`; no error was shown, but the supplied output does not show the migration revision or a before/after data check. Confirm the live revision and preservation separately. |
+| PostgreSQL concurrency tests | BLOCKED | Sprint 2A's two PostgreSQL-specific tests have not yet been reported against a disposable PostgreSQL database. Fixtures drop tables: never use the application database as `TEST_DATABASE_URL`. |
+| Real GitHub onboarding and live lifecycle | BLOCKED | No real GitHub App sign-in, verified enrollment, synchronization or lifecycle event has been reported. Existing mock tests are not evidence of real provider integration. |
+| GitHub Actions | BLOCKED | No actual workflow result has been provided. |
+
+The app uses a user OAuth token, not an installation private key; GitHub App private key
+configuration is not implemented or required by the current flow. A public webhook relay receives
+event payloads: use a dedicated public test repository and a trusted relay, never expose the demo
+dashboard or include webhook secrets, credentials, callback codes or payloads in shared logs.
+
 ## Repository publication attempt — 2026-10-28
 
 The user authorized committing and pushing to `https://github.com/roshan-pandit1/RepoPilot`.
