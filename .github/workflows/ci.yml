@@ -26,7 +26,7 @@ jobs:
       - uses: astral-sh/setup-uv@v6
         with:
           python-version: '3.12'
-          version: '0.9.5'
+          version: '0.13.6'
       - run: uv sync --locked
         working-directory: apps/api
       - run: uv run --locked ruff check .
@@ -44,7 +44,7 @@ jobs:
           node-version: '22'
       - run: npm ci --no-audit --no-fund
         working-directory: apps/web
-      - run: npm run typecheck && npm run lint && npm run build
+      - run: npm run typecheck && npm run lint && npm test && npm run build
         working-directory: apps/web
   smoke:
     runs-on: ubuntu-latest

@@ -1,9 +1,12 @@
-const assert = require("node:assert/strict");
-const fs = require("node:fs");
-const path = require("node:path");
-const test = require("node:test");
-const vm = require("node:vm");
-const ts = require("typescript");
+import assert from "node:assert/strict";
+import fs from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+import test from "node:test";
+import vm from "node:vm";
+import ts from "typescript";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 // Exercise the actual Next.js route and server-only client with a mocked upstream.
 function loadSource(file, dependencies, env, fetch) {
@@ -11,9 +14,9 @@ function loadSource(file, dependencies, env, fetch) {
   const compiled = ts.transpileModule(source, {
     compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
   }).outputText;
-  const module = { exports: {} };
+  const loadedModule = { exports: {} };
   const context = vm.createContext({
-    module, exports: module.exports, Response, Request, URL, AbortSignal,
+    module: loadedModule, exports: loadedModule.exports, Response, Request, URL, AbortSignal,
     process: { env }, fetch,
     require: (name) => {
       if (!(name in dependencies)) throw new Error(`Unexpected import: ${name}`);
@@ -21,7 +24,7 @@ function loadSource(file, dependencies, env, fetch) {
     },
   });
   new vm.Script(compiled, { filename: file }).runInContext(context);
-  return module.exports;
+  return loadedModule.exports;
 }
 
 function routeFor(env, fetch) {
@@ -73,4 +76,52 @@ test("upstream authorization errors and connection failures are handled safely",
   const response = await unavailable.GET(new Request("http://web/api/dashboard"));
   assert.equal(response.status, 503);
   assert.doesNotMatch(await response.text(), /fixture-secret/);
+});
+
+test("production session cookie is forwarded server-side without demo credentials", async () => {
+  const env = { ...development, APP_ENV: "production" };
+  let upstream;
+  const route = routeFor(env, async (url, options) => {
+    upstream = { url, options };
+    return Response.json([{ id: "902", full_name: "alice/public" }]);
+  });
+  const response = await route.GET(new Request("http://web/api/dashboard", {
+    headers: { Cookie: "rp_session=opaque-session" },
+  }));
+  assert.equal(response.status, 200);
+  assert.equal(upstream.options.headers.Cookie, "rp_session=opaque-session");
+  assert.equal(upstream.options.headers.Authorization, undefined);
+});
+
+function authRoute(env, fetch) {
+  const api = loadSource("lib/server-api.ts", { "server-only": {} }, env, fetch);
+  return loadSource("app/api/auth/[action]/route.ts", { "@/lib/server-api": api }, env, fetch);
+}
+
+test("OAuth proxy forwards redirect and state cookie without exposing server secrets", async () => {
+  let upstream;
+  const route = authRoute({ ...development, APP_ENV: "production" }, async (url, options) => {
+    upstream = { url, options };
+    return new Response(null, { status: 302, headers: {
+      location: "https://github.com/login/oauth/authorize?state=fixture",
+      "set-cookie": "rp_oauth=fixture; Path=/; HttpOnly; SameSite=Lax",
+    } });
+  });
+  const request = { method: "GET", headers: new Headers(), nextUrl: new URL("https://web/api/auth/start"), url: "https://web/api/auth/start" };
+  const response = await route.GET(request, { params: Promise.resolve({ action: "start" }) });
+  assert.equal(upstream.options.redirect, "manual");
+  assert.equal(response.status, 302);
+  assert.match(response.headers.get("set-cookie"), /HttpOnly/);
+  assert.equal(response.headers.get("location"), "https://github.com/login/oauth/authorize?state=fixture");
+  assert.doesNotMatch(await response.text(), /fixture-secret/);
+});
+
+test("failed OAuth callback redirects to a generic error without reflecting code or state", async () => {
+  const route = authRoute(development, async () => Response.json({ detail: "error" }, { status: 400 }));
+  const request = { method: "GET", headers: new Headers(), nextUrl: new URL("https://web/api/auth/callback?code=private-code&state=private-state"), url: "https://web/api/auth/callback?code=private-code&state=private-state" };
+  const response = await route.GET(request, { params: Promise.resolve({ action: "callback" }) });
+  assert.equal(response.status, 303);
+  assert.equal(response.headers.get("location"), "https://web/?auth_error=sign_in_failed");
+  assert.equal(response.headers.get("referrer-policy"), "no-referrer");
+  assert.equal(response.headers.get("cache-control"), "no-store");
 });

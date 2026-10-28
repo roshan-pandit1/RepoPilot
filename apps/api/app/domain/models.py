@@ -98,3 +98,61 @@ class Outbox(Base):
     attempts: Mapped[int] = mapped_column(Integer, default=0)
     next_dispatch_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=now)
     processed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
+class OAuthAttempt(Base):
+    __tablename__ = "oauth_attempts"
+    state_hash: Mapped[str] = mapped_column(String(64), primary_key=True)
+    verifier_ciphertext: Mapped[str] = mapped_column(Text)
+    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+
+
+class AuthSession(Base):
+    __tablename__ = "auth_sessions"
+    id_hash: Mapped[str] = mapped_column(String(64), primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), index=True)
+    tenant_id: Mapped[int] = mapped_column(ForeignKey("tenants.id"))
+    github_token_ciphertext: Mapped[str] = mapped_column(Text)
+    csrf_hash: Mapped[str] = mapped_column(String(64))
+    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    revoked_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    __table_args__ = (ForeignKeyConstraint(["tenant_id", "user_id"],
+                                          ["memberships.tenant_id", "memberships.user_id"]),)
+
+
+class PersonalTenant(Base):
+    __tablename__ = "personal_tenants"
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), primary_key=True)
+    tenant_id: Mapped[int] = mapped_column(ForeignKey("tenants.id"), unique=True)
+    __table_args__ = (ForeignKeyConstraint(["tenant_id", "user_id"],
+                                          ["memberships.tenant_id", "memberships.user_id"]),)
+
+
+class InstallationGuard(Base):
+    __tablename__ = "installation_guards"
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=False)
+    revoked: Mapped[bool] = mapped_column(Boolean, default=False)
+
+
+class RepositoryGuard(Base):
+    __tablename__ = "repository_guards"
+    installation_id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=False)
+    repository_id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=False)
+    revoked: Mapped[bool] = mapped_column(Boolean, default=False)
+
+
+class SyncJob(Base):
+    __tablename__ = "sync_jobs"
+    id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    repository_id: Mapped[int] = mapped_column(BigInteger)
+    tenant_id: Mapped[int] = mapped_column(Integer)
+    session_hash: Mapped[str] = mapped_column(ForeignKey("auth_sessions.id_hash"))
+    status: Mapped[str] = mapped_column(String(20), default="pending", index=True)
+    attempts: Mapped[int] = mapped_column(Integer, default=0)
+    next_dispatch_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=now)
+    processed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    __table_args__ = (
+        ForeignKeyConstraint(["repository_id", "tenant_id"],
+                             ["repositories.id", "repositories.tenant_id"]),
+        CheckConstraint("status IN ('pending', 'processed', 'partial', 'ignored', 'failed')"),
+    )

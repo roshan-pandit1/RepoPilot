@@ -9,6 +9,8 @@ from sqlalchemy import text
 from sqlalchemy.exc import SQLAlchemyError
 
 from app.api.v1.routes import router
+from app.modules.auth.routes import router as auth_router
+from app.modules.github.enrollment import router as installation_router
 from app.core.config import get_settings
 from app.infra.database import get_engine
 
@@ -22,6 +24,17 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(title="RepoPilot", version="0.1.0", lifespan=lifespan)
 app.include_router(router)
+app.include_router(auth_router)
+app.include_router(installation_router)
+
+
+@app.middleware("http")
+async def sensitive_response_headers(request: Request, call_next):
+    response = await call_next(request)
+    if request.url.path.startswith(("/v1/auth/", "/v1/installations", "/v1/repositories")):
+        response.headers["Cache-Control"] = "no-store"
+        response.headers["Referrer-Policy"] = "no-referrer"
+    return response
 
 
 @app.exception_handler(SQLAlchemyError)
@@ -45,6 +58,8 @@ def ready():
     try:
         with get_engine().connect() as connection:
             connection.execute(text("SELECT 1 FROM outbox_events LIMIT 1"))
+            connection.execute(text("SELECT 1 FROM sync_jobs LIMIT 1"))
+            connection.execute(text("SELECT 1 FROM auth_sessions LIMIT 1"))
         with Redis.from_url(get_settings().redis_url, socket_connect_timeout=2,
                             socket_timeout=2) as redis:
             redis.ping()

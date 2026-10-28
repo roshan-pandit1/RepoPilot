@@ -8,6 +8,7 @@ from sqlalchemy.orm import Session
 
 from app.domain.models import Delivery, Installation, Outbox, Repository
 from app.modules.github.schemas import IssueEvent, LifecycleEvent
+from app.modules.github.guards import installation_guard, repository_guard
 
 
 def accept(db: Session, delivery_id: str, event: str, raw: bytes, payload: dict) -> bool:
@@ -36,15 +37,22 @@ def accept(db: Session, delivery_id: str, event: str, raw: bytes, payload: dict)
                               payload=json.loads(message.issue.model_dump_json())))
             else:
                 message = LifecycleEvent.model_validate(payload)
+                revoke_installation = event == "installation" and message.action in {
+                    "deleted", "suspend", "new_permissions_accepted"
+                }
+                remove_repos = event == "installation_repositories" and message.action == "removed"
+                if revoke_installation:
+                    installation_guard(db, message.installation.id).revoked = True
                 installation = db.scalar(select(Installation).where(
                     Installation.id == message.installation.id
                 ).with_for_update())
-                if installation:
-                    # Never auto-enable from lifecycle events: stale reactivation is unsafe.
-                    if event == "installation" and message.action in {"deleted", "suspend"}:
-                        installation.active = False
-                    if event == "installation_repositories" and message.action == "removed":
-                        ids = [r.id for r in message.repositories_removed]
+                if installation and revoke_installation:
+                    installation.active = False
+                if remove_repos:
+                    ids = sorted({r.id for r in message.repositories_removed})
+                    for repository_id in ids:
+                        repository_guard(db, message.installation.id, repository_id).revoked = True
+                    if installation:
                         repos = db.scalars(select(Repository).where(
                             Repository.installation_id == installation.id,
                             Repository.id.in_(ids),

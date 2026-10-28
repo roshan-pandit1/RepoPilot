@@ -9,7 +9,7 @@ seed:
 test:
 	docker compose exec api pytest -q
 lint:
-	docker compose exec api ruff check .
+	docker compose exec api ruff check . --no-cache
 	cd apps/web && npm run typecheck && npm run lint
 smoke:
 	docker compose exec api python -m app.smoke

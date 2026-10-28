@@ -1,5 +1,6 @@
 from functools import lru_cache
 from typing import Literal
+from urllib.parse import urlsplit
 
 from pydantic import SecretStr, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -13,6 +14,13 @@ class Settings(BaseSettings):
     github_webhook_secret: SecretStr
     demo_auth_enabled: bool = False
     demo_api_token: SecretStr = SecretStr("")
+    github_oauth_enabled: bool = False
+    github_app_id: int = 0
+    github_client_id: str = ""
+    github_client_secret: SecretStr = SecretStr("")
+    github_token_encryption_key: SecretStr = SecretStr("")
+    github_callback_url: str = ""
+    web_origin: str = "http://localhost:3000"
     demo_user_id: int = 1
     demo_tenant_id: int = 1
 
@@ -25,6 +33,26 @@ class Settings(BaseSettings):
                 raise ValueError("Demo authentication is forbidden in production")
             if len(self.demo_api_token.get_secret_value()) < 32:
                 raise ValueError("Demo token must contain at least 32 characters")
+        if self.github_oauth_enabled:
+            from cryptography.fernet import Fernet
+
+            if self.github_app_id <= 0 or not self.github_client_id or not self.github_client_secret.get_secret_value():
+                raise ValueError("GitHub OAuth client configuration required")
+            try:
+                Fernet(self.github_token_encryption_key.get_secret_value().encode())
+            except (ValueError, TypeError):
+                raise ValueError("Valid Fernet token encryption key required") from None
+            origin = urlsplit(self.web_origin)
+            callback = urlsplit(self.github_callback_url)
+            if (origin.scheme not in {"http", "https"} or not origin.netloc
+                    or origin.path not in {"", "/"} or origin.query or origin.fragment
+                    or origin.username or origin.password):
+                raise ValueError("Invalid web origin")
+            if (callback.scheme != origin.scheme or callback.netloc != origin.netloc
+                    or callback.path != "/api/auth/callback" or callback.query or callback.fragment):
+                raise ValueError("Callback must be the fixed web origin auth callback")
+            if self.app_env == "production" and origin.scheme != "https":
+                raise ValueError("Production authentication requires HTTPS")
         return self
 
 
