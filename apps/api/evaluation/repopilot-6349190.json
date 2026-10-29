@@ -1,0 +1,267 @@
+{
+  "repository": "roshan-pandit1/RepoPilot",
+  "commit_sha": "63491908290e6874dbaaf2b15c2a96473aad1324",
+  "label_policy": "Binary relevance: each labeled symbol definition line must be fully covered by a result chunk with the same path and symbol. Labels are incomplete judgments, not an exhaustive relevance set.",
+  "queries": [
+    {
+      "id": "sync",
+      "question": "Where is repository issue synchronization handled?",
+      "relevance": [
+        {
+          "path": "apps/api/app/workers/tasks.py",
+          "symbol": "process_sync",
+          "start_line": 74,
+          "end_line": 74
+        }
+      ],
+      "rationale": "Applies a verified GitHub issue snapshot."
+    },
+    {
+      "id": "signature",
+      "question": "How are webhook signatures verified?",
+      "relevance": [
+        {
+          "path": "apps/api/app/modules/github/security.py",
+          "symbol": "valid_signature",
+          "start_line": 6,
+          "end_line": 6
+        }
+      ],
+      "rationale": "Validates the HMAC signature."
+    },
+    {
+      "id": "webhook",
+      "question": "Where are webhook request bodies and signatures checked?",
+      "relevance": [
+        {
+          "path": "apps/api/app/api/v1/routes.py",
+          "symbol": "webhook",
+          "start_line": 25,
+          "end_line": 25
+        }
+      ],
+      "rationale": "Reads bounded raw webhook bytes and checks the signature."
+    },
+    {
+      "id": "dispatch",
+      "question": "Where are queued issue and synchronization jobs dispatched?",
+      "relevance": [
+        {
+          "path": "apps/api/app/workers/dispatcher.py",
+          "symbol": "dispatch_once",
+          "start_line": 14,
+          "end_line": 14
+        }
+      ],
+      "rationale": "Publishes pending outbox and synchronization jobs."
+    },
+    {
+      "id": "authorization",
+      "question": "How is current repository access enforced?",
+      "relevance": [
+        {
+          "path": "apps/api/app/api/v1/routes.py",
+          "symbol": "authorized_repos",
+          "start_line": 68,
+          "end_line": 68
+        }
+      ],
+      "rationale": "Filters tenant repositories against current GitHub access."
+    },
+    {
+      "id": "tenant",
+      "question": "Where are enabled repositories scoped to a tenant?",
+      "relevance": [
+        {
+          "path": "apps/api/app/api/v1/routes.py",
+          "symbol": "visible_repos",
+          "start_line": 62,
+          "end_line": 62
+        }
+      ],
+      "rationale": "Filters enabled repositories by tenant and active installation."
+    },
+    {
+      "id": "csrf",
+      "question": "How are state-changing requests protected against CSRF?",
+      "relevance": [
+        {
+          "path": "apps/api/app/modules/auth/session.py",
+          "symbol": "require_csrf",
+          "start_line": 64,
+          "end_line": 64
+        }
+      ],
+      "rationale": "Checks origin and CSRF token."
+    },
+    {
+      "id": "principal",
+      "question": "How is an authenticated session resolved?",
+      "relevance": [
+        {
+          "path": "apps/api/app/modules/auth/session.py",
+          "symbol": "principal",
+          "start_line": 40,
+          "end_line": 40
+        }
+      ],
+      "rationale": "Resolves the session and tenant membership."
+    },
+    {
+      "id": "login",
+      "question": "Where does GitHub OAuth login begin with PKCE?",
+      "relevance": [
+        {
+          "path": "apps/api/app/modules/auth/routes.py",
+          "symbol": "start",
+          "start_line": 27,
+          "end_line": 27
+        }
+      ],
+      "rationale": "Creates the OAuth state and PKCE challenge."
+    },
+    {
+      "id": "callback",
+      "question": "Where is the GitHub OAuth callback verified?",
+      "relevance": [
+        {
+          "path": "apps/api/app/modules/auth/routes.py",
+          "symbol": "callback",
+          "start_line": 45,
+          "end_line": 45
+        }
+      ],
+      "rationale": "Consumes OAuth state and creates a session."
+    },
+    {
+      "id": "logout",
+      "question": "How is a user session revoked when signing out?",
+      "relevance": [
+        {
+          "path": "apps/api/app/modules/auth/routes.py",
+          "symbol": "logout",
+          "start_line": 126,
+          "end_line": 126
+        }
+      ],
+      "rationale": "Revokes the current session."
+    },
+    {
+      "id": "enroll",
+      "question": "How is a personal GitHub installation enrolled?",
+      "relevance": [
+        {
+          "path": "apps/api/app/modules/github/enrollment.py",
+          "symbol": "enroll",
+          "start_line": 57,
+          "end_line": 57
+        }
+      ],
+      "rationale": "Verifies and binds a personal installation."
+    },
+    {
+      "id": "choose",
+      "question": "Where is a public repository selected for an installation?",
+      "relevance": [
+        {
+          "path": "apps/api/app/modules/github/enrollment.py",
+          "symbol": "select_repository",
+          "start_line": 83,
+          "end_line": 83
+        }
+      ],
+      "rationale": "Selects an authorized public repository and starts synchronization."
+    },
+    {
+      "id": "installations",
+      "question": "Where are personal GitHub installations verified?",
+      "relevance": [
+        {
+          "path": "apps/api/app/modules/github/enrollment.py",
+          "symbol": "verified_installations",
+          "start_line": 17,
+          "end_line": 17
+        }
+      ],
+      "rationale": "Checks installations against the current GitHub identity."
+    },
+    {
+      "id": "visible",
+      "question": "How does the app check visible GitHub repositories?",
+      "relevance": [
+        {
+          "path": "apps/api/app/modules/github/enrollment.py",
+          "symbol": "visible_github_repositories",
+          "start_line": 35,
+          "end_line": 35
+        }
+      ],
+      "rationale": "Checks repository visibility via GitHub."
+    },
+    {
+      "id": "accept",
+      "question": "Where are webhook delivery and outbox records written?",
+      "relevance": [
+        {
+          "path": "apps/api/app/modules/ingestion/service.py",
+          "symbol": "accept",
+          "start_line": 14,
+          "end_line": 14
+        }
+      ],
+      "rationale": "Writes delivery and outbox records transactionally."
+    },
+    {
+      "id": "process",
+      "question": "Where are queued webhook issue events applied?",
+      "relevance": [
+        {
+          "path": "apps/api/app/workers/tasks.py",
+          "symbol": "process_event",
+          "start_line": 17,
+          "end_line": 17
+        }
+      ],
+      "rationale": "Processes queued issue delivery."
+    },
+    {
+      "id": "revoke",
+      "question": "Where are installation and repository revocations handled?",
+      "relevance": [
+        {
+          "path": "apps/api/app/modules/ingestion/service.py",
+          "symbol": "accept",
+          "start_line": 14,
+          "end_line": 14
+        }
+      ],
+      "rationale": "Applies lifecycle revocations in webhook ingestion."
+    },
+    {
+      "id": "health",
+      "question": "How does the application check database and Redis readiness?",
+      "relevance": [
+        {
+          "path": "apps/api/app/main.py",
+          "symbol": "ready",
+          "start_line": 57,
+          "end_line": 57
+        }
+      ],
+      "rationale": "Checks readiness dependencies."
+    },
+    {
+      "id": "delivery",
+      "question": "Where are duplicate webhook deliveries represented?",
+      "relevance": [
+        {
+          "path": "apps/api/app/domain/models.py",
+          "symbol": "Delivery",
+          "start_line": 78,
+          "end_line": 78
+        }
+      ],
+      "rationale": "Stores delivery identifiers and body hashes."
+    }
+  ]
+}

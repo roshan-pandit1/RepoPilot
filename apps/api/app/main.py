@@ -11,6 +11,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from app.api.v1.routes import router
 from app.modules.auth.routes import router as auth_router
 from app.modules.github.enrollment import router as installation_router
+from app.modules.ingestion.code_routes import router as code_router
 from app.core.config import get_settings
 from app.infra.database import get_engine
 
@@ -26,6 +27,7 @@ app = FastAPI(title="RepoPilot", version="0.1.0", lifespan=lifespan)
 app.include_router(router)
 app.include_router(auth_router)
 app.include_router(installation_router)
+app.include_router(code_router)
 
 
 @app.middleware("http")

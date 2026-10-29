@@ -2,9 +2,10 @@ from datetime import datetime, timezone
 
 from sqlalchemy import (
     JSON, BigInteger, Boolean, CheckConstraint, DateTime, ForeignKey,
-    ForeignKeyConstraint, Integer, String, Text, UniqueConstraint,
+    ForeignKeyConstraint, Index, Integer, String, Text, UniqueConstraint, text,
 )
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
+from app.infra.vector_type import Vector
 
 
 def now():
@@ -155,4 +156,163 @@ class SyncJob(Base):
         ForeignKeyConstraint(["repository_id", "tenant_id"],
                              ["repositories.id", "repositories.tenant_id"]),
         CheckConstraint("status IN ('pending', 'processed', 'partial', 'ignored', 'failed')"),
+    )
+
+
+class IndexJob(Base):
+    __tablename__ = "index_jobs"
+    id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    repository_id: Mapped[int] = mapped_column(BigInteger)
+    tenant_id: Mapped[int] = mapped_column(Integer)
+    session_hash: Mapped[str] = mapped_column(ForeignKey("auth_sessions.id_hash"))
+    status: Mapped[str] = mapped_column(String(20), default="pending")
+    attempts: Mapped[int] = mapped_column(Integer, default=0)
+    next_dispatch_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=now)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=now)
+    completed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    error_code: Mapped[str | None] = mapped_column(String(80))
+    commit_sha: Mapped[str | None] = mapped_column(String(40))
+    file_count: Mapped[int] = mapped_column(Integer, default=0)
+    chunk_count: Mapped[int] = mapped_column(Integer, default=0)
+    skipped_count: Mapped[int] = mapped_column(Integer, default=0)
+    lease_token: Mapped[str | None] = mapped_column(String(36))
+    lease_expires_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    __table_args__ = (
+        ForeignKeyConstraint(["repository_id", "tenant_id"], ["repositories.id", "repositories.tenant_id"]),
+        CheckConstraint("status IN ('pending', 'running', 'completed', 'partial', 'failed', 'cancelled')"),
+        Index("ix_index_jobs_dispatch", "status", "next_dispatch_at"),
+        Index("uq_index_jobs_active", "repository_id", unique=True,
+              postgresql_where=text("status IN ('pending', 'running')"),
+              sqlite_where=text("status IN ('pending', 'running')")),
+    )
+
+
+class CodeSnapshot(Base):
+    __tablename__ = "code_snapshots"
+    id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    repository_id: Mapped[int] = mapped_column(BigInteger)
+    tenant_id: Mapped[int] = mapped_column(Integer)
+    commit_sha: Mapped[str] = mapped_column(String(40))
+    published: Mapped[bool] = mapped_column(Boolean, default=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=now)
+    file_count: Mapped[int] = mapped_column(Integer, default=0)
+    chunk_count: Mapped[int] = mapped_column(Integer, default=0)
+    skipped_count: Mapped[int] = mapped_column(Integer, default=0)
+    __table_args__ = (
+        ForeignKeyConstraint(["repository_id", "tenant_id"], ["repositories.id", "repositories.tenant_id"]),
+        UniqueConstraint("id", "repository_id", "tenant_id"),
+        Index("uq_code_snapshots_published", "repository_id", unique=True,
+              postgresql_where=text("published"), sqlite_where=text("published = 1")),
+    )
+
+
+class IndexedFile(Base):
+    __tablename__ = "indexed_files"
+    id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    snapshot_id: Mapped[str] = mapped_column(String(36))
+    repository_id: Mapped[int] = mapped_column(BigInteger)
+    tenant_id: Mapped[int] = mapped_column(Integer)
+    path: Mapped[str] = mapped_column(Text)
+    content_hash: Mapped[str] = mapped_column(String(64))
+    __table_args__ = (
+        ForeignKeyConstraint(["snapshot_id", "repository_id", "tenant_id"],
+                             ["code_snapshots.id", "code_snapshots.repository_id", "code_snapshots.tenant_id"]),
+        UniqueConstraint("snapshot_id", "path"),
+        UniqueConstraint("id", "repository_id", "tenant_id"),
+        Index("ix_indexed_files_path_fts", text("to_tsvector('simple', path)"),
+              postgresql_using="gin").ddl_if(dialect="postgresql"),
+    )
+
+
+class CodeChunk(Base):
+    __tablename__ = "code_chunks"
+    id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    file_id: Mapped[str] = mapped_column(String(36))
+    repository_id: Mapped[int] = mapped_column(BigInteger)
+    tenant_id: Mapped[int] = mapped_column(Integer)
+    symbol: Mapped[str | None] = mapped_column(Text)
+    start_line: Mapped[int] = mapped_column(Integer)
+    end_line: Mapped[int] = mapped_column(Integer)
+    source_text: Mapped[str] = mapped_column(Text)
+    __table_args__ = (
+        ForeignKeyConstraint(["file_id", "repository_id", "tenant_id"],
+                             ["indexed_files.id", "indexed_files.repository_id", "indexed_files.tenant_id"]),
+        UniqueConstraint("file_id", "start_line"),
+        UniqueConstraint("id", "repository_id", "tenant_id", name="uq_code_chunks_owner"),
+        CheckConstraint("start_line > 0 AND end_line >= start_line"),
+        Index("ix_code_chunks_tenant_repository", "tenant_id", "repository_id"),
+        Index("ix_code_chunks_fts", text("to_tsvector('simple', (coalesce(symbol, '') || ' ') || source_text)"),
+              postgresql_using="gin").ddl_if(dialect="postgresql"),
+    )
+
+
+class EmbeddingCache(Base):
+    __tablename__ = "embedding_cache"
+    id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    repository_id: Mapped[int] = mapped_column(BigInteger)
+    tenant_id: Mapped[int] = mapped_column(Integer)
+    content_hash: Mapped[str] = mapped_column(String(64))
+    provider: Mapped[str] = mapped_column(String(40))
+    model: Mapped[str] = mapped_column(String(150))
+    model_version: Mapped[str] = mapped_column(String(80))
+    dimensions: Mapped[int] = mapped_column(Integer)
+    vector: Mapped[list[float]] = mapped_column(Vector().with_variant(JSON(), "sqlite"))
+    status: Mapped[str] = mapped_column(String(16), default="ready")
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=now)
+    __table_args__ = (
+        ForeignKeyConstraint(["repository_id", "tenant_id"], ["repositories.id", "repositories.tenant_id"]),
+        UniqueConstraint("id", "repository_id", "tenant_id"),
+        UniqueConstraint("repository_id", "tenant_id", "content_hash", "provider", "model", "model_version", "dimensions",
+                         name="uq_embedding_cache_key"),
+        CheckConstraint("dimensions BETWEEN 1 AND 2000"),
+        CheckConstraint("status IN ('ready', 'failed')"),
+    )
+
+
+class ChunkEmbedding(Base):
+    __tablename__ = "chunk_embeddings"
+    chunk_id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    cache_id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    repository_id: Mapped[int] = mapped_column(BigInteger)
+    tenant_id: Mapped[int] = mapped_column(Integer)
+    __table_args__ = (
+        ForeignKeyConstraint(["chunk_id", "repository_id", "tenant_id"],
+                             ["code_chunks.id", "code_chunks.repository_id", "code_chunks.tenant_id"]),
+        ForeignKeyConstraint(["cache_id", "repository_id", "tenant_id"],
+                             ["embedding_cache.id", "embedding_cache.repository_id", "embedding_cache.tenant_id"]),
+        Index("ix_chunk_embeddings_owner", "tenant_id", "repository_id"),
+    )
+
+
+class EmbeddingJob(Base):
+    __tablename__ = "embedding_jobs"
+    id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    snapshot_id: Mapped[str] = mapped_column(String(36))
+    repository_id: Mapped[int] = mapped_column(BigInteger)
+    tenant_id: Mapped[int] = mapped_column(Integer)
+    session_hash: Mapped[str] = mapped_column(ForeignKey("auth_sessions.id_hash"))
+    provider: Mapped[str] = mapped_column(String(40))
+    model: Mapped[str] = mapped_column(String(150))
+    model_version: Mapped[str] = mapped_column(String(80))
+    dimensions: Mapped[int] = mapped_column(Integer)
+    status: Mapped[str] = mapped_column(String(20), default="pending")
+    attempts: Mapped[int] = mapped_column(Integer, default=0)
+    next_dispatch_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=now)
+    lease_token: Mapped[str | None] = mapped_column(String(36))
+    lease_expires_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=now)
+    completed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    error_code: Mapped[str | None] = mapped_column(String(80))
+    total_chunks: Mapped[int] = mapped_column(Integer, default=0)
+    completed_chunks: Mapped[int] = mapped_column(Integer, default=0)
+    token_usage: Mapped[int] = mapped_column(Integer, default=0)
+    __table_args__ = (
+        ForeignKeyConstraint(["snapshot_id", "repository_id", "tenant_id"],
+                             ["code_snapshots.id", "code_snapshots.repository_id", "code_snapshots.tenant_id"]),
+        CheckConstraint("status IN ('pending', 'running', 'completed', 'failed', 'cancelled')"),
+        CheckConstraint("dimensions BETWEEN 1 AND 2000"),
+        Index("ix_embedding_jobs_dispatch", "status", "next_dispatch_at"),
+        Index("uq_embedding_jobs_active", "repository_id", unique=True,
+              postgresql_where=text("status IN ('pending', 'running')"),
+              sqlite_where=text("status IN ('pending', 'running')")),
     )

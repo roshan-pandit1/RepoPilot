@@ -23,9 +23,21 @@ class Settings(BaseSettings):
     web_origin: str = "http://localhost:3000"
     demo_user_id: int = 1
     demo_tenant_id: int = 1
+    embedding_provider: Literal["disabled", "fake", "openai"] = "disabled"
+    embedding_model: str = "text-embedding-3-small"
+    embedding_dimensions: int = 32
+    embedding_api_key: SecretStr = SecretStr("")
+    embedding_allow_paid: bool = False
 
     @model_validator(mode="after")
     def secure_defaults(self):
+        if not 1 <= self.embedding_dimensions <= 2000:
+            raise ValueError("Invalid embedding dimensions")
+        if self.embedding_provider == "fake" and self.app_env == "production":
+            raise ValueError("Fake embeddings are forbidden in production")
+        if self.embedding_provider == "openai" and (not self.embedding_allow_paid or
+                not self.embedding_api_key.get_secret_value() or not self.embedding_model):
+            raise ValueError("Paid embedding provider requires explicit opt-in and credentials")
         if len(self.github_webhook_secret.get_secret_value()) < 32:
             raise ValueError("Webhook secret must contain at least 32 characters")
         if self.demo_auth_enabled:

@@ -6,7 +6,7 @@ from uuid import uuid4
 
 import pytest
 from fastapi.testclient import TestClient
-from sqlalchemy import create_engine, event
+from sqlalchemy import create_engine, event, text
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
 
@@ -31,6 +31,11 @@ def factory():
         @event.listens_for(engine, "connect")
         def foreign_keys(connection, record):
             connection.execute("PRAGMA foreign_keys=ON")
+    elif engine.dialect.name == "postgresql":
+        # The fixture uses metadata rather than Alembic, so it must provision the
+        # type installed by migration 0005 before creating embedding tables.
+        with engine.begin() as connection:
+            connection.execute(text("CREATE EXTENSION IF NOT EXISTS vector"))
     Base.metadata.create_all(engine)
     sessions = sessionmaker(engine, expire_on_commit=False)
     seed(sessions)

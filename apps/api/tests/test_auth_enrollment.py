@@ -79,6 +79,7 @@ def csrf(client):
 
 def test_login_session_encrypted_state_replay_and_logout(client, factory, github_auth):
     state = sign_in(client)
+    old_session = client.cookies.get("rp_session")
     assert client.get("/v1/auth/me").json()["user"]["login"] == "alice"
     with factory() as db:
         from sqlalchemy import select
@@ -92,7 +93,10 @@ def test_login_session_encrypted_state_replay_and_logout(client, factory, github
     assert client.post("/v1/auth/logout", headers=csrf(client)).status_code == 200
     with factory() as db:
         from sqlalchemy import select
-        assert db.scalar(select(AuthSession)).github_token_ciphertext == ""
+        row = db.scalar(select(AuthSession))
+        assert row.github_token_ciphertext == "" and row.revoked_at is not None
+    assert client.get("/v1/auth/me").status_code == 401
+    client.cookies.set("rp_session", old_session)
     assert client.get("/v1/auth/me").status_code == 401
 
 
