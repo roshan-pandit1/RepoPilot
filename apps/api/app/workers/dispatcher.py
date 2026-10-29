@@ -4,15 +4,15 @@ from datetime import timedelta
 
 from sqlalchemy import and_, or_, select
 
-from app.domain.models import EmbeddingJob, IndexJob, Outbox, SyncJob, now
+from app.domain.models import EmbeddingJob, IndexJob, InvestigationOutbox, InvestigationReportOutbox, Outbox, SyncJob, now
 from app.core.index_logging import index_event
 from app.infra.database import get_session_factory
-from app.workers.tasks import embed_repository, index_repository, ingest_issue, sync_repository
+from app.workers.tasks import embed_repository, generate_mock_report, index_repository, ingest_issue, investigate_issue, sync_repository
 
 logger = logging.getLogger("repopilot.dispatcher")
 
 
-def dispatch_once(factory=None, publish=None, publish_sync=None, publish_index=None, publish_embedding=None):
+def dispatch_once(factory=None, publish=None, publish_sync=None, publish_index=None, publish_embedding=None, publish_investigation=None, publish_report=None):
     factory = factory or get_session_factory()
     publish = publish or (lambda event_id: ingest_issue.apply_async(
         args=[event_id], task_id=event_id, retry=False))
@@ -22,8 +22,14 @@ def dispatch_once(factory=None, publish=None, publish_sync=None, publish_index=N
         args=[job_id], task_id=job_id, retry=False))
     publish_embedding = publish_embedding or (lambda job_id: embed_repository.apply_async(
         args=[job_id], task_id=job_id, retry=False))
+    publish_investigation = publish_investigation or (lambda job_id: investigate_issue.apply_async(
+        args=[job_id], task_id=job_id, retry=False))
+    publish_report = publish_report or (lambda job_id: generate_mock_report.apply_async(
+        args=[job_id], task_id=job_id, retry=False))
     dispatched = []
     dispatched_embeddings = []
+    dispatched_investigations = []
+    dispatched_reports = []
     with factory.begin() as db:
         events = db.scalars(select(Outbox).where(
             Outbox.status == "pending", Outbox.next_dispatch_at <= now()
@@ -86,6 +92,32 @@ def dispatch_once(factory=None, publish=None, publish_sync=None, publish_index=N
                 dispatched_embeddings.append((job.id, job.repository_id))
             except Exception:
                 logger.warning("embedding_publish_failed")
+        events = db.scalars(select(InvestigationOutbox).where(
+            InvestigationOutbox.status == "pending", InvestigationOutbox.next_dispatch_at <= now()
+        ).order_by(InvestigationOutbox.next_dispatch_at).limit(10).with_for_update(skip_locked=True))
+        for event in events:
+            event.attempts += 1
+            event.next_dispatch_at = now() + timedelta(seconds=min(300, 2 ** min(event.attempts, 9)))
+            try:
+                publish_investigation(event.job_id)
+                dispatched_investigations.append((event.job_id, event.repository_id))
+            except Exception:
+                logger.warning("investigation_publish_failed")
+        reports = db.scalars(select(InvestigationReportOutbox).where(
+            InvestigationReportOutbox.status == "pending", InvestigationReportOutbox.next_dispatch_at <= now()
+        ).order_by(InvestigationReportOutbox.next_dispatch_at).limit(10).with_for_update(skip_locked=True))
+        for event in reports:
+            event.attempts += 1
+            event.next_dispatch_at = now() + timedelta(seconds=min(300, 2 ** min(event.attempts, 9)))
+            try:
+                publish_report(event.job_id)
+                dispatched_reports.append((event.job_id, event.repository_id))
+            except Exception:
+                logger.warning("report_publish_failed")
+    for job_id, repo_id in dispatched_reports:
+        index_event("report_job_dispatched", job_id=job_id, repository_id=repo_id, task_id=job_id)
+    for job_id, repo_id in dispatched_investigations:
+        index_event("investigation_job_dispatched", job_id=job_id, repository_id=repo_id, task_id=job_id)
     for job_id, repo_id in dispatched:
         index_event("index_job_dispatched", job_id=job_id, repository_id=repo_id, task_id=job_id)
     for job_id, repo_id in dispatched_embeddings:

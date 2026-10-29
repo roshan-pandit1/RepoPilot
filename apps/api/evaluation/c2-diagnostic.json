@@ -1,0 +1,557 @@
+{
+  "repository": "roshan-pandit1/RepoPilot",
+  "commit": "63491908290e6874dbaaf2b15c2a96473aad1324",
+  "strategies": {
+    "baseline": [
+      {
+        "id": "sync",
+        "returned": 0,
+        "history_matches": 0,
+        "snapshot_matches": 0,
+        "query_nodes": 11,
+        "relevant_ranks": []
+      },
+      {
+        "id": "signature",
+        "returned": 0,
+        "history_matches": 0,
+        "snapshot_matches": 0,
+        "query_nodes": 9,
+        "relevant_ranks": []
+      },
+      {
+        "id": "webhook",
+        "returned": 0,
+        "history_matches": 0,
+        "snapshot_matches": 0,
+        "query_nodes": 15,
+        "relevant_ranks": []
+      },
+      {
+        "id": "dispatch",
+        "returned": 0,
+        "history_matches": 0,
+        "snapshot_matches": 0,
+        "query_nodes": 15,
+        "relevant_ranks": []
+      },
+      {
+        "id": "authorization",
+        "returned": 0,
+        "history_matches": 0,
+        "snapshot_matches": 0,
+        "query_nodes": 11,
+        "relevant_ranks": []
+      },
+      {
+        "id": "tenant",
+        "returned": 0,
+        "history_matches": 0,
+        "snapshot_matches": 0,
+        "query_nodes": 15,
+        "relevant_ranks": []
+      },
+      {
+        "id": "csrf",
+        "returned": 0,
+        "history_matches": 0,
+        "snapshot_matches": 0,
+        "query_nodes": 17,
+        "relevant_ranks": []
+      },
+      {
+        "id": "principal",
+        "returned": 0,
+        "history_matches": 0,
+        "snapshot_matches": 0,
+        "query_nodes": 11,
+        "relevant_ranks": []
+      },
+      {
+        "id": "login",
+        "returned": 0,
+        "history_matches": 0,
+        "snapshot_matches": 0,
+        "query_nodes": 15,
+        "relevant_ranks": []
+      },
+      {
+        "id": "callback",
+        "returned": 0,
+        "history_matches": 0,
+        "snapshot_matches": 0,
+        "query_nodes": 13,
+        "relevant_ranks": []
+      },
+      {
+        "id": "logout",
+        "returned": 0,
+        "history_matches": 0,
+        "snapshot_matches": 0,
+        "query_nodes": 17,
+        "relevant_ranks": []
+      },
+      {
+        "id": "enroll",
+        "returned": 0,
+        "history_matches": 0,
+        "snapshot_matches": 0,
+        "query_nodes": 13,
+        "relevant_ranks": []
+      },
+      {
+        "id": "choose",
+        "returned": 0,
+        "history_matches": 0,
+        "snapshot_matches": 0,
+        "query_nodes": 17,
+        "relevant_ranks": []
+      },
+      {
+        "id": "installations",
+        "returned": 0,
+        "history_matches": 0,
+        "snapshot_matches": 0,
+        "query_nodes": 11,
+        "relevant_ranks": []
+      },
+      {
+        "id": "visible",
+        "returned": 0,
+        "history_matches": 0,
+        "snapshot_matches": 0,
+        "query_nodes": 15,
+        "relevant_ranks": []
+      },
+      {
+        "id": "accept",
+        "returned": 0,
+        "history_matches": 0,
+        "snapshot_matches": 0,
+        "query_nodes": 15,
+        "relevant_ranks": []
+      },
+      {
+        "id": "process",
+        "returned": 0,
+        "history_matches": 0,
+        "snapshot_matches": 0,
+        "query_nodes": 13,
+        "relevant_ranks": []
+      },
+      {
+        "id": "revoke",
+        "returned": 0,
+        "history_matches": 0,
+        "snapshot_matches": 0,
+        "query_nodes": 13,
+        "relevant_ranks": []
+      },
+      {
+        "id": "health",
+        "returned": 0,
+        "history_matches": 0,
+        "snapshot_matches": 0,
+        "query_nodes": 17,
+        "relevant_ranks": []
+      },
+      {
+        "id": "delivery",
+        "returned": 0,
+        "history_matches": 0,
+        "snapshot_matches": 0,
+        "query_nodes": 11,
+        "relevant_ranks": []
+      }
+    ],
+    "english_or": [
+      {
+        "id": "sync",
+        "returned": 10,
+        "history_matches": 244,
+        "snapshot_matches": 61,
+        "query_nodes": 7,
+        "relevant_ranks": [
+          2
+        ]
+      },
+      {
+        "id": "signature",
+        "returned": 10,
+        "history_matches": 132,
+        "snapshot_matches": 33,
+        "query_nodes": 5,
+        "relevant_ranks": [
+          9
+        ]
+      },
+      {
+        "id": "webhook",
+        "returned": 10,
+        "history_matches": 216,
+        "snapshot_matches": 54,
+        "query_nodes": 9,
+        "relevant_ranks": [
+          1
+        ]
+      },
+      {
+        "id": "dispatch",
+        "returned": 10,
+        "history_matches": 180,
+        "snapshot_matches": 45,
+        "query_nodes": 9,
+        "relevant_ranks": [
+          2
+        ]
+      },
+      {
+        "id": "authorization",
+        "returned": 10,
+        "history_matches": 200,
+        "snapshot_matches": 50,
+        "query_nodes": 7,
+        "relevant_ranks": []
+      },
+      {
+        "id": "tenant",
+        "returned": 10,
+        "history_matches": 264,
+        "snapshot_matches": 66,
+        "query_nodes": 7,
+        "relevant_ranks": []
+      },
+      {
+        "id": "csrf",
+        "returned": 10,
+        "history_matches": 216,
+        "snapshot_matches": 54,
+        "query_nodes": 11,
+        "relevant_ranks": [
+          2
+        ]
+      },
+      {
+        "id": "principal",
+        "returned": 10,
+        "history_matches": 192,
+        "snapshot_matches": 48,
+        "query_nodes": 5,
+        "relevant_ranks": [
+          2
+        ]
+      },
+      {
+        "id": "login",
+        "returned": 10,
+        "history_matches": 276,
+        "snapshot_matches": 69,
+        "query_nodes": 9,
+        "relevant_ranks": []
+      },
+      {
+        "id": "callback",
+        "returned": 10,
+        "history_matches": 276,
+        "snapshot_matches": 69,
+        "query_nodes": 7,
+        "relevant_ranks": [
+          1
+        ]
+      },
+      {
+        "id": "logout",
+        "returned": 10,
+        "history_matches": 388,
+        "snapshot_matches": 97,
+        "query_nodes": 7,
+        "relevant_ranks": []
+      },
+      {
+        "id": "enroll",
+        "returned": 10,
+        "history_matches": 368,
+        "snapshot_matches": 92,
+        "query_nodes": 7,
+        "relevant_ranks": [
+          1
+        ]
+      },
+      {
+        "id": "choose",
+        "returned": 10,
+        "history_matches": 276,
+        "snapshot_matches": 69,
+        "query_nodes": 7,
+        "relevant_ranks": [
+          1
+        ]
+      },
+      {
+        "id": "installations",
+        "returned": 10,
+        "history_matches": 368,
+        "snapshot_matches": 92,
+        "query_nodes": 7,
+        "relevant_ranks": [
+          7
+        ]
+      },
+      {
+        "id": "visible",
+        "returned": 10,
+        "history_matches": 384,
+        "snapshot_matches": 96,
+        "query_nodes": 9,
+        "relevant_ranks": [
+          9
+        ]
+      },
+      {
+        "id": "accept",
+        "returned": 10,
+        "history_matches": 164,
+        "snapshot_matches": 41,
+        "query_nodes": 9,
+        "relevant_ranks": [
+          2
+        ]
+      },
+      {
+        "id": "process",
+        "returned": 10,
+        "history_matches": 212,
+        "snapshot_matches": 53,
+        "query_nodes": 9,
+        "relevant_ranks": [
+          3
+        ]
+      },
+      {
+        "id": "revoke",
+        "returned": 10,
+        "history_matches": 244,
+        "snapshot_matches": 61,
+        "query_nodes": 7,
+        "relevant_ranks": [
+          3
+        ]
+      },
+      {
+        "id": "health",
+        "returned": 10,
+        "history_matches": 64,
+        "snapshot_matches": 16,
+        "query_nodes": 9,
+        "relevant_ranks": [
+          1
+        ]
+      },
+      {
+        "id": "delivery",
+        "returned": 10,
+        "history_matches": 116,
+        "snapshot_matches": 29,
+        "query_nodes": 7,
+        "relevant_ranks": [
+          7
+        ]
+      }
+    ],
+    "english_or_boost": [
+      {
+        "id": "sync",
+        "returned": 10,
+        "history_matches": 244,
+        "snapshot_matches": 61,
+        "query_nodes": 7,
+        "relevant_ranks": [
+          2
+        ]
+      },
+      {
+        "id": "signature",
+        "returned": 10,
+        "history_matches": 132,
+        "snapshot_matches": 33,
+        "query_nodes": 5,
+        "relevant_ranks": [
+          9
+        ]
+      },
+      {
+        "id": "webhook",
+        "returned": 10,
+        "history_matches": 216,
+        "snapshot_matches": 54,
+        "query_nodes": 9,
+        "relevant_ranks": [
+          1
+        ]
+      },
+      {
+        "id": "dispatch",
+        "returned": 10,
+        "history_matches": 180,
+        "snapshot_matches": 45,
+        "query_nodes": 9,
+        "relevant_ranks": [
+          2
+        ]
+      },
+      {
+        "id": "authorization",
+        "returned": 10,
+        "history_matches": 200,
+        "snapshot_matches": 50,
+        "query_nodes": 7,
+        "relevant_ranks": []
+      },
+      {
+        "id": "tenant",
+        "returned": 10,
+        "history_matches": 264,
+        "snapshot_matches": 66,
+        "query_nodes": 7,
+        "relevant_ranks": []
+      },
+      {
+        "id": "csrf",
+        "returned": 10,
+        "history_matches": 216,
+        "snapshot_matches": 54,
+        "query_nodes": 11,
+        "relevant_ranks": [
+          2
+        ]
+      },
+      {
+        "id": "principal",
+        "returned": 10,
+        "history_matches": 192,
+        "snapshot_matches": 48,
+        "query_nodes": 5,
+        "relevant_ranks": [
+          2
+        ]
+      },
+      {
+        "id": "login",
+        "returned": 10,
+        "history_matches": 276,
+        "snapshot_matches": 69,
+        "query_nodes": 9,
+        "relevant_ranks": []
+      },
+      {
+        "id": "callback",
+        "returned": 10,
+        "history_matches": 276,
+        "snapshot_matches": 69,
+        "query_nodes": 7,
+        "relevant_ranks": [
+          1
+        ]
+      },
+      {
+        "id": "logout",
+        "returned": 10,
+        "history_matches": 388,
+        "snapshot_matches": 97,
+        "query_nodes": 7,
+        "relevant_ranks": []
+      },
+      {
+        "id": "enroll",
+        "returned": 10,
+        "history_matches": 368,
+        "snapshot_matches": 92,
+        "query_nodes": 7,
+        "relevant_ranks": [
+          1
+        ]
+      },
+      {
+        "id": "choose",
+        "returned": 10,
+        "history_matches": 276,
+        "snapshot_matches": 69,
+        "query_nodes": 7,
+        "relevant_ranks": [
+          1
+        ]
+      },
+      {
+        "id": "installations",
+        "returned": 10,
+        "history_matches": 368,
+        "snapshot_matches": 92,
+        "query_nodes": 7,
+        "relevant_ranks": [
+          7
+        ]
+      },
+      {
+        "id": "visible",
+        "returned": 10,
+        "history_matches": 384,
+        "snapshot_matches": 96,
+        "query_nodes": 9,
+        "relevant_ranks": [
+          9
+        ]
+      },
+      {
+        "id": "accept",
+        "returned": 10,
+        "history_matches": 164,
+        "snapshot_matches": 41,
+        "query_nodes": 9,
+        "relevant_ranks": [
+          2
+        ]
+      },
+      {
+        "id": "process",
+        "returned": 10,
+        "history_matches": 212,
+        "snapshot_matches": 53,
+        "query_nodes": 9,
+        "relevant_ranks": [
+          3
+        ]
+      },
+      {
+        "id": "revoke",
+        "returned": 10,
+        "history_matches": 244,
+        "snapshot_matches": 61,
+        "query_nodes": 7,
+        "relevant_ranks": [
+          3
+        ]
+      },
+      {
+        "id": "health",
+        "returned": 10,
+        "history_matches": 64,
+        "snapshot_matches": 16,
+        "query_nodes": 9,
+        "relevant_ranks": [
+          1
+        ]
+      },
+      {
+        "id": "delivery",
+        "returned": 10,
+        "history_matches": 116,
+        "snapshot_matches": 29,
+        "query_nodes": 7,
+        "relevant_ranks": [
+          7
+        ]
+      }
+    ]
+  },
+  "published_chunks": 278
+}

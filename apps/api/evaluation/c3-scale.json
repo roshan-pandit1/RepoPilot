@@ -1,0 +1,1538 @@
+{
+  "method": "Generated temporary tables; C2 lexical expressions; not application data.",
+  "sizes": [
+    {
+      "total_chunks": 1000,
+      "eligible_published_chunks": 800,
+      "conditions": {
+        "existing_indexes": {
+          "sample_count": 36,
+          "timeout_count": 0,
+          "latency_p50_ms": 5.881,
+          "latency_p95_ms": 11.066,
+          "mean_ms": 6.933,
+          "index_build_seconds": 0.0,
+          "indexes": [
+            {
+              "name": "perf_files_1000_pkey",
+              "bytes": 16384
+            },
+            {
+              "name": "perf_chunks_1000_pkey",
+              "bytes": 40960
+            },
+            {
+              "name": "perf_chunks_1000_tenant_id_repository_id_idx",
+              "bytes": 16384
+            },
+            {
+              "name": "perf_chunks_1000_to_tsvector_idx",
+              "bytes": 81920
+            },
+            {
+              "name": "perf_files_1000_to_tsvector_idx",
+              "bytes": 16384
+            }
+          ],
+          "plans": {
+            "verify_webhook_signature": {
+              "planning_ms": 0.408,
+              "execution_ms": 3.255,
+              "nodes": [
+                {
+                  "Node Type": "Limit",
+                  "Actual Rows": 30,
+                  "Shared Hit Blocks": 3,
+                  "Shared Read Blocks": 0,
+                  "Local Hit Blocks": 17,
+                  "Local Read Blocks": 0,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0
+                },
+                {
+                  "Node Type": "Sort",
+                  "Actual Rows": 30,
+                  "Sort Method": "top-N heapsort",
+                  "Sort Space Used": 29,
+                  "Sort Space Type": "Memory",
+                  "Shared Hit Blocks": 3,
+                  "Shared Read Blocks": 0,
+                  "Local Hit Blocks": 17,
+                  "Local Read Blocks": 0,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0
+                },
+                {
+                  "Node Type": "Hash Join",
+                  "Actual Rows": 66,
+                  "Shared Hit Blocks": 0,
+                  "Shared Read Blocks": 0,
+                  "Local Hit Blocks": 17,
+                  "Local Read Blocks": 0,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0
+                },
+                {
+                  "Node Type": "Seq Scan",
+                  "Actual Rows": 900,
+                  "Rows Removed by Filter": 100,
+                  "Shared Hit Blocks": 0,
+                  "Shared Read Blocks": 0,
+                  "Local Hit Blocks": 16,
+                  "Local Read Blocks": 0,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0
+                },
+                {
+                  "Node Type": "Hash",
+                  "Actual Rows": 80,
+                  "Shared Hit Blocks": 0,
+                  "Shared Read Blocks": 0,
+                  "Local Hit Blocks": 1,
+                  "Local Read Blocks": 0,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0
+                },
+                {
+                  "Node Type": "Seq Scan",
+                  "Actual Rows": 80,
+                  "Rows Removed by Filter": 20,
+                  "Shared Hit Blocks": 0,
+                  "Shared Read Blocks": 0,
+                  "Local Hit Blocks": 1,
+                  "Local Read Blocks": 0,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0
+                }
+              ]
+            },
+            "repository authorization webhook": {
+              "planning_ms": 0.045,
+              "execution_ms": 3.226,
+              "nodes": [
+                {
+                  "Node Type": "Limit",
+                  "Actual Rows": 30,
+                  "Shared Hit Blocks": 0,
+                  "Shared Read Blocks": 0,
+                  "Local Hit Blocks": 17,
+                  "Local Read Blocks": 0,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0
+                },
+                {
+                  "Node Type": "Sort",
+                  "Actual Rows": 30,
+                  "Sort Method": "top-N heapsort",
+                  "Sort Space Used": 29,
+                  "Sort Space Type": "Memory",
+                  "Shared Hit Blocks": 0,
+                  "Shared Read Blocks": 0,
+                  "Local Hit Blocks": 17,
+                  "Local Read Blocks": 0,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0
+                },
+                {
+                  "Node Type": "Hash Join",
+                  "Actual Rows": 66,
+                  "Shared Hit Blocks": 0,
+                  "Shared Read Blocks": 0,
+                  "Local Hit Blocks": 17,
+                  "Local Read Blocks": 0,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0
+                },
+                {
+                  "Node Type": "Seq Scan",
+                  "Actual Rows": 900,
+                  "Rows Removed by Filter": 100,
+                  "Shared Hit Blocks": 0,
+                  "Shared Read Blocks": 0,
+                  "Local Hit Blocks": 16,
+                  "Local Read Blocks": 0,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0
+                },
+                {
+                  "Node Type": "Hash",
+                  "Actual Rows": 80,
+                  "Shared Hit Blocks": 0,
+                  "Shared Read Blocks": 0,
+                  "Local Hit Blocks": 1,
+                  "Local Read Blocks": 0,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0
+                },
+                {
+                  "Node Type": "Seq Scan",
+                  "Actual Rows": 80,
+                  "Rows Removed by Filter": 20,
+                  "Shared Hit Blocks": 0,
+                  "Shared Read Blocks": 0,
+                  "Local Hit Blocks": 1,
+                  "Local Read Blocks": 0,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0
+                }
+              ]
+            },
+            "where is source processing handled": {
+              "planning_ms": 0.048,
+              "execution_ms": 6.511,
+              "nodes": [
+                {
+                  "Node Type": "Limit",
+                  "Actual Rows": 30,
+                  "Shared Hit Blocks": 0,
+                  "Shared Read Blocks": 0,
+                  "Local Hit Blocks": 17,
+                  "Local Read Blocks": 0,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0
+                },
+                {
+                  "Node Type": "Sort",
+                  "Actual Rows": 30,
+                  "Sort Method": "top-N heapsort",
+                  "Sort Space Used": 29,
+                  "Sort Space Type": "Memory",
+                  "Shared Hit Blocks": 0,
+                  "Shared Read Blocks": 0,
+                  "Local Hit Blocks": 17,
+                  "Local Read Blocks": 0,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0
+                },
+                {
+                  "Node Type": "Hash Join",
+                  "Actual Rows": 795,
+                  "Shared Hit Blocks": 0,
+                  "Shared Read Blocks": 0,
+                  "Local Hit Blocks": 17,
+                  "Local Read Blocks": 0,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0
+                },
+                {
+                  "Node Type": "Seq Scan",
+                  "Actual Rows": 900,
+                  "Rows Removed by Filter": 100,
+                  "Shared Hit Blocks": 0,
+                  "Shared Read Blocks": 0,
+                  "Local Hit Blocks": 16,
+                  "Local Read Blocks": 0,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0
+                },
+                {
+                  "Node Type": "Hash",
+                  "Actual Rows": 80,
+                  "Shared Hit Blocks": 0,
+                  "Shared Read Blocks": 0,
+                  "Local Hit Blocks": 1,
+                  "Local Read Blocks": 0,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0
+                },
+                {
+                  "Node Type": "Seq Scan",
+                  "Actual Rows": 80,
+                  "Rows Removed by Filter": 20,
+                  "Shared Hit Blocks": 0,
+                  "Shared Read Blocks": 0,
+                  "Local Hit Blocks": 1,
+                  "Local Read Blocks": 0,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0
+                }
+              ]
+            }
+          },
+          "correctness": "passed for comparable completed queries",
+          "reference_queries_available": 3
+        },
+        "candidate_english_gin": {
+          "sample_count": 36,
+          "timeout_count": 0,
+          "latency_p50_ms": 6.136,
+          "latency_p95_ms": 10.877,
+          "mean_ms": 7.548,
+          "index_build_seconds": 0.005,
+          "indexes": [
+            {
+              "name": "perf_files_1000_pkey",
+              "bytes": 16384
+            },
+            {
+              "name": "perf_chunks_1000_pkey",
+              "bytes": 40960
+            },
+            {
+              "name": "perf_chunks_1000_tenant_id_repository_id_idx",
+              "bytes": 16384
+            },
+            {
+              "name": "perf_chunks_1000_to_tsvector_idx",
+              "bytes": 81920
+            },
+            {
+              "name": "perf_files_1000_to_tsvector_idx",
+              "bytes": 16384
+            },
+            {
+              "name": "perf_english_chunks_1000",
+              "bytes": 81920
+            },
+            {
+              "name": "perf_english_paths_1000",
+              "bytes": 16384
+            }
+          ],
+          "plans": {
+            "verify_webhook_signature": {
+              "planning_ms": 0.115,
+              "execution_ms": 3.202,
+              "nodes": [
+                {
+                  "Node Type": "Limit",
+                  "Actual Rows": 30,
+                  "Shared Hit Blocks": 0,
+                  "Shared Read Blocks": 0,
+                  "Local Hit Blocks": 17,
+                  "Local Read Blocks": 0,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0
+                },
+                {
+                  "Node Type": "Sort",
+                  "Actual Rows": 30,
+                  "Sort Method": "top-N heapsort",
+                  "Sort Space Used": 29,
+                  "Sort Space Type": "Memory",
+                  "Shared Hit Blocks": 0,
+                  "Shared Read Blocks": 0,
+                  "Local Hit Blocks": 17,
+                  "Local Read Blocks": 0,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0
+                },
+                {
+                  "Node Type": "Hash Join",
+                  "Actual Rows": 66,
+                  "Shared Hit Blocks": 0,
+                  "Shared Read Blocks": 0,
+                  "Local Hit Blocks": 17,
+                  "Local Read Blocks": 0,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0
+                },
+                {
+                  "Node Type": "Seq Scan",
+                  "Actual Rows": 900,
+                  "Rows Removed by Filter": 100,
+                  "Shared Hit Blocks": 0,
+                  "Shared Read Blocks": 0,
+                  "Local Hit Blocks": 16,
+                  "Local Read Blocks": 0,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0
+                },
+                {
+                  "Node Type": "Hash",
+                  "Actual Rows": 80,
+                  "Shared Hit Blocks": 0,
+                  "Shared Read Blocks": 0,
+                  "Local Hit Blocks": 1,
+                  "Local Read Blocks": 0,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0
+                },
+                {
+                  "Node Type": "Seq Scan",
+                  "Actual Rows": 80,
+                  "Rows Removed by Filter": 20,
+                  "Shared Hit Blocks": 0,
+                  "Shared Read Blocks": 0,
+                  "Local Hit Blocks": 1,
+                  "Local Read Blocks": 0,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0
+                }
+              ]
+            },
+            "repository authorization webhook": {
+              "planning_ms": 0.061,
+              "execution_ms": 3.201,
+              "nodes": [
+                {
+                  "Node Type": "Limit",
+                  "Actual Rows": 30,
+                  "Shared Hit Blocks": 0,
+                  "Shared Read Blocks": 0,
+                  "Local Hit Blocks": 17,
+                  "Local Read Blocks": 0,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0
+                },
+                {
+                  "Node Type": "Sort",
+                  "Actual Rows": 30,
+                  "Sort Method": "top-N heapsort",
+                  "Sort Space Used": 29,
+                  "Sort Space Type": "Memory",
+                  "Shared Hit Blocks": 0,
+                  "Shared Read Blocks": 0,
+                  "Local Hit Blocks": 17,
+                  "Local Read Blocks": 0,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0
+                },
+                {
+                  "Node Type": "Hash Join",
+                  "Actual Rows": 66,
+                  "Shared Hit Blocks": 0,
+                  "Shared Read Blocks": 0,
+                  "Local Hit Blocks": 17,
+                  "Local Read Blocks": 0,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0
+                },
+                {
+                  "Node Type": "Seq Scan",
+                  "Actual Rows": 900,
+                  "Rows Removed by Filter": 100,
+                  "Shared Hit Blocks": 0,
+                  "Shared Read Blocks": 0,
+                  "Local Hit Blocks": 16,
+                  "Local Read Blocks": 0,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0
+                },
+                {
+                  "Node Type": "Hash",
+                  "Actual Rows": 80,
+                  "Shared Hit Blocks": 0,
+                  "Shared Read Blocks": 0,
+                  "Local Hit Blocks": 1,
+                  "Local Read Blocks": 0,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0
+                },
+                {
+                  "Node Type": "Seq Scan",
+                  "Actual Rows": 80,
+                  "Rows Removed by Filter": 20,
+                  "Shared Hit Blocks": 0,
+                  "Shared Read Blocks": 0,
+                  "Local Hit Blocks": 1,
+                  "Local Read Blocks": 0,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0
+                }
+              ]
+            },
+            "where is source processing handled": {
+              "planning_ms": 0.133,
+              "execution_ms": 6.573,
+              "nodes": [
+                {
+                  "Node Type": "Limit",
+                  "Actual Rows": 30,
+                  "Shared Hit Blocks": 0,
+                  "Shared Read Blocks": 0,
+                  "Local Hit Blocks": 17,
+                  "Local Read Blocks": 0,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0
+                },
+                {
+                  "Node Type": "Sort",
+                  "Actual Rows": 30,
+                  "Sort Method": "top-N heapsort",
+                  "Sort Space Used": 29,
+                  "Sort Space Type": "Memory",
+                  "Shared Hit Blocks": 0,
+                  "Shared Read Blocks": 0,
+                  "Local Hit Blocks": 17,
+                  "Local Read Blocks": 0,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0
+                },
+                {
+                  "Node Type": "Hash Join",
+                  "Actual Rows": 795,
+                  "Shared Hit Blocks": 0,
+                  "Shared Read Blocks": 0,
+                  "Local Hit Blocks": 17,
+                  "Local Read Blocks": 0,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0
+                },
+                {
+                  "Node Type": "Seq Scan",
+                  "Actual Rows": 900,
+                  "Rows Removed by Filter": 100,
+                  "Shared Hit Blocks": 0,
+                  "Shared Read Blocks": 0,
+                  "Local Hit Blocks": 16,
+                  "Local Read Blocks": 0,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0
+                },
+                {
+                  "Node Type": "Hash",
+                  "Actual Rows": 80,
+                  "Shared Hit Blocks": 0,
+                  "Shared Read Blocks": 0,
+                  "Local Hit Blocks": 1,
+                  "Local Read Blocks": 0,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0
+                },
+                {
+                  "Node Type": "Seq Scan",
+                  "Actual Rows": 80,
+                  "Rows Removed by Filter": 20,
+                  "Shared Hit Blocks": 0,
+                  "Shared Read Blocks": 0,
+                  "Local Hit Blocks": 1,
+                  "Local Read Blocks": 0,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0
+                }
+              ]
+            }
+          },
+          "correctness": "passed for comparable completed queries",
+          "reference_queries_available": 3
+        }
+      }
+    },
+    {
+      "total_chunks": 10000,
+      "eligible_published_chunks": 8000,
+      "conditions": {
+        "existing_indexes": {
+          "sample_count": 36,
+          "timeout_count": 0,
+          "latency_p50_ms": 55.416,
+          "latency_p95_ms": 112.333,
+          "mean_ms": 66.028,
+          "index_build_seconds": 0.0,
+          "indexes": [
+            {
+              "name": "perf_files_10000_pkey",
+              "bytes": 40960
+            },
+            {
+              "name": "perf_chunks_10000_pkey",
+              "bytes": 245760
+            },
+            {
+              "name": "perf_chunks_10000_tenant_id_repository_id_idx",
+              "bytes": 90112
+            },
+            {
+              "name": "perf_chunks_10000_to_tsvector_idx",
+              "bytes": 720896
+            },
+            {
+              "name": "perf_files_10000_to_tsvector_idx",
+              "bytes": 114688
+            }
+          ],
+          "plans": {
+            "verify_webhook_signature": {
+              "planning_ms": 0.069,
+              "execution_ms": 31.225,
+              "nodes": [
+                {
+                  "Node Type": "Limit",
+                  "Actual Rows": 30,
+                  "Shared Hit Blocks": 0,
+                  "Shared Read Blocks": 0,
+                  "Local Hit Blocks": 164,
+                  "Local Read Blocks": 0,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0
+                },
+                {
+                  "Node Type": "Sort",
+                  "Actual Rows": 30,
+                  "Sort Method": "top-N heapsort",
+                  "Sort Space Used": 29,
+                  "Sort Space Type": "Memory",
+                  "Shared Hit Blocks": 0,
+                  "Shared Read Blocks": 0,
+                  "Local Hit Blocks": 164,
+                  "Local Read Blocks": 0,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0
+                },
+                {
+                  "Node Type": "Hash Join",
+                  "Actual Rows": 662,
+                  "Shared Hit Blocks": 0,
+                  "Shared Read Blocks": 0,
+                  "Local Hit Blocks": 164,
+                  "Local Read Blocks": 0,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0
+                },
+                {
+                  "Node Type": "Seq Scan",
+                  "Actual Rows": 9000,
+                  "Rows Removed by Filter": 1000,
+                  "Shared Hit Blocks": 0,
+                  "Shared Read Blocks": 0,
+                  "Local Hit Blocks": 154,
+                  "Local Read Blocks": 0,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0
+                },
+                {
+                  "Node Type": "Hash",
+                  "Actual Rows": 800,
+                  "Shared Hit Blocks": 0,
+                  "Shared Read Blocks": 0,
+                  "Local Hit Blocks": 10,
+                  "Local Read Blocks": 0,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0
+                },
+                {
+                  "Node Type": "Seq Scan",
+                  "Actual Rows": 800,
+                  "Rows Removed by Filter": 200,
+                  "Shared Hit Blocks": 0,
+                  "Shared Read Blocks": 0,
+                  "Local Hit Blocks": 10,
+                  "Local Read Blocks": 0,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0
+                }
+              ]
+            },
+            "repository authorization webhook": {
+              "planning_ms": 0.052,
+              "execution_ms": 31.058,
+              "nodes": [
+                {
+                  "Node Type": "Limit",
+                  "Actual Rows": 30,
+                  "Shared Hit Blocks": 0,
+                  "Shared Read Blocks": 0,
+                  "Local Hit Blocks": 164,
+                  "Local Read Blocks": 0,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0
+                },
+                {
+                  "Node Type": "Sort",
+                  "Actual Rows": 30,
+                  "Sort Method": "top-N heapsort",
+                  "Sort Space Used": 29,
+                  "Sort Space Type": "Memory",
+                  "Shared Hit Blocks": 0,
+                  "Shared Read Blocks": 0,
+                  "Local Hit Blocks": 164,
+                  "Local Read Blocks": 0,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0
+                },
+                {
+                  "Node Type": "Hash Join",
+                  "Actual Rows": 662,
+                  "Shared Hit Blocks": 0,
+                  "Shared Read Blocks": 0,
+                  "Local Hit Blocks": 164,
+                  "Local Read Blocks": 0,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0
+                },
+                {
+                  "Node Type": "Seq Scan",
+                  "Actual Rows": 9000,
+                  "Rows Removed by Filter": 1000,
+                  "Shared Hit Blocks": 0,
+                  "Shared Read Blocks": 0,
+                  "Local Hit Blocks": 154,
+                  "Local Read Blocks": 0,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0
+                },
+                {
+                  "Node Type": "Hash",
+                  "Actual Rows": 800,
+                  "Shared Hit Blocks": 0,
+                  "Shared Read Blocks": 0,
+                  "Local Hit Blocks": 10,
+                  "Local Read Blocks": 0,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0
+                },
+                {
+                  "Node Type": "Seq Scan",
+                  "Actual Rows": 800,
+                  "Rows Removed by Filter": 200,
+                  "Shared Hit Blocks": 0,
+                  "Shared Read Blocks": 0,
+                  "Local Hit Blocks": 10,
+                  "Local Read Blocks": 0,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0
+                }
+              ]
+            },
+            "where is source processing handled": {
+              "planning_ms": 0.079,
+              "execution_ms": 63.415,
+              "nodes": [
+                {
+                  "Node Type": "Limit",
+                  "Actual Rows": 30,
+                  "Shared Hit Blocks": 0,
+                  "Shared Read Blocks": 0,
+                  "Local Hit Blocks": 164,
+                  "Local Read Blocks": 0,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0
+                },
+                {
+                  "Node Type": "Sort",
+                  "Actual Rows": 30,
+                  "Sort Method": "top-N heapsort",
+                  "Sort Space Used": 29,
+                  "Sort Space Type": "Memory",
+                  "Shared Hit Blocks": 0,
+                  "Shared Read Blocks": 0,
+                  "Local Hit Blocks": 164,
+                  "Local Read Blocks": 0,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0
+                },
+                {
+                  "Node Type": "Hash Join",
+                  "Actual Rows": 7950,
+                  "Shared Hit Blocks": 0,
+                  "Shared Read Blocks": 0,
+                  "Local Hit Blocks": 164,
+                  "Local Read Blocks": 0,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0
+                },
+                {
+                  "Node Type": "Seq Scan",
+                  "Actual Rows": 9000,
+                  "Rows Removed by Filter": 1000,
+                  "Shared Hit Blocks": 0,
+                  "Shared Read Blocks": 0,
+                  "Local Hit Blocks": 154,
+                  "Local Read Blocks": 0,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0
+                },
+                {
+                  "Node Type": "Hash",
+                  "Actual Rows": 800,
+                  "Shared Hit Blocks": 0,
+                  "Shared Read Blocks": 0,
+                  "Local Hit Blocks": 10,
+                  "Local Read Blocks": 0,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0
+                },
+                {
+                  "Node Type": "Seq Scan",
+                  "Actual Rows": 800,
+                  "Rows Removed by Filter": 200,
+                  "Shared Hit Blocks": 0,
+                  "Shared Read Blocks": 0,
+                  "Local Hit Blocks": 10,
+                  "Local Read Blocks": 0,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0
+                }
+              ]
+            }
+          },
+          "correctness": "passed for comparable completed queries",
+          "reference_queries_available": 3
+        },
+        "candidate_english_gin": {
+          "sample_count": 36,
+          "timeout_count": 0,
+          "latency_p50_ms": 55.654,
+          "latency_p95_ms": 112.459,
+          "mean_ms": 72.492,
+          "index_build_seconds": 0.043,
+          "indexes": [
+            {
+              "name": "perf_chunks_10000_pkey",
+              "bytes": 245760
+            },
+            {
+              "name": "perf_chunks_10000_tenant_id_repository_id_idx",
+              "bytes": 90112
+            },
+            {
+              "name": "perf_chunks_10000_to_tsvector_idx",
+              "bytes": 720896
+            },
+            {
+              "name": "perf_english_chunks_10000",
+              "bytes": 720896
+            },
+            {
+              "name": "perf_files_10000_pkey",
+              "bytes": 40960
+            },
+            {
+              "name": "perf_files_10000_to_tsvector_idx",
+              "bytes": 114688
+            },
+            {
+              "name": "perf_english_paths_10000",
+              "bytes": 90112
+            }
+          ],
+          "plans": {
+            "verify_webhook_signature": {
+              "planning_ms": 0.145,
+              "execution_ms": 31.91,
+              "nodes": [
+                {
+                  "Node Type": "Limit",
+                  "Actual Rows": 30,
+                  "Shared Hit Blocks": 0,
+                  "Shared Read Blocks": 0,
+                  "Local Hit Blocks": 164,
+                  "Local Read Blocks": 0,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0
+                },
+                {
+                  "Node Type": "Sort",
+                  "Actual Rows": 30,
+                  "Sort Method": "top-N heapsort",
+                  "Sort Space Used": 29,
+                  "Sort Space Type": "Memory",
+                  "Shared Hit Blocks": 0,
+                  "Shared Read Blocks": 0,
+                  "Local Hit Blocks": 164,
+                  "Local Read Blocks": 0,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0
+                },
+                {
+                  "Node Type": "Hash Join",
+                  "Actual Rows": 662,
+                  "Shared Hit Blocks": 0,
+                  "Shared Read Blocks": 0,
+                  "Local Hit Blocks": 164,
+                  "Local Read Blocks": 0,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0
+                },
+                {
+                  "Node Type": "Seq Scan",
+                  "Actual Rows": 9000,
+                  "Rows Removed by Filter": 1000,
+                  "Shared Hit Blocks": 0,
+                  "Shared Read Blocks": 0,
+                  "Local Hit Blocks": 154,
+                  "Local Read Blocks": 0,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0
+                },
+                {
+                  "Node Type": "Hash",
+                  "Actual Rows": 800,
+                  "Shared Hit Blocks": 0,
+                  "Shared Read Blocks": 0,
+                  "Local Hit Blocks": 10,
+                  "Local Read Blocks": 0,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0
+                },
+                {
+                  "Node Type": "Seq Scan",
+                  "Actual Rows": 800,
+                  "Rows Removed by Filter": 200,
+                  "Shared Hit Blocks": 0,
+                  "Shared Read Blocks": 0,
+                  "Local Hit Blocks": 10,
+                  "Local Read Blocks": 0,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0
+                }
+              ]
+            },
+            "repository authorization webhook": {
+              "planning_ms": 0.12,
+              "execution_ms": 31.058,
+              "nodes": [
+                {
+                  "Node Type": "Limit",
+                  "Actual Rows": 30,
+                  "Shared Hit Blocks": 0,
+                  "Shared Read Blocks": 0,
+                  "Local Hit Blocks": 164,
+                  "Local Read Blocks": 0,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0
+                },
+                {
+                  "Node Type": "Sort",
+                  "Actual Rows": 30,
+                  "Sort Method": "top-N heapsort",
+                  "Sort Space Used": 29,
+                  "Sort Space Type": "Memory",
+                  "Shared Hit Blocks": 0,
+                  "Shared Read Blocks": 0,
+                  "Local Hit Blocks": 164,
+                  "Local Read Blocks": 0,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0
+                },
+                {
+                  "Node Type": "Hash Join",
+                  "Actual Rows": 662,
+                  "Shared Hit Blocks": 0,
+                  "Shared Read Blocks": 0,
+                  "Local Hit Blocks": 164,
+                  "Local Read Blocks": 0,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0
+                },
+                {
+                  "Node Type": "Seq Scan",
+                  "Actual Rows": 9000,
+                  "Rows Removed by Filter": 1000,
+                  "Shared Hit Blocks": 0,
+                  "Shared Read Blocks": 0,
+                  "Local Hit Blocks": 154,
+                  "Local Read Blocks": 0,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0
+                },
+                {
+                  "Node Type": "Hash",
+                  "Actual Rows": 800,
+                  "Shared Hit Blocks": 0,
+                  "Shared Read Blocks": 0,
+                  "Local Hit Blocks": 10,
+                  "Local Read Blocks": 0,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0
+                },
+                {
+                  "Node Type": "Seq Scan",
+                  "Actual Rows": 800,
+                  "Rows Removed by Filter": 200,
+                  "Shared Hit Blocks": 0,
+                  "Shared Read Blocks": 0,
+                  "Local Hit Blocks": 10,
+                  "Local Read Blocks": 0,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0
+                }
+              ]
+            },
+            "where is source processing handled": {
+              "planning_ms": 0.124,
+              "execution_ms": 65.188,
+              "nodes": [
+                {
+                  "Node Type": "Limit",
+                  "Actual Rows": 30,
+                  "Shared Hit Blocks": 0,
+                  "Shared Read Blocks": 0,
+                  "Local Hit Blocks": 164,
+                  "Local Read Blocks": 0,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0
+                },
+                {
+                  "Node Type": "Sort",
+                  "Actual Rows": 30,
+                  "Sort Method": "top-N heapsort",
+                  "Sort Space Used": 29,
+                  "Sort Space Type": "Memory",
+                  "Shared Hit Blocks": 0,
+                  "Shared Read Blocks": 0,
+                  "Local Hit Blocks": 164,
+                  "Local Read Blocks": 0,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0
+                },
+                {
+                  "Node Type": "Hash Join",
+                  "Actual Rows": 7950,
+                  "Shared Hit Blocks": 0,
+                  "Shared Read Blocks": 0,
+                  "Local Hit Blocks": 164,
+                  "Local Read Blocks": 0,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0
+                },
+                {
+                  "Node Type": "Seq Scan",
+                  "Actual Rows": 9000,
+                  "Rows Removed by Filter": 1000,
+                  "Shared Hit Blocks": 0,
+                  "Shared Read Blocks": 0,
+                  "Local Hit Blocks": 154,
+                  "Local Read Blocks": 0,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0
+                },
+                {
+                  "Node Type": "Hash",
+                  "Actual Rows": 800,
+                  "Shared Hit Blocks": 0,
+                  "Shared Read Blocks": 0,
+                  "Local Hit Blocks": 10,
+                  "Local Read Blocks": 0,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0
+                },
+                {
+                  "Node Type": "Seq Scan",
+                  "Actual Rows": 800,
+                  "Rows Removed by Filter": 200,
+                  "Shared Hit Blocks": 0,
+                  "Shared Read Blocks": 0,
+                  "Local Hit Blocks": 10,
+                  "Local Read Blocks": 0,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0
+                }
+              ]
+            }
+          },
+          "correctness": "passed for comparable completed queries",
+          "reference_queries_available": 3
+        }
+      }
+    },
+    {
+      "total_chunks": 50000,
+      "eligible_published_chunks": 40000,
+      "conditions": {
+        "existing_indexes": {
+          "sample_count": 36,
+          "timeout_count": 0,
+          "latency_p50_ms": 280.509,
+          "latency_p95_ms": 554.89,
+          "mean_ms": 334.141,
+          "index_build_seconds": 0.0,
+          "indexes": [
+            {
+              "name": "perf_chunks_50000_pkey",
+              "bytes": 1138688
+            },
+            {
+              "name": "perf_chunks_50000_tenant_id_repository_id_idx",
+              "bytes": 360448
+            },
+            {
+              "name": "perf_chunks_50000_to_tsvector_idx",
+              "bytes": 3211264
+            },
+            {
+              "name": "perf_files_50000_pkey",
+              "bytes": 131072
+            },
+            {
+              "name": "perf_files_50000_to_tsvector_idx",
+              "bytes": 532480
+            }
+          ],
+          "plans": {
+            "verify_webhook_signature": {
+              "planning_ms": 0.094,
+              "execution_ms": 156.076,
+              "nodes": [
+                {
+                  "Node Type": "Limit",
+                  "Actual Rows": 30,
+                  "Shared Hit Blocks": 0,
+                  "Shared Read Blocks": 0,
+                  "Local Hit Blocks": 720,
+                  "Local Read Blocks": 97,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0
+                },
+                {
+                  "Node Type": "Sort",
+                  "Actual Rows": 30,
+                  "Sort Method": "top-N heapsort",
+                  "Sort Space Used": 29,
+                  "Sort Space Type": "Memory",
+                  "Shared Hit Blocks": 0,
+                  "Shared Read Blocks": 0,
+                  "Local Hit Blocks": 720,
+                  "Local Read Blocks": 97,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0
+                },
+                {
+                  "Node Type": "Hash Join",
+                  "Actual Rows": 3307,
+                  "Shared Hit Blocks": 0,
+                  "Shared Read Blocks": 0,
+                  "Local Hit Blocks": 720,
+                  "Local Read Blocks": 97,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0
+                },
+                {
+                  "Node Type": "Seq Scan",
+                  "Actual Rows": 45000,
+                  "Rows Removed by Filter": 5000,
+                  "Shared Hit Blocks": 0,
+                  "Shared Read Blocks": 0,
+                  "Local Hit Blocks": 718,
+                  "Local Read Blocks": 52,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0
+                },
+                {
+                  "Node Type": "Hash",
+                  "Actual Rows": 4000,
+                  "Shared Hit Blocks": 0,
+                  "Shared Read Blocks": 0,
+                  "Local Hit Blocks": 2,
+                  "Local Read Blocks": 45,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0
+                },
+                {
+                  "Node Type": "Seq Scan",
+                  "Actual Rows": 4000,
+                  "Rows Removed by Filter": 1000,
+                  "Shared Hit Blocks": 0,
+                  "Shared Read Blocks": 0,
+                  "Local Hit Blocks": 2,
+                  "Local Read Blocks": 45,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0
+                }
+              ]
+            },
+            "repository authorization webhook": {
+              "planning_ms": 0.116,
+              "execution_ms": 156.093,
+              "nodes": [
+                {
+                  "Node Type": "Limit",
+                  "Actual Rows": 30,
+                  "Shared Hit Blocks": 0,
+                  "Shared Read Blocks": 0,
+                  "Local Hit Blocks": 817,
+                  "Local Read Blocks": 0,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0
+                },
+                {
+                  "Node Type": "Sort",
+                  "Actual Rows": 30,
+                  "Sort Method": "top-N heapsort",
+                  "Sort Space Used": 29,
+                  "Sort Space Type": "Memory",
+                  "Shared Hit Blocks": 0,
+                  "Shared Read Blocks": 0,
+                  "Local Hit Blocks": 817,
+                  "Local Read Blocks": 0,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0
+                },
+                {
+                  "Node Type": "Hash Join",
+                  "Actual Rows": 3307,
+                  "Shared Hit Blocks": 0,
+                  "Shared Read Blocks": 0,
+                  "Local Hit Blocks": 817,
+                  "Local Read Blocks": 0,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0
+                },
+                {
+                  "Node Type": "Seq Scan",
+                  "Actual Rows": 45000,
+                  "Rows Removed by Filter": 5000,
+                  "Shared Hit Blocks": 0,
+                  "Shared Read Blocks": 0,
+                  "Local Hit Blocks": 770,
+                  "Local Read Blocks": 0,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0
+                },
+                {
+                  "Node Type": "Hash",
+                  "Actual Rows": 4000,
+                  "Shared Hit Blocks": 0,
+                  "Shared Read Blocks": 0,
+                  "Local Hit Blocks": 47,
+                  "Local Read Blocks": 0,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0
+                },
+                {
+                  "Node Type": "Seq Scan",
+                  "Actual Rows": 4000,
+                  "Rows Removed by Filter": 1000,
+                  "Shared Hit Blocks": 0,
+                  "Shared Read Blocks": 0,
+                  "Local Hit Blocks": 47,
+                  "Local Read Blocks": 0,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0
+                }
+              ]
+            },
+            "where is source processing handled": {
+              "planning_ms": 0.126,
+              "execution_ms": 338.577,
+              "nodes": [
+                {
+                  "Node Type": "Limit",
+                  "Actual Rows": 30,
+                  "Shared Hit Blocks": 0,
+                  "Shared Read Blocks": 0,
+                  "Local Hit Blocks": 817,
+                  "Local Read Blocks": 0,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0
+                },
+                {
+                  "Node Type": "Sort",
+                  "Actual Rows": 30,
+                  "Sort Method": "top-N heapsort",
+                  "Sort Space Used": 29,
+                  "Sort Space Type": "Memory",
+                  "Shared Hit Blocks": 0,
+                  "Shared Read Blocks": 0,
+                  "Local Hit Blocks": 817,
+                  "Local Read Blocks": 0,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0
+                },
+                {
+                  "Node Type": "Hash Join",
+                  "Actual Rows": 39750,
+                  "Shared Hit Blocks": 0,
+                  "Shared Read Blocks": 0,
+                  "Local Hit Blocks": 817,
+                  "Local Read Blocks": 0,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0
+                },
+                {
+                  "Node Type": "Seq Scan",
+                  "Actual Rows": 45000,
+                  "Rows Removed by Filter": 5000,
+                  "Shared Hit Blocks": 0,
+                  "Shared Read Blocks": 0,
+                  "Local Hit Blocks": 770,
+                  "Local Read Blocks": 0,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0
+                },
+                {
+                  "Node Type": "Hash",
+                  "Actual Rows": 4000,
+                  "Shared Hit Blocks": 0,
+                  "Shared Read Blocks": 0,
+                  "Local Hit Blocks": 47,
+                  "Local Read Blocks": 0,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0
+                },
+                {
+                  "Node Type": "Seq Scan",
+                  "Actual Rows": 4000,
+                  "Rows Removed by Filter": 1000,
+                  "Shared Hit Blocks": 0,
+                  "Shared Read Blocks": 0,
+                  "Local Hit Blocks": 47,
+                  "Local Read Blocks": 0,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0
+                }
+              ]
+            }
+          },
+          "correctness": "passed for comparable completed queries",
+          "reference_queries_available": 3
+        },
+        "candidate_english_gin": {
+          "sample_count": 36,
+          "timeout_count": 0,
+          "latency_p50_ms": 288.401,
+          "latency_p95_ms": 559.828,
+          "mean_ms": 371.572,
+          "index_build_seconds": 0.22,
+          "indexes": [
+            {
+              "name": "perf_chunks_50000_pkey",
+              "bytes": 1138688
+            },
+            {
+              "name": "perf_chunks_50000_tenant_id_repository_id_idx",
+              "bytes": 360448
+            },
+            {
+              "name": "perf_chunks_50000_to_tsvector_idx",
+              "bytes": 3211264
+            },
+            {
+              "name": "perf_english_chunks_50000",
+              "bytes": 3203072
+            },
+            {
+              "name": "perf_english_paths_50000",
+              "bytes": 376832
+            },
+            {
+              "name": "perf_files_50000_pkey",
+              "bytes": 131072
+            },
+            {
+              "name": "perf_files_50000_to_tsvector_idx",
+              "bytes": 532480
+            }
+          ],
+          "plans": {
+            "verify_webhook_signature": {
+              "planning_ms": 0.157,
+              "execution_ms": 164.963,
+              "nodes": [
+                {
+                  "Node Type": "Limit",
+                  "Actual Rows": 30,
+                  "Shared Hit Blocks": 0,
+                  "Shared Read Blocks": 0,
+                  "Local Hit Blocks": 279,
+                  "Local Read Blocks": 538,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0
+                },
+                {
+                  "Node Type": "Sort",
+                  "Actual Rows": 30,
+                  "Sort Method": "top-N heapsort",
+                  "Sort Space Used": 29,
+                  "Sort Space Type": "Memory",
+                  "Shared Hit Blocks": 0,
+                  "Shared Read Blocks": 0,
+                  "Local Hit Blocks": 279,
+                  "Local Read Blocks": 538,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0
+                },
+                {
+                  "Node Type": "Hash Join",
+                  "Actual Rows": 3307,
+                  "Shared Hit Blocks": 0,
+                  "Shared Read Blocks": 0,
+                  "Local Hit Blocks": 279,
+                  "Local Read Blocks": 538,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0
+                },
+                {
+                  "Node Type": "Seq Scan",
+                  "Actual Rows": 45000,
+                  "Rows Removed by Filter": 5000,
+                  "Shared Hit Blocks": 0,
+                  "Shared Read Blocks": 0,
+                  "Local Hit Blocks": 232,
+                  "Local Read Blocks": 538,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0
+                },
+                {
+                  "Node Type": "Hash",
+                  "Actual Rows": 4000,
+                  "Shared Hit Blocks": 0,
+                  "Shared Read Blocks": 0,
+                  "Local Hit Blocks": 47,
+                  "Local Read Blocks": 0,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0
+                },
+                {
+                  "Node Type": "Seq Scan",
+                  "Actual Rows": 4000,
+                  "Rows Removed by Filter": 1000,
+                  "Shared Hit Blocks": 0,
+                  "Shared Read Blocks": 0,
+                  "Local Hit Blocks": 47,
+                  "Local Read Blocks": 0,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0
+                }
+              ]
+            },
+            "repository authorization webhook": {
+              "planning_ms": 0.137,
+              "execution_ms": 161.484,
+              "nodes": [
+                {
+                  "Node Type": "Limit",
+                  "Actual Rows": 30,
+                  "Shared Hit Blocks": 0,
+                  "Shared Read Blocks": 0,
+                  "Local Hit Blocks": 817,
+                  "Local Read Blocks": 0,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0
+                },
+                {
+                  "Node Type": "Sort",
+                  "Actual Rows": 30,
+                  "Sort Method": "top-N heapsort",
+                  "Sort Space Used": 29,
+                  "Sort Space Type": "Memory",
+                  "Shared Hit Blocks": 0,
+                  "Shared Read Blocks": 0,
+                  "Local Hit Blocks": 817,
+                  "Local Read Blocks": 0,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0
+                },
+                {
+                  "Node Type": "Hash Join",
+                  "Actual Rows": 3307,
+                  "Shared Hit Blocks": 0,
+                  "Shared Read Blocks": 0,
+                  "Local Hit Blocks": 817,
+                  "Local Read Blocks": 0,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0
+                },
+                {
+                  "Node Type": "Seq Scan",
+                  "Actual Rows": 45000,
+                  "Rows Removed by Filter": 5000,
+                  "Shared Hit Blocks": 0,
+                  "Shared Read Blocks": 0,
+                  "Local Hit Blocks": 770,
+                  "Local Read Blocks": 0,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0
+                },
+                {
+                  "Node Type": "Hash",
+                  "Actual Rows": 4000,
+                  "Shared Hit Blocks": 0,
+                  "Shared Read Blocks": 0,
+                  "Local Hit Blocks": 47,
+                  "Local Read Blocks": 0,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0
+                },
+                {
+                  "Node Type": "Seq Scan",
+                  "Actual Rows": 4000,
+                  "Rows Removed by Filter": 1000,
+                  "Shared Hit Blocks": 0,
+                  "Shared Read Blocks": 0,
+                  "Local Hit Blocks": 47,
+                  "Local Read Blocks": 0,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0
+                }
+              ]
+            },
+            "where is source processing handled": {
+              "planning_ms": 0.153,
+              "execution_ms": 336.508,
+              "nodes": [
+                {
+                  "Node Type": "Limit",
+                  "Actual Rows": 30,
+                  "Shared Hit Blocks": 0,
+                  "Shared Read Blocks": 0,
+                  "Local Hit Blocks": 817,
+                  "Local Read Blocks": 0,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0
+                },
+                {
+                  "Node Type": "Sort",
+                  "Actual Rows": 30,
+                  "Sort Method": "top-N heapsort",
+                  "Sort Space Used": 29,
+                  "Sort Space Type": "Memory",
+                  "Shared Hit Blocks": 0,
+                  "Shared Read Blocks": 0,
+                  "Local Hit Blocks": 817,
+                  "Local Read Blocks": 0,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0
+                },
+                {
+                  "Node Type": "Hash Join",
+                  "Actual Rows": 39750,
+                  "Shared Hit Blocks": 0,
+                  "Shared Read Blocks": 0,
+                  "Local Hit Blocks": 817,
+                  "Local Read Blocks": 0,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0
+                },
+                {
+                  "Node Type": "Seq Scan",
+                  "Actual Rows": 45000,
+                  "Rows Removed by Filter": 5000,
+                  "Shared Hit Blocks": 0,
+                  "Shared Read Blocks": 0,
+                  "Local Hit Blocks": 770,
+                  "Local Read Blocks": 0,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0
+                },
+                {
+                  "Node Type": "Hash",
+                  "Actual Rows": 4000,
+                  "Shared Hit Blocks": 0,
+                  "Shared Read Blocks": 0,
+                  "Local Hit Blocks": 47,
+                  "Local Read Blocks": 0,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0
+                },
+                {
+                  "Node Type": "Seq Scan",
+                  "Actual Rows": 4000,
+                  "Rows Removed by Filter": 1000,
+                  "Shared Hit Blocks": 0,
+                  "Shared Read Blocks": 0,
+                  "Local Hit Blocks": 47,
+                  "Local Read Blocks": 0,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0
+                }
+              ]
+            }
+          },
+          "correctness": "passed for comparable completed queries",
+          "reference_queries_available": 3
+        }
+      }
+    }
+  ],
+  "queries": [
+    "verify_webhook_signature",
+    "repository authorization webhook",
+    "where is source processing handled"
+  ],
+  "repetitions_per_query": 12,
+  "cpu_memory": "Not measured; EXPLAIN sort memory and buffers reported when available.",
+  "p99": "Not reported: fewer than 100 samples per condition.",
+  "paid_calls": 0
+}

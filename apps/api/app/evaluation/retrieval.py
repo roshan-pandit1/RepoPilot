@@ -57,10 +57,10 @@ def percentile(values: list[float], fraction: float) -> float:
     return ordered[max(0, math.ceil(fraction * len(ordered)) - 1)]
 
 
-def evaluate(dataset: dict, responses: dict, metadata: dict) -> dict:
+def evaluate(dataset: dict, responses: dict, metadata: dict, modes=MODES) -> dict:
     result = {"dataset_commit": dataset["commit_sha"], "repository": dataset["repository"],
               "configuration": metadata, "modes": {}}
-    for mode in MODES:
+    for mode in modes:
         rows = []
         for question in dataset["queries"]:
             response, elapsed = responses[(mode, question["id"])]

@@ -23,6 +23,14 @@ class Settings(BaseSettings):
     web_origin: str = "http://localhost:3000"
     demo_user_id: int = 1
     demo_tenant_id: int = 1
+    investigation_query_limit: int = 3
+    investigation_per_query_limit: int = 10
+    investigation_evidence_limit: int = 20
+    issue_context_body_chars: int = 16000
+    issue_context_comment_count: int = 10
+    issue_context_comment_chars: int = 2000
+    issue_context_total_chars: int = 30000
+    issue_context_max_requests: int = 42
     embedding_provider: Literal["disabled", "fake", "openai"] = "disabled"
     embedding_model: str = "text-embedding-3-small"
     embedding_dimensions: int = 32
@@ -31,6 +39,15 @@ class Settings(BaseSettings):
 
     @model_validator(mode="after")
     def secure_defaults(self):
+        if not (1 <= self.investigation_query_limit <= 3 and 1 <= self.investigation_per_query_limit <= 20
+                and 1 <= self.investigation_evidence_limit <= 30):
+            raise ValueError("Invalid investigation retrieval limits")
+        if not (1 <= self.issue_context_body_chars <= 50000
+                and 0 <= self.issue_context_comment_count <= 30
+                and 1 <= self.issue_context_comment_chars <= 5000
+                and 1 <= self.issue_context_total_chars <= 100000
+                and 2 <= self.issue_context_max_requests <= 42):
+            raise ValueError("Invalid issue context limits")
         if not 1 <= self.embedding_dimensions <= 2000:
             raise ValueError("Invalid embedding dimensions")
         if self.embedding_provider == "fake" and self.app_env == "production":

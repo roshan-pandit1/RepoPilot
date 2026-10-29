@@ -1,0 +1,422 @@
+{
+  "dataset_commit": "956a4f92983b222ce179891bbde39cb49a2022b2",
+  "repository": "roshan-pandit1/RepoPilot",
+  "configuration": {
+    "provider": "disabled",
+    "model": null,
+    "dimensions": null,
+    "limit": 10,
+    "dataset_sha256": "813414c2eece2fa42f57d75d9cc12b6dd77eb5d75d63999ad8cae14b65bdd2ba",
+    "database": "repopilot_c3_disposable_a47f7b87227215f9",
+    "snapshot_id": "2207c4a6-2717-4c81-ab3c-eb777e97d557",
+    "snapshot": {
+      "files": 77,
+      "chunks": 556,
+      "skipped_files": 1
+    },
+    "migration": "0006",
+    "citations": "verified against local Git blobs; GitHub availability unverified",
+    "negative_candidates": "two unscored",
+    "semantic": "not measured",
+    "authorization_checks": "unauthenticated 401; unpublished 409; revoked access and other tenant 404"
+  },
+  "modes": {
+    "keyword": {
+      "queries": [
+        {
+          "id": "sessions",
+          "question": "How are GitHub login sessions created and revoked?",
+          "recall": {
+            "1": 0.5,
+            "3": 0.5,
+            "5": 0.5,
+            "10": 0.5
+          },
+          "reciprocal_rank": 1.0,
+          "ndcg_at_10": 0.6131471927654584,
+          "relevant_ranks": [
+            1
+          ],
+          "returned": 10,
+          "invalid_citations": 0,
+          "fallback": false,
+          "effective_mode": "keyword",
+          "latency_ms": 61.661,
+          "top_result": {
+            "path": "apps/api/app/modules/auth/routes.py",
+            "symbol": "callback"
+          }
+        },
+        {
+          "id": "access",
+          "question": "How is current repository access enforced?",
+          "recall": {
+            "1": 0.0,
+            "3": 0.0,
+            "5": 0.0,
+            "10": 0.0
+          },
+          "reciprocal_rank": 0,
+          "ndcg_at_10": 0.0,
+          "relevant_ranks": [],
+          "returned": 10,
+          "invalid_citations": 0,
+          "fallback": false,
+          "effective_mode": "keyword",
+          "latency_ms": 31.733,
+          "top_result": {
+            "path": "apps/api/app/workers/tasks.py",
+            "symbol": "process_index"
+          }
+        },
+        {
+          "id": "signature",
+          "question": "How are GitHub webhook signatures checked?",
+          "recall": {
+            "1": 0.0,
+            "3": 0.5,
+            "5": 0.5,
+            "10": 0.5
+          },
+          "reciprocal_rank": 0.3333333333333333,
+          "ndcg_at_10": 0.3065735963827292,
+          "relevant_ranks": [
+            3
+          ],
+          "returned": 10,
+          "invalid_citations": 0,
+          "fallback": false,
+          "effective_mode": "keyword",
+          "latency_ms": 24.861,
+          "top_result": {
+            "path": "apps/api/app/modules/auth/routes.py",
+            "symbol": "callback"
+          }
+        },
+        {
+          "id": "snapshot",
+          "question": "How is a pinned repository snapshot planned?",
+          "recall": {
+            "1": 0.0,
+            "3": 0.0,
+            "5": 0.0,
+            "10": 0.0
+          },
+          "reciprocal_rank": 0,
+          "ndcg_at_10": 0.0,
+          "relevant_ranks": [],
+          "returned": 10,
+          "invalid_citations": 0,
+          "fallback": false,
+          "effective_mode": "keyword",
+          "latency_ms": 25.319,
+          "top_result": {
+            "path": "apps/api/app/workers/tasks.py",
+            "symbol": "process_index"
+          }
+        },
+        {
+          "id": "index",
+          "question": "Where are indexing jobs claimed and published?",
+          "recall": {
+            "1": 0.0,
+            "3": 0.3333333333333333,
+            "5": 0.3333333333333333,
+            "10": 0.6666666666666666
+          },
+          "reciprocal_rank": 0.5,
+          "ndcg_at_10": 0.43734888382569426,
+          "relevant_ranks": [
+            2,
+            9
+          ],
+          "returned": 10,
+          "invalid_citations": 0,
+          "fallback": false,
+          "effective_mode": "keyword",
+          "latency_ms": 23.792,
+          "top_result": {
+            "path": "apps/api/app/workers/dispatcher.py",
+            "symbol": "dispatch_once"
+          }
+        },
+        {
+          "id": "chunking",
+          "question": "How are Python definitions split into source chunks?",
+          "recall": {
+            "1": 0.0,
+            "3": 0.0,
+            "5": 0.0,
+            "10": 0.0
+          },
+          "reciprocal_rank": 0,
+          "ndcg_at_10": 0.0,
+          "relevant_ranks": [],
+          "returned": 10,
+          "invalid_citations": 0,
+          "fallback": false,
+          "effective_mode": "keyword",
+          "latency_ms": 22.622,
+          "top_result": {
+            "path": "apps/api/app/modules/ingestion/code_routes.py",
+            "symbol": "search_code"
+          }
+        },
+        {
+          "id": "screening",
+          "question": "How are source files screened before indexing?",
+          "recall": {
+            "1": 0.0,
+            "3": 0.0,
+            "5": 0.5,
+            "10": 0.5
+          },
+          "reciprocal_rank": 0.25,
+          "ndcg_at_10": 0.2640681225725909,
+          "relevant_ranks": [
+            4
+          ],
+          "returned": 10,
+          "invalid_citations": 0,
+          "fallback": false,
+          "effective_mode": "keyword",
+          "latency_ms": 25.835,
+          "top_result": {
+            "path": "apps/api/app/workers/tasks.py",
+            "symbol": "process_index"
+          }
+        },
+        {
+          "id": "citations",
+          "question": "Where are commit-pinned GitHub citations built?",
+          "recall": {
+            "1": 0.0,
+            "3": 0.0,
+            "5": 0.0,
+            "10": 0.0
+          },
+          "reciprocal_rank": 0,
+          "ndcg_at_10": 0.0,
+          "relevant_ranks": [],
+          "returned": 10,
+          "invalid_citations": 0,
+          "fallback": false,
+          "effective_mode": "keyword",
+          "latency_ms": 28.961,
+          "top_result": {
+            "path": "apps/api/app/modules/github/source_client.py",
+            "symbol": "GitHubSourceClient"
+          }
+        },
+        {
+          "id": "embedding_jobs",
+          "question": "How are embedding jobs processed in batches?",
+          "recall": {
+            "1": 0.0,
+            "3": 0.0,
+            "5": 1.0,
+            "10": 1.0
+          },
+          "reciprocal_rank": 0.25,
+          "ndcg_at_10": 0.43067655807339306,
+          "relevant_ranks": [
+            4
+          ],
+          "returned": 10,
+          "invalid_citations": 0,
+          "fallback": false,
+          "effective_mode": "keyword",
+          "latency_ms": 27.56,
+          "top_result": {
+            "path": "apps/api/app/workers/tasks.py",
+            "symbol": "process_index"
+          }
+        },
+        {
+          "id": "embedding_cache",
+          "question": "Where is embedding cache reuse recorded?",
+          "recall": {
+            "1": 0.0,
+            "3": 0.5,
+            "5": 0.5,
+            "10": 0.5
+          },
+          "reciprocal_rank": 0.5,
+          "ndcg_at_10": 0.38685280723454163,
+          "relevant_ranks": [
+            2
+          ],
+          "returned": 10,
+          "invalid_citations": 0,
+          "fallback": false,
+          "effective_mode": "keyword",
+          "latency_ms": 26.627,
+          "top_result": {
+            "path": "apps/api/app/modules/github/client.py",
+            "symbol": "HttpGitHubClient"
+          }
+        },
+        {
+          "id": "keyword",
+          "question": "How does keyword search handle natural language?",
+          "recall": {
+            "1": 1.0,
+            "3": 1.0,
+            "5": 1.0,
+            "10": 1.0
+          },
+          "reciprocal_rank": 1.0,
+          "ndcg_at_10": 1.0,
+          "relevant_ranks": [
+            1
+          ],
+          "returned": 10,
+          "invalid_citations": 0,
+          "fallback": false,
+          "effective_mode": "keyword",
+          "latency_ms": 27.022,
+          "top_result": {
+            "path": "apps/api/app/modules/ingestion/code_routes.py",
+            "symbol": "search_code"
+          }
+        },
+        {
+          "id": "fusion",
+          "question": "How are keyword and semantic ranks combined?",
+          "recall": {
+            "1": 0.5,
+            "3": 0.5,
+            "5": 0.5,
+            "10": 1.0
+          },
+          "reciprocal_rank": 1.0,
+          "ndcg_at_10": 0.8065735963827293,
+          "relevant_ranks": [
+            1,
+            8
+          ],
+          "returned": 10,
+          "invalid_citations": 0,
+          "fallback": false,
+          "effective_mode": "keyword",
+          "latency_ms": 24.311,
+          "top_result": {
+            "path": "apps/api/app/modules/ingestion/code_routes.py",
+            "symbol": "search_code"
+          }
+        },
+        {
+          "id": "retry",
+          "question": "How are transient ingestion failures retried?",
+          "recall": {
+            "1": 0.0,
+            "3": 0.5,
+            "5": 1.0,
+            "10": 1.0
+          },
+          "reciprocal_rank": 0.5,
+          "ndcg_at_10": 0.6240505200038379,
+          "relevant_ranks": [
+            2,
+            5
+          ],
+          "returned": 10,
+          "invalid_citations": 0,
+          "fallback": false,
+          "effective_mode": "keyword",
+          "latency_ms": 26.968,
+          "top_result": {
+            "path": "apps/api/tests/test_ingestion.py",
+            "symbol": "test_celery_retry_on_transient_failure"
+          }
+        },
+        {
+          "id": "dispatch",
+          "question": "How are pending jobs republished safely?",
+          "recall": {
+            "1": 0.0,
+            "3": 1.0,
+            "5": 1.0,
+            "10": 1.0
+          },
+          "reciprocal_rank": 0.5,
+          "ndcg_at_10": 0.6309297535714575,
+          "relevant_ranks": [
+            2
+          ],
+          "returned": 10,
+          "invalid_citations": 0,
+          "fallback": false,
+          "effective_mode": "keyword",
+          "latency_ms": 33.439,
+          "top_result": {
+            "path": "apps/api/app/workers/tasks.py",
+            "symbol": "process_index"
+          }
+        },
+        {
+          "id": "access_ambiguous",
+          "question": "Where is repository access checked?",
+          "recall": {
+            "1": 0.0,
+            "3": 0.25,
+            "5": 0.25,
+            "10": 0.25
+          },
+          "reciprocal_rank": 0.5,
+          "ndcg_at_10": 0.24630238874073,
+          "relevant_ranks": [
+            2
+          ],
+          "returned": 10,
+          "invalid_citations": 0,
+          "fallback": false,
+          "effective_mode": "keyword",
+          "latency_ms": 34.064,
+          "top_result": {
+            "path": "apps/api/app/modules/github/enrollment.py",
+            "symbol": "select_repository"
+          }
+        },
+        {
+          "id": "completion_ambiguous",
+          "question": "Where are jobs completed?",
+          "recall": {
+            "1": 0.0,
+            "3": 0.0,
+            "5": 0.0,
+            "10": 0.25
+          },
+          "reciprocal_rank": 0.125,
+          "ndcg_at_10": 0.123151194370365,
+          "relevant_ranks": [
+            8
+          ],
+          "returned": 10,
+          "invalid_citations": 0,
+          "fallback": false,
+          "effective_mode": "keyword",
+          "latency_ms": 33.195,
+          "top_result": {
+            "path": "apps/api/app/workers/tasks.py",
+            "symbol": "process_index"
+          }
+        }
+      ],
+      "recall": {
+        "1": 0.125,
+        "3": 0.3177083333333333,
+        "5": 0.4427083333333333,
+        "10": 0.5104166666666666
+      },
+      "mrr": 0.4036458333333333,
+      "ndcg_at_10": 0.36685466337022044,
+      "no_relevant": 4,
+      "fallback_count": 0,
+      "total_results": 160,
+      "invalid_citations": 0,
+      "latency_p50_ms": 26.968,
+      "latency_p95_ms": 61.661
+    }
+  }
+}

@@ -1,0 +1,72 @@
+{
+  "dataset": "investigation-evidence-v1",
+  "dataset_sha256": "4a082e5bb5133f945693ed8f44be940e9f072d4cbc8532e422ee9f8ecd0aa202",
+  "source_commit": "956a4f92983b222ce179891bbde39cb49a2022b2",
+  "snapshot_id": "599acb53-e760-4e9a-ad43-ef27ee099003",
+  "files": 77,
+  "chunks": 349,
+  "mode": "keyword",
+  "execution": "PostgreSQL and direct worker with mocked GitHub",
+  "positive_cases": 3,
+  "positive_hit_at_10": 2,
+  "negative_or_no_query_cases": 3,
+  "citation_chunk_mismatches": 0,
+  "evidence_count": 48,
+  "latency_p50_ms": 28.238500000000002,
+  "latency_p95_ms": 68.736,
+  "cases": [
+    {
+      "id": "identifier",
+      "kind": "positive",
+      "relevant_ranks_at_10": [
+        1
+      ],
+      "evidence_count": 19,
+      "retrieval_status": "ready",
+      "latency_ms": 68.736
+    },
+    {
+      "id": "natural_language",
+      "kind": "positive",
+      "relevant_ranks_at_10": [],
+      "evidence_count": 19,
+      "retrieval_status": "ready",
+      "latency_ms": 56.245
+    },
+    {
+      "id": "ambiguous",
+      "kind": "positive",
+      "relevant_ranks_at_10": [
+        4
+      ],
+      "evidence_count": 10,
+      "retrieval_status": "ready",
+      "latency_ms": 32.383
+    },
+    {
+      "id": "no_match",
+      "kind": "no_match",
+      "relevant_ranks_at_10": [],
+      "evidence_count": 0,
+      "retrieval_status": "no_matches",
+      "latency_ms": 24.094
+    },
+    {
+      "id": "malicious",
+      "kind": "no_query",
+      "relevant_ranks_at_10": [],
+      "evidence_count": 0,
+      "retrieval_status": "no_usable_queries",
+      "latency_ms": 9.335
+    },
+    {
+      "id": "unavailable_source",
+      "kind": "no_match",
+      "relevant_ranks_at_10": [],
+      "evidence_count": 0,
+      "retrieval_status": "no_matches",
+      "latency_ms": 23.121
+    }
+  ],
+  "limitations": "Synthetic cases and incomplete labels; Git objects checked locally, remote citation resolution not checked; direct worker, no real Celery or semantic quality."
+}

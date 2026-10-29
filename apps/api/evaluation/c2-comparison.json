@@ -1,0 +1,618 @@
+{
+  "repository": "roshan-pandit1/RepoPilot",
+  "commit_sha": "63491908290e6874dbaaf2b15c2a96473aad1324",
+  "modes": {
+    "keyword": {
+      "before": {
+        "recall": {
+          "1": 0.0,
+          "3": 0.0,
+          "5": 0.0,
+          "10": 0.0
+        },
+        "mrr": 0,
+        "ndcg_at_10": 0.0,
+        "no_relevant": 20,
+        "fallback_count": 0,
+        "invalid_citations": 0,
+        "total_results": 0,
+        "latency_p50_ms": 1206.9,
+        "latency_p95_ms": 1774.4,
+        "zero_results": 20
+      },
+      "after": {
+        "recall": {
+          "1": 0.25,
+          "3": 0.6,
+          "5": 0.6,
+          "10": 0.8
+        },
+        "mrr": 0.43373015873015874,
+        "ndcg_at_10": 0.5211687712925959,
+        "no_relevant": 4,
+        "fallback_count": 0,
+        "invalid_citations": 0,
+        "total_results": 198,
+        "latency_p50_ms": 1301.6,
+        "latency_p95_ms": 1789.3,
+        "zero_results": 0
+      },
+      "queries": [
+        {
+          "id": "sync",
+          "before_ranks": [],
+          "after_ranks": [
+            2
+          ],
+          "before_returned": 0,
+          "after_returned": 10
+        },
+        {
+          "id": "signature",
+          "before_ranks": [],
+          "after_ranks": [
+            9
+          ],
+          "before_returned": 0,
+          "after_returned": 10
+        },
+        {
+          "id": "webhook",
+          "before_ranks": [],
+          "after_ranks": [
+            1
+          ],
+          "before_returned": 0,
+          "after_returned": 10
+        },
+        {
+          "id": "dispatch",
+          "before_ranks": [],
+          "after_ranks": [
+            2
+          ],
+          "before_returned": 0,
+          "after_returned": 10
+        },
+        {
+          "id": "authorization",
+          "before_ranks": [],
+          "after_ranks": [],
+          "before_returned": 0,
+          "after_returned": 10
+        },
+        {
+          "id": "tenant",
+          "before_ranks": [],
+          "after_ranks": [],
+          "before_returned": 0,
+          "after_returned": 10
+        },
+        {
+          "id": "csrf",
+          "before_ranks": [],
+          "after_ranks": [
+            2
+          ],
+          "before_returned": 0,
+          "after_returned": 10
+        },
+        {
+          "id": "principal",
+          "before_ranks": [],
+          "after_ranks": [
+            2
+          ],
+          "before_returned": 0,
+          "after_returned": 10
+        },
+        {
+          "id": "login",
+          "before_ranks": [],
+          "after_ranks": [],
+          "before_returned": 0,
+          "after_returned": 10
+        },
+        {
+          "id": "callback",
+          "before_ranks": [],
+          "after_ranks": [
+            1
+          ],
+          "before_returned": 0,
+          "after_returned": 10
+        },
+        {
+          "id": "logout",
+          "before_ranks": [],
+          "after_ranks": [],
+          "before_returned": 0,
+          "after_returned": 10
+        },
+        {
+          "id": "enroll",
+          "before_ranks": [],
+          "after_ranks": [
+            1
+          ],
+          "before_returned": 0,
+          "after_returned": 10
+        },
+        {
+          "id": "choose",
+          "before_ranks": [],
+          "after_ranks": [
+            1
+          ],
+          "before_returned": 0,
+          "after_returned": 10
+        },
+        {
+          "id": "installations",
+          "before_ranks": [],
+          "after_ranks": [
+            7
+          ],
+          "before_returned": 0,
+          "after_returned": 10
+        },
+        {
+          "id": "visible",
+          "before_ranks": [],
+          "after_ranks": [
+            9
+          ],
+          "before_returned": 0,
+          "after_returned": 10
+        },
+        {
+          "id": "accept",
+          "before_ranks": [],
+          "after_ranks": [
+            2
+          ],
+          "before_returned": 0,
+          "after_returned": 10
+        },
+        {
+          "id": "process",
+          "before_ranks": [],
+          "after_ranks": [
+            3
+          ],
+          "before_returned": 0,
+          "after_returned": 10
+        },
+        {
+          "id": "revoke",
+          "before_ranks": [],
+          "after_ranks": [
+            3
+          ],
+          "before_returned": 0,
+          "after_returned": 10
+        },
+        {
+          "id": "health",
+          "before_ranks": [],
+          "after_ranks": [
+            1
+          ],
+          "before_returned": 0,
+          "after_returned": 8
+        },
+        {
+          "id": "delivery",
+          "before_ranks": [],
+          "after_ranks": [
+            7
+          ],
+          "before_returned": 0,
+          "after_returned": 10
+        }
+      ]
+    },
+    "semantic": {
+      "before": {
+        "recall": {
+          "1": 0.05,
+          "3": 0.05,
+          "5": 0.1,
+          "10": 0.15
+        },
+        "mrr": 0.06964285714285715,
+        "ndcg_at_10": 0.08820049457033632,
+        "no_relevant": 17,
+        "fallback_count": 0,
+        "invalid_citations": 0,
+        "total_results": 200,
+        "latency_p50_ms": 1223,
+        "latency_p95_ms": 1595.5,
+        "zero_results": 0
+      },
+      "after": {
+        "recall": {
+          "1": 0.05,
+          "3": 0.05,
+          "5": 0.1,
+          "10": 0.15
+        },
+        "mrr": 0.06964285714285715,
+        "ndcg_at_10": 0.08820049457033632,
+        "no_relevant": 17,
+        "fallback_count": 0,
+        "invalid_citations": 0,
+        "total_results": 200,
+        "latency_p50_ms": 1223.4,
+        "latency_p95_ms": 1446.3,
+        "zero_results": 0
+      },
+      "queries": [
+        {
+          "id": "sync",
+          "before_ranks": [],
+          "after_ranks": [],
+          "before_returned": 10,
+          "after_returned": 10
+        },
+        {
+          "id": "signature",
+          "before_ranks": [],
+          "after_ranks": [],
+          "before_returned": 10,
+          "after_returned": 10
+        },
+        {
+          "id": "webhook",
+          "before_ranks": [],
+          "after_ranks": [],
+          "before_returned": 10,
+          "after_returned": 10
+        },
+        {
+          "id": "dispatch",
+          "before_ranks": [],
+          "after_ranks": [],
+          "before_returned": 10,
+          "after_returned": 10
+        },
+        {
+          "id": "authorization",
+          "before_ranks": [],
+          "after_ranks": [],
+          "before_returned": 10,
+          "after_returned": 10
+        },
+        {
+          "id": "tenant",
+          "before_ranks": [],
+          "after_ranks": [],
+          "before_returned": 10,
+          "after_returned": 10
+        },
+        {
+          "id": "csrf",
+          "before_ranks": [],
+          "after_ranks": [],
+          "before_returned": 10,
+          "after_returned": 10
+        },
+        {
+          "id": "principal",
+          "before_ranks": [],
+          "after_ranks": [],
+          "before_returned": 10,
+          "after_returned": 10
+        },
+        {
+          "id": "login",
+          "before_ranks": [],
+          "after_ranks": [],
+          "before_returned": 10,
+          "after_returned": 10
+        },
+        {
+          "id": "callback",
+          "before_ranks": [],
+          "after_ranks": [],
+          "before_returned": 10,
+          "after_returned": 10
+        },
+        {
+          "id": "logout",
+          "before_ranks": [],
+          "after_ranks": [],
+          "before_returned": 10,
+          "after_returned": 10
+        },
+        {
+          "id": "enroll",
+          "before_ranks": [
+            1
+          ],
+          "after_ranks": [
+            1
+          ],
+          "before_returned": 10,
+          "after_returned": 10
+        },
+        {
+          "id": "choose",
+          "before_ranks": [],
+          "after_ranks": [],
+          "before_returned": 10,
+          "after_returned": 10
+        },
+        {
+          "id": "installations",
+          "before_ranks": [
+            7
+          ],
+          "after_ranks": [
+            7
+          ],
+          "before_returned": 10,
+          "after_returned": 10
+        },
+        {
+          "id": "visible",
+          "before_ranks": [],
+          "after_ranks": [],
+          "before_returned": 10,
+          "after_returned": 10
+        },
+        {
+          "id": "accept",
+          "before_ranks": [],
+          "after_ranks": [],
+          "before_returned": 10,
+          "after_returned": 10
+        },
+        {
+          "id": "process",
+          "before_ranks": [],
+          "after_ranks": [],
+          "before_returned": 10,
+          "after_returned": 10
+        },
+        {
+          "id": "revoke",
+          "before_ranks": [
+            4
+          ],
+          "after_ranks": [
+            4
+          ],
+          "before_returned": 10,
+          "after_returned": 10
+        },
+        {
+          "id": "health",
+          "before_ranks": [],
+          "after_ranks": [],
+          "before_returned": 10,
+          "after_returned": 10
+        },
+        {
+          "id": "delivery",
+          "before_ranks": [],
+          "after_ranks": [],
+          "before_returned": 10,
+          "after_returned": 10
+        }
+      ]
+    },
+    "hybrid": {
+      "before": {
+        "recall": {
+          "1": 0.05,
+          "3": 0.05,
+          "5": 0.1,
+          "10": 0.15
+        },
+        "mrr": 0.06964285714285715,
+        "ndcg_at_10": 0.08820049457033632,
+        "no_relevant": 17,
+        "fallback_count": 0,
+        "invalid_citations": 0,
+        "total_results": 200,
+        "latency_p50_ms": 1213.5,
+        "latency_p95_ms": 1796.1,
+        "zero_results": 0
+      },
+      "after": {
+        "recall": {
+          "1": 0.05,
+          "3": 0.15,
+          "5": 0.45,
+          "10": 0.7
+        },
+        "mrr": 0.18805555555555556,
+        "ndcg_at_10": 0.3053974755610464,
+        "no_relevant": 6,
+        "fallback_count": 0,
+        "invalid_citations": 0,
+        "total_results": 200,
+        "latency_p50_ms": 1241,
+        "latency_p95_ms": 1496.8,
+        "zero_results": 0
+      },
+      "queries": [
+        {
+          "id": "sync",
+          "before_ranks": [],
+          "after_ranks": [
+            6
+          ],
+          "before_returned": 10,
+          "after_returned": 10
+        },
+        {
+          "id": "signature",
+          "before_ranks": [],
+          "after_ranks": [],
+          "before_returned": 10,
+          "after_returned": 10
+        },
+        {
+          "id": "webhook",
+          "before_ranks": [],
+          "after_ranks": [
+            10
+          ],
+          "before_returned": 10,
+          "after_returned": 10
+        },
+        {
+          "id": "dispatch",
+          "before_ranks": [],
+          "after_ranks": [
+            4
+          ],
+          "before_returned": 10,
+          "after_returned": 10
+        },
+        {
+          "id": "authorization",
+          "before_ranks": [],
+          "after_ranks": [
+            5
+          ],
+          "before_returned": 10,
+          "after_returned": 10
+        },
+        {
+          "id": "tenant",
+          "before_ranks": [],
+          "after_ranks": [],
+          "before_returned": 10,
+          "after_returned": 10
+        },
+        {
+          "id": "csrf",
+          "before_ranks": [],
+          "after_ranks": [
+            10
+          ],
+          "before_returned": 10,
+          "after_returned": 10
+        },
+        {
+          "id": "principal",
+          "before_ranks": [],
+          "after_ranks": [],
+          "before_returned": 10,
+          "after_returned": 10
+        },
+        {
+          "id": "login",
+          "before_ranks": [],
+          "after_ranks": [
+            10
+          ],
+          "before_returned": 10,
+          "after_returned": 10
+        },
+        {
+          "id": "callback",
+          "before_ranks": [],
+          "after_ranks": [
+            3
+          ],
+          "before_returned": 10,
+          "after_returned": 10
+        },
+        {
+          "id": "logout",
+          "before_ranks": [],
+          "after_ranks": [],
+          "before_returned": 10,
+          "after_returned": 10
+        },
+        {
+          "id": "enroll",
+          "before_ranks": [
+            1
+          ],
+          "after_ranks": [
+            1
+          ],
+          "before_returned": 10,
+          "after_returned": 10
+        },
+        {
+          "id": "choose",
+          "before_ranks": [],
+          "after_ranks": [
+            9
+          ],
+          "before_returned": 10,
+          "after_returned": 10
+        },
+        {
+          "id": "installations",
+          "before_ranks": [
+            7
+          ],
+          "after_ranks": [
+            4
+          ],
+          "before_returned": 10,
+          "after_returned": 10
+        },
+        {
+          "id": "visible",
+          "before_ranks": [],
+          "after_ranks": [],
+          "before_returned": 10,
+          "after_returned": 10
+        },
+        {
+          "id": "accept",
+          "before_ranks": [],
+          "after_ranks": [
+            5
+          ],
+          "before_returned": 10,
+          "after_returned": 10
+        },
+        {
+          "id": "process",
+          "before_ranks": [],
+          "after_ranks": [
+            5
+          ],
+          "before_returned": 10,
+          "after_returned": 10
+        },
+        {
+          "id": "revoke",
+          "before_ranks": [
+            4
+          ],
+          "after_ranks": [
+            2
+          ],
+          "before_returned": 10,
+          "after_returned": 10
+        },
+        {
+          "id": "health",
+          "before_ranks": [],
+          "after_ranks": [
+            4
+          ],
+          "before_returned": 10,
+          "after_returned": 10
+        },
+        {
+          "id": "delivery",
+          "before_ranks": [],
+          "after_ranks": [],
+          "before_returned": 10,
+          "after_returned": 10
+        }
+      ]
+    }
+  }
+}

@@ -504,3 +504,279 @@ def embed_repository(job_id: str):
         raise TransientIngestionError("database_temporarily_unavailable") from None
     except SQLAlchemyError:
         raise IngestionError("database_operation_failed") from None
+
+
+def process_investigation(job_id: str, factory=None, github=None, work=None):
+    """Fenced legacy mock or snapshot-pinned evidence execution with no network locks."""
+    from datetime import timedelta
+    from uuid import uuid4
+    from cryptography.fernet import InvalidToken
+    from fastapi import HTTPException
+    from billiard.exceptions import SoftTimeLimitExceeded
+    from pydantic import ValidationError
+    from app.domain.models import (AuthSession, CodeChunk, CodeSnapshot, IndexedFile, InvestigationEvidence,
+                                   InvestigationJob, InvestigationOutbox, Membership, User)
+    from app.core.index_logging import index_event
+    from app.modules.auth.session import Principal, cipher, utc
+    from app.modules.github.client import GitHubFailure, HttpGitHubClient, get_github_client
+    from app.modules.github.issue_context import IssueData
+    from app.modules.github.issue_context_client import IssueContextClient
+    from app.modules.investigation.query_builder import build_queries
+    from app.modules.investigation.retrieval import (InvalidEvidence, SnapshotUnavailable,
+                                                       fingerprint_chunk, retrieve_candidates)
+    from app.modules.github.enrollment import visible_github_repositories
+    from app.modules.github.guards import installation_guard, repository_guard
+
+    factory = factory or get_session_factory()
+    github = github or get_github_client()
+    work = work or (lambda: None)
+    lease = str(uuid4())
+
+    def terminal(db, job, status, code):
+        job.status, job.error_code, job.updated_at = status, code, now()
+        job.completed_at = None if status == "queued" else now()
+        job.lease_token, job.lease_expires_at = None, None
+        if status != "queued":
+            event = db.get(InvestigationOutbox, job.id)
+            if event:
+                event.status = "processed"
+
+    with factory.begin() as db:
+        job = db.scalar(select(InvestigationJob).where(InvestigationJob.id == job_id).with_for_update())
+        if not job or job.status not in ("queued", "running"):
+            return
+        if job.status == "running" and job.lease_expires_at and utc(job.lease_expires_at) > now():
+            return
+        if job.attempts >= 5:
+            terminal(db, job, "failed", "attempts_exhausted")
+            return
+        session = db.scalar(select(AuthSession).where(AuthSession.id_hash == job.session_hash).with_for_update())
+        if (not session or session.revoked_at is not None or utc(session.expires_at) <= now()
+                or session.tenant_id != job.tenant_id or session.user_id != job.user_id
+                or not db.get(Membership, (job.tenant_id, job.user_id))):
+            terminal(db, job, "cancelled", "session_unavailable")
+            return
+        user = db.get(User, job.user_id)
+        repo = db.get(Repository, job.repository_id)
+        installation = db.get(Installation, repo.installation_id) if repo else None
+        if (not user or not repo or not repo.enabled or repo.tenant_id != job.tenant_id
+                or not installation or not installation.active or installation.tenant_id != job.tenant_id):
+            terminal(db, job, "cancelled", "repository_unavailable")
+            return
+        try:
+            token = cipher().decrypt(session.github_token_ciphertext.encode()).decode()
+        except (InvalidToken, UnicodeError, ValueError):
+            terminal(db, job, "failed", "invalid_session")
+            return
+        identity = Principal(user.id, job.tenant_id, user.github_user_id, token, session.id_hash)
+        repo_id, repo_name, installation_id = repo.id, repo.full_name, installation.id
+        operation, snapshot_id, commit = job.operation, job.snapshot_id, job.snapshot_commit_sha
+        issue_id, issue_number, issue_updated_at = job.issue_id, job.issue_number, utc(job.issue_updated_at)
+        query_limit, per_query_limit = job.query_limit, job.per_query_limit
+        evidence_limit, query_body_limit = job.evidence_limit, job.query_body_limit
+        if operation == "code_evidence":
+            if job.query_version != "terms-v1":
+                terminal(db, job, "failed", "query_version_unavailable")
+                return
+            snapshot = db.get(CodeSnapshot, snapshot_id)
+            if (not snapshot or not snapshot.published or snapshot.repository_id != repo_id
+                    or snapshot.tenant_id != job.tenant_id or snapshot.commit_sha != commit
+                    or job.source_repository_name != repo_name):
+                terminal(db, job, "cancelled", "snapshot_unavailable")
+                return
+        job.attempts += 1
+        job.status, job.lease_token = "running", lease
+        job.started_at = job.started_at or now()
+        job.lease_expires_at, job.updated_at = now() + timedelta(seconds=240), now()
+
+    index_event("investigation_job_claimed", job_id=job_id, repository_id=repo_id)
+
+    def finish_failure(status, code):
+        with factory.begin() as db:
+            job = db.scalar(select(InvestigationJob).where(InvestigationJob.id == job_id).with_for_update())
+            if job and job.status == "running" and job.lease_token == lease:
+                if status == "queued" and job.attempts >= 5:
+                    status, code = "failed", "attempts_exhausted"
+                terminal(db, job, status, code)
+
+    candidates = []
+    warning = None
+    query_input_truncated = None
+    source = IssueContextClient(get_settings().issue_context_max_requests) if type(github) is HttpGitHubClient else github
+    auth_client = source if operation == "code_evidence" else github
+
+    def checked_issue():
+        data = source.issue(identity.token, repo_name, issue_number)
+        if not isinstance(data, dict) or "pull_request" in data:
+            raise InvalidEvidence("issue_unavailable")
+        try:
+            issue = IssueData.model_validate(data)
+            if any(not isinstance(label.get("name"), str) for label in issue.labels):
+                raise ValueError("invalid_label")
+        except (ValidationError, ValueError, TypeError):
+            raise InvalidEvidence("invalid_issue") from None
+        if issue.id != issue_id or issue.number != issue_number or utc(issue.updated_at) != issue_updated_at:
+            raise InvalidEvidence("issue_changed")
+        return issue
+
+    try:
+        allowed = visible_github_repositories(identity, auth_client, installation_id)
+        if not any(item["id"] == repo_id and item["full_name"] == repo_name for item in allowed):
+            finish_failure("cancelled", "repository_unavailable")
+            return
+        if operation == "code_evidence":
+            issue = checked_issue()
+            labels = [label["name"] for label in issue.labels]
+            query_input_truncated = (len(issue.title) > 1024 or len(issue.body or "") > query_body_limit
+                                     or len(labels) > 20 or any(len(label) > 100 for label in labels[:20]))
+            queries = build_queries(issue.title, (issue.body or "")[:query_body_limit], labels, query_limit)
+            allowed = visible_github_repositories(identity, auth_client, installation_id)
+            if not any(item["id"] == repo_id and item["full_name"] == repo_name for item in allowed):
+                finish_failure("cancelled", "repository_unavailable")
+                return
+            # This short read occurs after GitHub I/O, before searching private application data.
+            with factory() as db:
+                current_session = db.get(AuthSession, identity.session_hash)
+                current_repo = db.get(Repository, repo_id)
+                current_installation = db.get(Installation, installation_id)
+                if (not current_session or current_session.revoked_at is not None
+                        or utc(current_session.expires_at) <= now()
+                        or current_session.user_id != identity.user_id
+                        or current_session.tenant_id != identity.tenant_id
+                        or not db.get(Membership, (identity.tenant_id, identity.user_id))
+                        or not current_installation or not current_installation.active
+                        or current_installation.tenant_id != identity.tenant_id
+                        or not current_repo or not current_repo.enabled
+                        or current_repo.tenant_id != identity.tenant_id
+                        or current_repo.full_name != repo_name
+                        or current_repo.installation_id != installation_id):
+                    raise InvalidEvidence("authorization_revoked")
+            work()
+            candidates = retrieve_candidates(factory, queries=queries, snapshot_id=snapshot_id,
+                repository_id=repo_id, tenant_id=identity.tenant_id, commit=commit, full_name=repo_name,
+                per_query_limit=per_query_limit, evidence_limit=evidence_limit)
+            warning = "no_usable_queries" if not queries else "no_matches" if not candidates else None
+        else:
+            work()
+        allowed = visible_github_repositories(identity, auth_client, installation_id)
+        if not any(item["id"] == repo_id and item["full_name"] == repo_name for item in allowed):
+            finish_failure("cancelled", "repository_unavailable")
+            return
+        if operation == "code_evidence":
+            checked_issue()
+            allowed = visible_github_repositories(identity, auth_client, installation_id)
+            if not any(item["id"] == repo_id and item["full_name"] == repo_name for item in allowed):
+                finish_failure("cancelled", "repository_unavailable")
+                return
+    except GitHubFailure as exc:
+        if str(exc) == "github_not_found":
+            finish_failure("cancelled", "issue_unavailable")
+            return
+        finish_failure("queued", "github_verification_unavailable")
+        raise TransientIngestionError("github_verification_unavailable") from None
+    except SnapshotUnavailable:
+        finish_failure("cancelled", "snapshot_unavailable")
+        return
+    except InvalidEvidence as exc:
+        code = str(exc)
+        finish_failure("cancelled" if code in {"issue_changed", "issue_unavailable", "authorization_revoked"} else "failed", code)
+        return
+    except HTTPException as exc:
+        if exc.status_code == 403:
+            finish_failure("cancelled", "repository_unavailable")
+            return
+        finish_failure("queued", "github_verification_unavailable")
+        raise TransientIngestionError("github_verification_unavailable") from None
+    except SoftTimeLimitExceeded:
+        finish_failure("queued", "worker_timeout")
+        raise TransientIngestionError("worker_timeout") from None
+    except OperationalError:
+        finish_failure("queued", "database_temporarily_unavailable")
+        raise TransientIngestionError("database_temporarily_unavailable") from None
+    evidence_published = False
+    with factory.begin() as db:
+        job = db.scalar(select(InvestigationJob).where(InvestigationJob.id == job_id).with_for_update())
+        if (not job or job.status != "running" or job.lease_token != lease or not job.lease_expires_at
+                or utc(job.lease_expires_at) <= now()):
+            return
+        session = db.scalar(select(AuthSession).where(AuthSession.id_hash == job.session_hash).with_for_update())
+        ig = installation_guard(db, installation_id)
+        installation = db.scalar(select(Installation).where(Installation.id == installation_id).with_for_update())
+        rg = repository_guard(db, installation_id, repo_id)
+        repo = db.scalar(select(Repository).where(Repository.id == repo_id).with_for_update())
+        if (not session or session.revoked_at is not None or utc(session.expires_at) <= now()
+                or session.user_id != identity.user_id or session.tenant_id != identity.tenant_id
+                or not db.get(Membership, (identity.tenant_id, identity.user_id)) or ig.revoked or rg.revoked
+                or not installation or not installation.active or installation.tenant_id != identity.tenant_id
+                or not repo or not repo.enabled or repo.tenant_id != identity.tenant_id
+                or repo.full_name != repo_name or repo.installation_id != installation_id):
+            terminal(db, job, "cancelled", "repository_unavailable")
+        elif operation == "code_evidence":
+            snapshot = db.scalar(select(CodeSnapshot).where(CodeSnapshot.id == snapshot_id,
+                CodeSnapshot.repository_id == repo_id, CodeSnapshot.tenant_id == identity.tenant_id,
+                CodeSnapshot.commit_sha == commit, CodeSnapshot.published.is_(True)).with_for_update())
+            if (not snapshot or job.snapshot_id != snapshot_id or job.snapshot_commit_sha != commit
+                    or job.source_repository_name != repo_name):
+                terminal(db, job, "cancelled", "snapshot_unavailable")
+            elif db.scalar(select(InvestigationEvidence.id).where(InvestigationEvidence.job_id == job.id).limit(1)):
+                terminal(db, job, "failed", "invalid_evidence")
+            else:
+                valid = True
+                for item in candidates:
+                    row = db.execute(select(CodeChunk, IndexedFile).join(IndexedFile, CodeChunk.file_id == IndexedFile.id)
+                        .where(CodeChunk.id == item.chunk_id, CodeChunk.repository_id == repo_id,
+                               CodeChunk.tenant_id == identity.tenant_id, IndexedFile.id == item.file_id,
+                               IndexedFile.repository_id == repo_id, IndexedFile.tenant_id == identity.tenant_id,
+                               IndexedFile.snapshot_id == snapshot_id)).one_or_none()
+                    if (not row or row[1].path != item.path or row[0].symbol != item.symbol
+                            or row[0].start_line != item.start_line or row[0].end_line != item.end_line
+                            or fingerprint_chunk(row[0], row[1]) != item.chunk_fingerprint):
+                        valid = False
+                        break
+                if not valid:
+                    terminal(db, job, "failed", "invalid_evidence")
+                else:
+                    for rank, item in enumerate(candidates, 1):
+                        db.add(InvestigationEvidence(id=str(uuid4()), job_id=job.id, snapshot_id=snapshot_id,
+                            repository_id=repo_id, tenant_id=identity.tenant_id, chunk_id=item.chunk_id,
+                            rank=rank, query_id=item.query_id, query_hash=item.query_hash,
+                            query_rank=item.query_rank, chunk_fingerprint=item.chunk_fingerprint, method="keyword"))
+                    job.retrieval_warning = warning
+                    job.query_input_truncated = query_input_truncated
+                    terminal(db, job, "completed", None)
+                    evidence_published = True
+        else:
+            terminal(db, job, "completed", None)
+
+    if evidence_published:
+        index_event("investigation_evidence_published", job_id=job_id, repository_id=repo_id, snapshot_id=snapshot_id)
+    index_event("investigation_job_finalized", job_id=job_id, repository_id=repo_id)
+
+
+@celery.task(name="investigate_issue", autoretry_for=(TransientIngestionError,), retry_backoff=True,
+             retry_jitter=True, retry_backoff_max=60, max_retries=5, soft_time_limit=180, time_limit=200)
+def investigate_issue(job_id: str):
+    from app.core.index_logging import index_event
+    index_event("investigation_task_received", job_id=job_id, task_id=investigate_issue.request.id)
+    try:
+        process_investigation(job_id)
+        index_event("investigation_task_finished", job_id=job_id, task_id=investigate_issue.request.id)
+    except OperationalError:
+        raise TransientIngestionError("database_temporarily_unavailable") from None
+    except SQLAlchemyError:
+        raise IngestionError("database_operation_failed") from None
+
+
+@celery.task(name="generate_mock_report", autoretry_for=(TransientIngestionError,), retry_backoff=True,
+             retry_jitter=True, retry_backoff_max=60, max_retries=5, soft_time_limit=180, time_limit=200)
+def generate_mock_report(job_id: str):
+    from app.core.index_logging import index_event
+    from app.modules.investigation.report_worker import ReportTransientError, process_report
+    index_event("report_task_received", job_id=job_id, task_id=generate_mock_report.request.id)
+    try:
+        process_report(job_id)
+        index_event("report_task_finished", job_id=job_id, task_id=generate_mock_report.request.id)
+    except (ReportTransientError, OperationalError):
+        raise TransientIngestionError("report_temporarily_unavailable") from None
+    except SQLAlchemyError:
+        raise IngestionError("database_operation_failed") from None

@@ -1,0 +1,71 @@
+{
+  "dataset": "mock-report-v1",
+  "dataset_sha256": "8c0cf26291fc15c2f3fcba3c84ec2d82e7f9f382150b4fc74176d5a7b6eeb615",
+  "mode": "deterministic mock; synthetic in-process inputs and mocked authorization",
+  "model_cases": 9,
+  "valid_reports": 7,
+  "invalid_outputs_rejected": 2,
+  "validated_evidence_references": 6,
+  "duplicate_delivery_report_rows": 1,
+  "duplicate_delivery_worker_attempts": 1,
+  "revoked_access_http": 404,
+  "model_validation_latency_p50_ms": 0.585,
+  "model_validation_latency_p95_ms": 1.197,
+  "cases": [
+    {
+      "id": "exact_function",
+      "outcome": "valid",
+      "validated_references": 1,
+      "latency_ms": 1.197
+    },
+    {
+      "id": "natural_language",
+      "outcome": "valid",
+      "validated_references": 1,
+      "latency_ms": 0.855
+    },
+    {
+      "id": "ambiguous",
+      "outcome": "valid",
+      "validated_references": 1,
+      "latency_ms": 0.802
+    },
+    {
+      "id": "no_evidence",
+      "outcome": "valid",
+      "validated_references": 0,
+      "latency_ms": 0.275
+    },
+    {
+      "id": "unsupported",
+      "outcome": "valid",
+      "validated_references": 0,
+      "latency_ms": 0.293
+    },
+    {
+      "id": "contradictory",
+      "outcome": "valid",
+      "validated_references": 2,
+      "latency_ms": 0.608
+    },
+    {
+      "id": "malicious",
+      "outcome": "valid",
+      "validated_references": 1,
+      "latency_ms": 0.585
+    },
+    {
+      "id": "malformed",
+      "outcome": "rejected",
+      "validated_references": 0,
+      "latency_ms": 0.334
+    },
+    {
+      "id": "foreign_citation",
+      "outcome": "rejected",
+      "validated_references": 0,
+      "latency_ms": 0.374
+    }
+  ],
+  "limitations": "Mock mechanics only; synthetic references, no real model reasoning, remote citations, real Celery or performance/load claim."
+}

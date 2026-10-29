@@ -1,21 +1,22 @@
 """Authenticated indexing and PostgreSQL lexical search endpoints."""
 from uuid import uuid4
-from urllib.parse import quote
 from typing import Literal
 
 from fastapi import APIRouter, Depends, HTTPException, Request
 from pydantic import BaseModel, Field
-from sqlalchemy import Text, case, cast, func, select, text
+from sqlalchemy import select, text
 from sqlalchemy.orm import Session
 
 from app.api.v1.routes import authorized_repos
 from app.core.index_logging import index_event
-from app.domain.models import CodeChunk, CodeSnapshot, EmbeddingJob, IndexedFile, IndexJob, Repository
+from app.domain.models import CodeSnapshot, EmbeddingJob, IndexJob, Repository
 from app.infra.database import get_db
 from app.modules.auth.session import Principal, principal, require_csrf
 from app.modules.github.client import GitHubClient, get_github_client
 from app.modules.ingestion.embeddings import EmbeddingError, configured_provider
 from app.modules.ingestion.rank_fusion import reciprocal_rank_fusion
+from app.modules.ingestion.keyword_search import keyword_statement
+from app.modules.ingestion.citations import github_citation
 from app.modules.ingestion.semantic_search import search_vectors
 
 router = APIRouter(prefix="/v1/repositories")
@@ -152,23 +153,8 @@ def search_code(repository_id: int, body: SearchRequest, request: Request,
                          CodeSnapshot.tenant_id == identity.tenant_id, CodeSnapshot.published.is_(True)))
     if not snapshot:
         raise HTTPException(409, "Repository has no published index")
-    # PostgreSQL quotes its parsed lexemes; replacing only its generated AND operators
-    # preserves that quoting while allowing meaningful English terms to match independently.
-    normalized = func.replace(body.query, "_", " ")
-    parsed = func.plainto_tsquery(text("'english'"), normalized)
-    query = func.to_tsquery(text("'english'"), func.replace(cast(parsed, Text), " & ", " | "))
-    source_vector = func.to_tsvector(text("'english'"), func.replace(
-        func.coalesce(CodeChunk.symbol, text("''")) + text("' '") + CodeChunk.source_text, "_", " "))
-    path_vector = func.to_tsvector(text("'english'"), func.replace(IndexedFile.path, "_", " "))
-    exact_symbol = case((func.lower(CodeChunk.symbol) == body.query.strip().lower(), 5.0), else_=0.0)
-    score = func.ts_rank_cd(source_vector, query) + func.ts_rank_cd(path_vector, query) + exact_symbol
-    stmt = (select(CodeChunk, IndexedFile, score.label("score")).join(IndexedFile,
-        CodeChunk.file_id == IndexedFile.id).where(
-        CodeChunk.tenant_id == identity.tenant_id, CodeChunk.repository_id == repo.id,
-        IndexedFile.tenant_id == identity.tenant_id, IndexedFile.repository_id == repo.id,
-        IndexedFile.snapshot_id == snapshot.id,
-        (source_vector.op("@@")(query) | path_vector.op("@@")(query)))
-        .order_by(score.desc(), IndexedFile.path, CodeChunk.start_line, CodeChunk.id).limit(min(50, body.limit * 3)))
+    stmt = keyword_statement(repository_id=repo.id, tenant_id=identity.tenant_id,
+                             snapshot_id=snapshot.id, query_text=body.query, limit=min(50, body.limit * 3))
     db.execute(text("SET LOCAL statement_timeout = '3s'"))
     keyword_rows = db.execute(stmt).all() if body.mode in {"keyword", "hybrid"} else []
     semantic_rows = []
@@ -212,11 +198,10 @@ def search_code(repository_id: int, body: SearchRequest, request: Request,
             method = "hybrid" if chunk_id in keyword and chunk_id in semantic else "keyword" if chunk_id in keyword else "semantic"
             ranked.append((chunk, file, rank, method))
         actual_mode = "hybrid"
-    base = "https://github.com/" + "/".join(quote(part, safe="") for part in repo.full_name.split("/"))
     return {"commit_sha": snapshot.commit_sha, "partial": bool(snapshot.skipped_count),
             "mode": actual_mode, "fallback_reason": fallback, "items": [
         {"repository_id": str(repo.id), "path": file.path, "symbol": chunk.symbol,
          "snippet": chunk.source_text, "start_line": chunk.start_line, "end_line": chunk.end_line,
          "commit_sha": snapshot.commit_sha,
-         "url": f"{base}/blob/{snapshot.commit_sha}/{quote(file.path, safe='/')}#L{chunk.start_line}-L{chunk.end_line}",
+         "url": github_citation(repo.full_name, snapshot.commit_sha, file.path, chunk.start_line, chunk.end_line),
          "score": rank, "retrieval_method": method} for chunk, file, rank, method in ranked]}

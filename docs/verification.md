@@ -1,5 +1,502 @@
 # Verification record
 
+## Sprint 3 Phase C3 — final local verification
+
+**PHASE C3 VERIFIED LOCALLY**, with the limits in the evaluation record below. The matched
+host log `/tmp/repopilot-v2-20261029-160824.log` and `apps/api/evaluation/v2-local.json`
+identify the same dedicated disposable database `repopilot_c3_disposable_a47f7b87227215f9`
+and published snapshot `2207c4a6-2717-4c81-ab3c-eb777e97d557`. The host log records an
+empty dedicated database, 128 PostgreSQL tests passing, Ruff passing, migration 0006 at head
+with no pending operations, 30 validated labels and runner completion. The user reported exit
+status 0; the saved log itself does not separately record a shell exit code. The snapshot has
+77 files, 556 chunks and one screened file. The existing v1 regression and synthetic scale
+reports remain separate. The checkpoint commit was local-only at evaluation time; GitHub
+citation availability was not verified by that evaluation. This local result is not a
+production-readiness claim.
+
+The following preparation records describe earlier points in time and are superseded where
+they report a provisional verdict, uncommitted source, or an unexecuted v2 evaluation.
+
+## Sprint 3 Phase C3 — committed-source v2 preparation
+
+**NOT YET VERIFIED.** The user created local-only commit
+`956a4f92983b222ce179891bbde39cb49a2022b2`. Read-only Git comparison confirmed that its 53
+changed files exactly match the approved checkpoint manifest with `.env.example` excluded and
+`apps/api/evaluation/browser-capture.js` included. Its parent is
+`63491908290e6874dbaaf2b15c2a96473aad1324`. No `apps/web/` path is in the commit; the seven
+frontend Git status entries match the pre-commit status record. The earlier record did not
+capture content hashes, so this is a status comparison, not a byte-for-byte proof.
+
+The separately versioned working-tree dataset `apps/api/evaluation/repopilot-v2-956a4f9.json`
+pins the local commit and contains 16 positive/ambiguous questions with 30 inclusive evidence
+ranges. The two ambiguous questions have multiple relevant labels; two negative candidates are
+kept unscored pending exhaustive review and a suitable no-answer metric. The 30 labels were
+checked against actual committed Git source, symbol/decorator ranges, source-selection policy,
+and single-chunk coverage. The original 20 labels were also revalidated. This validates the
+labels structurally; no v2 retrieval scores, local source snapshot or live GitHub permalink are
+claimed. The Git commit's remote availability is unknown.
+
+The user approved and created the local checkpoint; no push, deploy or live reindex was performed.
+The committed 53 files passed a limited recognizable credential-pattern scan, which is not
+comprehensive; the private-key marker in a source-client test is synthetic fixture text. The
+working-tree label verifier was extended to validate full interior ranges and decorators. A
+disposable evaluation plan, explicitly not yet executable until its Git source adapter and test
+runner are implemented, is in `apps/api/evaluation/benchmark-v2-disposable-plan.md`. Explicit
+approval is required before creating the test snapshot, and separate approval is required for
+any future push, live reindex or paid API use.
+
+Local backend tests after these changes: **118 passed, 9 PostgreSQL-only skipped**, and Ruff
+passed. `git diff --check` passed. No PostgreSQL test or database mutation was performed in this
+preparation; the prior user-reported disposable PostgreSQL run passed 125 tests.
+
+## Sprint 3 Phase C3 — v2 provenance preparation
+
+**NOT YET VERIFIED.** Read-only Git inspection found HEAD
+`63491908290e6874dbaaf2b15c2a96473aad1324`; the newer indexing and embedding modules remain
+uncommitted. The 18-question v2 proposal has 14 concrete implementation questions, two ambiguous
+questions and two unverified negative candidates. Of the concrete questions, two have all listed
+function bodies unchanged from HEAD, eleven depend on new or changed implementations, and one
+mixes committed and uncommitted functions. The per-question ranges, exact proposed backend source
+checkpoint, exclusions and disposable local-evaluation design are recorded in
+`apps/api/evaluation/benchmark-v2-provenance.md`. No v2 score or GitHub citation is claimed.
+
+This preparation reran the existing pinned-label verification (**20 matches**), local backend
+tests (**116 passed, 9 PostgreSQL-only skipped**), Ruff and `git diff --check`. No PostgreSQL test
+was executed in this preparation; the earlier host result of 125 passes is documented below. A
+limited pattern scan found one test fixture containing a private-key marker string, not key
+material; it is not comprehensive secret detection. No stage, commit, push, database mutation,
+deployment, reindex or paid API call was performed.
+
+## Sprint 3 Phase C3 — scale and retrieval coverage
+
+**NOT YET VERIFIED.** The user ran the generated-corpus PostgreSQL workload in a dedicated
+disposable database. It creates only temporary fixture tables and compares existing-style
+indexes to candidate English-expression GIN indexes. For 1,000 / 10,000 / 50,000 generated
+chunks (800 / 8,000 / 40,000 in the target tenant and snapshot), the current-index p50/p95
+were 5.881/11.066 ms, 55.416/112.333 ms, and 280.509/554.890 ms respectively, with 36 samples
+per condition and no timeouts. Candidate English GIN p50/p95 were 6.136/10.877,
+55.654/112.459, and 288.401/559.828 ms. All plans used sequential scans, a hash join and top-N
+sort; the candidate indexes were not selected. The candidate indexes increased total index size;
+no migration or new application index was introduced. Detailed query plans, buffer counts,
+index sizes, build times, correctness checks and caveats are in `apps/api/evaluation/c3-scale.md`
+and `.json`. CPU and total memory were not measured; p99 is not reported from 36 samples.
+These are generated temporary tables with simplified IDs/projections, not production or
+authenticated API timings. The largest case exceeds current indexing limits.
+
+The first host workload attempt failed before measurements because psycopg interpreted a literal
+modulo operator as a placeholder; the fixture generator was fixed and the second run succeeded.
+The original C1 benchmark remains unchanged. The newer modules do not exist in any available
+committed revision; `apps/api/evaluation/benchmark-v2-proposal.md` is explicitly unpinned and
+must not be scored as ground truth. A suitable committed revision and any new source snapshot
+still require separate review and approval. The paid-provider reservation design remains
+unimplemented, and paid background generation is disabled; no paid calls were made.
+
+Local backend: **116 passed, 9 PostgreSQL-only skipped**, Ruff and `git diff --check` passed.
+The user then reported **125 passed**, Alembic **0006** with no drift, and Ruff passed against a
+fresh disposable PostgreSQL database, including the CamelCase and bounded-result test. Explicit
+cross-model and cross-dimension vector assertions were added afterward; the user reran the full
+suite and reported **125 passed**, Alembic **0006**, no drift, and Ruff passed. No C2 search SQL or app indexes were changed, and no application database or
+source snapshot was modified during the generated workload.
+
+The user reran the original benchmark through the authenticated API against the same commit,
+model configuration, questions and result limit. Keyword Recall@1/3/5/10 remained
+.25/.60/.60/.80, MRR .434 and nDCG@10 .521, with no labeled-rank changes for any question.
+There were zero keyword fallbacks and zero structurally invalid citations among 198 returned
+results. Keyword p50/p95 were 1150.9/1426.7 ms compared with 1301.6/1789.3 ms in the C2 run;
+these samples include network and authorization and do not establish a performance improvement.
+Fake semantic and hybrid labeled ranks were also unchanged; these are mechanical checks only.
+Detailed per-query results are in `apps/api/evaluation/c3-comparison.md` and `.json`.
+After adding the comparison-report safeguard, the local focused tests passed 11 tests and Ruff.
+
+## Sprint 3 Phase C2 — lexical retrieval and session security
+
+**PASS locally, with performance and coverage limitations.** The C1 benchmark and labels remain unchanged. A host-run,
+read-only PostgreSQL diagnostic on the same 278-chunk published snapshot compared the original
+simple-language AND query with English-language OR variants. The original produced zero candidates
+for every question even across this repository's snapshot history, so snapshot filtering did not
+discard any matches for those queries. English OR and English OR plus an exact-symbol boost each
+had diagnostic Recall@1/3/5/10 of .25/.60/.60/.80, MRR .434 and binary nDCG@10 .521. This
+operator-level diagnostic is not the authenticated after-change API benchmark. Per-question
+candidate counts and ranks are in `apps/api/evaluation/c2-diagnostic.md` and `.json`.
+
+The candidate implementation uses English stemming/stop words and splits underscores, safely
+constructs an OR tsquery from PostgreSQL-quoted parsed lexemes, adds an exact-symbol boost, and
+uses a stable ID tie-breaker. It retains bound parameters, authorization, tenant and published
+snapshot predicates, and the three-second SQL timeout. Existing simple-language FTS expression
+indexes do not directly cover the new English expressions; this version can scan the bounded
+snapshot, and performance on large repositories remains unverified. No migration or reindex has
+been performed. The user reported **122 passed**, Alembic **0006** with no drift, and Ruff passed
+on a new disposable PostgreSQL database. The authenticated after-change run on the same commit,
+questions and limit returned 198 keyword results, zero structural citation failures, and no
+fallbacks. Recall@1/3/5/10 was .25/.60/.60/.80; MRR .434 and binary nDCG@10 .521. Four queries
+had no labeled result in the top ten; all 20 returned at least one result. Before the change,
+all keyword values were zero and all 20 returned zero results. Wall-clock p50/p95 changed from
+1206.9/1774.4 ms to 1301.6/1789.3 ms; these include GitHub authorization and network time and
+are not a load benchmark. Full per-query comparisons and metadata are in
+`apps/api/evaluation/c2-comparison.md` and `.json`. Fake-vector semantic/hybrid scores remain
+mechanical checks, not real semantic quality. Structural citation checks do not open every link.
+
+Security: logout revokes the server-side session and clears its stored encrypted GitHub token;
+the authorization dependency rejects revoked and expired rows. The user reported a read-only
+account count of **1 active, 4 revoked, 3 expired**, and an unauthenticated request returned
+401. A later host count showed **1 active, 5 revoked, 3 expired**. These counts do not identify
+either exposed session. The user then approved an account-wide active-session revocation and
+ran the documented host SQL: one user matched, the update revoked zero rows, and the following
+account count was **0 active, 6 revoked, 3 expired**. Therefore no unexpired, non-revoked
+RepoPilot session remained for that account at the time; the update did not itself revoke the
+remaining session, which had already become inactive. A subsequent new sign-in was used for
+the evaluation. The procedure and its impact are in
+`apps/api/evaluation/session-revocation.md`.
+The regression suite now verifies a revoked fixture session cannot authenticate when replayed.
+
+The real-provider budget-control proposal is in `apps/api/evaluation/paid-budget-design.md`.
+It is a design only: the current adapter lacks durable hard-budget enforcement and paid
+generation remains disabled. No paid API calls have been made.
+
+## Sprint 3 Phase C1 — retrieval evaluation
+
+**VERIFIED LOCALLY for the pinned-snapshot evaluation baseline.** The 20-question benchmark in `apps/api/evaluation/repopilot-6349190.json`
+is anchored to real symbols at commit `63491908290e6874dbaaf2b15c2a96473aad1324` using Git
+objects and Python AST line numbers. The pinned commit predates indexing, source chunking,
+permalink generation and embedding cache modules, which therefore lack benchmark labels. Labels
+are binary single-line definition anchors and do not exhaustively identify all relevant code.
+
+Reconstructing all eligible Python files from the pinned Git object with the existing chunker
+produced 40 files, 278 chunks, 109 whitespace-only gaps, 169 nonempty chunks and 168 distinct
+nonempty content hashes. All reconstructed chunks matched their inclusive source line slices.
+The user supplied read-only per-file PostgreSQL counts consistent with the reconstruction. The
+per-file record is `apps/api/evaluation/chunk-audit.md`. Whitespace gaps contain no searchable
+source and are excluded from embeddings; source chunking intentionally preserves all lines.
+
+The evaluation harness uses only the existing authorized search API, checks the snapshot commit,
+calculates macro Recall@1/3/5/10, MRR, binary nDCG@10, fallbacks, citation validity and sample
+latencies, and writes no snippets or credentials to reports. Fake semantic/hybrid results are
+mechanical only; real semantic quality is not measured. An authenticated browser run completed
+against the pinned snapshot: all 20 natural-language keyword queries returned zero results,
+so Recall@1/3/5/10, MRR and nDCG@10 were zero for this incomplete label set. The semantic and
+hybrid requests all fell back to keyword because the status reported embeddings not ready; those
+requests cannot establish vector or hybrid behavior. All modes returned zero citations, so the
+zero invalid-citation count does not validate any citations. The exact per-query output and
+wall-clock latency samples are in `apps/api/evaluation/results-local.md` and `.json`. PostgreSQL
+simple-language `plainto_tsquery` requires query terms together, which is a likely explanation
+for poor natural-language retrieval; no causal experiment was run. Latest local tests: **113 passed, 7 PostgreSQL-only skipped**;
+Ruff passed. The user reported **119 passed**, Alembic revision 0006 with no drift, and Ruff
+passing on a new disposable PostgreSQL database. A later focused local test added report,
+commit-mismatch and browser-capture assertions, and all seven evaluation tests passed. No paid request was made. An experiment estimate
+and its unenforced proposed spend ceiling are documented in `apps/api/evaluation/README.md`;
+real-provider job support and enforceable budgets remain prerequisites to any paid experiment.
+
+After the user enabled the fake provider and generated embeddings for the current published
+snapshot, a second authenticated browser run completed all 60 searches without fallback.
+`apps/api/evaluation/results-fake.md` and `.json` contain its measured results. Keyword had
+zero returned results and Recall@1/3/5/10, MRR and nDCG@10 of zero on these 20 questions.
+Fake semantic and hybrid each returned 200 results; 3 of 20 queries matched the incomplete
+definition-anchor labels within ten results. Both had Recall@1/3/5/10 of .05/.05/.10/.15,
+MRR .070 and nDCG@10 .088; these are **MECHANICAL TEST ONLY**, not real semantic quality.
+The 400 returned citations passed structural checks against the pinned commit and line fragments.
+Wall-clock p50/p95 in milliseconds were 1206.9/1774.4 keyword, 1223.0/1595.5 semantic,
+and 1213.5/1796.1 hybrid. These include live GitHub authorization and proxy/network time,
+without warmup or repeated sampling; they are not a production latency benchmark. Real semantic
+quality has not been measured.
+
+A later authenticated repeat capture produced the same per-query labeled ranks and aggregate
+retrieval metrics in each mode, with zero fallbacks. Repeat p50/p95 latencies were 1213.2/1300.8
+ms keyword, 1236.3/1848.9 ms fake semantic, and 1152.7/1295.8 ms fake hybrid. The repeat is
+recorded in `apps/api/evaluation/results-repeat.md` and `.json`; equal labeled ranks do not
+prove every returned ranking was identical.
+
+## Sprint 3 Phase B1 — Checkpoint D
+
+**VERIFIED LOCALLY with the deterministic fake provider.** Dashboard mode selection, snapshot-aware embedding readiness, fake-job
+submission, bounded active-job polling, and explicit keyword fallback are implemented. The proxy
+forwards the existing search mode and embedding routes with session and CSRF headers. Search
+requests are fenced against stale responses; source remains escaped and citation URLs are checked.
+The dashboard labels deterministic fake vectors as a test mechanism, not semantic quality.
+The worker and dispatcher emit correlated embedding task receipt, finish and dispatch events;
+task finish alone does not imply success, so persisted job state must also be checked.
+
+Local frontend typecheck, ESLint, **20 tests**, and production build passed. These include
+server-rendered and mocked-proxy checks, not browser interaction. Local backend full suite:
+**106 passed, 7 PostgreSQL-only skipped**; Ruff passed. A full-suite fixture discovery error
+was corrected by importing the shared authentication fixture directly. The user subsequently
+built the API, worker, dispatcher and web images and ran the full suite against a fresh
+disposable PostgreSQL database: **113 passed**, revision **0006**, no Alembic drift, and Ruff
+passed. No paid call was made.
+
+Migration 0005 installs pgvector if necessary, adds an ownership unique constraint and embedding
+tables; 0006 adds embedding jobs. Previous disposable PostgreSQL upgrades reached 0006 with no
+drift. Read-only host inspection reported the application database at **0006** with pgvector
+**0.8.7** installed; no application migration is needed to reach the current head. Any future
+application migration requires explicit approval and a protected backup. Migration
+downgrade drops embedding data; it is not a lossless rollback. `make dev` / normal Compose startup
+can run the migration service automatically and must not be used against the application database
+before approval. Rebuilding images alone does not migrate data; API, dispatcher, worker and web
+need updated images for the integrated flow.
+
+The user restarted the rebuilt services with the fake provider and submitted a job through the
+dashboard for the existing published `roshan-pandit1/RepoPilot` snapshot. Host logs show
+dispatcher publication and Celery task receipt and return for job
+`07919f84-3bfa-424e-976b-f1f2cb1abf74`. Read-only PostgreSQL queries show the job completed
+in one attempt against commit `63491908290e6874dbaaf2b15c2a96473aad1324`, model
+`fake/deterministic-hash` version 1, dimension 32: 169 embedded chunks and 168 distinct cache
+entries. The snapshot contains 278 chunks, of which 109 are whitespace-only and excluded by the
+worker; the 169 nonempty chunks match the job count. This verifies live fake-vector generation,
+not semantic relevance. User-provided browser screenshots show `process_sync` searched on the
+existing repository in keyword (7 results), semantic (10), and hybrid (10) modes, each displaying
+its effective mode and retrieval method. Subsequent screenshots show the `process_sync` source
+opened on GitHub at the expected commit and highlighted through line 147, with line 148 outside
+the highlight. An unauthenticated hybrid search returned HTTP 401. A subsequent read-only query
+showed two more completed jobs, `2c2a7f2c-5bec-4474-b3cd-49aa6a43e267` and
+`11376cc5-c6f8-4e3f-94d5-13040061fdb9`, each reporting 169 of 169 chunks, while the current
+published snapshot still had 169 embedding links and 168 cache entries. The dashboard also
+showed a newer source indexing timestamp; this confirms repeated processing without increased
+current-snapshot counts but does not prove that the source snapshot itself was unchanged.
+The user subsequently supplied a dashboard screenshot for `roshan-pandit1/Mini-Css-Project`:
+semantic search reported `embeddings_not_ready`, explicitly displayed keyword fallback, and
+returned no matches for the snapshot with zero Python chunks. This is a functional integration
+check, not a relevance benchmark or a production-readiness assessment.
+
+Read-only application inspection (does not start the migration service):
+
+```sh
+docker compose exec -T postgres sh -c 'psql -v ON_ERROR_STOP=1 -U "$POSTGRES_USER" -d "$POSTGRES_DB"' <<'SQL'
+SELECT version_num FROM alembic_version;
+SELECT name, default_version, installed_version FROM pg_available_extensions WHERE name = 'vector';
+SELECT extname, extversion FROM pg_extension WHERE extname = 'vector';
+SQL
+```
+
+Before any approved application migration, create and securely retain a database backup, for
+example `umask 077` followed by `docker compose exec -T postgres sh -c 'pg_dump -U "$POSTGRES_USER" -d "$POSTGRES_DB" -Fc' > repopilot-before-b1.dump`.
+Verify that backup according to the operator's restore procedure in a separate database.
+After explicit approval, `docker compose run --rm --no-deps api alembic upgrade head` applies
+the migrations using the built API image. Do not use downgrade as a lossless rollback: it drops
+embedding tables and their contents. Restore testing and downtime coordination are operator
+responsibilities; do not overwrite the application database during verification.
+
+## Sprint 3 Phase B1 — Checkpoint A
+
+**IN PROGRESS; NOT VERIFIED END TO END.** Added a deterministic fake provider, an explicitly
+opt-in OpenAI provider adapter, additive migration `0005`, and tenant/repository-scoped vector
+cache and chunk links. The fake is for mechanical testing only. No real embedding request or
+paid API call has been made. The OpenAI adapter requires `allow_paid=True` in addition to a key;
+it is not wired into background jobs or configuration yet.
+
+The user built the API image and ran `alembic upgrade head`, `alembic current`, `alembic check`
+and `pytest -q -ra tests/test_embeddings.py` on a new disposable PostgreSQL database: revision
+`0005`, no drift, **3 passed**. A fourth provider retry/accounting test was added afterward and
+passed locally using `httpx.MockTransport`; it made no network request. SQLite migration was
+also tested; SQLite JSON storage is not evidence of pgvector similarity behavior. Worker,
+semantic search, hybrid search and dashboard integration remain unfinished.
+
+## Sprint 3 Phase B1 — Checkpoints B and C
+
+**IN PROGRESS; NOT VERIFIED END TO END.** The fake-only durable embedding job, dispatcher,
+batch persistence and exact pgvector query are implemented. A first host PostgreSQL run
+exposed a scalar-distance decoding failure; the operator return type was corrected. The next
+host run on a new disposable PostgreSQL database reported revision `0006`, no Alembic drift,
+and **8 passed**, including exact cosine search with fake vectors. Additional revocation,
+tenant and search-mode cases were added after that host build and subsequently passed in the
+disposable PostgreSQL run described below.
+
+The search API now accepts keyword, semantic and hybrid modes; reciprocal rank fusion combines
+ranked lists, and missing compatible embeddings explicitly fall back to keyword search. Local
+focused tests report **12 passed, 2 PostgreSQL-only skipped**. The later host PostgreSQL run
+included the added hybrid and fallback tests and passed.
+The dashboard is not yet integrated. No real-provider request or paid service was used;
+paid background generation remains disabled pending explicit approval and budget controls.
+
+### Checkpoint C PostgreSQL fixture failure
+
+**PASS on a disposable PostgreSQL database.** The supplied `/tmp/repopilot-b1c-error.log` shows PostgreSQL
+`UndefinedObject: type "vector" does not exist` during `CREATE TABLE embedding_cache`,
+before the search test executes. The fixture calls ORM `create_all` directly, whereas
+migration 0005 installs the `vector` extension; creating an empty disposable database
+alone does not install it. The test fixture now installs the extension in its PostgreSQL
+test database before creating tables. This does not modify application startup or migrations.
+The database used in the failed run has not been inspected independently; its failure shows
+the vector type was unavailable to that connection at setup time.
+
+After the fixture change, local SQLite-backed embedding, ranking and code-workflow tests
+reported **21 passed, 4 PostgreSQL-only skipped**; Ruff and `git diff --check` passed.
+The user then ran the formerly failing test on a fresh disposable PostgreSQL database:
+**1 passed**. Migration reached **0006 (head)** with no Alembic drift; inspection reported
+pgvector **0.8.7** and the `embedding_cache`, `chunk_embeddings`, and `embedding_jobs` tables.
+The related embedding, ranking and code-workflow suite reported **25 passed**, including
+PostgreSQL vector, hybrid, keyword fallback, authorization and concurrency tests. These use
+fake providers and do not demonstrate a live Celery embedding pipeline or semantic relevance.
+The fixture's table creation and teardown were confined to the disposable test database.
+
+## Sprint 3 Phase A4 — dashboard and lifecycle events
+
+**VERIFIED LOCALLY with follow-up limitations.** The dashboard now renders repository indexing status and a
+same-origin search interface, using the backend's published snapshot, counts, timestamp and
+commit-pinned citations. Polling is limited to pending/running jobs and is stopped on cleanup.
+Code is rendered as React text, with lightweight highlighting; citation links are restricted to
+the expected GitHub repository, commit, path and line fragment. The user explicitly authorized
+a live reindex for this verification.
+
+| Check | Status | Evidence |
+| --- | --- | --- |
+| Frontend | PASS with limitation | `npm run typecheck`, `npm run lint`, `npm test` and `npm run build` passed locally; 17 tests include status rendering, error messaging, escaping and citation validation. Tests use server rendering or mocked fetches, not interactive browser transitions. |
+| Backend | PASS with limitation | `pytest -q -ra`: 94 passed, five PostgreSQL-only skips; Ruff passed. Lifecycle tests verify job/snapshot correlation, JSON fields and severity, and check that a fixture token and source text do not appear in emitted events. |
+| Host PostgreSQL | PASS with limitation | The user ran the backend suite against a disposable PostgreSQL database: **97 passed**. Two additional logging tests were added after that host build and passed locally; rerunning the latest image on PostgreSQL remains pending. |
+| Browser and live logs for A4 | PASS with limitation | The user authorized a reindex, reported the new Code search UI displayed `process_sync` and its View source link opened the highlighted GitHub lines. Host logs show the RepoPilot job was queued, dispatched, claimed, collected, published and completed. A later host screenshot confirmed the corrected panel placement and readable search button, with RepoPilot shown as Indexed at 40 files, 278 chunks, the expected commit and a timestamp. Intermediate on-screen job states were not separately reported. The screenshot still showed the earlier five-second refresh setting; the later thirty-second setting needs a host rebuild. |
+
+The status endpoint adds the published snapshot's `indexed_at` field. JSON lifecycle events
+include correlation IDs but no source, tokens, or exception bodies. Existing historical jobs do
+not gain retroactive logs. Host-provided logs showed two jobs being queued, dispatched, claimed,
+collecting source and publishing snapshots; the RepoPilot job and UI search were confirmed as
+described below. Those logs showed Celery wrapping INFO JSON events as WARNING;
+worker stdout redirection was disabled afterward, but that adjustment has not been verified on
+the host. Real-account dashboard refresh was reduced from five to thirty seconds after host logs
+showed repeated GitHub reads; each backend read still revalidates access. Credential filtering
+remains pattern-based and incomplete.
+
+Host SQL correlated job `b97b9c35-0fcb-419d-ab01-664842d06830` with
+`roshan-pandit1/RepoPilot`: status `completed`, commit
+`63491908290e6874dbaaf2b15c2a96473aad1324`, 40 files, 278 chunks and zero skips. Its
+job/task ID appears in API queued, dispatcher dispatched and worker claimed, collection,
+publication and completion events; worker publication reported snapshot
+`c9880616-13e2-40cf-8fd1-a720959091b6`. A separate completed job was for
+`Mini-Css-Project` and contained zero indexed Python files. The user confirmed the new UI
+search and View source link worked. The host did not separately report each intermediate
+on-screen status; the worker lifecycle sequence establishes processing and completion.
+
+## Sprint 3 Phase A3 closure checks
+
+**Status: VERIFIED LOCALLY, with the observability limitations below.** The most recent local run of
+`apps/api/.venv/bin/python -m pytest -q -ra` reported 91 passed and five PostgreSQL-only
+skips; `.venv/bin/ruff check . --no-cache` and `git diff --check` passed. The earlier host
+run reported 96 passing tests using disposable PostgreSQL, including full-text and
+concurrency tests; those tests use injected GitHub clients and direct worker calls.
+
+The live job and published snapshot both record commit
+`63491908290e6874dbaaf2b15c2a96473aad1324`, 40 files and 278 chunks, with one dispatch
+attempt. A live search returned `process_sync` at `apps/api/app/workers/tasks.py` lines
+74–147; local `git show` confirms the source boundaries at that commit. The user printed the
+actual API-generated URL:
+`https://github.com/roshan-pandit1/RepoPilot/blob/63491908290e6874dbaaf2b15c2a96473aad1324/apps/api/app/workers/tasks.py#L74-L147`.
+The owner, repository, commit, path, and line fragment match. The user confirmed that GitHub
+opened the link and highlighted lines 74–147. Web retrieval in this sandbox returned a cache
+miss, so the visual result is host-reported. The schema links snapshots to
+repositories and commits, not directly to job IDs; correlation is based on repository,
+commit and timestamps, not a job-to-snapshot foreign key.
+
+The host ran `docker compose ps`, `docker compose logs --tail=300 worker dispatcher` and
+read-only PostgreSQL queries. The worker and dispatcher were running; the worker startup log
+listed the Redis broker and Celery queue. No error was visible in the supplied logs, but the
+worker is configured at WARNING level, task events were off, and neither component emitted
+per-task success messages. Thus the logs do not identify the indexing job. No reindex was
+requested. PostgreSQL independently returned one completed job with one recorded dispatch
+attempt, and exactly one published snapshot for the repository/commit with 40 actual files,
+278 actual chunks, and the `process_sync` chunk at lines 74–147. The snapshot has no direct
+job foreign key; the job/snapshot match is an inference from repository and commit. The
+authenticated 202 request, one dispatch attempt, running Redis-connected Celery worker,
+completed job, matching published snapshot and real search together support local processing;
+they are not a per-task log trace and do not establish production readiness.
+
+## Sprint 3 Phase A3 regression follow-up
+
+| Check | Status | Evidence |
+| --- | --- | --- |
+| Production settings test | PASS | Reproduced failure with OAuth enabled and an HTTP localhost callback inherited from the environment. The positive test now supplies complete HTTPS OAuth settings; the existing negative test still rejects production HTTP. The four configuration tests passed with OAuth enabled in the environment. |
+| Backend regression suite | PASS with limitation | `pytest -q -ra`: 90 passed and four PostgreSQL-only tests skipped, including the new concurrent indexing request test. Ruff passed. The configuration tests also passed with OAuth enabled in the environment. |
+| Frontend checks | PASS with limitation | Typecheck, lint, 14 tests and production build passed both locally and on the host. Two proxy tests use a mocked upstream; no browser-based live indexing call has yet been run. The user's earlier npm commands failed because they were run from the repository root; rerunning from `apps/web` passed. |
+| Live smoke | PASS with limitation | Host traceback confirmed demo authentication was disabled. A user-run isolated development demo stack built and reported `PASS: auth rejection, signature rejection, durable delivery, deduplication, real worker, DB, API, web data`. It used separate PostgreSQL and Redis volumes; the real-user stack remained separate. This validates the Sprint 1 path, not Sprint 3 indexing. |
+| PostgreSQL migration and tests | PASS with limitation | Host rebuilt Compose, `alembic current` reported `0004 (head)`, and `alembic check` reported no new upgrade operations. A user-supplied dedicated disposable PostgreSQL test database ran `pytest -q -ra`: **96 passed**. This includes PostgreSQL row-lock, concurrent indexing-request and full-text citation tests, but uses injected GitHub clients and direct worker calls. |
+| Real GitHub indexing and search | PASS | A signed-in host browser received HTTP 202 for job `6effc48a-e4ea-4608-a0c0-eef6da698900`; status reported completed. Host PostgreSQL showed one dispatch attempt, commit `63491908290e6874dbaaf2b15c2a96473aad1324`, 40 files, 278 chunks, zero skips, and a published snapshot with matching stored counts. An authenticated browser search for `process_sync` returned the function at `apps/api/app/workers/tasks.py` lines 74–147. `git show` confirmed the lines, the user printed the matching actual API URL, and confirmed GitHub highlighted those lines. |
+| Real Celery evidence | PASS with observability limitation | The worker logs show a running Redis-connected Celery worker but no task receipt or completion for this job at WARNING level. A recorded dispatch attempt, completed database job, matching snapshot, and real search support the local chain; no per-task log trace was observed. The isolated Sprint 1 smoke independently exercised real Celery for webhook ingestion. |
+| Live unauthenticated access | PASS | Host `curl` to `/v1/repositories/1/index-status` without credentials returned 401. This does not independently demonstrate cross-tenant isolation; PostgreSQL tests cover that with injected GitHub responses. |
+
+Host read-only SQL confirmed both GIN indexes and both partial unique indexes exist in the
+application database, which currently contains 6 issues, 3 repositories and 2 users. These
+are current counts, not a complete before/after comparison of all stored data.
+
+The web app now includes a narrow same-origin proxy for index, index status and search so a
+signed-in browser can exercise the backend without copying session credentials into a terminal.
+The proxy forwards the session and CSRF headers and leaves authorization to the existing API.
+
+Host follow-up: the application database reached revision `0004`, but `alembic check`
+failed because the two PostgreSQL FTS indexes created in migration `0003` were absent from
+ORM metadata. They are now declared as PostgreSQL-only expression indexes. A local SQLite
+upgrade/check reaches `0004` with no detected drift; SQLite emits two warnings because it
+cannot reflect expression indexes. The corrected PostgreSQL check and suite await a host run.
+The first corrected host check still reported a mismatch for the chunk index: PostgreSQL
+reflects extra grouping around concatenation. The metadata now matches that grouping, and a
+local regression test compares it with the actual PostgreSQL-reflected expression. A live
+PostgreSQL recheck still reported a remove/add operation for that index; the test did not
+reproduce SQLAlchemy's full reflection/compilation behavior. Read-only diagnostics of the
+reflected and metadata expressions showed that SQLAlchemy's reflected form had one fewer
+pair of grouping parentheses than `pg_indexes` displayed. Metadata now matches the reflected
+form, with a normalization regression test. The subsequent host check passed without a new
+migration, confirming the existing indexes were retained.
+
+Indexing now claims a fenced lease, fetches GitHub content outside database transactions, and
+revalidates session, tenant, repository, installation, lease and branch commit before atomic
+publication. SQLite tests cover stale leases, revocation during fetch, changed commits and expired
+lease recovery. Real PostgreSQL concurrency, broker recovery and provider authorization changes
+remain unverified. A separate additive `0004` migration introduces nullable lease fields.
+
+Host PostgreSQL testing reached the full suite after the FTS metadata correction, but reported
+24 failures in authentication and indexing. A focused test confirmed PostgreSQL's demo seed
+used explicit IDs without advancing the tenant sequence, causing a duplicate primary key on
+the next generated tenant. The seed now serializes PostgreSQL inserts while advancing the user
+and tenant sequences without rewinding them. The full host PostgreSQL rerun passed all 96
+tests. Local SQLite results after this fix: 91 passed, five PostgreSQL-only tests skipped.
+
+## Sprint 3 Phase A3 — backend integration
+
+**NOT YET VERIFIED.** Added migration `0003`, indexing jobs, tenant-linked snapshots/files/chunks,
+dispatcher publication, a Celery indexing task, and authenticated index/status/keyword-search
+routes. The worker builds and publishes in a single transaction after GitHub access checks.
+Its pending status remains visible during work; live progress and lock-duration hardening remain.
+
+| Check | Status | Evidence |
+| --- | --- | --- |
+| Backend suite | PASS with limitation | `apps/api/.venv/bin/python -m pytest -q -ra`: 85 passed; three PostgreSQL-only tests skipped (two locking tests and FTS search). |
+| Index workflow test | PASS with limitation | Injected GitHub/source clients and direct worker invocation demonstrated persisted job, dispatcher callback, snapshot/chunk storage, retry rollback, and tenant/revocation denial using SQLite. This is not live Celery or GitHub. |
+| Ruff / frontend | PASS | Backend Ruff and frontend typecheck and ESLint passed. |
+| SQLite migration | PASS with limitation | Disposable SQLite database upgraded to 0002, seeded, upgraded to 0003; `alembic check` found no drift, `alembic current` returned 0003 and the demo repository remained. PostgreSQL migration and FTS indexes have not been verified. |
+| PostgreSQL / Celery / GitHub / search | BLOCKED | Docker daemon inaccessible in this session; PostgreSQL FTS, real broker processing and real GitHub indexing have not been exercised. No live citation result is claimed. |
+
+Current source filtering is pattern-based, not comprehensive. Real GitHub source indexing requires
+Contents read permission; existing permission changes may revoke the current installation, and
+reauthorization is unavailable. Use a separate development app/installation for real testing.
+
+## Sprint 3 Phase A2 — source client increment
+
+**NOT YET VERIFIED.** Added an isolated GitHub source client with HTTPS-only fixed origin,
+request and response limits, rate-limit classification, resolved commit/tree mapping, and
+content-addressed blob integrity validation. Added a high-confidence source pattern detector;
+this is not comprehensive secret scanning. Neither is wired into authorization, persistence,
+Celery, or an API and no real repository was downloaded or indexed.
+
+| Check | Status | Evidence |
+| --- | --- | --- |
+| Backend tests | PASS with limitation | `apps/api/.venv/bin/python -m pytest -q`: 80 passed, two PostgreSQL-only tests skipped; source client uses `httpx.MockTransport`. |
+| Ruff | PASS | `apps/api/.venv/bin/ruff check . --no-cache` passed. |
+| Migration, worker, keyword search, frontend | BLOCKED | No Sprint 3 schema or indexing pipeline has been implemented; no live PostgreSQL/Celery or GitHub indexing test has been performed. |
+
+An isolated collector enforces byte and chunk budgets and rejects files containing recognized
+credential patterns before returning chunks. It is not connected to storage and is not a
+comprehensive secret scanner. Publishing requires fresh authorization checks and atomicity.
+
+## Sprint 3 initial primitives — 2026-10-28
+
+**NOT VERIFIED / Phase A incomplete.** The isolated source-selection, snapshot-planning,
+and Python chunking primitives have been added, but are not wired to an API, GitHub, database,
+or worker. No repository source has been indexed. Candidate selection is not secret detection.
+Snapshot planning rejects truncated trees instead of treating them as complete.
+
+| Check | Status | Evidence |
+| --- | --- | --- |
+| Backend tests | PASS with limitation | `apps/api/.venv/bin/python -m pytest -q`: 74 passed, two PostgreSQL-only tests skipped. Snapshot tests use a fake client; no GitHub call. |
+| Backend Ruff | PASS | `apps/api/.venv/bin/ruff check . --no-cache` passed. |
+| Frontend typecheck and lint | PASS | `npm run typecheck && npm run lint` passed using installed dependencies. |
+| Migration | BLOCKED / not applicable | No Sprint 3 migration exists yet; real PostgreSQL is unavailable in this sandbox. |
+| Indexing, retrieval, benchmarks and browser | BLOCKED | No indexing worker, persisted snapshot, embeddings, search endpoint, evaluation or search UI exists yet. No benchmark results are claimed. |
+
 ## Sprint 2A real-service verification follow-up — 2026-10-28
 
 Subsequent user screenshots show a real GitHub sign-in as `roshan-pandit1`, an eligible
@@ -363,3 +860,545 @@ required; authoring the workflow is not evidence of a passing run.
   review after exhaustion. Issue close/reopen synchronization and timestamp reconciliation remain
   out of scope.
 - Sprint 1 / 1.5 is **not ready to close** until the definition-of-done checks pass.
+
+### C3 v2 disposable evaluation (2026-10-29)
+
+The matched host log and saved v2 report record source commit
+`956a4f92983b222ce179891bbde39cb49a2022b2`, dataset SHA-256
+`813414c2eece2fa42f57d75d9cc12b6dd77eb5d75d63999ad8cae14b65bdd2ba`, database
+`repopilot_c3_disposable_a47f7b87227215f9` and published snapshot
+`2207c4a6-2717-4c81-ab3c-eb777e97d557`. The script created a separate container and checked
+the database name and empty schema before tests. It used no Compose services. The log shows
+128 PostgreSQL tests passed, Ruff passed, migration 0006 head without drift, 30 verified labels,
+published snapshot, and runner completion. The user reports the host command exited 0.
+The application database was not independently inspected or compared before and after.
+
+Sixteen positive/ambiguous questions and 30 labels were evaluated. Keyword macro recall
+@1/@3/@5/@10 was **0.125 / 0.318 / 0.443 / 0.510**, MRR **0.404**, nDCG@10 **0.367**.
+Twelve questions had at least one labeled top-10 result; `access`, `snapshot`, `chunking`,
+and `citations` had none. The report records zero invalid citations among 160 results and zero
+fallbacks. Latency p50/p95 was **26.968 / 61.661 ms** for 16 in-process test-client requests;
+nearest-rank p95 is the slowest observation and does not establish load performance. An
+independent evaluator invocation reconstructed metrics from stored relevant ranks and label
+counts and matched the JSON and Markdown output. This checks arithmetic, not independent
+retrieval: the report does not preserve all returned identities. Two negative candidates remain
+unscored, and incomplete labels mean unlabeled results are not necessarily irrelevant.
+
+The runner checks file hashes, chunk slices, commit, path and line ranges against local Git
+blobs, and checks the citation URL structure; the matching successful host log and report
+record the checks passing. The log also records the fixture's unauthenticated 401, unpublished
+snapshot 409, revoked access and other-tenant 404 responses. Remote GitHub links are not
+verified for this local-only commit. No embeddings were generated in this v2 run and real
+semantic quality remains unmeasured.
+
+The original 20-question v1 dataset remains separately pinned to
+`63491908290e6874dbaaf2b15c2a96473aad1324`; its C3 keyword Recall@10 remained 0.80 and its
+fake semantic/hybrid results are mechanical only. The separate v1 and v2 commits, questions,
+labels and execution environments make their scores unsuitable for direct comparison.
+The synthetic 1K/10K/50K scale and query-plan results remain in `c3-scale.md` and `.json`;
+no additional index was justified. Paid-provider hard budget controls remain unimplemented,
+and paid background generation remains disabled.
+
+This final review also revalidated the 30 labels, passed 10 evaluation/adapter tests, Ruff,
+and `git diff --check`. The seven previously observed frontend status entries remain present;
+byte-for-byte preservation was not independently established. No source labels were changed.
+
+## Sprint 4 checkpoint 4A — issue context
+
+**NOT YET VERIFIED.** Added `GET /v1/repositories/{repository_id}/issues/{issue_number}/context`
+for bounded fresh issue metadata and comments, without migrations or AI calls. A GitHub user
+session, tenant membership, active enrolled installation and enabled repository are required;
+current personal-installation/public-repository visibility and session/repository state are
+rechecked after the bounded fetch. PRs and missing/inaccessible repositories are rejected.
+GitHub errors are sanitized; timeout and rate-limit handling are covered with mocked transport.
+Content is inert, untrusted data and links/attachments are not fetched. See README for limits,
+truncation semantics and configuration. The per-operation request cap includes authorization
+pagination as well as issue/comment calls. Stored issues are not used as a freshness authority.
+
+Local backend test suite: **129 passed, 9 PostgreSQL-only skipped**, including 10 mocked issue
+context tests; Ruff and `git diff --check` passed. No live GitHub context request was made.
+Docker access is unavailable in the agent sandbox; PostgreSQL integration tests and migration
+drift checks for this checkpoint remain pending. The host script
+`apps/api/evaluation/run-4a-disposable.sh` creates a new isolated container/database, verifies
+its name and empty schema before destructive fixtures, runs tests, and checks migrations. It
+retains the new container and volume. The normal application database is not targeted.
+
+The user subsequently provided a host screenshot of the dedicated disposable run: database
+`repopilot_4a_disposable_2ad3cb51bc38243f` was confirmed empty before fixtures; **138
+PostgreSQL tests passed**, Ruff passed, and Alembic reported **0006 (head)** with no pending
+upgrade operations. The screenshot reports that the new container and volume were retained.
+This is host-reported screenshot evidence; no live GitHub issue-context request has been
+verified. **Checkpoint 4A remains NOT YET VERIFIED** pending live integration verification.
+
+### Checkpoint 4A live verification preparation
+
+The actual endpoint is `GET /v1/repositories/{repository_id}/issues/{issue_number}/context`;
+there are no query parameters. Existing Next.js `/api/code/...` routes do not proxy this path.
+The backend requires a real signed-in GitHub session and rechecks current personal-installation
+and public-repository access before returning content. GitHub documents repository Issues: read
+for GitHub App user tokens (public resources may be accessible without that permission); the
+actual app installation's permission state has not been inspected. Changing installation
+permissions can revoke RepoPilot enrollment and requires separate approval. No permission or
+installation changes were made.
+
+Localhost was unreachable in the agent sandbox and the GitHub repository/issues page could not
+be retrieved by the web tool, so no actual issue number, GitHub result, or HTTP status has been
+verified. In this review the focused mocked issue-context tests passed 10 tests and Ruff passed.
+The previous host screenshot records 138 PostgreSQL tests and Alembic 0006 without drift.
+Authentication, other-tenant denial, revocation, PR exclusion and malicious content are covered
+by those mocked/integration tests, not a live revocation. Live field comparison and an
+unauthenticated live request remain pending; Checkpoint 4A remains NOT YET VERIFIED.
+
+### Checkpoint 4A same-origin issue-context proxy
+
+A narrowly scoped Next.js GET route now forwards browser session cookies server-side to
+`/v1/repositories/{repository_id}/issues/{issue_number}/context`, with bounded numeric IDs,
+no-store headers, no redirect following, and sanitized error responses. Backend authentication,
+repository and tenant authorization remain authoritative. The existing application container
+must be rebuilt/restarted locally to serve this new route; no deployment was performed here.
+Frontend verification: **24 tests passed**, typecheck and ESLint passed; focused backend
+issue-context tests: **10 passed**. `git diff --check` passed. Live GitHub issue verification
+remains pending, so checkpoint 4A remains NOT YET VERIFIED.
+
+### Checkpoint 4A live GitHub verification — 2026-10-29
+
+**SPRINT 4 CHECKPOINT 4A VERIFIED LOCALLY.** The user provided screenshots of a public
+non-PR test issue #1 in `roshan-pandit1/RepoPilot` and the signed-in same-origin proxy response.
+The response displayed repository ID `1435878031`, issue number 1, stable issue ID, title,
+body, state `open`, empty labels and comments, creation/update/retrieval timestamps, GitHub
+issue URL and all truncation flags `false`. The issue number, title, body and state match the
+GitHub issue screenshot; the URL identifies the same issue. The success status is inferred as
+200 from the proxy implementation's success-only response branch; the screenshot did not show
+the Network status. Timestamps were present but not independently compared to exact GitHub
+timestamps. There were no comments to compare, and the live issue did not exercise truncation.
+
+A separate incognito screenshot showed `Authentication required`; the proxy maps that response
+to 401, although the screenshot did not show the HTTP status. Other-tenant isolation, revoked
+installation/repository access, pull-request rejection, malicious issue text, oversized input,
+and truncation are covered by the mocked/integration tests; no live access was revoked.
+The user previously supplied host evidence of 138 passing PostgreSQL tests, Ruff and migration
+0006 without drift. The same-origin proxy passed 24 frontend tests, typecheck and lint; the
+issue-context suite passed 10 focused tests. No GitHub App permission change, live reindex,
+paid API call or additional commit was performed. Live testing covers one short public issue
+with no comments, not all GitHub states or provider failure conditions.
+
+## Sprint 4 checkpoint 4B — durable mock investigation jobs
+
+**NOT YET VERIFIED.** Added tenant/user/repository-scoped investigation jobs and a dedicated
+transactional outbox (migration 0007), authenticated CSRF-protected submission and authorized
+status endpoints, dispatcher publication, and fenced lease-based Celery mock execution. Active
+same-user/repository/issue submissions reuse a job; terminal requests may create a fresh job.
+The job records issue identity and timestamps, not raw issue text or token material. GitHub
+checks occur outside locked transactions; the worker rechecks session, membership, installation,
+repository and current visibility before completion. Completed indicates mock orchestration only;
+no source snapshot or AI inference is performed. Publication retries continue with capped delay;
+worker claims are capped at five, and expired leases can be reclaimed. API, worker and outbox
+status semantics and limitations are summarized in README.
+
+Local backend verification: **135 passed, 10 PostgreSQL-only skipped**, Ruff passed. A fresh
+SQLite database upgraded to Alembic 0007 and `alembic check` found no operations, with SQLite
+warnings that expression indexes cannot be reflected; this is not PostgreSQL migration evidence.
+Frontend: **26 tests passed**, typecheck and lint passed. PostgreSQL concurrency and schema
+checks, actual Redis/dispatcher/Celery processing and the live issue #1 job remain pending.
+Docker is inaccessible from the agent sandbox. `apps/api/evaluation/run-4b-disposable.sh`
+creates a new isolated PostgreSQL container and database, confirms an empty schema before
+fixtures, runs tests and migrations, and retains its new volume. The normal database has not
+been changed. A live run against it requires explicit user approval for migration 0007, and
+local app/worker/dispatcher restart after code review; it cannot be claimed from direct worker
+unit tests. `apps/api/evaluation/investigation-live-check.js` is a prepared browser-side test,
+not an execution record. No paid calls, commit, push or deployment were performed.
+
+The user subsequently supplied a host screenshot showing a new empty dedicated database
+`repopilot_4b_disposable_28472d8e081d0d12`: **145 PostgreSQL tests passed**, Ruff passed,
+Alembic reported **0007 (head)** and no pending upgrade operations, and the disposable
+container and volume were retained. This is host screenshot evidence, not a real
+Redis/dispatcher/Celery execution. Live orchestration remains pending; the normal application
+database has not been migrated by this work. **Checkpoint 4B remains NOT YET VERIFIED.**
+
+### Checkpoint 4B local integration approval and preparation
+
+The user approved an application database backup, additive migration 0007 and exactly one
+mock job for RepoPilot issue #1. Sandbox Docker access is unavailable, so these actions have
+not yet run. The reviewed migration adds the two investigation tables, indexes and constraints;
+it does not alter or delete existing tables. The prepared host procedure
+`apps/api/evaluation/run-4b-local-migration.sh` verifies the Compose project, local PostgreSQL
+container address, development API/migration targets and existing revision, writes a private
+custom-format database backup, validates that the full archive can be read, applies 0007 and
+restarts only local services. Failure stops execution. It does not create a job.
+`investigation-live-check.js` submits one job; the read-only `investigation-evidence.sh` and
+`investigation-replay.sh` capture correlated status/log evidence and republish the existing task
+without creating a new job. These are prepared procedures, not evidence of execution. Backup,
+migration, authorization and real Celery results remain pending host output.
+
+The user supplied a host screenshot of the migration procedure showing the migration-container
+target/revision confirmation, Alembic `0007 (head)`, no new upgrade operations, the local
+API healthy and worker/dispatcher/web started, and a retained backup at
+`~/Library/Application Support/RepoPilot/backups/4b-p1KB07/repopilot-before-0007.dump`.
+The visible screenshot does not show the earlier dump-validation output; the prepared script
+is designed to stop on backup failure or unreadable archive. This is user-provided host evidence,
+not an independently inspected backup or test restore. Exactly one live mock job remains to be
+submitted and verified; checkpoint 4B remains NOT YET VERIFIED.
+
+The user provided a browser screenshot showing one authorized mock investigation submitted as
+`d0614fdf-6931-4f7f-ab52-37bcb9955208`, initially `queued`, then `completed` with one
+attempt, no error code and operation `mock_orchestration`. This is a reported status API
+observation; correlated database/outbox/dispatcher/worker and unauthenticated status evidence
+are still pending. No second job has been authorized. Checkpoint 4B remains NOT YET VERIFIED.
+
+The first correlation lookup and replay were given an incorrectly transcribed job UUID
+(`47f7` instead of `4f7f` in the third group). The lookup returned zero rows and the replay
+script reported that no task was sent. The incognito request also used the incorrect UUID and
+returned an authentication-required message, without showing an HTTP status. Correct-ID
+correlation and replay evidence remain pending.
+
+### Checkpoint 4B local integration verification — 2026-10-29
+
+**SPRINT 4 CHECKPOINT 4B VERIFIED LOCALLY**, within the limits below. The user-provided host
+screenshots show the authorized issue #1 job `d0614fdf-6931-4f7f-ab52-37bcb9955208`
+transitioned from queued to completed through the signed-in status API. The correlated
+PostgreSQL row shows repository `1435878031`, issue 1, completed, one worker attempt, no error,
+and an outbox status of processed with two dispatch attempts. Dispatcher and worker lifecycle
+logs show dispatch, task receipt, claim and finalization. The user republished the existing
+Celery task with a different task ID; the worker received it and the stored status and worker
+attempt count remained completed and one. The repeat dispatch/receipt did not create a second
+completed worker claim in the shown evidence. This exercises Redis/Celery at least once and
+idempotent handling of a duplicate after completion; it does not prove behavior under every
+failure or timing condition.
+
+An incognito request for the correct job showed `Authentication required`. The screenshot
+did not include the Network status code; 401 is inferred from the proxy's handling of the
+backend response. Tenant isolation, revocation, concurrent claims, retry and lease recovery
+were exercised in the previously reported disposable PostgreSQL suite of 145 passing tests.
+The prior host screenshot reported migration 0007 at head with no drift and a retained backup;
+the backup has not been independently restored. No AI inference, source retrieval, hypothesis
+or report was performed. No push, commit or paid call is reported. This verification is local
+and is not a production-readiness claim.
+
+## Sprint 4 checkpoint 4C — snapshot-fenced evidence preparation
+
+**SPRINT 4 CHECKPOINT 4C NOT YET VERIFIED.** New investigation jobs bind to an existing
+published tenant/repository snapshot at submission. The worker fetches fresh authorized issue
+metadata, checks issue identity/update time, rechecks repository access before searching and
+before publication, uses the shared PostgreSQL keyword statement, and validates the same
+snapshot and chunk fingerprints in the fenced publication transaction. Evidence references,
+query IDs/hashes, pinned query-builder version/limits and job completion are committed atomically. After revocation, unpublication,
+or a changed/missing chunk, the evidence API fails closed. Empty query/match outcomes and
+partial snapshots are explicitly identified. The application does not enforce source-row
+immutability at the database level; fingerprints detect subsequent changes at read time.
+
+Migration 0008 adds job snapshot/operation fields and an evidence table with ownership foreign
+keys and uniqueness constraints. Existing 4B jobs receive the legacy operation default, retaining
+snapshot-null semantics; a disposable SQLite upgrade test verified a populated completed 0007
+job and outbox survive. SQLite `alembic check` found no pending operations, but cannot reflect
+existing expression indexes and is not PostgreSQL evidence. The six-case synthetic dataset
+`apps/api/evaluation/investigation-evidence-v1.json` uses actual local Git commit
+`956a4f92983b222ce179891bbde39cb49a2022b2`; four positive evidence labels were matched to
+eligible source chunks. Its PostgreSQL evaluation test measures labeled top-10 hits, no-answer
+behavior, local Git citation/chunk consistency and direct-worker latency, but was skipped here.
+No evidence quality or latency scores have been measured in this environment. Query-builder
+version and query/result budgets are pinned at submission; the API flags truncated query input.
+
+Local backend suite: **159 passed, 12 PostgreSQL-only skipped**; Ruff passed. Frontend:
+**27 tests passed**, typecheck and lint passed. `git diff --check` passed. Docker access to the
+sandbox was denied. `apps/api/evaluation/run-4c-disposable.sh` prepares a new isolated
+PostgreSQL container/database, verifies its target and empty schema, runs tests and migration
+drift checks, and writes separate evaluation reports. The normal database was not migrated,
+no live 4C job was created, and no real Redis/Celery 4C result is claimed. A reviewed local
+migration helper and a one-job browser procedure are prepared but require separate approval.
+Existing issue #1 is a generic issue-context test; it may exercise the pipeline but is not a
+relevance benchmark. No paid models, embeddings, source reindex or AI conclusions were used.
+
+### Checkpoint 4C disposable PostgreSQL and synthetic evaluation — 2026-10-29
+
+The user supplied a host screenshot reporting the newly created, confirmed-empty database
+`repopilot_4c_disposable_9c07073a6ea041d4`, **171 PostgreSQL tests passed**, Ruff passed,
+Alembic **0008 (head)** and no pending operations. The separate saved
+`apps/api/evaluation/4c-evaluation-local.json` and `.md` record a six-case direct-worker
+PostgreSQL evaluation with mocked GitHub, dataset SHA-256
+`4a082e5bb5133f945693ed8f44be940e9f072d4cbc8532e422ee9f8ecd0aa202`, and local commit
+`956a4f92983b222ce179891bbde39cb49a2022b2`. Its disposable snapshot ID is
+`599acb53-e760-4e9a-ad43-ef27ee099003`, with 77 collected files and 349 nonempty chunks.
+
+Two of three positive cases had a labeled hit in the top 10: the exact identifier case at rank
+1 and the ambiguous case at rank 4. The natural-language webhook-signature case had no
+labeled hit in the top 10 despite 19 evidence candidates; the report does not establish whether
+a labeled item occurred later. The two synthetic no-match cases returned no candidates and
+`no_matches`; the malicious-text case returned `no_usable_queries`. Across 48 evidence items,
+the test recorded zero citation/chunk mismatches against local Git objects. The direct-worker
+latency p50/p95 was 28.239/68.736 ms over only six samples; the nearest-rank p95 is the maximum,
+not a load-test estimate. Labels are incomplete, so unlabeled results are not necessarily
+irrelevant. No real GitHub URL resolution, real Celery execution, semantic quality or AI
+reasoning was evaluated by this fixture. The original 4C preparation record above describes the
+previous sandbox state and is superseded by this host run for PostgreSQL tests and evaluation.
+
+The existing local application database has not been migrated to 0008 and no live 4C job has
+been created. A separate approval is required for each. **Checkpoint 4C remains NOT YET
+VERIFIED** until an approved real PostgreSQL/Redis/Celery job and citation evidence are observed.
+
+### Checkpoint 4C live verification approval and preflight preparation
+
+The user approved a fresh backup, additive migration 0008 and exactly one new local issue #1
+job. Docker is inaccessible from the agent sandbox, so no host operation has yet been executed
+by the agent. The reviewed 0008 upgrade adds investigation job columns, constraints and the
+new evidence table; its conventional downgrade removes them and is not authorized or used.
+The host helper checks the local Compose database and 0007 revision, the prior completed 4B
+job, an active published repository snapshot and absence of active issue #1 jobs; it creates
+and reads back a private dump before applying the upgrade. The prepared browser helper checks
+snapshot access via the authenticated API before submitting once. The evidence helper checks
+persisted snapshot/chunk ownership and fingerprints, and a separate local Git verifier compares
+file and chunk hashes, symbols and line ranges without printing source. A focused local Git
+verifier test passed, Ruff passed, and shell/JavaScript syntax checks passed. Remote GitHub
+citation resolution and live database, dispatcher, broker and worker results remain pending.
+
+The user subsequently supplied a host screenshot of the approved local migration procedure:
+local images built, the migration-container target/revision confirmed, Alembic `0008 (head)`
+with no pending upgrade operations, the post-migration target/revision and prior 4B job verified,
+and the API healthy with worker/dispatcher/web started. The output reported a fresh backup
+retained under `~/Library/Application Support/RepoPilot/backups/4c-*`. The screenshot starts
+partway through the procedure and does not itself show the initial snapshot/database preflight
+or archive-read output; the script is designed to stop if those checks fail. No independent
+test restore was performed. The approved single live 4C job and evidence remain pending.
+
+The user provided a browser screenshot of the authorized 4C check: published commit
+`63491908290e6874dbaaf2b15c2a96473aad1324`, newly submitted job
+`457d40bf-7e15-4e10-9a27-b8a0de9e513b`, snapshot
+`24e51533-c612-4833-921d-447cfed7df99`, and terminal `completed` status with one attempt,
+`code_evidence` operation and 20 candidate references with `ready` retrieval status. The issue
+is generic, so this is not evidence of meaningful relevance. The screenshot is authenticated
+API evidence; database/outbox, correlated Celery logs, duplicate replay, unauthorized status,
+local Git and remote citation checks remain pending. **Checkpoint 4C remains NOT YET VERIFIED.**
+
+The user then supplied host terminal output for job `457d40bf-7e15-4e10-9a27-b8a0de9e513b`:
+the application database reports `completed`, one worker attempt, no error, snapshot
+`24e51533-c612-4833-921d-447cfed7df99`, commit
+`63491908290e6874dbaaf2b15c2a96473aad1324`, and a processed outbox with three dispatch
+attempts. The correlated dispatcher and Celery logs show dispatch, task receipt, claim,
+evidence publication and finalization. Twenty distinct ranked evidence rows were present;
+a separately dispatched duplicate task was received and finished, with the same 20 chunk IDs,
+ranks and one worker attempt afterward. The local Git verifier confirmed that all 20 persisted
+chunk references match file hashes, symbols and inclusive ranges in the specified local Git
+commit. The user also reported an unauthenticated evidence request returning HTTP 401. The
+signed-in browser had already returned job status and evidence references.
+
+This is real local PostgreSQL/Redis/Celery orchestration and persisted evidence, not a relevance
+assessment: issue #1 is a generic test issue. The remote GitHub permalink was not checked by the
+local verifier, and an attempt to open the cited source through the agent's web tool failed to
+fetch it. User confirmation of a GitHub-hosted citation opening to the expected commit, file
+and lines remains outstanding. Until that citation check, **checkpoint 4C remains NOT YET
+VERIFIED**. The disposable suite previously reported 171 PostgreSQL tests passed and Alembic
+0008 without drift; backup retention was reported without a test restore.
+
+### Checkpoint 4C final local verification — 2026-10-29
+
+**SPRINT 4 CHECKPOINT 4C VERIFIED LOCALLY.** The user supplied GitHub screenshots of the
+returned `process_sync` citation: `apps/api/app/workers/tasks.py` at displayed commit
+`6349190`, with lines 74–147 highlighted. This verifies one GitHub-hosted citation; all 20
+persisted evidence chunks were separately checked against local Git objects, not individually
+opened on GitHub. The prior pending-citation verdict above is superseded by this evidence.
+
+The single authorized live 4C job was `457d40bf-7e15-4e10-9a27-b8a0de9e513b` for repository
+`1435878031`, issue 1, snapshot `24e51533-c612-4833-921d-447cfed7df99` and commit
+`63491908290e6874dbaaf2b15c2a96473aad1324`. The user-reported database and correlated
+logs show a completed job with one worker attempt, a processed outbox with three dispatch
+attempts, real dispatcher and Celery receipt/claim/publication, and 20 persisted chunk
+references. A duplicate task replay left the same evidence rows and attempt count. Authorized
+status/evidence reads succeeded and an unauthenticated evidence request returned HTTP 401.
+The user-reported disposable PostgreSQL suite passed 171 tests; Ruff passed, and migration
+0008 was at head without drift. The host procedure reported a retained backup; it was not
+independently test-restored.
+
+The live issue is generic and the returned candidates are not judged relevant. In the separate
+six-case synthetic evaluation, two of three positive cases had a labeled top-10 hit, with no
+labeled top-10 hit for the natural-language case; labels are incomplete. No semantic quality,
+AI inference, hypotheses or reports were evaluated. Local verification is not a claim of
+production readiness or that every remote citation was individually opened.
+
+### Checkpoint 4D mock reports — 2026-10-29
+
+**SPRINT 4 CHECKPOINT 4D NOT YET VERIFIED.** The working tree now contains an explicit,
+separately requested report task for an authorized completed 4C investigation. Submission
+checks session, CSRF, current tenant/repository/installation access and the still-published
+snapshot, and atomically inserts the task and its outbox row. A unique investigation-to-task
+constraint makes repeated requests reuse the same task; failed or cancelled tasks do not have
+an automatic restart endpoint. Existing 4B/4C jobs are not reprocessed. The worker claims a
+lease, fetches bounded fresh issue context, checks issue identity/update time and current
+authorization, projects the existing evidence into bounded mock input, and rechecks access,
+snapshot, chunk fingerprints and the lease before publishing one report and terminal state
+in a single transaction. No database transaction is held during model execution. The report
+read API checks current authorization and verified evidence again, with local session,
+revocation and snapshot locks acquired after the remote check; no report is returned for an
+unsuccessful or partial task.
+
+Only the deterministic `mock` / `deterministic-v1` in-process model is selectable; it does
+not perform diagnostic reasoning. The API labels its output accordingly. Reports identify the
+job, repository, issue, snapshot, commit and provider and include a summary, ordered possible
+causes, supporting and contradictory evidence, missing information, high uncertainty,
+diagnostic next steps, warnings, usage metadata and creation time. Model output may reference
+only verified chunks belonging to the parent job, using their exact snapshot, commit and
+inclusive line boundaries; duplicate, foreign, malformed and fabricated references are
+rejected. URLs, paths and symbols come from verified server-side evidence, not the model.
+Evidence-backed claims remain speculative, and a claim with no support is unsupported.
+An empty evidence set can produce a valid report with no hypotheses.
+
+The package is limited to eight evidence items, 800 UTF-8 bytes per sanitized source excerpt,
+10,000 bytes of sanitized text, 32,000 bytes of serialized input, three hypotheses and 16,000
+bytes of model output; rendered reports are capped at 60,000 bytes. No source excerpts or raw
+model inputs are persisted in reports or returned by their API. Common sensitive patterns,
+source literals and comments are redacted; the active GitHub token, session hash, configured
+secret values and database/Redis passwords are checked against the projected package and
+validated report output.
+This is best-effort redaction, not proof that arbitrary secrets cannot occur in source or
+metadata. Untrusted issue/source text has no tools, shell or
+GitHub write capability in the mock. These safeguards and mock tests do not establish that a
+future real model would resist prompt injection or be safe to send repository data to.
+
+Actual local checks in this workspace: backend pytest **203 passed, 14 skipped** because
+PostgreSQL-specific locks, full-text, vector, migration and sequence checks require a real
+PostgreSQL database. The populated 0007 → 0008 → 0009 preservation and `alembic check`
+passed on a disposable SQLite database; SQLite cannot establish PostgreSQL migration drift or
+locking correctness. Ruff passed. Frontend proxy tests: **28 passed**; TypeScript typecheck
+and ESLint passed. Shell syntax checks passed, and the prepared normal-database migration
+helper failed closed when its explicit approval acknowledgement was absent. The full
+PostgreSQL suite and PostgreSQL Alembic drift check have **not** run for 0009 in this sandbox.
+
+The separate `mock-report-v1` evaluation produced seven valid structured outputs out of nine
+model cases, rejected both intentionally invalid outputs, validated six synthetic references,
+and observed one persisted report/one worker attempt after a duplicate direct delivery. A
+mocked revoked-access read returned 404. The measured in-process model/validation latency
+p50/p95 was **0.137/0.346 ms** over nine synthetic cases; this is not a service or load test.
+The exact case outcomes and dataset hash are in `apps/api/evaluation/4d-evaluation-local.md`
+and `.json`. It does not assess cause accuracy, remote citation resolution or real Celery.
+The earlier 4C retrieval evaluation remains separate and its natural-language miss remains.
+
+Migration `0009` adds report jobs, report outbox and reports, with composite ownership and
+uniqueness constraints; its upgrade contains no table drops or data updates. Its downgrade
+would remove the new tables and was not executed. The normal application database was not
+migrated for 4D and no 4D report task or live investigation job was submitted. Docker access
+is restricted in the agent sandbox. On the Mac host, the following runs tests and migrations
+only against a **new**, checked-empty disposable PostgreSQL container/database and retains
+its volume; it does not create a live task:
+
+```sh
+cd "/Volumes/Samsung SSD/Project/RepoPilot"
+bash apps/api/evaluation/run-4d-disposable.sh
+```
+
+After those checks pass, a separate approval is required to back up and migrate the normal
+local database to 0009, rebuild/restart local services, and create one mock report task for
+completed 4C job `457d40bf-7e15-4e10-9a27-b8a0de9e513b`. The prepared
+`run-4d-local-migration.sh` verifies the target, prior job/snapshot/evidence and reviewed
+migration hash, creates and reads a private backup, then migrates; the backup would still need
+an independent test restore to establish recoverability. Its acknowledgement flag is an
+additional guard, not user authorization. `investigation-4d-live-check.js` is a prepared
+one-submission browser procedure and `investigation-4d-evidence.sh` reads correlated task,
+outbox and allowlisted lifecycle logs. Neither has been executed. Actual PostgreSQL
+locking/drift, dispatcher/Redis/Celery execution, authorized report read and unauthenticated
+rejection remain required before closing 4D.
+
+### Checkpoint 4D approved local verification preparation — 2026-10-29
+
+The user has now approved a fresh backup, local application migration 0009, local service
+restart and exactly one mock report task for completed 4C investigation
+`457d40bf-7e15-4e10-9a27-b8a0de9e513b`. This supersedes the approval requirement in the
+preceding historical entry; it does not authorize another investigation job, a reindex or a
+real provider. Docker remains inaccessible from the agent sandbox, so no backup, migration,
+service restart or live report task has been performed by the agent in this step.
+
+Code review confirms that 0009's **upgrade** creates three new report tables, their constraints
+and an outbox index; it does not change existing investigation rows. The report submission
+creates a separate report job and outbox event, while the report worker reads the completed
+4C job and its evidence and does not reopen or mutate them. A focused regression test checks
+that the parent status, attempts, timestamps, snapshot and evidence remain unchanged after
+report processing. The host migration helper now also checks the expected local database,
+0008 revision, all three report tables being absent, published snapshot and 20 existing
+evidence rows, processed 4C outbox and existing non-revoked guards before making a backup.
+It validates the backup archive before migration and checks that both prior jobs and evidence
+remain present afterward. The archive-read check is not an independent test restore.
+
+The disposable host runner now fails if any tests are skipped and runs the browser-helper
+tests before any normal-database migration. Three local browser-helper tests passed: one POST
+with valid evidence, no POST if the parent changed or a report exists, and failure on a bad
+citation without resubmission. Focused report/migration tests passed **27**, with **3**
+PostgreSQL-only skips in this sandbox; Ruff and shell/JavaScript syntax checks passed. A
+separate probe confirmed that the disposable runner's test gate rejects skipped tests. The
+host browser helper checks the original job before and after the report and compares each
+returned citation to authorized evidence. The read-only evidence helper validates the
+persisted report, snapshot, evidence fingerprints and reference ranges and prints only
+identifiers, counts and allowlisted lifecycle log fields. None of these host procedures has
+been executed here. The PostgreSQL results, fresh backup, 0009 migration and real report
+execution remain pending; **checkpoint 4D remains NOT YET VERIFIED**.
+
+### Checkpoint 4D authenticated browser result — 2026-10-29
+
+The user supplied a screenshot of the approved browser helper submitting mock report task
+`0bc440d3-0a4e-41fc-94f4-c0f3763deac6` for the existing 4C investigation. The authenticated
+report API returned `completed` with one attempt. The helper reported that one report citation
+matched the authorized evidence response and that the original 4C job's checked state was
+unchanged. The displayed 404 occurred during the helper's expected pre-submission check that
+no report existed; it preceded the successful submission.
+
+The user subsequently reported an unauthenticated report request returning HTTP 401. The
+evidence script printed its UUID usage message and did not return database or log evidence;
+the actual report task UUID above must be supplied to run it. The screenshot and 401 do not
+show the backup or disposable PostgreSQL test output, the persisted report ID and outbox row,
+or correlated dispatcher/worker logs. Those host results are still needed to verify real
+orchestration and close checkpoint 4D. **SPRINT 4 CHECKPOINT 4D NOT YET VERIFIED.**
+
+### Checkpoint 4D real report orchestration evidence — 2026-10-29
+
+The user supplied the read-only host evidence output for report task
+`0bc440d3-0a4e-41fc-94f4-c0f3763deac6` and parent investigation
+`457d40bf-7e15-4e10-9a27-b8a0de9e513b`. The application database reported one completed
+report, ID `dbcbaa32-6330-475a-9da9-7bbb0f8e3305`, using `mock` / `deterministic-v1`.
+The task had one worker attempt and a processed outbox with three dispatch attempts.
+Correlated logs show dispatch, worker receipt and claim, and completion. Multiple deliveries
+were observed, while the database retained one report and one worker attempt.
+
+The host verification checked that the completed parent still had one attempt and 20 evidence
+items, and that the report's one reference matched the persisted evidence and its fingerprint
+for published snapshot `24e51533-c612-4833-921d-447cfed7df99`, commit
+`63491908290e6874dbaaf2b15c2a96473aad1324`. The signed-in browser also reported its comparison
+of the citation to authorized evidence and unchanged parent state; an unauthenticated report
+request returned 401. These checks demonstrate local mock-report orchestration, not real AI
+reasoning or root-cause quality.
+
+A backup file was observed at `~/Library/Application Support/RepoPilot/backups/4d-GuxVsW/`
+with size 241,480 bytes. File existence alone does not verify the archive or a restore. The
+saved synthetic evaluation output was updated on the host; its current p50/p95 values are
+0.390/0.749 ms for nine in-process mock cases, not a service benchmark. The earlier recorded
+0.137/0.346 ms values refer to a different sandbox run. The saved evaluation file does not
+establish the full disposable PostgreSQL test result. The disposable test output, archive-read
+confirmation and application Alembic current/drift output remain to be reviewed. Until that
+evidence is available, **SPRINT 4 CHECKPOINT 4D NOT YET VERIFIED.**
+
+### Checkpoint 4D final local verification — 2026-10-29
+
+**SPRINT 4 CHECKPOINT 4D VERIFIED LOCALLY.** The user supplied a screenshot of the host
+verification command completing. It shows the disposable runner's final retained-container
+message for `repopilot-4d-disposable-af47e657cfdf3b87`, followed by application Alembic
+`0009 (head)`, no pending upgrade operations, and successful backup-archive reading. The
+test-count line is not visible in the screenshot. From the reviewed runner's fail-closed
+control flow, reaching that final message implies that its checked-empty disposable
+PostgreSQL preflight, full pytest suite without skips, browser-helper tests, Ruff, disposable
+Alembic upgrade/check and `git diff --check` succeeded. This is an inference from the shown
+completion marker and script, not an independently observed test count. The container and
+volume were retained. The backup was read as an archive; it was not independently restored.
+
+The matching saved synthetic `mock-report-v1` evaluation contains seven valid reports, two
+rejected invalid outputs and six validated synthetic references. It reports one persisted
+report and one worker attempt after a duplicate direct delivery, plus a mocked revoked-access
+HTTP 404. Its nine in-process samples had p50/p95 validation latency of 0.585/1.197 ms;
+this is neither a service load measurement nor an assessment of diagnostic accuracy.
+
+The separate real local PostgreSQL/outbox/Redis/Celery evidence immediately above shows report
+`dbcbaa32-6330-475a-9da9-7bbb0f8e3305` completed through the approved report task, with one
+worker attempt, three outbox dispatch attempts and one persisted report. Its one cited chunk
+matched the authorized parent investigation's published snapshot and fingerprint. The parent
+job remained completed and unchanged in the browser check, the signed-in report API returned
+the report, and an unauthenticated request returned HTTP 401. The earlier pending verdicts
+are superseded by this evidence.
+
+This verifies mock orchestration and evidence grounding locally. The generic issue does not
+establish issue-to-code relevance, the mock performs no real reasoning, and the report's
+individual GitHub citation was not independently opened remotely in this 4D run. Secret
+redaction is best effort. No paid model was enabled or called, and no test restore was made.

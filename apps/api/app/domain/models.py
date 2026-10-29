@@ -316,3 +316,167 @@ class EmbeddingJob(Base):
               postgresql_where=text("status IN ('pending', 'running')"),
               sqlite_where=text("status IN ('pending', 'running')")),
     )
+
+
+class InvestigationJob(Base):
+    __tablename__ = "investigation_jobs"
+    id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    repository_id: Mapped[int] = mapped_column(BigInteger)
+    tenant_id: Mapped[int] = mapped_column(Integer)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
+    session_hash: Mapped[str] = mapped_column(ForeignKey("auth_sessions.id_hash"))
+    issue_id: Mapped[int] = mapped_column(BigInteger)
+    issue_number: Mapped[int] = mapped_column(Integer)
+    operation: Mapped[str] = mapped_column(String(30), default="mock_orchestration", server_default="mock_orchestration")
+    snapshot_id: Mapped[str | None] = mapped_column(String(36))
+    snapshot_commit_sha: Mapped[str | None] = mapped_column(String(40))
+    source_repository_name: Mapped[str | None] = mapped_column(String(250))
+    retrieval_warning: Mapped[str | None] = mapped_column(String(40))
+    query_version: Mapped[str | None] = mapped_column(String(30))
+    query_limit: Mapped[int | None] = mapped_column(Integer)
+    per_query_limit: Mapped[int | None] = mapped_column(Integer)
+    evidence_limit: Mapped[int | None] = mapped_column(Integer)
+    query_body_limit: Mapped[int | None] = mapped_column(Integer)
+    query_input_truncated: Mapped[bool | None] = mapped_column(Boolean)
+    issue_updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    context_retrieved_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    status: Mapped[str] = mapped_column(String(20), default="queued")
+    attempts: Mapped[int] = mapped_column(Integer, default=0)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=now)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=now)
+    started_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    completed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    lease_token: Mapped[str | None] = mapped_column(String(36))
+    lease_expires_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    error_code: Mapped[str | None] = mapped_column(String(80))
+    __table_args__ = (
+        ForeignKeyConstraint(["repository_id", "tenant_id"], ["repositories.id", "repositories.tenant_id"]),
+        UniqueConstraint("id", "repository_id", "tenant_id"),
+        UniqueConstraint("id", "snapshot_id", "repository_id", "tenant_id", name="uq_investigation_snapshot_owner"),
+        ForeignKeyConstraint(["snapshot_id", "repository_id", "tenant_id"],
+                             ["code_snapshots.id", "code_snapshots.repository_id", "code_snapshots.tenant_id"],
+                             name="fk_investigation_snapshot_owner"),
+        CheckConstraint("(operation = 'mock_orchestration' AND snapshot_id IS NULL AND snapshot_commit_sha IS NULL AND source_repository_name IS NULL AND query_version IS NULL) OR (operation = 'code_evidence' AND snapshot_id IS NOT NULL AND snapshot_commit_sha IS NOT NULL AND source_repository_name IS NOT NULL AND query_version IS NOT NULL AND query_limit IS NOT NULL AND query_limit BETWEEN 1 AND 3 AND per_query_limit IS NOT NULL AND per_query_limit BETWEEN 1 AND 20 AND evidence_limit IS NOT NULL AND evidence_limit BETWEEN 1 AND 30 AND query_body_limit IS NOT NULL AND query_body_limit BETWEEN 1 AND 4000)", name="ck_investigation_operation_snapshot"),
+        CheckConstraint("issue_number > 0 AND issue_id > 0 AND attempts >= 0"),
+        CheckConstraint("status IN ('queued', 'running', 'completed', 'failed', 'cancelled')"),
+        Index("uq_investigation_active", "tenant_id", "user_id", "repository_id", "issue_number", unique=True,
+              postgresql_where=text("status IN ('queued', 'running')"),
+              sqlite_where=text("status IN ('queued', 'running')")),
+    )
+
+
+class InvestigationOutbox(Base):
+    __tablename__ = "investigation_outbox"
+    job_id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    repository_id: Mapped[int] = mapped_column(BigInteger)
+    tenant_id: Mapped[int] = mapped_column(Integer)
+    status: Mapped[str] = mapped_column(String(20), default="pending")
+    attempts: Mapped[int] = mapped_column(Integer, default=0)
+    next_dispatch_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=now)
+    __table_args__ = (
+        ForeignKeyConstraint(["job_id", "repository_id", "tenant_id"],
+                             ["investigation_jobs.id", "investigation_jobs.repository_id", "investigation_jobs.tenant_id"]),
+        CheckConstraint("status IN ('pending', 'processed') AND attempts >= 0"),
+        Index("ix_investigation_outbox_dispatch", "status", "next_dispatch_at"),
+    )
+
+
+class InvestigationEvidence(Base):
+    __tablename__ = "investigation_evidence"
+    id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    job_id: Mapped[str] = mapped_column(String(36))
+    snapshot_id: Mapped[str] = mapped_column(String(36))
+    repository_id: Mapped[int] = mapped_column(BigInteger)
+    tenant_id: Mapped[int] = mapped_column(Integer)
+    chunk_id: Mapped[str] = mapped_column(String(36))
+    rank: Mapped[int] = mapped_column(Integer)
+    query_id: Mapped[str] = mapped_column(String(40))
+    query_hash: Mapped[str] = mapped_column(String(64))
+    chunk_fingerprint: Mapped[str] = mapped_column(String(64))
+    query_rank: Mapped[int] = mapped_column(Integer)
+    method: Mapped[str] = mapped_column(String(20), default="keyword")
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=now)
+    __table_args__ = (
+        ForeignKeyConstraint(["job_id", "snapshot_id", "repository_id", "tenant_id"],
+            ["investigation_jobs.id", "investigation_jobs.snapshot_id", "investigation_jobs.repository_id", "investigation_jobs.tenant_id"],
+            name="fk_evidence_investigation_snapshot"),
+        ForeignKeyConstraint(["chunk_id", "repository_id", "tenant_id"],
+            ["code_chunks.id", "code_chunks.repository_id", "code_chunks.tenant_id"], name="fk_evidence_chunk_owner"),
+        UniqueConstraint("job_id", "chunk_id", name="uq_evidence_job_chunk"),
+        UniqueConstraint("job_id", "rank", name="uq_evidence_job_rank"),
+        CheckConstraint("rank > 0 AND query_rank > 0 AND method = 'keyword'", name="ck_evidence_rank_method"),
+    )
+
+
+class InvestigationReportJob(Base):
+    __tablename__ = "investigation_report_jobs"
+    id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    investigation_id: Mapped[str] = mapped_column(String(36))
+    snapshot_id: Mapped[str] = mapped_column(String(36))
+    repository_id: Mapped[int] = mapped_column(BigInteger)
+    tenant_id: Mapped[int] = mapped_column(Integer)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
+    session_hash: Mapped[str] = mapped_column(ForeignKey("auth_sessions.id_hash"))
+    status: Mapped[str] = mapped_column(String(20), default="queued")
+    attempts: Mapped[int] = mapped_column(Integer, default=0)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=now)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=now)
+    started_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    completed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    lease_token: Mapped[str | None] = mapped_column(String(36))
+    lease_expires_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    error_code: Mapped[str | None] = mapped_column(String(80))
+    __table_args__ = (
+        ForeignKeyConstraint(["investigation_id", "snapshot_id", "repository_id", "tenant_id"],
+            ["investigation_jobs.id", "investigation_jobs.snapshot_id", "investigation_jobs.repository_id", "investigation_jobs.tenant_id"],
+            name="fk_report_job_investigation_snapshot"),
+        UniqueConstraint("investigation_id", name="uq_report_job_investigation"),
+        UniqueConstraint("id", "repository_id", "tenant_id", name="uq_report_job_owner"),
+        UniqueConstraint("id", "investigation_id", "snapshot_id", "repository_id", "tenant_id", name="uq_report_job_full_owner"),
+        CheckConstraint("status IN ('queued', 'running', 'completed', 'failed', 'cancelled') AND attempts >= 0", name="ck_report_job_status"),
+    )
+
+
+class InvestigationReportOutbox(Base):
+    __tablename__ = "investigation_report_outbox"
+    job_id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    repository_id: Mapped[int] = mapped_column(BigInteger)
+    tenant_id: Mapped[int] = mapped_column(Integer)
+    status: Mapped[str] = mapped_column(String(20), default="pending")
+    attempts: Mapped[int] = mapped_column(Integer, default=0)
+    next_dispatch_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=now)
+    __table_args__ = (
+        ForeignKeyConstraint(["job_id", "repository_id", "tenant_id"],
+            ["investigation_report_jobs.id", "investigation_report_jobs.repository_id", "investigation_report_jobs.tenant_id"],
+            name="fk_report_outbox_owner"),
+        CheckConstraint("status IN ('pending', 'processed') AND attempts >= 0", name="ck_report_outbox_status"),
+        Index("ix_report_outbox_dispatch", "status", "next_dispatch_at"),
+    )
+
+
+class InvestigationReport(Base):
+    __tablename__ = "investigation_reports"
+    id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    report_job_id: Mapped[str] = mapped_column(String(36))
+    investigation_id: Mapped[str] = mapped_column(String(36))
+    snapshot_id: Mapped[str] = mapped_column(String(36))
+    repository_id: Mapped[int] = mapped_column(BigInteger)
+    tenant_id: Mapped[int] = mapped_column(Integer)
+    commit_sha: Mapped[str] = mapped_column(String(40))
+    provider: Mapped[str] = mapped_column(String(40))
+    model: Mapped[str] = mapped_column(String(80))
+    payload: Mapped[dict] = mapped_column(JSON)
+    input_tokens: Mapped[int | None] = mapped_column(Integer)
+    output_tokens: Mapped[int | None] = mapped_column(Integer)
+    cost_microusd: Mapped[int | None] = mapped_column(Integer)
+    input_truncated: Mapped[bool] = mapped_column(Boolean)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=now)
+    __table_args__ = (
+        ForeignKeyConstraint(["report_job_id", "investigation_id", "snapshot_id", "repository_id", "tenant_id"],
+            ["investigation_report_jobs.id", "investigation_report_jobs.investigation_id", "investigation_report_jobs.snapshot_id", "investigation_report_jobs.repository_id", "investigation_report_jobs.tenant_id"],
+            name="fk_report_job_full_owner"),
+        UniqueConstraint("investigation_id", name="uq_report_investigation"),
+        UniqueConstraint("report_job_id", name="uq_report_job"),
+        CheckConstraint("provider = 'mock' AND model = 'deterministic-v1'", name="ck_report_mock_provider"),
+        CheckConstraint("(input_tokens IS NULL OR input_tokens >= 0) AND (output_tokens IS NULL OR output_tokens >= 0) AND (cost_microusd IS NULL OR cost_microusd >= 0)", name="ck_report_usage"),
+    )

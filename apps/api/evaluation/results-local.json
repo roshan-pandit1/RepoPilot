@@ -1,0 +1,1208 @@
+{
+  "dataset_commit": "63491908290e6874dbaaf2b15c2a96473aad1324",
+  "repository": "roshan-pandit1/RepoPilot",
+  "configuration": {
+    "provider": "fake",
+    "model": "deterministic-hash",
+    "dimensions": 32,
+    "embedding_ready": false,
+    "limit": 10,
+    "quality_label": "MECHANICAL TEST ONLY for fake semantic/hybrid"
+  },
+  "modes": {
+    "keyword": {
+      "queries": [
+        {
+          "id": "sync",
+          "question": "Where is repository issue synchronization handled?",
+          "recall": {
+            "1": 0.0,
+            "3": 0.0,
+            "5": 0.0,
+            "10": 0.0
+          },
+          "reciprocal_rank": 0,
+          "ndcg_at_10": 0.0,
+          "relevant_ranks": [],
+          "returned": 0,
+          "invalid_citations": 0,
+          "fallback": false,
+          "effective_mode": "keyword",
+          "latency_ms": 1158,
+          "top_result": null
+        },
+        {
+          "id": "signature",
+          "question": "How are webhook signatures verified?",
+          "recall": {
+            "1": 0.0,
+            "3": 0.0,
+            "5": 0.0,
+            "10": 0.0
+          },
+          "reciprocal_rank": 0,
+          "ndcg_at_10": 0.0,
+          "relevant_ranks": [],
+          "returned": 0,
+          "invalid_citations": 0,
+          "fallback": false,
+          "effective_mode": "keyword",
+          "latency_ms": 1426.6,
+          "top_result": null
+        },
+        {
+          "id": "webhook",
+          "question": "Where are webhook request bodies and signatures checked?",
+          "recall": {
+            "1": 0.0,
+            "3": 0.0,
+            "5": 0.0,
+            "10": 0.0
+          },
+          "reciprocal_rank": 0,
+          "ndcg_at_10": 0.0,
+          "relevant_ranks": [],
+          "returned": 0,
+          "invalid_citations": 0,
+          "fallback": false,
+          "effective_mode": "keyword",
+          "latency_ms": 1296.9,
+          "top_result": null
+        },
+        {
+          "id": "dispatch",
+          "question": "Where are queued issue and synchronization jobs dispatched?",
+          "recall": {
+            "1": 0.0,
+            "3": 0.0,
+            "5": 0.0,
+            "10": 0.0
+          },
+          "reciprocal_rank": 0,
+          "ndcg_at_10": 0.0,
+          "relevant_ranks": [],
+          "returned": 0,
+          "invalid_citations": 0,
+          "fallback": false,
+          "effective_mode": "keyword",
+          "latency_ms": 1133.2,
+          "top_result": null
+        },
+        {
+          "id": "authorization",
+          "question": "How is current repository access enforced?",
+          "recall": {
+            "1": 0.0,
+            "3": 0.0,
+            "5": 0.0,
+            "10": 0.0
+          },
+          "reciprocal_rank": 0,
+          "ndcg_at_10": 0.0,
+          "relevant_ranks": [],
+          "returned": 0,
+          "invalid_citations": 0,
+          "fallback": false,
+          "effective_mode": "keyword",
+          "latency_ms": 1296.9,
+          "top_result": null
+        },
+        {
+          "id": "tenant",
+          "question": "Where are enabled repositories scoped to a tenant?",
+          "recall": {
+            "1": 0.0,
+            "3": 0.0,
+            "5": 0.0,
+            "10": 0.0
+          },
+          "reciprocal_rank": 0,
+          "ndcg_at_10": 0.0,
+          "relevant_ranks": [],
+          "returned": 0,
+          "invalid_citations": 0,
+          "fallback": false,
+          "effective_mode": "keyword",
+          "latency_ms": 1052.8,
+          "top_result": null
+        },
+        {
+          "id": "csrf",
+          "question": "How are state-changing requests protected against CSRF?",
+          "recall": {
+            "1": 0.0,
+            "3": 0.0,
+            "5": 0.0,
+            "10": 0.0
+          },
+          "reciprocal_rank": 0,
+          "ndcg_at_10": 0.0,
+          "relevant_ranks": [],
+          "returned": 0,
+          "invalid_citations": 0,
+          "fallback": false,
+          "effective_mode": "keyword",
+          "latency_ms": 1177.6,
+          "top_result": null
+        },
+        {
+          "id": "principal",
+          "question": "How is an authenticated session resolved?",
+          "recall": {
+            "1": 0.0,
+            "3": 0.0,
+            "5": 0.0,
+            "10": 0.0
+          },
+          "reciprocal_rank": 0,
+          "ndcg_at_10": 0.0,
+          "relevant_ranks": [],
+          "returned": 0,
+          "invalid_citations": 0,
+          "fallback": false,
+          "effective_mode": "keyword",
+          "latency_ms": 1295.8,
+          "top_result": null
+        },
+        {
+          "id": "login",
+          "question": "Where does GitHub OAuth login begin with PKCE?",
+          "recall": {
+            "1": 0.0,
+            "3": 0.0,
+            "5": 0.0,
+            "10": 0.0
+          },
+          "reciprocal_rank": 0,
+          "ndcg_at_10": 0.0,
+          "relevant_ranks": [],
+          "returned": 0,
+          "invalid_citations": 0,
+          "fallback": false,
+          "effective_mode": "keyword",
+          "latency_ms": 1137.2,
+          "top_result": null
+        },
+        {
+          "id": "callback",
+          "question": "Where is the GitHub OAuth callback verified?",
+          "recall": {
+            "1": 0.0,
+            "3": 0.0,
+            "5": 0.0,
+            "10": 0.0
+          },
+          "reciprocal_rank": 0,
+          "ndcg_at_10": 0.0,
+          "relevant_ranks": [],
+          "returned": 0,
+          "invalid_citations": 0,
+          "fallback": false,
+          "effective_mode": "keyword",
+          "latency_ms": 1272.3,
+          "top_result": null
+        },
+        {
+          "id": "logout",
+          "question": "How is a user session revoked when signing out?",
+          "recall": {
+            "1": 0.0,
+            "3": 0.0,
+            "5": 0.0,
+            "10": 0.0
+          },
+          "reciprocal_rank": 0,
+          "ndcg_at_10": 0.0,
+          "relevant_ranks": [],
+          "returned": 0,
+          "invalid_citations": 0,
+          "fallback": false,
+          "effective_mode": "keyword",
+          "latency_ms": 1260.8,
+          "top_result": null
+        },
+        {
+          "id": "enroll",
+          "question": "How is a personal GitHub installation enrolled?",
+          "recall": {
+            "1": 0.0,
+            "3": 0.0,
+            "5": 0.0,
+            "10": 0.0
+          },
+          "reciprocal_rank": 0,
+          "ndcg_at_10": 0.0,
+          "relevant_ranks": [],
+          "returned": 0,
+          "invalid_citations": 0,
+          "fallback": false,
+          "effective_mode": "keyword",
+          "latency_ms": 1533.1,
+          "top_result": null
+        },
+        {
+          "id": "choose",
+          "question": "Where is a public repository selected for an installation?",
+          "recall": {
+            "1": 0.0,
+            "3": 0.0,
+            "5": 0.0,
+            "10": 0.0
+          },
+          "reciprocal_rank": 0,
+          "ndcg_at_10": 0.0,
+          "relevant_ranks": [],
+          "returned": 0,
+          "invalid_citations": 0,
+          "fallback": false,
+          "effective_mode": "keyword",
+          "latency_ms": 1251.8,
+          "top_result": null
+        },
+        {
+          "id": "installations",
+          "question": "Where are personal GitHub installations verified?",
+          "recall": {
+            "1": 0.0,
+            "3": 0.0,
+            "5": 0.0,
+            "10": 0.0
+          },
+          "reciprocal_rank": 0,
+          "ndcg_at_10": 0.0,
+          "relevant_ranks": [],
+          "returned": 0,
+          "invalid_citations": 0,
+          "fallback": false,
+          "effective_mode": "keyword",
+          "latency_ms": 1133.5,
+          "top_result": null
+        },
+        {
+          "id": "visible",
+          "question": "How does the app check visible GitHub repositories?",
+          "recall": {
+            "1": 0.0,
+            "3": 0.0,
+            "5": 0.0,
+            "10": 0.0
+          },
+          "reciprocal_rank": 0,
+          "ndcg_at_10": 0.0,
+          "relevant_ranks": [],
+          "returned": 0,
+          "invalid_citations": 0,
+          "fallback": false,
+          "effective_mode": "keyword",
+          "latency_ms": 1305.6,
+          "top_result": null
+        },
+        {
+          "id": "accept",
+          "question": "Where are webhook delivery and outbox records written?",
+          "recall": {
+            "1": 0.0,
+            "3": 0.0,
+            "5": 0.0,
+            "10": 0.0
+          },
+          "reciprocal_rank": 0,
+          "ndcg_at_10": 0.0,
+          "relevant_ranks": [],
+          "returned": 0,
+          "invalid_citations": 0,
+          "fallback": false,
+          "effective_mode": "keyword",
+          "latency_ms": 1327,
+          "top_result": null
+        },
+        {
+          "id": "process",
+          "question": "Where are queued webhook issue events applied?",
+          "recall": {
+            "1": 0.0,
+            "3": 0.0,
+            "5": 0.0,
+            "10": 0.0
+          },
+          "reciprocal_rank": 0,
+          "ndcg_at_10": 0.0,
+          "relevant_ranks": [],
+          "returned": 0,
+          "invalid_citations": 0,
+          "fallback": false,
+          "effective_mode": "keyword",
+          "latency_ms": 1143.6,
+          "top_result": null
+        },
+        {
+          "id": "revoke",
+          "question": "Where are installation and repository revocations handled?",
+          "recall": {
+            "1": 0.0,
+            "3": 0.0,
+            "5": 0.0,
+            "10": 0.0
+          },
+          "reciprocal_rank": 0,
+          "ndcg_at_10": 0.0,
+          "relevant_ranks": [],
+          "returned": 0,
+          "invalid_citations": 0,
+          "fallback": false,
+          "effective_mode": "keyword",
+          "latency_ms": 1223.8,
+          "top_result": null
+        },
+        {
+          "id": "health",
+          "question": "How does the application check database and Redis readiness?",
+          "recall": {
+            "1": 0.0,
+            "3": 0.0,
+            "5": 0.0,
+            "10": 0.0
+          },
+          "reciprocal_rank": 0,
+          "ndcg_at_10": 0.0,
+          "relevant_ranks": [],
+          "returned": 0,
+          "invalid_citations": 0,
+          "fallback": false,
+          "effective_mode": "keyword",
+          "latency_ms": 1118.2,
+          "top_result": null
+        },
+        {
+          "id": "delivery",
+          "question": "Where are duplicate webhook deliveries represented?",
+          "recall": {
+            "1": 0.0,
+            "3": 0.0,
+            "5": 0.0,
+            "10": 0.0
+          },
+          "reciprocal_rank": 0,
+          "ndcg_at_10": 0.0,
+          "relevant_ranks": [],
+          "returned": 0,
+          "invalid_citations": 0,
+          "fallback": false,
+          "effective_mode": "keyword",
+          "latency_ms": 1053.6,
+          "top_result": null
+        }
+      ],
+      "recall": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.0,
+        "10": 0.0
+      },
+      "mrr": 0,
+      "ndcg_at_10": 0.0,
+      "no_relevant": 20,
+      "fallback_count": 0,
+      "total_results": 0,
+      "invalid_citations": 0,
+      "latency_p50_ms": 1223.8,
+      "latency_p95_ms": 1426.6
+    },
+    "semantic": {
+      "queries": [
+        {
+          "id": "sync",
+          "question": "Where is repository issue synchronization handled?",
+          "recall": {
+            "1": 0.0,
+            "3": 0.0,
+            "5": 0.0,
+            "10": 0.0
+          },
+          "reciprocal_rank": 0,
+          "ndcg_at_10": 0.0,
+          "relevant_ranks": [],
+          "returned": 0,
+          "invalid_citations": 0,
+          "fallback": true,
+          "effective_mode": "keyword",
+          "latency_ms": 1099.2,
+          "top_result": null
+        },
+        {
+          "id": "signature",
+          "question": "How are webhook signatures verified?",
+          "recall": {
+            "1": 0.0,
+            "3": 0.0,
+            "5": 0.0,
+            "10": 0.0
+          },
+          "reciprocal_rank": 0,
+          "ndcg_at_10": 0.0,
+          "relevant_ranks": [],
+          "returned": 0,
+          "invalid_citations": 0,
+          "fallback": true,
+          "effective_mode": "keyword",
+          "latency_ms": 1113,
+          "top_result": null
+        },
+        {
+          "id": "webhook",
+          "question": "Where are webhook request bodies and signatures checked?",
+          "recall": {
+            "1": 0.0,
+            "3": 0.0,
+            "5": 0.0,
+            "10": 0.0
+          },
+          "reciprocal_rank": 0,
+          "ndcg_at_10": 0.0,
+          "relevant_ranks": [],
+          "returned": 0,
+          "invalid_citations": 0,
+          "fallback": true,
+          "effective_mode": "keyword",
+          "latency_ms": 1080,
+          "top_result": null
+        },
+        {
+          "id": "dispatch",
+          "question": "Where are queued issue and synchronization jobs dispatched?",
+          "recall": {
+            "1": 0.0,
+            "3": 0.0,
+            "5": 0.0,
+            "10": 0.0
+          },
+          "reciprocal_rank": 0,
+          "ndcg_at_10": 0.0,
+          "relevant_ranks": [],
+          "returned": 0,
+          "invalid_citations": 0,
+          "fallback": true,
+          "effective_mode": "keyword",
+          "latency_ms": 1096.1,
+          "top_result": null
+        },
+        {
+          "id": "authorization",
+          "question": "How is current repository access enforced?",
+          "recall": {
+            "1": 0.0,
+            "3": 0.0,
+            "5": 0.0,
+            "10": 0.0
+          },
+          "reciprocal_rank": 0,
+          "ndcg_at_10": 0.0,
+          "relevant_ranks": [],
+          "returned": 0,
+          "invalid_citations": 0,
+          "fallback": true,
+          "effective_mode": "keyword",
+          "latency_ms": 1086.8,
+          "top_result": null
+        },
+        {
+          "id": "tenant",
+          "question": "Where are enabled repositories scoped to a tenant?",
+          "recall": {
+            "1": 0.0,
+            "3": 0.0,
+            "5": 0.0,
+            "10": 0.0
+          },
+          "reciprocal_rank": 0,
+          "ndcg_at_10": 0.0,
+          "relevant_ranks": [],
+          "returned": 0,
+          "invalid_citations": 0,
+          "fallback": true,
+          "effective_mode": "keyword",
+          "latency_ms": 1684.8,
+          "top_result": null
+        },
+        {
+          "id": "csrf",
+          "question": "How are state-changing requests protected against CSRF?",
+          "recall": {
+            "1": 0.0,
+            "3": 0.0,
+            "5": 0.0,
+            "10": 0.0
+          },
+          "reciprocal_rank": 0,
+          "ndcg_at_10": 0.0,
+          "relevant_ranks": [],
+          "returned": 0,
+          "invalid_citations": 0,
+          "fallback": true,
+          "effective_mode": "keyword",
+          "latency_ms": 1185.9,
+          "top_result": null
+        },
+        {
+          "id": "principal",
+          "question": "How is an authenticated session resolved?",
+          "recall": {
+            "1": 0.0,
+            "3": 0.0,
+            "5": 0.0,
+            "10": 0.0
+          },
+          "reciprocal_rank": 0,
+          "ndcg_at_10": 0.0,
+          "relevant_ranks": [],
+          "returned": 0,
+          "invalid_citations": 0,
+          "fallback": true,
+          "effective_mode": "keyword",
+          "latency_ms": 1349.7,
+          "top_result": null
+        },
+        {
+          "id": "login",
+          "question": "Where does GitHub OAuth login begin with PKCE?",
+          "recall": {
+            "1": 0.0,
+            "3": 0.0,
+            "5": 0.0,
+            "10": 0.0
+          },
+          "reciprocal_rank": 0,
+          "ndcg_at_10": 0.0,
+          "relevant_ranks": [],
+          "returned": 0,
+          "invalid_citations": 0,
+          "fallback": true,
+          "effective_mode": "keyword",
+          "latency_ms": 2022.4,
+          "top_result": null
+        },
+        {
+          "id": "callback",
+          "question": "Where is the GitHub OAuth callback verified?",
+          "recall": {
+            "1": 0.0,
+            "3": 0.0,
+            "5": 0.0,
+            "10": 0.0
+          },
+          "reciprocal_rank": 0,
+          "ndcg_at_10": 0.0,
+          "relevant_ranks": [],
+          "returned": 0,
+          "invalid_citations": 0,
+          "fallback": true,
+          "effective_mode": "keyword",
+          "latency_ms": 1050.1,
+          "top_result": null
+        },
+        {
+          "id": "logout",
+          "question": "How is a user session revoked when signing out?",
+          "recall": {
+            "1": 0.0,
+            "3": 0.0,
+            "5": 0.0,
+            "10": 0.0
+          },
+          "reciprocal_rank": 0,
+          "ndcg_at_10": 0.0,
+          "relevant_ranks": [],
+          "returned": 0,
+          "invalid_citations": 0,
+          "fallback": true,
+          "effective_mode": "keyword",
+          "latency_ms": 1214.6,
+          "top_result": null
+        },
+        {
+          "id": "enroll",
+          "question": "How is a personal GitHub installation enrolled?",
+          "recall": {
+            "1": 0.0,
+            "3": 0.0,
+            "5": 0.0,
+            "10": 0.0
+          },
+          "reciprocal_rank": 0,
+          "ndcg_at_10": 0.0,
+          "relevant_ranks": [],
+          "returned": 0,
+          "invalid_citations": 0,
+          "fallback": true,
+          "effective_mode": "keyword",
+          "latency_ms": 1366.1,
+          "top_result": null
+        },
+        {
+          "id": "choose",
+          "question": "Where is a public repository selected for an installation?",
+          "recall": {
+            "1": 0.0,
+            "3": 0.0,
+            "5": 0.0,
+            "10": 0.0
+          },
+          "reciprocal_rank": 0,
+          "ndcg_at_10": 0.0,
+          "relevant_ranks": [],
+          "returned": 0,
+          "invalid_citations": 0,
+          "fallback": true,
+          "effective_mode": "keyword",
+          "latency_ms": 1257.7,
+          "top_result": null
+        },
+        {
+          "id": "installations",
+          "question": "Where are personal GitHub installations verified?",
+          "recall": {
+            "1": 0.0,
+            "3": 0.0,
+            "5": 0.0,
+            "10": 0.0
+          },
+          "reciprocal_rank": 0,
+          "ndcg_at_10": 0.0,
+          "relevant_ranks": [],
+          "returned": 0,
+          "invalid_citations": 0,
+          "fallback": true,
+          "effective_mode": "keyword",
+          "latency_ms": 1775,
+          "top_result": null
+        },
+        {
+          "id": "visible",
+          "question": "How does the app check visible GitHub repositories?",
+          "recall": {
+            "1": 0.0,
+            "3": 0.0,
+            "5": 0.0,
+            "10": 0.0
+          },
+          "reciprocal_rank": 0,
+          "ndcg_at_10": 0.0,
+          "relevant_ranks": [],
+          "returned": 0,
+          "invalid_citations": 0,
+          "fallback": true,
+          "effective_mode": "keyword",
+          "latency_ms": 1061.7,
+          "top_result": null
+        },
+        {
+          "id": "accept",
+          "question": "Where are webhook delivery and outbox records written?",
+          "recall": {
+            "1": 0.0,
+            "3": 0.0,
+            "5": 0.0,
+            "10": 0.0
+          },
+          "reciprocal_rank": 0,
+          "ndcg_at_10": 0.0,
+          "relevant_ranks": [],
+          "returned": 0,
+          "invalid_citations": 0,
+          "fallback": true,
+          "effective_mode": "keyword",
+          "latency_ms": 1195.2,
+          "top_result": null
+        },
+        {
+          "id": "process",
+          "question": "Where are queued webhook issue events applied?",
+          "recall": {
+            "1": 0.0,
+            "3": 0.0,
+            "5": 0.0,
+            "10": 0.0
+          },
+          "reciprocal_rank": 0,
+          "ndcg_at_10": 0.0,
+          "relevant_ranks": [],
+          "returned": 0,
+          "invalid_citations": 0,
+          "fallback": true,
+          "effective_mode": "keyword",
+          "latency_ms": 1140.2,
+          "top_result": null
+        },
+        {
+          "id": "revoke",
+          "question": "Where are installation and repository revocations handled?",
+          "recall": {
+            "1": 0.0,
+            "3": 0.0,
+            "5": 0.0,
+            "10": 0.0
+          },
+          "reciprocal_rank": 0,
+          "ndcg_at_10": 0.0,
+          "relevant_ranks": [],
+          "returned": 0,
+          "invalid_citations": 0,
+          "fallback": true,
+          "effective_mode": "keyword",
+          "latency_ms": 1310.5,
+          "top_result": null
+        },
+        {
+          "id": "health",
+          "question": "How does the application check database and Redis readiness?",
+          "recall": {
+            "1": 0.0,
+            "3": 0.0,
+            "5": 0.0,
+            "10": 0.0
+          },
+          "reciprocal_rank": 0,
+          "ndcg_at_10": 0.0,
+          "relevant_ranks": [],
+          "returned": 0,
+          "invalid_citations": 0,
+          "fallback": true,
+          "effective_mode": "keyword",
+          "latency_ms": 1250.2,
+          "top_result": null
+        },
+        {
+          "id": "delivery",
+          "question": "Where are duplicate webhook deliveries represented?",
+          "recall": {
+            "1": 0.0,
+            "3": 0.0,
+            "5": 0.0,
+            "10": 0.0
+          },
+          "reciprocal_rank": 0,
+          "ndcg_at_10": 0.0,
+          "relevant_ranks": [],
+          "returned": 0,
+          "invalid_citations": 0,
+          "fallback": true,
+          "effective_mode": "keyword",
+          "latency_ms": 1084.7,
+          "top_result": null
+        }
+      ],
+      "recall": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.0,
+        "10": 0.0
+      },
+      "mrr": 0,
+      "ndcg_at_10": 0.0,
+      "no_relevant": 20,
+      "fallback_count": 20,
+      "total_results": 0,
+      "invalid_citations": 0,
+      "latency_p50_ms": 1185.9,
+      "latency_p95_ms": 1775
+    },
+    "hybrid": {
+      "queries": [
+        {
+          "id": "sync",
+          "question": "Where is repository issue synchronization handled?",
+          "recall": {
+            "1": 0.0,
+            "3": 0.0,
+            "5": 0.0,
+            "10": 0.0
+          },
+          "reciprocal_rank": 0,
+          "ndcg_at_10": 0.0,
+          "relevant_ranks": [],
+          "returned": 0,
+          "invalid_citations": 0,
+          "fallback": true,
+          "effective_mode": "keyword",
+          "latency_ms": 1145.5,
+          "top_result": null
+        },
+        {
+          "id": "signature",
+          "question": "How are webhook signatures verified?",
+          "recall": {
+            "1": 0.0,
+            "3": 0.0,
+            "5": 0.0,
+            "10": 0.0
+          },
+          "reciprocal_rank": 0,
+          "ndcg_at_10": 0.0,
+          "relevant_ranks": [],
+          "returned": 0,
+          "invalid_citations": 0,
+          "fallback": true,
+          "effective_mode": "keyword",
+          "latency_ms": 1212.6,
+          "top_result": null
+        },
+        {
+          "id": "webhook",
+          "question": "Where are webhook request bodies and signatures checked?",
+          "recall": {
+            "1": 0.0,
+            "3": 0.0,
+            "5": 0.0,
+            "10": 0.0
+          },
+          "reciprocal_rank": 0,
+          "ndcg_at_10": 0.0,
+          "relevant_ranks": [],
+          "returned": 0,
+          "invalid_citations": 0,
+          "fallback": true,
+          "effective_mode": "keyword",
+          "latency_ms": 1104.6,
+          "top_result": null
+        },
+        {
+          "id": "dispatch",
+          "question": "Where are queued issue and synchronization jobs dispatched?",
+          "recall": {
+            "1": 0.0,
+            "3": 0.0,
+            "5": 0.0,
+            "10": 0.0
+          },
+          "reciprocal_rank": 0,
+          "ndcg_at_10": 0.0,
+          "relevant_ranks": [],
+          "returned": 0,
+          "invalid_citations": 0,
+          "fallback": true,
+          "effective_mode": "keyword",
+          "latency_ms": 1962.7,
+          "top_result": null
+        },
+        {
+          "id": "authorization",
+          "question": "How is current repository access enforced?",
+          "recall": {
+            "1": 0.0,
+            "3": 0.0,
+            "5": 0.0,
+            "10": 0.0
+          },
+          "reciprocal_rank": 0,
+          "ndcg_at_10": 0.0,
+          "relevant_ranks": [],
+          "returned": 0,
+          "invalid_citations": 0,
+          "fallback": true,
+          "effective_mode": "keyword",
+          "latency_ms": 1148.1,
+          "top_result": null
+        },
+        {
+          "id": "tenant",
+          "question": "Where are enabled repositories scoped to a tenant?",
+          "recall": {
+            "1": 0.0,
+            "3": 0.0,
+            "5": 0.0,
+            "10": 0.0
+          },
+          "reciprocal_rank": 0,
+          "ndcg_at_10": 0.0,
+          "relevant_ranks": [],
+          "returned": 0,
+          "invalid_citations": 0,
+          "fallback": true,
+          "effective_mode": "keyword",
+          "latency_ms": 1046.2,
+          "top_result": null
+        },
+        {
+          "id": "csrf",
+          "question": "How are state-changing requests protected against CSRF?",
+          "recall": {
+            "1": 0.0,
+            "3": 0.0,
+            "5": 0.0,
+            "10": 0.0
+          },
+          "reciprocal_rank": 0,
+          "ndcg_at_10": 0.0,
+          "relevant_ranks": [],
+          "returned": 0,
+          "invalid_citations": 0,
+          "fallback": true,
+          "effective_mode": "keyword",
+          "latency_ms": 1213.8,
+          "top_result": null
+        },
+        {
+          "id": "principal",
+          "question": "How is an authenticated session resolved?",
+          "recall": {
+            "1": 0.0,
+            "3": 0.0,
+            "5": 0.0,
+            "10": 0.0
+          },
+          "reciprocal_rank": 0,
+          "ndcg_at_10": 0.0,
+          "relevant_ranks": [],
+          "returned": 0,
+          "invalid_citations": 0,
+          "fallback": true,
+          "effective_mode": "keyword",
+          "latency_ms": 1192.5,
+          "top_result": null
+        },
+        {
+          "id": "login",
+          "question": "Where does GitHub OAuth login begin with PKCE?",
+          "recall": {
+            "1": 0.0,
+            "3": 0.0,
+            "5": 0.0,
+            "10": 0.0
+          },
+          "reciprocal_rank": 0,
+          "ndcg_at_10": 0.0,
+          "relevant_ranks": [],
+          "returned": 0,
+          "invalid_citations": 0,
+          "fallback": true,
+          "effective_mode": "keyword",
+          "latency_ms": 1083.2,
+          "top_result": null
+        },
+        {
+          "id": "callback",
+          "question": "Where is the GitHub OAuth callback verified?",
+          "recall": {
+            "1": 0.0,
+            "3": 0.0,
+            "5": 0.0,
+            "10": 0.0
+          },
+          "reciprocal_rank": 0,
+          "ndcg_at_10": 0.0,
+          "relevant_ranks": [],
+          "returned": 0,
+          "invalid_citations": 0,
+          "fallback": true,
+          "effective_mode": "keyword",
+          "latency_ms": 1217.9,
+          "top_result": null
+        },
+        {
+          "id": "logout",
+          "question": "How is a user session revoked when signing out?",
+          "recall": {
+            "1": 0.0,
+            "3": 0.0,
+            "5": 0.0,
+            "10": 0.0
+          },
+          "reciprocal_rank": 0,
+          "ndcg_at_10": 0.0,
+          "relevant_ranks": [],
+          "returned": 0,
+          "invalid_citations": 0,
+          "fallback": true,
+          "effective_mode": "keyword",
+          "latency_ms": 1014.3,
+          "top_result": null
+        },
+        {
+          "id": "enroll",
+          "question": "How is a personal GitHub installation enrolled?",
+          "recall": {
+            "1": 0.0,
+            "3": 0.0,
+            "5": 0.0,
+            "10": 0.0
+          },
+          "reciprocal_rank": 0,
+          "ndcg_at_10": 0.0,
+          "relevant_ranks": [],
+          "returned": 0,
+          "invalid_citations": 0,
+          "fallback": true,
+          "effective_mode": "keyword",
+          "latency_ms": 1315.6,
+          "top_result": null
+        },
+        {
+          "id": "choose",
+          "question": "Where is a public repository selected for an installation?",
+          "recall": {
+            "1": 0.0,
+            "3": 0.0,
+            "5": 0.0,
+            "10": 0.0
+          },
+          "reciprocal_rank": 0,
+          "ndcg_at_10": 0.0,
+          "relevant_ranks": [],
+          "returned": 0,
+          "invalid_citations": 0,
+          "fallback": true,
+          "effective_mode": "keyword",
+          "latency_ms": 1052.5,
+          "top_result": null
+        },
+        {
+          "id": "installations",
+          "question": "Where are personal GitHub installations verified?",
+          "recall": {
+            "1": 0.0,
+            "3": 0.0,
+            "5": 0.0,
+            "10": 0.0
+          },
+          "reciprocal_rank": 0,
+          "ndcg_at_10": 0.0,
+          "relevant_ranks": [],
+          "returned": 0,
+          "invalid_citations": 0,
+          "fallback": true,
+          "effective_mode": "keyword",
+          "latency_ms": 7903.7,
+          "top_result": null
+        },
+        {
+          "id": "visible",
+          "question": "How does the app check visible GitHub repositories?",
+          "recall": {
+            "1": 0.0,
+            "3": 0.0,
+            "5": 0.0,
+            "10": 0.0
+          },
+          "reciprocal_rank": 0,
+          "ndcg_at_10": 0.0,
+          "relevant_ranks": [],
+          "returned": 0,
+          "invalid_citations": 0,
+          "fallback": true,
+          "effective_mode": "keyword",
+          "latency_ms": 1699.1,
+          "top_result": null
+        },
+        {
+          "id": "accept",
+          "question": "Where are webhook delivery and outbox records written?",
+          "recall": {
+            "1": 0.0,
+            "3": 0.0,
+            "5": 0.0,
+            "10": 0.0
+          },
+          "reciprocal_rank": 0,
+          "ndcg_at_10": 0.0,
+          "relevant_ranks": [],
+          "returned": 0,
+          "invalid_citations": 0,
+          "fallback": true,
+          "effective_mode": "keyword",
+          "latency_ms": 1266.5,
+          "top_result": null
+        },
+        {
+          "id": "process",
+          "question": "Where are queued webhook issue events applied?",
+          "recall": {
+            "1": 0.0,
+            "3": 0.0,
+            "5": 0.0,
+            "10": 0.0
+          },
+          "reciprocal_rank": 0,
+          "ndcg_at_10": 0.0,
+          "relevant_ranks": [],
+          "returned": 0,
+          "invalid_citations": 0,
+          "fallback": true,
+          "effective_mode": "keyword",
+          "latency_ms": 1192.1,
+          "top_result": null
+        },
+        {
+          "id": "revoke",
+          "question": "Where are installation and repository revocations handled?",
+          "recall": {
+            "1": 0.0,
+            "3": 0.0,
+            "5": 0.0,
+            "10": 0.0
+          },
+          "reciprocal_rank": 0,
+          "ndcg_at_10": 0.0,
+          "relevant_ranks": [],
+          "returned": 0,
+          "invalid_citations": 0,
+          "fallback": true,
+          "effective_mode": "keyword",
+          "latency_ms": 1252.3,
+          "top_result": null
+        },
+        {
+          "id": "health",
+          "question": "How does the application check database and Redis readiness?",
+          "recall": {
+            "1": 0.0,
+            "3": 0.0,
+            "5": 0.0,
+            "10": 0.0
+          },
+          "reciprocal_rank": 0,
+          "ndcg_at_10": 0.0,
+          "relevant_ranks": [],
+          "returned": 0,
+          "invalid_citations": 0,
+          "fallback": true,
+          "effective_mode": "keyword",
+          "latency_ms": 1188.8,
+          "top_result": null
+        },
+        {
+          "id": "delivery",
+          "question": "Where are duplicate webhook deliveries represented?",
+          "recall": {
+            "1": 0.0,
+            "3": 0.0,
+            "5": 0.0,
+            "10": 0.0
+          },
+          "reciprocal_rank": 0,
+          "ndcg_at_10": 0.0,
+          "relevant_ranks": [],
+          "returned": 0,
+          "invalid_citations": 0,
+          "fallback": true,
+          "effective_mode": "keyword",
+          "latency_ms": 1238.5,
+          "top_result": null
+        }
+      ],
+      "recall": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.0,
+        "10": 0.0
+      },
+      "mrr": 0,
+      "ndcg_at_10": 0.0,
+      "no_relevant": 20,
+      "fallback_count": 20,
+      "total_results": 0,
+      "invalid_citations": 0,
+      "latency_p50_ms": 1192.5,
+      "latency_p95_ms": 1962.7
+    }
+  }
+}

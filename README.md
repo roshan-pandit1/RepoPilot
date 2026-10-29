@@ -1,13 +1,12 @@
 # RepoPilot
 
-A modular monolith for reliable GitHub issue ingestion. Sprint 1 implements the source for
-**signed GitHub webhook → PostgreSQL outbox → Celery → issue inbox**. Sprint 2A adds an
-initial GitHub App user sign-in and verified personal-account enrollment flow. AI, indexing,
-and GitHub writes remain out of scope.
+A modular monolith for GitHub issue ingestion, commit-pinned source retrieval and durable
+investigations. Sprint 4 checkpoint 4D produces evidence-grounded reports with a deterministic
+mock provider. Real AI inference and GitHub write operations are not enabled.
 
-**Status: Sprint 2A implementation is not yet release-verified.** Sprint 1 demo ingestion was verified locally;
-the new GitHub authentication/enrollment and bounded sync paths have only been tested with fakes.
-The Python lockfile now matches the updated manifest; the new paths still need a locked Docker build and host integration verification.
+**Status: Sprint 3 C3 and Sprint 4 checkpoints 4A–4D were verified locally**, including
+authorized GitHub reads and local PostgreSQL/Redis/Celery workflows. These checks do not
+establish production readiness or real-model diagnostic quality. See [verification results](docs/verification.md).
 
 **Sprint 1 historical status: verified locally.** The host-reported signed webhook
 smoke test passed through PostgreSQL, Redis/Celery, the authorized API, and the dashboard data
@@ -15,7 +14,7 @@ route; a screenshot showed processed issues in the browser. The PostgreSQL-backe
 passed all 39 tests without warnings, and the clean frontend install, type check, lint, tests,
 and build passed. Nine frontend tests now include server-rendered loading, error, unauthorized,
 empty, and issue-list states; browser fetch transitions and a real GitHub Actions run remain open.
-The lockfiles are present but uncommitted. See [verification results](docs/verification.md).
+The dependency lockfiles are tracked. See [verification results](docs/verification.md).
 
 ## Quick start
 
@@ -39,7 +38,13 @@ make smoke
 Open **http://localhost:3000**. API docs are at **http://localhost:8000/docs**.
 `make seed` creates only the clearly marked demo identity, installation, and repository.
 `make smoke` submits a signed demo issue and waits for the real worker to process it.
-The dashboard refreshes every five seconds. Seed is repeatable and does not re-enable revoked access.
+Both `make seed` and `make smoke` require `APP_ENV=development` and
+`DEMO_AUTH_ENABLED=true` on the running stack; they intentionally fail when the demo is
+disabled for real GitHub sign-in. For smoke testing without changing that stack, use a
+separate Compose project and database. The successful host procedure and its limitations are
+recorded in `docs/verification.md`.
+The dashboard refreshes every five seconds in demo mode and every thirty seconds for real
+accounts. Seed is repeatable and does not re-enable revoked access.
 The smoke test checks unauthenticated reads, invalid signatures, duplicate deliveries, database
 issue uniqueness, and the dashboard data route; it does not inspect a rendered browser UI.
 A fresh `.env` was generated locally during implementation; do not overwrite it or commit it.
@@ -56,35 +61,21 @@ make lint                         # Ruff, frontend type checking, ESLint
 make smoke                        # Actual HTTP/database/broker/worker/web-data integration
 ```
 
-Docker and CI use `uv sync --locked` and `npm ci`. The generated lockfiles are currently
-uncommitted; include `apps/api/uv.lock` and `apps/web/package-lock.json` in a future
-authorized commit. Run `make lock` only when intentionally updating dependency resolution.
+Docker and CI use `uv sync --locked` and `npm ci`; both lockfiles were included in the
+previous Git commit. Run `make lock` only when intentionally updating dependency resolution.
 
 ## Review and version control
 
-No files have been staged, committed, or pushed by this hardening task. Review the entire
-working tree, including pre-existing changes, before choosing what to include:
+Review the working tree and stage only intended files before committing:
 
 ```bash
 git status --short
 git diff
-git diff --no-index /dev/null apps/api/uv.lock
-git diff --no-index /dev/null apps/web/package-lock.json
-```
-
-After reviewing, if you explicitly choose to include all current changes, the following
-commands stage the working tree, inspect the staged result, commit locally, and push the
-current branch. `git add -A` includes all unignored changes, not just this sprint; inspect
-`git status --short` first and stage selected paths instead if any changes should be excluded.
-Neither commit nor push has been authorized or performed in this session.
-
-```bash
-git add -A
 git diff --cached --stat
-git diff --cached
-git commit -m "Harden Sprint 1 and plan verified GitHub access"
-git push -u origin HEAD
+git diff --cached --check
 ```
+
+Never include `.env`, credentials, private keys, database dumps or unrelated work in a commit.
 
 ## Project layout
 
@@ -215,9 +206,84 @@ and normalized outbox data, so database access and backups also need protection.
 
 ## GitHub App setup (Sprint 2A)
 
-This implementation is **not yet release-verified**. Automated tests use an injected GitHub
-client; no real GitHub login, app installation, PostgreSQL upgrade, or production deployment
-has been validated in this workspace. No credentials are required for the Sprint 1 demo.
+The integration was verified locally with an authorized public repository; it has not been
+verified for production deployment. No credentials are required for the Sprint 1 demo.
+
+Sprint 3's experimental indexing backend requires GitHub App repository **Contents: read-only**
+permission. Changing permissions on an existing installation currently revokes its RepoPilot
+enrollment and there is no reauthorization flow; use a separate development installation for
+testing. GitHub indexing and PostgreSQL search have been exercised locally.
+
+`POST /v1/repositories/{id}/index` queues a durable job, `GET .../index-status` returns the
+latest job and published snapshot, and `POST .../search` accepts `{"query":"...","limit":10}`.
+Both POSTs require the session CSRF token and same-origin header. The worker rechecks GitHub
+access, pins a commit, collects Python source, and publishes the snapshot transactionally.
+PostgreSQL keyword search returns commit-pinned GitHub line links. Access remains subject to
+the signed-in user's session, repository authorization and the published-snapshot restriction.
+
+Default limits are 10,000 tree entries, 1,000 Python files, 100,000 bytes per file,
+5,000,000 total bytes, 10,000 chunks, 1,005 source requests and 120 seconds for source
+retrieval; the worker has a 200-second hard limit. Oversize or detected-secret files are
+excluded and the snapshot is marked partial. A truncated tree is rejected. The pattern
+filter catches only some recognizable credentials and cannot guarantee that source is safe.
+Repository content is untrusted. Workers claim a fenced 240-second lease before network work,
+fetch outside database transactions, then check the lease, session, installation, repository
+and default-branch commit before atomic publication. An expired claim can be republished.
+The final authorization check and GitHub request are not a single distributed transaction;
+webhook delivery latency and provider-side changes remain operational risks. Historical
+snapshots are retained; retention, detailed progress and production operational controls remain
+unfinished. Migration `0003` adds jobs, snapshots, files, chunks and PostgreSQL FTS indexes.
+Indexing emits JSON lifecycle events with job, repository, task and snapshot identifiers where
+available. Events do not include credentials, raw source or exception bodies. Historical jobs
+cannot be retroactively given task logs, and logs are not a substitute for persisted job status.
+
+### Experimental embeddings (Sprint 3 B1)
+
+Embedding storage and exact pgvector search are under active development. The default
+`EMBEDDING_PROVIDER=disabled` leaves keyword search in place. `EMBEDDING_PROVIDER=fake` is
+restricted to development/test and creates deterministic vectors solely for testing the
+pipeline; their retrieval quality is not a semantic benchmark. The API exposes
+`POST /v1/repositories/{id}/embeddings` and `GET /v1/repositories/{id}/embedding-status`;
+both require the existing authenticated repository access and POST requires CSRF. A published
+snapshot is required. Search accepts `mode` (`keyword`, `semantic`, `hybrid`); when compatible
+embeddings are unavailable, the response reports keyword fallback. Readiness is specific to
+the current snapshot and configured model. Citations use the backend's commit-pinned URLs.
+Migrations `0005` and `0006` require PostgreSQL with pgvector;
+do not run test fixtures against the application database. Back up the application database and
+obtain explicit approval before migrating it; Compose's migration service runs `alembic upgrade
+head` automatically on startup. Downgrading these migrations drops embedding jobs and vectors.
+
+An OpenAI adapter is implemented against the [embeddings API](https://developers.openai.com/api/reference/resources/embeddings/methods/create),
+but paid background generation is deliberately disabled until separately approved and budgeted.
+No paid call has been made. Source pattern filtering cannot guarantee secrets are absent;
+review what data would leave the server before enabling any external provider. Vector and hybrid
+search have been verified locally on the existing repository using only deterministic fake
+vectors, PostgreSQL, Redis and Celery; fake vectors do not demonstrate semantic quality. See
+`docs/verification.md` for the actual counts, tests and remaining limitations.
+
+### Retrieval evaluation (Sprint 3 C1)
+
+The 20-question, commit-pinned benchmark, chunk eligibility audit, authenticated evaluation
+command, metric definitions and an unapproved paid experiment plan are in
+`apps/api/evaluation/`. The harness calls the existing authorized same-origin search API and
+writes Markdown and JSON without source snippets or credentials. The first authenticated run
+fell back for semantic and hybrid requests; a second ran all three modes with fake vectors.
+Fake semantic/hybrid metrics are mechanical checks, not evidence of semantic quality. The pinned
+commit predates the indexing and embedding modules,
+so those newer features cannot be labeled against it.
+
+The C2 lexical strategy uses English stemming and stop-word removal, underscore splitting, OR
+matching, and an exact-symbol boost. The unchanged pinned-snapshot benchmark and per-query
+before/after API results are in `apps/api/evaluation/c2-comparison.md`. English search expressions
+are not covered by the existing simple-language FTS indexes and are subject to the existing
+three-second query timeout; production-scale performance remains unverified.
+
+The C3 generated-corpus PostgreSQL experiment, including query plans, latencies and index-size
+tradeoffs, is documented in `apps/api/evaluation/c3-scale.md`. In that limited fixture, additional
+English GIN indexes were not selected and did not consistently improve latency, so no index was added. The
+original benchmark was rerun with unchanged labeled ranks; the comparison is in
+`apps/api/evaluation/c3-comparison.md`. The separately versioned newer-module benchmark is
+pinned to commit `956a4f9` and its disposable evaluation is reported in `v2-local.md`.
 
 1. On a disposable, authorized personal test account, create a GitHub App with **Issues: read**
    and automatic **Metadata: read**; do not grant write permissions. Subscribe to issues and
@@ -276,23 +342,141 @@ dispatcher, Celery, and Next.js independently using the commands from Compose.
 
 ## Current limitations and next tasks
 
-- Lockfiles are uncommitted; GitHub Actions and browser fetch transitions have not been verified.
+- GitHub Actions and browser fetch transitions have not been verified.
 - ESLint 9 is end-of-life; locked peer dependencies need a compatible, tested upgrade to ESLint 10.
-- GitHub OAuth and personal-account enrollment are implemented but not tested with real credentials,
-  PostgreSQL migrations, or concurrent revocation in PostgreSQL. Organization enrollment,
+- GitHub OAuth and personal-account enrollment have been exercised locally. Organization enrollment,
   reauthorization, RLS, token cleanup, retention/deletion automation, lifecycle reconciliation,
   and visibility/transfer reconciliation remain incomplete. Tenant isolation currently relies on
   query scopes, GitHub access rechecks, and composite database foreign keys.
-- The updated Python lock matches the manifest, but the new locked Docker build and CI have not run.
+- The Python lock matches the manifest; hosted CI has not been verified for this checkpoint.
 - Only issue opened/edited events are supported; close/reopen/delete synchronization is deferred.
-- No AI, repository indexing, shell execution, GitHub writes, or private-repository ingestion.
+- Real AI inference, GitHub writes and private-repository ingestion remain disabled.
 - The dashboard repository picker is capped at 100. Issue pagination is offset-based.
 - Readiness does not prove worker health; the smoke test checks the original webhook processing path end to end.
 - No deployment, HA guarantee, backup/restore drill, or browser-rendered E2E test has been performed.
 
-Next three engineering tasks:
-1. Verify clean installs, PostgreSQL, Docker build, and live smoke on an unrestricted host; commit the existing lockfiles with authorization.
-2. Verify GitHub auth, secure sessions, enrollment, and sync on a disposable host with real test credentials.
-3. Add lifecycle reconciliation, failed-event recovery tooling, retention, and worker health metrics before starting indexing.
+The [Sprint 4 plan](docs/sprint-4-investigator-plan.md) records the remaining evaluation,
+security and production-readiness work.
 
-The [Sprint 2 plan](docs/SPRINT_2_PLAN.md) describes the wider milestone; the 2A implementation is a restricted, unverified first increment and does not add AI features.
+### GitHub issue context (Sprint 4 checkpoint 4A)
+
+`GET /v1/repositories/{repository_id}/issues/{issue_number}/context` returns a structured,
+read-only GitHub issue and bounded comments for a signed-in user with an enrolled, currently
+visible public repository. It rechecks session, installation and repository access after
+fetching. Pull requests and inaccessible or missing issues return 404; GitHub outages and rate
+limits return 503 without upstream details. The response contains IDs, text, state, labels,
+creation/update/retrieval times, issue URL and truncation flags. It never follows linked URLs
+or retrieves attachments. All text is untrusted; this endpoint does not invoke a model or tools.
+
+Default text limits are 16,000 body characters, 10 comments of 2,000 characters each, and
+30,000 total characters across title, body, labels and comment bodies. The title is capped at
+1,024 characters and labels at 20 names of 100 characters each. Body, comment count, comment
+size, total size and the shared GitHub authorization/content request budget (default 42) are
+configurable with `ISSUE_CONTEXT_BODY_CHARS`, `ISSUE_CONTEXT_COMMENT_COUNT`,
+`ISSUE_CONTEXT_COMMENT_CHARS`, `ISSUE_CONTEXT_TOTAL_CHARS`, and `ISSUE_CONTEXT_MAX_REQUESTS`;
+startup validation enforces upper bounds. Each GitHub response is limited to 1 MB and the
+operation checks a 60-second deadline between requests and response chunks, with 10-second
+HTTP timeouts; a blocking request can overrun that deadline. Flags indicate truncation;
+response JSON encoding and metadata add overhead beyond the character budget. Stored issue
+records lack the requested complete fields and freshness guarantees, so this endpoint performs
+fresh bounded GitHub reads. Live retrieval of one public issue was verified; comments and
+truncation were covered by mocked tests rather than that live issue.
+
+### Mock investigation jobs (Sprint 4 checkpoint 4B)
+
+`POST /v1/repositories/{repository_id}/issues/{issue_number}/investigations` checks the
+signed-in user's CSRF token and current issue/repository access, then atomically persists a job
+and its transactional dispatch record. Active requests for the same user, tenant, repository,
+and issue reuse one job; a new request after a terminal state creates a new job. Only issue ID,
+number and freshness timestamps are retained, not issue text or credentials. `GET
+/v1/repositories/{repository_id}/investigations/{job_id}` returns an authorized user's job
+state and safe lifecycle metadata. No source snapshot is selected by this checkpoint.
+
+States are `queued`, `running`, `completed`, `cancelled` and `failed`; `completed` means only
+that deterministic mock orchestration succeeded. The existing dispatcher republishes pending
+outbox records with capped backoff. A worker claims a 240-second lease, rechecks authorization
+without holding database locks across GitHub requests, fences completion and cancels on access
+revocation. Up to five worker claims are permitted; transient failures return the job to queued,
+and expired leases are reclaimed. Publication retry continues until processing succeeds or the
+job reaches a terminal state. There is no LLM, retrieval, hypothesis or report. Migration 0007
+is required; do not apply it to an existing application database without explicit approval.
+
+### Snapshot-fenced investigation evidence (Sprint 4 checkpoint 4C)
+
+New investigation submissions require a currently published snapshot for the authorized
+repository; a missing snapshot returns HTTP 409 without creating a job. The job records that
+snapshot's database ID, commit and repository name. If the snapshot is unpublished, ownership
+or GitHub access changes, or the issue's stable ID/update timestamp changes during processing,
+the worker cancels rather than switching snapshots. Historical 4B mock jobs remain marked
+`mock_orchestration` and do not gain a snapshot. These rules supersede the mock-only behavior
+for new submissions described in the 4B section above.
+
+Issue text is untrusted input. Each job pins its query-builder version and limits at
+submission. A deterministic heuristic chooses up to three bounded keyword queries from identifiers and title/label terms; it does not execute instructions or understand
+issue intent. The worker uses the existing English PostgreSQL lexical rank and three-second
+statement timeout, with defaults of 10 candidates per query and 20 total evidence items. Limits
+are configurable via `INVESTIGATION_QUERY_LIMIT` (1–3), `INVESTIGATION_PER_QUERY_LIMIT` (1–20)
+and `INVESTIGATION_EVIDENCE_LIMIT` (1–30). Results are deduplicated by chunk and ordered by best
+query rank, query order, path, line and chunk ID. A retrieved item is a candidate, not a finding
+of relevance or cause. The issue is fetched again and authorization rechecked without holding
+row locks over GitHub requests; evidence and terminal job status are committed together under
+the lease and repository/snapshot locks.
+
+`GET /v1/repositories/{repository_id}/investigations/{job_id}/evidence` returns only a requesting
+user's authorized, completed job's currently published snapshot and ranked chunk references,
+query identifiers and hashes, path/symbol/line metadata and commit-pinned GitHub URLs. The same
+origin proxy is `GET /api/investigations/{repository_id}/jobs/{job_id}/evidence`. Status retains
+its 4B fields and adds snapshot, evidence count, retrieval status and partial-snapshot flag.
+Zero results are explicitly `no_matches` or `no_usable_queries`; a partial index and issue
+text truncated before query construction are flagged.
+Raw issue text, query text, source snippets and credentials are not stored in evidence; query
+hashes identify query content but are not secrecy guarantees for guessable text. Chunk and
+citation metadata are fingerprinted and checked before use, since the database does not enforce
+absolute immutability of source rows. Reindexing makes old evidence unavailable through this
+API while the old snapshot is unpublished. GitHub permalink shape does not establish remote
+commit availability. The six synthetic evaluation cases are separately versioned in
+`apps/api/evaluation/investigation-evidence-v1.json`.
+
+Migration 0008 was applied to the local application database with explicit approval. Any further
+application-database changes or live test jobs require their own approval. The disposable
+PostgreSQL evaluation found top-10 labeled hits in two of three positive synthetic cases. One
+local 4C job completed through Redis and Celery with persisted evidence; the generic live issue
+does not establish retrieval relevance. No fake or real embeddings are used for this retrieval.
+
+### Evidence-grounded mock reports (Sprint 4 checkpoint 4D)
+
+A completed, authorized `code_evidence` investigation can be explicitly given a separate report
+task with `POST /v1/repositories/{repository_id}/investigations/{job_id}/report`. The request
+requires the existing session, CSRF, tenant, current GitHub installation and repository checks.
+It creates a report task and transactional outbox record together; repeated requests reuse the
+one task for that investigation, including when it has failed or been cancelled. A failed task
+does not automatically start a new task. Existing 4B and 4C jobs are not reprocessed. `GET` at
+the same backend path returns authorized status and, on success, the structured report. The
+same-origin browser proxy is `/api/investigations/{repository_id}/jobs/{job_id}/report`.
+
+The only selectable report provider is an in-process deterministic mock. Its output is labeled
+as a mock, not a diagnosis: a cited hypothesis is speculative and an uncited one is unsupported.
+It can return no hypotheses when no evidence exists. The server validates every cited chunk,
+snapshot, commit and inclusive line range against the completed investigation's verified
+evidence; it constructs citation URLs itself and checks the evidence again on report reads.
+The report includes issue/repository identity, snapshot and commit, model identity, summary,
+ranked hypotheses and their supporting or contradictory references, uncertainty, missing
+evidence, next steps, warnings, and creation time. It does not return source excerpts or prompts.
+
+The model package takes at most eight evidence chunks, 800 UTF-8 bytes per sanitized excerpt,
+10,000 bytes of total sanitized text and 32,000 bytes of JSON input. Output is limited to 16,000
+bytes and three hypotheses; rendered reports are capped at 60,000 bytes. Issue body, title,
+labels and at most three comments are bounded further. Issue text and source are untrusted;
+there are no model tools or code execution. Redaction omits common credential patterns,
+Python literals and comments, and fails closed if the active GitHub token or session hash is
+present in the projected input or report output. Configured secret values and database/Redis
+passwords are checked too, but this is not a complete secret detector. A future real model would need
+separate security review, enforceable provider budgets and explicit approval.
+
+The worker uses a lease, rechecks current session/installation/repository access and the
+published snapshot before and after the mock, and atomically publishes one report and terminal
+state. The mock's two-second elapsed-time check occurs after it returns; Celery's existing
+180-second soft and 200-second hard limits are the process-level bounds. Migration 0009 is
+additive on upgrade and was applied to the local application database after a backup. A real
+local Celery mock-report run and disposable PostgreSQL checks passed; see
+[`docs/verification.md`](docs/verification.md). No real model or paid call is enabled.

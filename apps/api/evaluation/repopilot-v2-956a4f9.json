@@ -1,0 +1,315 @@
+{
+  "version": "v2",
+  "repository": "roshan-pandit1/RepoPilot",
+  "commit_sha": "956a4f92983b222ce179891bbde39cb49a2022b2",
+  "commit_availability": "local-only; remote availability is unverified",
+  "label_policy": "Binary labels: same path and symbol and full coverage of inclusive line range by a single eligible chunk. Multiple labels are distinct relevant evidence; judgments are incomplete.",
+  "queries": [
+    {
+      "id": "sessions",
+      "question": "How are GitHub login sessions created and revoked?",
+      "relevance": [
+        {
+          "path": "apps/api/app/modules/auth/routes.py",
+          "symbol": "callback",
+          "start_line": 94,
+          "end_line": 107
+        },
+        {
+          "path": "apps/api/app/modules/auth/routes.py",
+          "symbol": "logout",
+          "start_line": 126,
+          "end_line": 132
+        }
+      ],
+      "rationale": "OAuth callback creates sessions; logout revokes them."
+    },
+    {
+      "id": "access",
+      "question": "How is current repository access enforced?",
+      "relevance": [
+        {
+          "path": "apps/api/app/modules/ingestion/code_routes.py",
+          "symbol": "allowed_repository",
+          "start_line": 24,
+          "end_line": 30
+        }
+      ],
+      "rationale": "The indexing/search routes validate repository access."
+    },
+    {
+      "id": "signature",
+      "question": "How are GitHub webhook signatures checked?",
+      "relevance": [
+        {
+          "path": "apps/api/app/modules/github/security.py",
+          "symbol": "valid_signature",
+          "start_line": 6,
+          "end_line": 8
+        },
+        {
+          "path": "apps/api/app/api/v1/routes.py",
+          "symbol": "webhook",
+          "start_line": 25,
+          "end_line": 34
+        }
+      ],
+      "rationale": "HMAC validation is used at webhook ingress."
+    },
+    {
+      "id": "snapshot",
+      "question": "How is a pinned repository snapshot planned?",
+      "relevance": [
+        {
+          "path": "apps/api/app/modules/ingestion/code_snapshot.py",
+          "symbol": "plan_snapshot",
+          "start_line": 47,
+          "end_line": 60
+        }
+      ],
+      "rationale": "The planner verifies repository metadata and resolves the commit."
+    },
+    {
+      "id": "index",
+      "question": "Where are indexing jobs claimed and published?",
+      "relevance": [
+        {
+          "path": "apps/api/app/workers/tasks.py",
+          "symbol": "process_index",
+          "start_line": 184,
+          "end_line": 190
+        },
+        {
+          "path": "apps/api/app/workers/tasks.py",
+          "symbol": "process_index",
+          "start_line": 297,
+          "end_line": 303
+        },
+        {
+          "path": "apps/api/app/modules/ingestion/code_persistence.py",
+          "symbol": "publish_snapshot",
+          "start_line": 20,
+          "end_line": 30
+        }
+      ],
+      "rationale": "The worker claims a job and later publishes its snapshot under a fenced lease."
+    },
+    {
+      "id": "chunking",
+      "question": "How are Python definitions split into source chunks?",
+      "relevance": [
+        {
+          "path": "apps/api/app/modules/ingestion/code_chunking.py",
+          "symbol": "chunk_python",
+          "start_line": 26,
+          "end_line": 49
+        }
+      ],
+      "rationale": "AST definitions and deterministic windows form chunks."
+    },
+    {
+      "id": "screening",
+      "question": "How are source files screened before indexing?",
+      "relevance": [
+        {
+          "path": "apps/api/app/modules/ingestion/code_collect.py",
+          "symbol": "collect_source",
+          "start_line": 44,
+          "end_line": 61
+        },
+        {
+          "path": "apps/api/app/modules/ingestion/code_selection.py",
+          "symbol": "eligible_python_path",
+          "start_line": 15,
+          "end_line": 25
+        }
+      ],
+      "rationale": "The collector decodes files and rejects sensitive content."
+    },
+    {
+      "id": "citations",
+      "question": "Where are commit-pinned GitHub citations built?",
+      "relevance": [
+        {
+          "path": "apps/api/app/modules/ingestion/code_routes.py",
+          "symbol": "search_code",
+          "start_line": 215,
+          "end_line": 221
+        }
+      ],
+      "rationale": "Search builds a link using repository, commit, file and inclusive lines."
+    },
+    {
+      "id": "embedding_jobs",
+      "question": "How are embedding jobs processed in batches?",
+      "relevance": [
+        {
+          "path": "apps/api/app/workers/tasks.py",
+          "symbol": "process_embedding",
+          "start_line": 411,
+          "end_line": 422
+        }
+      ],
+      "rationale": "Embedding worker processes chunks in bounded batches."
+    },
+    {
+      "id": "embedding_cache",
+      "question": "Where is embedding cache reuse recorded?",
+      "relevance": [
+        {
+          "path": "apps/api/app/workers/tasks.py",
+          "symbol": "process_embedding",
+          "start_line": 413,
+          "end_line": 422
+        },
+        {
+          "path": "apps/api/app/modules/ingestion/embedding_store.py",
+          "symbol": "persist_embedding",
+          "start_line": 21,
+          "end_line": 35
+        }
+      ],
+      "rationale": "The worker looks up cached vectors and persistence links them to chunks."
+    },
+    {
+      "id": "keyword",
+      "question": "How does keyword search handle natural language?",
+      "relevance": [
+        {
+          "path": "apps/api/app/modules/ingestion/code_routes.py",
+          "symbol": "search_code",
+          "start_line": 155,
+          "end_line": 164
+        }
+      ],
+      "rationale": "Search builds the English OR query and lexical rank."
+    },
+    {
+      "id": "fusion",
+      "question": "How are keyword and semantic ranks combined?",
+      "relevance": [
+        {
+          "path": "apps/api/app/modules/ingestion/code_routes.py",
+          "symbol": "search_code",
+          "start_line": 204,
+          "end_line": 208
+        },
+        {
+          "path": "apps/api/app/modules/ingestion/rank_fusion.py",
+          "symbol": "reciprocal_rank_fusion",
+          "start_line": 5,
+          "end_line": 16
+        }
+      ],
+      "rationale": "The search route fuses rankings through RRF."
+    },
+    {
+      "id": "retry",
+      "question": "How are transient ingestion failures retried?",
+      "relevance": [
+        {
+          "path": "apps/api/app/workers/tasks.py",
+          "symbol": "ingest_issue",
+          "start_line": 63,
+          "end_line": 72
+        },
+        {
+          "path": "apps/api/app/workers/tasks.py",
+          "symbol": "index_repository",
+          "start_line": 309,
+          "end_line": 322
+        }
+      ],
+      "rationale": "Issue and indexing tasks use Celery retry settings."
+    },
+    {
+      "id": "dispatch",
+      "question": "How are pending jobs republished safely?",
+      "relevance": [
+        {
+          "path": "apps/api/app/workers/dispatcher.py",
+          "symbol": "dispatch_once",
+          "start_line": 55,
+          "end_line": 85
+        }
+      ],
+      "rationale": "The dispatcher schedules and publishes pending or expired jobs."
+    },
+    {
+      "id": "access_ambiguous",
+      "question": "Where is repository access checked?",
+      "relevance": [
+        {
+          "path": "apps/api/app/modules/ingestion/code_routes.py",
+          "symbol": "allowed_repository",
+          "start_line": 24,
+          "end_line": 30
+        },
+        {
+          "path": "apps/api/app/api/v1/routes.py",
+          "symbol": "authorized_repos",
+          "start_line": 68,
+          "end_line": 79
+        },
+        {
+          "path": "apps/api/app/modules/github/enrollment.py",
+          "symbol": "visible_github_repositories",
+          "start_line": 35,
+          "end_line": 46
+        },
+        {
+          "path": "apps/api/app/workers/tasks.py",
+          "symbol": "process_index",
+          "start_line": 190,
+          "end_line": 202
+        }
+      ],
+      "rationale": "Access is checked at API reads, GitHub enrollment, and worker execution; all are relevant."
+    },
+    {
+      "id": "completion_ambiguous",
+      "question": "Where are jobs completed?",
+      "relevance": [
+        {
+          "path": "apps/api/app/workers/tasks.py",
+          "symbol": "process_event",
+          "start_line": 51,
+          "end_line": 52
+        },
+        {
+          "path": "apps/api/app/workers/tasks.py",
+          "symbol": "process_sync",
+          "start_line": 147,
+          "end_line": 148
+        },
+        {
+          "path": "apps/api/app/workers/tasks.py",
+          "symbol": "process_index",
+          "start_line": 297,
+          "end_line": 303
+        },
+        {
+          "path": "apps/api/app/workers/tasks.py",
+          "symbol": "process_embedding",
+          "start_line": 476,
+          "end_line": 479
+        }
+      ],
+      "rationale": "Issue, sync, index and embedding workers each record completion; all are relevant."
+    }
+  ],
+  "unscored_negative_candidates": [
+    {
+      "id": "negative_pull_requests",
+      "question": "Where are pull requests automatically generated?",
+      "status": "unscored",
+      "rationale": "No-answer judgment requires exhaustive commit-scoped review."
+    },
+    {
+      "id": "negative_paid_worker",
+      "question": "Where is a remote paid embedding call executed by the worker?",
+      "status": "unscored",
+      "rationale": "The adapter exists but the worker rejects non-fake providers; no-answer judgment requires full call-path review."
+    }
+  ]
+}

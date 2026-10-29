@@ -1,5 +1,14 @@
 # Retrieval evaluation
 
+The separately versioned `repopilot-v2-956a4f9.json` pins local commit
+`956a4f92983b222ce179891bbde39cb49a2022b2`. It contains 16 positive/ambiguous questions
+with 30 reviewed ranges; two negative candidates remain unscored. Run
+`python -m app.evaluation.verify_labels evaluation/repopilot-v2-956a4f9.json` from `apps/api`
+to verify the committed Git source, symbol ranges and complete single-chunk coverage. No v2
+snapshot or retrieval benchmark has been run. This local commit is not assumed to be on GitHub.
+The required approval and unimplemented test-runner work are detailed in
+`benchmark-v2-disposable-plan.md`.
+
 `repopilot-6349190.json` pins the public repository and commit. Each query has an ID, natural
 language question, rationale, and one or more binary relevance labels with a path, symbol, and
 inclusive line range. Each label here anchors the definition line: a result counts only if it
@@ -79,3 +88,41 @@ all source for sensitive data (the existing filter is incomplete), add enforceab
 and cost budgets, verify model limits and rate, establish account-side spend limits, separately
 verify the real-provider workflow, and obtain explicit user approval. Do not simply set the paid
 configuration flag; it is not an authorization or a spending cap.
+
+## Investigation evidence fixture v1
+
+`investigation-evidence-v1.json` is a separate six-case synthetic issue dataset, pinned to
+local Git commit `956a4f92983b222ce179891bbde39cb49a2022b2`. `cases` contain `id`, issue
+`title`/`body`, `kind` (`positive`, `no_match`, or `no_query`), `labels` and `rationale`.
+Positive labels contain a path, symbol and an inclusive line range that must be fully covered
+by a single returned chunk. The four labels were reviewed against Git objects and checked
+against eligible chunks. Labels are incomplete; unlabeled candidates are not automatically
+irrelevant. The two synthetic no-match terms were checked for absence in the pinned Python
+source. The malicious case checks an abstention from query construction, not a claim that a
+keyword filter is a security boundary.
+
+`tests/test_investigation_evaluation_pg.py` builds a snapshot from that commit in the test
+database, drives the existing authenticated job flow with mocked GitHub and a direct worker,
+checks result chunks and citation structure against local Git blobs, and records per-case hit
+ranks, no-match behavior and direct-worker latency. `run-4c-disposable.sh` writes
+`4c-evaluation-local.json` and `.md` only after that test executes. It does not test real
+Celery, remote GitHub resolution or semantic/AI quality; six latency samples are descriptive,
+not a load benchmark. The older v1/v2 retrieval datasets and reports remain separate.
+
+## Mock investigation report fixture v1
+
+`mock-report-v1.json` is a separate synthetic mechanics fixture. Seven valid model cases and
+two deliberately malformed or foreign-reference cases exercise schema and grounding checks;
+two additional worker-security scenarios exercise duplicate delivery and revoked access with
+mock GitHub. `tests/test_report_evaluation.py` measures local in-process model construction
+and validation time and verifies synthetic reference structure. Its output under
+`4d-evaluation-local.json` and `.md` is **mock mechanics only**: it is not a measure of root
+cause accuracy, real AI behavior, remote GitHub resolution, Celery delivery, or load capacity.
+
+For PostgreSQL verification, `bash apps/api/evaluation/run-4d-disposable.sh` creates a new
+separate pgvector container and randomly named database, checks that the database is empty,
+runs the full backend suite, Ruff, Alembic upgrade/current/check and the fixture evaluation,
+and retains the new container and volume. It does not connect to the application's Compose
+database. Do not point destructive fixtures at the normal database. A separately approved
+application migration and report task are required before real Redis/Celery verification; the
+prepared host/browser helpers do not themselves grant that approval.

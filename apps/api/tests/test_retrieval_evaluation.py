@@ -6,6 +6,7 @@ import pytest
 
 from app.evaluation.retrieval import citation_valid, evaluate, main, markdown, match_label, measure_query
 from app.evaluation.compare_reports import compare
+from app.evaluation.verify_labels import valid_label
 from app.modules.ingestion.code_chunking import chunk_python
 
 
@@ -97,3 +98,25 @@ def test_browser_capture_produces_sanitized_reports_without_credentials(tmp_path
     main()
     assert json.loads(output.with_suffix('.json').read_text())['modes']['keyword']['no_relevant'] == 1
     assert 'MECHANICAL TEST ONLY' in output.with_suffix('.md').read_text()
+
+
+def test_v2_labels_support_decorators_and_require_one_complete_chunk():
+    source = '@decorator\ndef example():\n' + ''.join('    value = 1\n' for _ in range(125))
+    label = {'symbol': 'example', 'start_line': 1, 'end_line': 2}
+    assert valid_label(source, label)
+    assert valid_label(source, {**label, 'start_line': 123, 'end_line': 125})
+    assert not valid_label(source, {**label, 'start_line': 120, 'end_line': 121})
+    assert not valid_label(source, {**label, 'symbol': 'other'})
+    assert not valid_label(source, {**label, 'start_line': 9, 'end_line': 8})
+
+
+def test_v2_dataset_keeps_negative_candidates_unscored():
+    root = Path(__file__).resolve().parents[1]
+    data = json.loads((root / 'evaluation/repopilot-v2-956a4f9.json').read_text())
+    assert data['commit_sha'] == '956a4f92983b222ce179891bbde39cb49a2022b2'
+    assert len(data['queries']) == 16
+    assert all(query['relevance'] for query in data['queries'])
+    assert all(len(next(q for q in data['queries'] if q['id'] == name)['relevance']) > 1
+               for name in ('access_ambiguous', 'completion_ambiguous'))
+    assert len(data['unscored_negative_candidates']) == 2
+    assert all(item['status'] == 'unscored' for item in data['unscored_negative_candidates'])

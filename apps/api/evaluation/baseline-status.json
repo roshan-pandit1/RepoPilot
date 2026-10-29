@@ -1,0 +1,11 @@
+{
+  "status": "VERIFIED_LOCALLY_FAKE_VECTORS_ONLY",
+  "repository": "roshan-pandit1/RepoPilot",
+  "commit_sha": "63491908290e6874dbaaf2b15c2a96473aad1324",
+  "benchmark_queries": 20,
+  "keyword_metrics": "See results-local.json",
+  "fake_semantic_metrics": "See results-fake.json: MECHANICAL TEST ONLY",
+  "hybrid_metrics": "See results-fake.json: MECHANICAL TEST ONLY",
+  "real_semantic_quality": "NOT YET MEASURED",
+  "reason": "The second authenticated run completed with compatible fake embeddings and no fallback."
+}
