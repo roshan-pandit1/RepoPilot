@@ -1,9 +1,11 @@
 """Authenticated, read-only mock-investigation orchestration endpoints."""
 from uuid import UUID, uuid4
-from urllib.parse import quote
+from urllib.parse import quote, unquote, urlsplit
 
 from fastapi import APIRouter, Depends, HTTPException, Path, Request
+from pydantic import SecretStr
 from sqlalchemy import func, select
+from sqlalchemy.engine import make_url
 from sqlalchemy.orm import Session
 
 from app.domain.models import (CodeSnapshot, Installation,
@@ -15,9 +17,27 @@ from app.modules.github.client import GitHubClient, get_github_client
 from app.modules.github.guards import installation_guard, repository_guard
 from app.modules.github.issue_context import authorize, issue_context
 from app.modules.ingestion.citations import github_citation
+from app.modules.ingestion.code_selection import contains_sensitive_source
 from app.modules.investigation.retrieval import InvalidEvidence, load_verified_evidence
 
 router = APIRouter(prefix="/v1/repositories")
+SNIPPET_CHARS = 4000
+
+
+def source_excerpt(source: str, identity: Principal, request: Request) -> tuple[str | None, bool]:
+    """Bound excerpts and withhold known credentials; this is not a complete secret scanner."""
+    settings = get_settings()
+    try:
+        secrets = [getattr(settings, name).get_secret_value() for name in type(settings).model_fields
+                   if isinstance(getattr(settings, name), SecretStr)]
+        secrets.extend([identity.token, identity.session_hash, request.cookies.get("rp_session"), request.cookies.get("rp_csrf"),
+                        make_url(settings.database_url).password,
+                        unquote(urlsplit(settings.redis_url).password or "")])
+    except (TypeError, ValueError):
+        return None, False
+    if contains_sensitive_source(source) or any(secret and secret in source for secret in secrets):
+        return None, False
+    return source[:SNIPPET_CHARS], len(source) > SNIPPET_CHARS
 
 
 @router.post("/{repository_id}/issues/{issue_number}/investigations", status_code=202)
@@ -99,7 +119,8 @@ def status(repository_id: int = Path(gt=0, lt=2**63), job_id: UUID = Path(),
         else:
             snapshot_partial = bool(snapshot.skipped_count)
             retrieval_status = job.status
-    return {"job_id": job.id, "status": job.status, "attempts": job.attempts,
+    return {"job_id": job.id, "issue_id": str(job.issue_id), "issue_number": job.issue_number,
+            "status": job.status, "attempts": job.attempts,
             "created_at": job.created_at, "updated_at": job.updated_at, "started_at": job.started_at,
             "completed_at": job.completed_at, "error_code": job.error_code,
             "operation": job.operation, "snapshot_id": job.snapshot_id, "commit_sha": job.snapshot_commit_sha,
@@ -112,10 +133,15 @@ def status(repository_id: int = Path(gt=0, lt=2**63), job_id: UUID = Path(),
 
 
 @router.get("/{repository_id}/investigations/{job_id}/evidence")
-def evidence(repository_id: int = Path(gt=0, lt=2**63), job_id: UUID = Path(),
+def evidence(request: Request, repository_id: int = Path(gt=0, lt=2**63), job_id: UUID = Path(),
+             include_snippets: bool = False,
              identity: Principal = Depends(principal), db: Session = Depends(get_db),
              github: GitHubClient = Depends(get_github_client)):
     name = authorize(repository_id, identity, db, github)
+    if include_snippets:
+        # Serialize excerpt reads with local session, installation and repository revocation.
+        from app.modules.investigation.report_routes import lock_report_read_access
+        lock_report_read_access(db, repository_id, identity, name)
     job = db.scalar(select(InvestigationJob).where(InvestigationJob.id == str(job_id),
         InvestigationJob.tenant_id == identity.tenant_id, InvestigationJob.user_id == identity.user_id,
         InvestigationJob.repository_id == repository_id))
@@ -140,6 +166,11 @@ def evidence(repository_id: int = Path(gt=0, lt=2**63), job_id: UUID = Path(),
                   "end_line": chunk.end_line, "commit_sha": snapshot.commit_sha,
                   "url": github_citation(name, snapshot.commit_sha, file.path, chunk.start_line, chunk.end_line)}
                  for item, chunk, file in rows]
+        if include_snippets:
+            for result, (_, chunk, _) in zip(items, rows, strict=True):
+                snippet, truncated = source_excerpt(chunk.source_text, identity, request)
+                result.update(snippet=snippet, snippet_truncated=truncated,
+                              snippet_unavailable=snippet is None)
     except ValueError:
         raise HTTPException(409, "Evidence is unavailable") from None
     return {"job_id": job.id, "snapshot_id": snapshot.id, "commit_sha": snapshot.commit_sha,

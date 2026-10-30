@@ -6,5 +6,7 @@ export async function GET(request: NextRequest, context: { params: Promise<{ rep
   if (!validRepository(repository) || !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(job)) {
     return Response.json({ detail: "Invalid request" }, { status: 422, headers: { "Cache-Control": "no-store" } });
   }
-  return forwardInvestigation(request, `/v1/repositories/${repository}/investigations/${job}/evidence`);
+  const query = new URL(request.url).searchParams;
+  const includeSnippets = query.get("include_snippets") === "true";
+  return forwardInvestigation(request, `/v1/repositories/${repository}/investigations/${job}/evidence${includeSnippets ? "?include_snippets=true" : ""}`);
 }

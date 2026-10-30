@@ -4,7 +4,7 @@ from dataclasses import replace
 import pytest
 
 from app.modules.investigation.report_model import (MAX_CONTEXT_BYTES, MAX_EVIDENCE, ModelError,
-    ModelResult, ModelTimeout, MockInvestigationModel, build_package, execute_model, validate_draft)
+    ModelResult, ModelTimeout, MockInvestigationModel, build_package, execute_model, model_request, validate_draft)
 
 SNAPSHOT = '11111111-1111-4111-8111-111111111111'
 CHUNK = '22222222-2222-4222-8222-222222222222'
@@ -53,7 +53,7 @@ def test_untrusted_input_is_bounded_and_never_executes():
 @pytest.mark.parametrize('change', ['unknown', 'snapshot', 'commit', 'start', 'end', 'duplicate', 'url', 'repo', 'confidence'])
 def test_hallucinated_or_malformed_evidence_and_extra_fields_are_rejected(change):
     request = package()
-    output = json.loads(MockInvestigationModel().generate(request, timeout_seconds=2).raw_json)
+    output = json.loads(MockInvestigationModel().generate(model_request(request), timeout_seconds=2).raw_json)
     reference = output['hypotheses'][0]['evidence'][0]
     if change == 'unknown':
         reference['chunk_id'] = '44444444-4444-4444-8444-444444444444'
@@ -79,7 +79,7 @@ def test_hallucinated_or_malformed_evidence_and_extra_fields_are_rejected(change
 
 def test_unsupported_hypothesis_and_invalid_model_output():
     request = package(False)
-    draft = json.loads(MockInvestigationModel().generate(request, timeout_seconds=2).raw_json)
+    draft = json.loads(MockInvestigationModel().generate(model_request(request), timeout_seconds=2).raw_json)
     draft['hypotheses'] = [{'title': 'Possible issue', 'explanation': 'No support is available.',
                             'observations': [], 'missing_or_contradictory': ['Evidence missing.'], 'evidence': []}]
     assert validate_draft(ModelResult(json.dumps(draft)), request)['hypotheses'][0]['support_status'] == 'unsupported'
@@ -111,7 +111,7 @@ def test_contradictory_evidence_is_validated_and_kept_separate():
     second = replace(request.evidence[0], chunk_id='55555555-5555-4555-8555-555555555555',
                      path='src/other.py', start_line=6, end_line=7)
     request = replace(request, evidence=(*request.evidence, second))
-    output = json.loads(MockInvestigationModel().generate(request, timeout_seconds=2).raw_json)
+    output = json.loads(MockInvestigationModel().generate(model_request(request), timeout_seconds=2).raw_json)
     opposite = {'chunk_id': second.chunk_id, 'snapshot_id': SNAPSHOT, 'commit_sha': COMMIT,
                 'start_line': 6, 'end_line': 7}
     output['hypotheses'][0]['contradictory_evidence'] = [opposite]
@@ -138,7 +138,7 @@ def test_secret_and_environment_projection_omits_literals_and_fstrings():
 def test_duplicate_json_keys_and_untrusted_urls_are_rejected():
     with pytest.raises(ModelError):
         validate_draft(ModelResult('{"summary":"a","summary":"b"}'), package(False))
-    draft = json.loads(MockInvestigationModel().generate(package(False), timeout_seconds=2).raw_json)
+    draft = json.loads(MockInvestigationModel().generate(model_request(package(False)), timeout_seconds=2).raw_json)
     draft['next_steps'] = ['Fetch ftp://example.invalid/private']
     with pytest.raises(ModelError, match='model_output_unsafe'):
         validate_draft(ModelResult(json.dumps(draft)), package(False))

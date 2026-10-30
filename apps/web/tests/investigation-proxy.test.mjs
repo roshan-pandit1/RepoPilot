@@ -10,7 +10,7 @@ function load(file, deps, fetch) {
   const source = fs.readFileSync(path.join(root, file), "utf8");
   const code = ts.transpileModule(source, { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 }}).outputText;
   const mod = { exports: {} };
-  const ctx = vm.createContext({ module: mod, exports: mod.exports, Response, Request, AbortSignal,
+  const ctx = vm.createContext({ module: mod, exports: mod.exports, Response, Request, AbortSignal, URL,
     process: { env: { API_INTERNAL_URL: "http://api.test" } }, fetch,
     require: (name) => { if (!(name in deps)) throw new Error("unexpected import"); return deps[name]; } });
   new vm.Script(code).runInContext(ctx);
@@ -38,6 +38,18 @@ test("submission and status use fixed backend paths and forward session/CSRF ser
   await r.status.GET(new Request("http://web"), { params: Promise.resolve({ repository: "902", job: id }) });
   assert.equal(calls[1].url, `http://api.test/v1/repositories/902/investigations/${id}`);
 });
+
+test("same-origin submission derives the CSRF header on the server without returning cookies", async () => {
+  let call;
+  const r = routes(async (url, options) => { call = { url, options }; return Response.json({ status: "queued" }, { status: 202 }); });
+  const request = new Request("http://web", { method: "POST", headers: {
+    cookie: "rp_session=opaque; rp_csrf=test%2Dcsrf", origin: "http://web" } });
+  const result = await r.submit.POST(request, { params: Promise.resolve({ repository: "902", issue: "5" }) });
+  assert.equal(call.options.headers["x-csrf-token"], "test-csrf");
+  assert.equal(call.options.headers.origin, "http://web");
+  assert.doesNotMatch(await result.text(), /opaque|csrf/);
+  assert.equal(result.headers.get("set-cookie"), null);
+});
 test("bad paths and upstream failures fail safely", async () => {
   let calls = 0;
   const r = routes(async () => { calls++; return Response.json({ detail: "private secret" }, { status: 401 }); });
@@ -60,6 +72,20 @@ test("evidence route uses the authorized backend path and preserves denial", asy
   assert.equal(call.options.headers.cookie, "rp_session=fixture");
   assert.equal(response.status, 404);
   assert.doesNotMatch(await response.text(), /private detail|fixture/);
+});
+
+test("evidence proxy forwards only the explicit bounded-snippet option", async () => {
+  const calls = [];
+  const fetch = async (url) => { calls.push(url); return Response.json({ items: [] }); };
+  const helper = load("lib/investigation-proxy.ts", { "server-only": {} }, fetch);
+  const route = load("app/api/investigations/[repository]/jobs/[job]/evidence/route.ts",
+    { "@/lib/investigation-proxy": helper }, fetch);
+  const id = "00000000-0000-4000-8000-000000000000";
+  const context = { params: Promise.resolve({ repository: "902", job: id }) };
+  await route.GET(new Request("http://web/?include_snippets=true&other=private"), context);
+  assert.equal(calls[0], `http://api.test/v1/repositories/902/investigations/${id}/evidence?include_snippets=true`);
+  await route.GET(new Request("http://web/?include_snippets=false"), context);
+  assert.equal(calls[1], `http://api.test/v1/repositories/902/investigations/${id}/evidence`);
 });
 
 test("report proxy forwards only validated paths and preserves authentication and CSRF", async () => {

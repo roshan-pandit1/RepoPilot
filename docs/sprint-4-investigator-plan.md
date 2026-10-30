@@ -169,3 +169,36 @@ the supplied screenshot. The application reported 0009 at head without drift, an
 archive was read without an independent test restore. See `docs/verification.md` for the
 evidence and limits. The mock is not real AI reasoning and does not establish diagnostic
 quality or production prompt-injection resistance.
+
+## Checkpoint 4E implementation status
+
+The mock report request now uses a fixed application-owned instruction object and a separate
+bounded untrusted issue/source object. Server-side output and evidence validation rejects
+explicit role/tool instructions, unsafe control characters and invalid or cross-snapshot
+references. A separately versioned synthetic adversarial dataset covers input and model-output
+attacks; dedicated workflow tests exercise tenant and snapshot isolation, revocation, retries,
+duplicate delivery, and safe output/log behavior. These checks do not prove a real model would
+resist prompt injection. Secret redaction and output patterns remain incomplete.
+
+The user reported 269 passing tests with no skips, Ruff passing and Alembic 0009 without drift
+in a new dedicated disposable PostgreSQL database. The 33-case mock security evaluation also
+passed. No live 4E job, real provider or unrelated frontend change was used. **Checkpoint 4E
+passes locally within this mock-only scope.**
+
+## Checkpoint 4F preparation status
+
+`issue-report-v1` contains 19 synthetic issues, including the earlier natural-language
+webhook-signature failure; 16 cases have 23 source-location labels checked against Git commit
+`30705da4c044192cab4ac207e253ab8e8a1bd100` and the current source-selection/chunking rules.
+The remaining three cases have no scored relevance judgment. The benchmark records incomplete
+labels rather than treating unlabelled results as irrelevant. A rubric defines a future
+independent human review but no substantive root-cause accuracy has been measured.
+
+The user supplied host output showing 283 passing PostgreSQL tests, the 33-case adversarial
+fixture, Ruff and Alembic 0009 without drift in the separate disposable checks procedure.
+The user approved and ran the committed-source evaluation in a separate disposable database.
+**Checkpoint 4F is VERIFIED LOCALLY** for synthetic keyword retrieval and deterministic mock
+report mechanics. Its 16 scored cases have 12 labeled top-10 hits; 19/19 reports passed schema
+and provenance checks. This does not measure real AI reasoning or diagnostic accuracy. See
+`docs/verification.md` for complete metrics, security checks and the separation between the
+committed source and evaluator working tree.

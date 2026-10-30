@@ -126,3 +126,65 @@ and retains the new container and volume. It does not connect to the application
 database. Do not point destructive fixtures at the normal database. A separately approved
 application migration and report task are required before real Redis/Celery verification; the
 prepared host/browser helpers do not themselves grant that approval.
+
+## Adversarial mock-report fixture v1
+
+`adversarial-report-v1.json` is a separate synthetic security fixture. Its input cases attack
+issue titles, bodies, comments, labels, source excerpts and source metadata; its output cases
+attempt role/tool instructions, exfiltration, malformed JSON and forged evidence. The
+deterministic evaluator runs the actual mock projection and server-side output validator:
+
+```sh
+cd apps/api
+../../.venv/bin/python -m app.evaluation.adversarial
+```
+
+The generated `4e-security-evaluation.json` and `.md` contain case IDs and outcomes, not the
+attack payloads. Separate pytest integration tests cover tenant and snapshot isolation,
+revocation, retries, duplicate publication and redaction. These tests use a mock provider and
+do not establish real-model prompt-injection resistance. `run-4e-disposable.sh` creates and
+checks a new disposable PostgreSQL database; it does not connect to the application database.
+The user reported 269 passing PostgreSQL tests, no skips, Ruff passing, Alembic 0009 without
+drift and all 33 security cases passing in the dedicated 4E disposable database.
+
+## Issue-to-code and mock-report fixture v1 (checkpoint 4F)
+
+`issue-report-v1.json` contains 19 synthetic scenarios pinned to commit
+`30705da4c044192cab4ac207e253ab8e8a1bd100` and its recorded Git tree. Sixteen cases have
+23 reviewed source-location labels; two are ambiguous, and three cases (insufficient detail,
+an unreviewed negative candidate, and malicious text) are excluded from relevance scoring.
+`issue-report-v1-provenance.md` lists the verified symbol, inclusive label and eligible chunk
+range for each label. Git verification does not create a database snapshot or assign chunk IDs.
+Labels are incomplete, and the scenarios do not assert a verified bug or root cause.
+
+From `apps/api`, `../../.venv/bin/python -m app.evaluation.issue_report` verifies the labels
+against local Git blobs, source selection and the existing Python chunker. This read-only
+check needs no PostgreSQL. `bash apps/api/evaluation/run-4f-checks.sh` creates a new empty
+disposable pgvector database, runs the backend suite, security fixtures, Ruff and Alembic
+checks, and retains the new container and volume. It excludes the existing 4C test that
+publishes a committed-Git source snapshot; no application database is used.
+
+Creating a new committed-source snapshot requires separate user approval. Once approved,
+`run-4f-disposable.sh` checks the exact commit approval flag, creates a fresh isolated
+database, applies migrations there, and uses the existing indexing worker, authorized test
+client, fake GitHub and direct investigation/report workers. It creates one real database
+snapshot and generated chunk IDs only inside that database. It records a unique JSON/Markdown
+run pair without overwriting earlier runs. The explicit flag is a safety guard, not permission.
+
+The scorer reuses the v1/v2 binary relevance calculation, with macro recall@1/3/5/10, MRR and
+nDCG@10 over scored cases only. It records per-case results and per-query hashes and retained
+evidence after deduplication, citation checks against local Git, worker latency and evidence
+budgets. An unlabeled result is not necessarily irrelevant. Reports are checked mechanically
+against persisted evidence and replayed; malformed, foreign and contradictory-reference
+probes exercise the server validator. The snapshot is the committed source under test; the
+evaluator is the current working tree, whose relevant implementation hashes are recorded in
+each run, including any uncommitted 4E hardening. Results from different commits, datasets or
+snapshot IDs must be reported separately.
+
+`issue-report-v1-rubric.md` describes a future independent human review of substantive claims;
+it is not a diagnostic-quality measurement. No paid provider, real model, real GitHub issue,
+live Celery workflow or remote citation-resolution check is involved in the disposable 4F
+runner. The separately approved host run is recorded in
+`4f-issue-report-v1-4f762b71ae8d9569.json` and `.md`; see `docs/verification.md` for the
+measured metrics and the subsequent fixture-logging safeguard. Keep this run separate from
+v1/v2 and 4C/4D results.

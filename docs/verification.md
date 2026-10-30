@@ -1402,3 +1402,294 @@ This verifies mock orchestration and evidence grounding locally. The generic iss
 establish issue-to-code relevance, the mock performs no real reasoning, and the report's
 individual GitHub citation was not independently opened remotely in this 4D run. Secret
 redaction is best effort. No paid model was enabled or called, and no test restore was made.
+
+### Checkpoint 4E security preparation — 2026-10-29
+
+**SPRINT 4 CHECKPOINT 4E NOT YET VERIFIED.** The model boundary now constructs an immutable,
+application-owned `mock-report-policy-v1` instruction object separately from the bounded
+untrusted issue, labels, comments, paths, symbols and source excerpts. The mock has no tools
+or model-provider network interface. The server rejects invalid evidence allowlists before
+model invocation and again during output validation, as well as tested explicit
+forged-role/tool patterns, URLs, unsafe control characters and malformed or fabricated
+model responses. Existing tenant/snapshot checks and lease-fenced, atomic publication remain
+in force. Unknown model errors are reduced to safe error codes; prompts and source excerpts
+are not persisted in reports or included in lifecycle logs. Invalid Unicode in a GitHub
+issue is rejected by the issue schema without publishing a report.
+
+The separate synthetic dataset `apps/api/evaluation/adversarial-report-v1.json` has SHA-256
+`b7ba2f58a21d3c349198ccdaf2dfbfed968a7e384618cef7530c86fc44c020e6`. The local evaluator
+reported **33/33** boundary checks passed: 14 untrusted input cases and 19 malicious-output
+cases. Its per-case report is `apps/api/evaluation/4e-security-evaluation.md` and `.json`.
+Separate workflow tests cover a foreign-tenant chunk, a same-tenant foreign-snapshot chunk,
+access revoked during a mock call, timeout followed by malicious output, duplicate delivery,
+external-operation guards and safe error/log handling. These tests use fake GitHub responses
+and the deterministic mock; they are not evidence of a real model's prompt-injection resistance.
+
+The local backend suite passed **255 tests**, with **14 PostgreSQL-specific tests skipped**;
+Ruff, the existing three browser-helper tests, shell syntax and `git diff --check` passed.
+The SQLite migration-preservation test includes an Alembic check, but SQLite does not verify
+PostgreSQL locking or drift. Docker's API socket was unavailable in this environment, so no
+4E PostgreSQL test or live 4E worker run was performed. No normal application database or
+live job was changed. The prepared `apps/api/evaluation/run-4e-disposable.sh` creates a new,
+checked-empty PostgreSQL container/database, runs all backend tests without skips, the security
+evaluation, Ruff and Alembic checks, and retains its volume.
+
+The output filters and secret redaction are best effort: they can miss obfuscated instructions
+or unknown secrets and can reject benign text. A future real provider would require separate
+review of role boundaries, tool permissions, disclosure, budgets and adversarial behavior;
+the current tests do not establish real AI reasoning or production readiness. The report
+schema does not persist the instruction-policy version for historical reports.
+
+### Checkpoint 4E disposable PostgreSQL verification — 2026-10-29
+
+**SPRINT 4 CHECKPOINT 4E PASS LOCALLY**, within the mock-only security scope. The user supplied
+the completed host output for new container `repopilot-4e-disposable-f1c81fccddeca9be` and
+database `repopilot_4e_disposable_f1c81fccddeca9be`. The runner confirmed the database was
+empty and dedicated before testing. It reported **269 PostgreSQL tests passed, zero skipped**,
+three browser-helper tests passed, Ruff passed, Alembic **0009 (head)** with no pending upgrade
+operations, and all **33/33** adversarial fixture checks passed. The container and its new
+volume were retained. This host output supersedes the pending PostgreSQL status above.
+
+The reported dataset SHA-256 `b7ba2f58a21d3c349198ccdaf2dfbfed968a7e384618cef7530c86fc44c020e6`
+matches both the current dataset file and the saved `4e-security-evaluation.json`. The 33
+cases cover 14 untrusted input surfaces and 19 malicious model-output cases; the separate
+workflow tests exercise tenant/snapshot checks, revocation, retries and publication safety.
+These results use mocked GitHub responses and the in-process mock model. They do not establish
+real-model prompt-injection resistance, complete secret detection or production readiness.
+No new live investigation, real provider call or normal application-database mutation was
+performed for 4E; the real Celery result remains the separately documented 4D baseline.
+
+### Checkpoint 4F evaluation preparation — 2026-10-29
+
+At the preparation stage **SPRINT 4 CHECKPOINT 4F was NOT YET VERIFIED**. The separate `issue-report-v1` dataset contains
+19 synthetic issues: 16 source-location-scored cases, including two ambiguous cases, and
+three unscored insufficient/unreviewed-negative/security cases. Twenty-three positive labels
+were checked against local Git commit `30705da4c044192cab4ac207e253ab8e8a1bd100`, tree
+`beac4e3116133a810f679761e17a7441fa77c2d7`, source selection and eligible chunk boundaries.
+The dataset SHA-256 is `416cbf9e46b9399cf78d118f581a882d16cf512da439d352d3af29674c447bf6`.
+The mapping is in `apps/api/evaluation/issue-report-v1-provenance.md`. At that stage no snapshot
+or chunk UUID had been created. These incomplete labels do not establish root-cause correctness.
+The natural-language signature case was included; its result is documented below.
+
+The initial sandbox backend run, with the PostgreSQL committed-source snapshot test deliberately
+excluded, reported **270 passed, 13 skipped** using SQLite; this is not PostgreSQL locking or
+drift evidence. The focused 4F and 4E security tests subsequently passed, Ruff passed, the separately evaluated
+4E adversarial fixture passed **33/33**, shell syntax and `git diff --check` passed, and the
+approval guard refused an unapproved snapshot run. Docker's socket was denied to this sandbox.
+`run-4f-checks.sh` was prepared for host PostgreSQL regression checks in a new disposable
+database. The prior 4E host result remains separate and is not a 4F PostgreSQL result.
+
+The user subsequently supplied a screenshot of the host `run-4f-checks.sh` completion:
+**283 PostgreSQL tests passed**, all **33/33** adversarial checks passed, Ruff passed, and
+Alembic reported **0009 (head)** with no pending upgrade operations. The screenshot names
+the retained `repopilot-4f-checks-89d8c2f0d4f94786` container and says the committed-source
+snapshot test was excluded. Its database-name and preflight lines are not visible. The reviewed
+script only reaches the displayed success marker after its dedicated-empty-database preflight,
+pytest (with skips treated as failure), security evaluation, Ruff and Alembic checks succeed;
+those details are inferred from the shown marker and script rather than visible independently.
+The extra 4F macro-recall unit test added while the host run was underway passed separately
+in the sandbox. The new database and volume were retained.
+
+The user subsequently approved creation of the committed-source snapshot and the evaluation.
+The host results below supersede this preparation status.
+
+### Checkpoint 4F final local verification — 2026-10-29
+
+**SPRINT 4 CHECKPOINT 4F VERIFIED LOCALLY**, for the specified synthetic keyword and mock-report
+evaluation scope. The user supplied the successful host output for new container
+`repopilot-4f-disposable-4f762b71ae8d9569` and database
+`repopilot_4f_disposable_4f762b71ae8d9569`. The runner confirmed the dedicated database was
+empty, applied migrations there and reported Alembic **0009 (head)** without drift. It
+published snapshot `1a8e0d9e-1cf1-4e0a-9cac-f8ced23f1694` for the exact commit above: 104
+files, 889 chunks and one screened file. The container and its new volume were retained. No
+normal application database or GitHub issue was changed.
+
+The matching `4f-issue-report-v1-4f762b71ae8d9569.json` and `.md` record 16 scored and
+three unscored cases. The existing evaluator gives macro **Recall@1/3/5/10 =
+0.375/0.500/0.5625/0.625**, **MRR = 0.51414**, **nDCG@10 = 0.52054**, and a labeled hit
+within the top 10 for **12/16** scored cases. Two of 19 cases returned zero evidence. Across
+all cases, 226 evidence items were returned; all 226 recorded citation paths and inclusive
+chunk ranges were independently checked against local committed Git objects. The evaluator
+recomputed every per-case and aggregate retrieval score from the saved evidence. Direct-worker
+latency p50/p95 was **50.798/92.294 ms** for these 19 cases; this is not a load benchmark.
+
+The natural-language signature case returned the `webhook` handler at rank 2 but did not
+return its other labeled verifier in the top 10: its label recall@10 is 0.5. This is a separate
+dataset, commit and snapshot from the earlier 4C miss and does not establish a comparable
+improvement. The four cases without a labeled top-10 hit concern repository access, Python
+chunking, snapshot publication and citation boundaries. Their unlabeled results are not
+automatically irrelevant. The insufficient-details case returned 10 candidates without a
+scored label; the unreviewed negative and malicious case returned zero. None of those three
+cases was scored as a confirmed no-answer case.
+
+All **19/19** deterministic mock reports passed schema, investigation/snapshot provenance and
+support-status checks; **17/17** references matched the authorized evidence, **2/2** empty
+evidence cases abstained, and **19/19** duplicate direct deliveries left one report and one
+worker attempt. Ten additional mock-output probes passed, including malformed, oversized,
+foreign or cross-snapshot references, an incorrect commit, out-of-range lines, duplicate
+references, unsafe text, unsupported claims and contradictory evidence. The test client
+recorded HTTP 401 unauthenticated, 404 after repository revocation, 409 for an unpublished
+snapshot and 404 for a different tenant. These checks use mocked GitHub and direct workers;
+the separate 4D result is the evidence for real local Celery orchestration.
+
+The host's separate disposable regression run reported **283 PostgreSQL tests passed**, with
+the committed-source 4C test intentionally excluded, plus **33/33** adversarial checks, Ruff
+and Alembic drift checks. Its final marker implies no pytest skips under the reviewed script.
+Two additional evaluator unit tests were added after that run; the subsequent sandbox run
+reported **272 passed, 13 skipped** (SQLite, with the committed-source 4C test excluded),
+and **69** focused evaluation/security tests passed. Ruff, shell syntax and `git diff --check`
+passed. PostgreSQL was unavailable to the sandbox itself.
+
+The host log included HTTP callback query parameters from the synthetic OAuth test session.
+These were mock-only one-time values, not credentials from the user's real GitHub session.
+The evaluator now suppresses both `httpx` and the actual TestClient `httpx2` request loggers;
+a synthetic OAuth callback regression test passes. This logging-only change followed the run,
+so the runner's current hash differs from its recorded run hash; the recorded scorer and other
+implementation hashes were checked, and the scores were independently recomputed. No new
+snapshot or repeat evaluation was created for this fix.
+
+The labels are incomplete; no human-reviewed root-cause quality or real-model performance was
+measured. The rubric describes a future independent review. Source filtering and secret
+redaction remain incomplete, and remote GitHub citation resolution was not checked in this
+run. The previous v1/v2, 4C and 4D artifacts remain separate. No paid model or embedding call,
+live reindex, deployment, commit or push was performed.
+
+### Sprint 5A issue-investigation dashboard — 2026-10-30
+
+**SPRINT 5A NOT YET VERIFIED.** The dashboard now selects a synchronized issue or accepts a
+validated issue number for the selected authorized repository. It loads the existing bounded
+issue-context API and can explicitly submit an investigation or open an existing job UUID.
+The status view uses actual job states and the pinned snapshot/commit. Completed jobs can show
+ranked evidence and request or read a deterministic mock report; no investigation or report
+is submitted automatically. Mock reports are visibly identified as demonstrations, with
+speculative/unsupported labels, citations, missing information and next steps.
+
+The status response adds the stable issue ID and number, allowing the client to reject a job
+from a different issue. The evidence API's default still omits source excerpts. Its optional
+`include_snippets=true` returns at most 4,000 characters per verified evidence chunk, with
+truncation/withholding indicators. Before returning excerpts it rechecks current GitHub access,
+session, tenant, installation and repository guards, and the published snapshot and evidence
+fingerprints. It withholds chunks containing recognizable credentials or known active runtime
+secrets. These screens are incomplete; source and issue data must still be treated as untrusted.
+The same-origin proxy only forwards this explicit query option. For investigation POSTs it
+derives the existing CSRF header server-side from the CSRF cookie when necessary; the backend
+still checks the exact origin, session, cookie and CSRF hash. Session and GitHub credentials are
+not returned to the browser code.
+
+The client validates response identity, snapshot, commit, ranks, citation URLs and report
+references before displaying them. It renders issue and code text through React, never as HTML.
+It aborts stale requests on issue/repository changes or unmount, prevents concurrent duplicate
+submissions and limits active-job/report polling to 40 three-second attempts. Displayed results
+are reauthorized every 30 seconds for a bounded period, hidden when the tab becomes inactive,
+and cleared on failed revalidation. A remote revocation can take until the next check (and an
+in-flight request timeout) to reach an already open view; this is not instant revocation.
+
+Automated local checks on Node **22.23.4**: **48 frontend tests**, TypeScript, ESLint and the
+production Next.js build passed. Frontend tests include server-rendered views and exercised asynchronous controller
+transitions with mocked network/timers; they are not a real-browser test. The full SQLite
+backend suite passed **275 tests, 14 skipped**; Ruff passed. The focused OAuth callback-log
+regression passes for the post-4F runner. The 4F benchmark was not rerun: its artifact records
+the then-current implementation hashes; both the logging runner and investigation routes have
+since changed in the working tree. These checks used the uncommitted working tree based on
+commit `30705da4c044192cab4ac207e253ab8e8a1bd100`, before the issue-loading fix recorded below.
+The tested frontend controller, workspace,
+dashboard and proxy SHA-256 values are respectively
+`24f36b9dd7ee690452bcfd007350ad5bbfc65d64cfe354762fe5c18ff5e0580c`,
+`0262bc2e771534a9f36c5eb255b52744f8ab1d086f344ece62adc89d420f455b`,
+`f5f359891192ab4847efe4a50938e76b6b3d9b4613d9decce39b5efa2d43ac9b`, and
+`45e362ebd2938dd61046eac4adebd01bf63cdd4900f8958995dede4296f5ff87`.
+The current logging-runner SHA-256 is
+`4d5daa8e76cf1bb26742277545465d9efa3cbac46a4c256d49300aeb8860e4bd`, and the current routes
+SHA-256 is `3644dd628b40cea7edc570e44aaf2ef5ada9dcbfc083067551119c84edfc1d91`.
+
+Docker and the local web service remain inaccessible from the sandbox. The user supplied host
+evidence of rebuilt, healthy API and web services and a successful disposable PostgreSQL run,
+recorded below. Authenticated browser verification remains pending. Read-only host verification
+can use the previously completed issue #1 job `457d40bf-7e15-4e10-9a27-b8a0de9e513b` and its
+report. A new live investigation or report requires separate user approval. No normal
+application database, GitHub issue, live index, paid provider, deployment, commit or push was
+changed for this checkpoint.
+
+#### Sprint 5A final verification review
+
+The existing disposable runner was reviewed before the host run. It creates a uniquely named
+PostgreSQL container and database, verifies the target and an empty public schema, and points
+the destructive pytest fixtures and Alembic commands at that database. It fails the run on
+skipped pytest cases, excludes the separately gated committed-source snapshot test, and retains
+the container and volume.
+
+The user's 2026-10-30 host screenshot shows the API and web images built and both services
+healthy. The API container's routes SHA-256 matched the reviewed value above; the web container
+contained both the investigation and hidden-tab markers. Those checks do not establish actual
+browser behavior or prove every frontend file by hash. The same host run created container
+`repopilot-4f-checks-2affd11a715ea117` and empty database
+`repopilot_4f_checks_2affd11a715ea117`. It reported **288 PostgreSQL tests passed** in 41.02 s;
+the runner's success marker also requires no skipped tests. The prior committed-source snapshot
+test was intentionally excluded. The adversarial fixture reported **33/33 passed** with dataset
+SHA-256 `b7ba2f58a21d3c349198ccdaf2dfbfed968a7e384618cef7530c86fc44c020e6`; Ruff passed and
+the disposable database reached Alembic **0009 (head)** with no drift. The container and its
+volume were retained. This run did not create a committed-source benchmark snapshot.
+
+The user subsequently reported that an unauthenticated host `curl` request to the existing
+issue #1 job's same-origin report endpoint returned **HTTP 401**. This verifies rejection for
+that unauthenticated report request; it does not demonstrate the signed-in dashboard or other
+authorization scenarios in a browser.
+
+During the review, the frontend suite was rerun with **48 passed**; focused investigation and
+adversarial backend tests reported **45 passed and 1 PostgreSQL-only skip** on SQLite. Ruff and
+`git diff --check` passed. These reruns and the host output do not replace authenticated browser
+verification. No new investigation or report is authorized for that verification.
+
+#### Sprint 5A issue-loading diagnosis and fix
+
+The user reported that **Load issue** showed `Request unavailable. Please try again.` for
+repository `roshan-pandit1/RepoPilot`, issue #1. Their Chrome Console screenshot shows that a
+local probe calling `window.fetch` as another object's method throws `TypeError: Failed to
+execute 'fetch' on 'Window': Illegal invocation`. The visible Network rows show dashboard
+requests but no issue-context request; the screenshot does not establish the contents of the
+entire Network log. The controller used the same receiver pattern, so the exception was caught
+and reduced to the generic message before a request could be sent. The route and response schema
+were checked against the existing API and earlier 4A issue-context evidence.
+
+The default controller transport now calls `globalThis.fetch` with its global receiver. The
+same-origin proxy and backend authorization were not changed. A regression with a
+receiver-checking browser-fetch substitute and the issue #1 repository and issue identifiers
+failed before the fix and passed afterward. On Node **22.23.4**, **49 frontend tests**,
+TypeScript, ESLint and the production build passed. The focused issue-context and authentication
+backend tests reported **26 passed and 1 PostgreSQL-only skip** on SQLite; Ruff and
+`git diff --check` passed. The updated controller's SHA-256 is
+`ef5f9a5e60905265a8372c540c1a2e142a18aad35c0582231edf78940f182f13`.
+
+The user subsequently reported rebuilding and starting the local web service and receiving
+**HTTP 401** from an unauthenticated host `curl` request to the issue #1 context endpoint. This
+confirms rejection of that request, but is not an incognito-browser observation. The user's
+earlier unauthenticated report HTTP 401 and 288-test disposable PostgreSQL run preceded this
+frontend-only change; neither proves that the corrected issue workspace loads in Chrome. The
+read-only authenticated issue and existing evidence/report display remain pending. No new live
+investigation or report was created.
+
+#### Sprint 5A historical status compatibility
+
+The user's authenticated browser status responses returned HTTP 200 for both the historical
+job `d0614fdf-6931-4f7f-ab52-37bcb9955208` and the newer job
+`410e2d9e-44d3-4b61-852b-1a18a1506f1f`. The former reports `mock_orchestration`, null
+snapshot and commit, `not_applicable` retrieval, zero evidence and null snapshot-partial;
+the latter reports `code_evidence`, a snapshot and commit, and 20 evidence items. The frontend
+had required the second shape for every job and therefore rejected the valid historical status.
+The validator now accepts the historical shape only when its metadata is consistent, displays
+its status without fabricating evidence, and does not request or offer evidence or reports for
+that operation. Historical completed status is reauthorized on a bounded schedule and cleared
+when access cannot be rechecked. Snapshot-backed jobs retain their existing validation and report
+path.
+
+An earlier user-supplied read-only application-database result associated mock report
+`dbcbaa32-6330-475a-9da9-7bbb0f8e3305` with investigation
+`457d40bf-7e15-4e10-9a27-b8a0de9e513b` for `roshan-pandit1/RepoPilot`, issue #1; it is not
+the older orchestration job. A fresh read-only host query was requested because the sandbox
+cannot reach Docker. Its result and authenticated browser verification of the corrected UI are
+pending. The old and new response fixtures, inconsistent metadata, revocation, and switching from
+a historical job to a snapshot-backed mock report are covered by tests. **53 frontend tests**,
+TypeScript, ESLint and production build passed on Node 22; focused backend tests reported
+**58 passed, 3 PostgreSQL-only skips** on SQLite. Ruff and `git diff --check` passed. The earlier
+288-test PostgreSQL host run preceded this frontend-only change. No database records, jobs,
+reports, GitHub issues or application migrations were created or modified for this fix.

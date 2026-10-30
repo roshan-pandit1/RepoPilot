@@ -240,7 +240,7 @@ def process_report(job_id: str, factory=None, github=None, model=None):
         else:
             fail('failed', code if code in {'model_output_invalid', 'model_output_too_large',
                 'model_output_unsafe', 'model_evidence_invalid', 'model_not_enabled',
-                'model_usage_invalid', 'context_limit', 'sensitive_input'} else 'model_failed')
+                'model_usage_invalid', 'model_input_invalid', 'context_limit', 'sensitive_input'} else 'model_failed')
         return
     except SoftTimeLimitExceeded:
         fail('queued', 'worker_timeout')

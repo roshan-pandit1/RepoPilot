@@ -12,7 +12,7 @@ from sqlalchemy import select
 from app.domain.models import InvestigationReport, InvestigationReportJob
 from app.evaluation.retrieval import citation_valid, percentile
 from app.modules.investigation.report_model import (ModelError, ModelResult, MockInvestigationModel,
-                                                    build_package, validate_draft)
+                                                    build_package, model_request, validate_draft)
 from app.modules.investigation.report_worker import process_report
 from app.modules.ingestion.citations import github_citation
 from test_auth_enrollment import github_auth as github_auth
@@ -45,7 +45,7 @@ def test_synthetic_mock_report_evaluation(client, factory, github_auth, monkeypa
             assert citation_valid({'url': item.citation, 'path': item.path, 'start_line': item.start_line,
                                    'end_line': item.end_line, 'commit_sha': item.commit_sha}, 'alice/public', COMMIT)
         model = MockInvestigationModel()
-        raw = model.generate(request, timeout_seconds=2).raw_json
+        raw = model.generate(model_request(request), timeout_seconds=2).raw_json
         draft = json.loads(raw)
         if case['kind'] == 'unsupported':
             draft['hypotheses'] = [{'title': 'Possible issue', 'explanation': 'No support is available.',

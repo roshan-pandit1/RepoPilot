@@ -16,7 +16,7 @@ function loadSource(file, dependencies, env, fetch) {
   }).outputText;
   const loadedModule = { exports: {} };
   const context = vm.createContext({
-    module: loadedModule, exports: loadedModule.exports, Response, Request, URL, AbortSignal,
+    module: loadedModule, exports: loadedModule.exports, Response, Request, URL, AbortSignal, TextDecoder,
     process: { env }, fetch,
     require: (name) => {
       if (!(name in dependencies)) throw new Error(`Unexpected import: ${name}`);
@@ -31,6 +31,54 @@ function routeFor(env, fetch) {
   const api = loadSource("lib/server-api.ts", { "server-only": {} }, env, fetch);
   return loadSource("app/api/dashboard/route.ts", { "@/lib/server-api": api }, env, fetch);
 }
+
+function codeRoute(env, fetch) {
+  return loadSource("app/api/code/[repository]/[action]/route.ts", {}, env, fetch);
+}
+
+test("index proxy forwards session and CSRF headers to the authorized backend", async () => {
+  let upstream;
+  const route = codeRoute({ API_INTERNAL_URL: "http://api.example" }, async (url, options) => {
+    upstream = { url, options };
+    return Response.json({ job_id: "job", status: "pending" }, { status: 202 });
+  });
+  const request = new Request("http://web/api/code/902/index", { method: "POST", headers: {
+    cookie: "rp_session=opaque", origin: "http://web", "x-csrf-token": "fixture" } });
+  const result = await route.POST(request, { params: Promise.resolve({ repository: "902", action: "index" }) });
+  assert.equal(result.status, 202);
+  assert.equal(upstream.url, "http://api.example/v1/repositories/902/index");
+  assert.equal(upstream.options.headers.cookie, "rp_session=opaque");
+  assert.equal(upstream.options.headers["x-csrf-token"], "fixture");
+  assert.equal(result.headers.get("cache-control"), "no-store");
+});
+
+test("index proxy rejects invalid paths and oversized searches", async () => {
+  const route = codeRoute({}, async () => { throw new Error("must not fetch"); });
+  const bad = await route.GET(new Request("http://web/"), { params: Promise.resolve({ repository: "1x", action: "index-status" }) });
+  assert.equal(bad.status, 404);
+  const request = new Request("http://web/", { method: "POST", body: JSON.stringify({ query: "x".repeat(5000) }) });
+  const oversized = await route.POST(request, { params: Promise.resolve({ repository: "902", action: "search" }) });
+  assert.equal(oversized.status, 413);
+});
+
+test("code proxy forwards search modes and embedding routes with session protections", async () => {
+  const calls = [];
+  const route = codeRoute({}, async (url, options) => { calls.push({ url, options }); return Response.json({ status: "ok" }); });
+  for (const mode of ["keyword", "semantic", "hybrid"]) {
+    const response = await route.POST(new Request("http://web", { method: "POST", headers: {
+      cookie: "rp_session=opaque", origin: "http://web", "x-csrf-token": "csrf" },
+      body: JSON.stringify({ query: "example", mode }) }), { params: Promise.resolve({ repository: "902", action: "search" }) });
+    assert.equal(response.status, 200);
+    assert.equal(JSON.parse(calls.at(-1).options.body).mode, mode);
+    assert.equal(calls.at(-1).options.headers["x-csrf-token"], "csrf");
+  }
+  const invalid = await route.POST(new Request("http://web", { method: "POST", body: JSON.stringify({ query: "x", mode: "other" }) }), { params: Promise.resolve({ repository: "902", action: "search" }) });
+  assert.equal(invalid.status, 422);
+  const status = await route.GET(new Request("http://web"), { params: Promise.resolve({ repository: "902", action: "embedding-status" }) });
+  assert.equal(status.status, 200);
+  const start = await route.POST(new Request("http://web", { method: "POST" }), { params: Promise.resolve({ repository: "902", action: "embeddings" }) });
+  assert.equal(start.status, 200);
+});
 
 const development = {
   APP_ENV: "development", DEMO_AUTH_ENABLED: "true", DEMO_API_TOKEN: "fixture-secret",

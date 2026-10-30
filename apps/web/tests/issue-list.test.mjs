@@ -69,3 +69,9 @@ test("successful API data renders issue fields as text", () => {
   assert.match(html, /processed/);
   assert.doesNotMatch(html, /<untrusted issue>/);
 });
+
+test("connected users can select a listed issue for investigation", () => {
+  const html = render({ onSelectIssue: () => {}, page: { items: [{ id: "42", number: 7, title: "Example",
+    state: "open", updated_at: "2026-01-01T00:00:00Z", ingestion_status: "processed" }], ingestion: {} } });
+  assert.match(html, /Select issue for investigation/);
+});

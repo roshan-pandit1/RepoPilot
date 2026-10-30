@@ -65,8 +65,10 @@ def test_postgres_legacy_job_survives_migration():
     if not raw_url:
         pytest.skip('Disposable PostgreSQL is required')
     url = make_url(raw_url)
-    if url.get_backend_name() != 'postgresql' or not (url.database or '').startswith(('repopilot_4c_disposable_', 'repopilot_4d_disposable_')):
-        pytest.skip('Requires a dedicated 4C or 4D disposable PostgreSQL database')
+    if url.get_backend_name() != 'postgresql' or not (url.database or '').startswith(
+            ('repopilot_4c_disposable_', 'repopilot_4d_disposable_', 'repopilot_4e_disposable_',
+             'repopilot_4f_checks_')):
+        pytest.skip('Requires a dedicated checkpoint disposable PostgreSQL database')
     schema = 'legacy4c_' + uuid4().hex
     admin = create_engine(url, hide_parameters=True)
     scoped_url = url.update_query_dict({'options': f'-csearch_path={schema},public'})

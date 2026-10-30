@@ -4,8 +4,8 @@ A modular monolith for GitHub issue ingestion, commit-pinned source retrieval an
 investigations. Sprint 4 checkpoint 4D produces evidence-grounded reports with a deterministic
 mock provider. Real AI inference and GitHub write operations are not enabled.
 
-**Status: Sprint 3 C3 and Sprint 4 checkpoints 4A–4D were verified locally**, including
-authorized GitHub reads and local PostgreSQL/Redis/Celery workflows. These checks do not
+**Status: Sprint 3 C3 and Sprint 4 checkpoints 4A–4F were verified locally**, including
+authorized GitHub reads and the earlier 4D PostgreSQL/Redis/Celery workflow. These checks do not
 establish production readiness or real-model diagnostic quality. See [verification results](docs/verification.md).
 
 **Sprint 1 historical status: verified locally.** The host-reported signed webhook
@@ -426,7 +426,12 @@ the lease and repository/snapshot locks.
 user's authorized, completed job's currently published snapshot and ranked chunk references,
 query identifiers and hashes, path/symbol/line metadata and commit-pinned GitHub URLs. The same
 origin proxy is `GET /api/investigations/{repository_id}/jobs/{job_id}/evidence`. Status retains
-its 4B fields and adds snapshot, evidence count, retrieval status and partial-snapshot flag.
+its 4B fields and adds issue identity, snapshot, evidence count, retrieval status and partial-snapshot flag.
+For the investigation dashboard, `?include_snippets=true` explicitly requests source excerpts
+of at most 4,000 characters per item. These reads recheck and lock local authorization, withhold
+recognizable credentials and known runtime secrets, and report truncation or withholding; the
+default response continues to omit source text. Source screening is incomplete and does not
+guarantee that all secrets are detected.
 Zero results are explicitly `no_matches` or `no_usable_queries`; a partial index and issue
 text truncated before query construction are flagged.
 Raw issue text, query text, source snippets and credentials are not stored in evidence; query
@@ -480,3 +485,50 @@ state. The mock's two-second elapsed-time check occurs after it returns; Celery'
 additive on upgrade and was applied to the local application database after a backup. A real
 local Celery mock-report run and disposable PostgreSQL checks passed; see
 [`docs/verification.md`](docs/verification.md). No real model or paid call is enabled.
+
+### Mock report security boundaries (Sprint 4 checkpoint 4E)
+
+The model request separates a fixed, application-owned `mock-report-policy-v1` instruction
+object from the bounded issue/source data object. The mock exposes no tools or provider
+network calls. Evidence is checked before the mock call and model output is checked against the
+report schema and the investigation's persisted, snapshot-fenced evidence. Tested forged-role,
+command and URL patterns and unsafe control characters are rejected. The worker still
+rechecks authorization and the snapshot
+around model execution and uses the existing lease and atomic publication rules.
+
+`apps/api/evaluation/adversarial-report-v1.json` contains reproducible synthetic attacks.
+Run `cd apps/api && ../../.venv/bin/python -m app.evaluation.adversarial` to produce the
+separate `4e-security-evaluation.json` and `.md` report. These tests exercise the mock and
+server boundaries; they do not establish a real model's resistance to prompt injection.
+Output pattern checks and credential redaction are best effort and can miss attacks or reject
+benign text. The user reported 269 passing tests against a dedicated disposable PostgreSQL
+database; no live 4E job was run. See `docs/verification.md`.
+
+### Issue-to-code evaluation (Sprint 4 checkpoint 4F)
+
+A separate 19-case synthetic issue-to-code dataset and local Git provenance audit are prepared
+in [`apps/api/evaluation`](apps/api/evaluation/README.md). Sixteen cases have reviewed
+source-location labels; three remain unscored. A mock-report grounding evaluator and disposable
+PostgreSQL procedure run against a separately approved disposable snapshot. The recorded
+keyword evaluation has 12/16 cases with a labeled top-10 hit; all 19 mock reports passed
+structural and provenance checks. The mock is not a measurement of diagnostic reasoning;
+see `docs/verification.md` for metrics, limitations and execution details.
+
+### Issue investigation dashboard (Sprint 5A)
+
+The issue inbox lets a signed-in user select a synchronized issue or enter an issue number for
+an authorized repository. Load the issue to see bounded GitHub context, then explicitly start
+an investigation or open an existing job by UUID. The dashboard shows actual job states,
+snapshot, bounded source excerpts and validated commit-pinned citations. A completed job can
+explicitly request its one mock report; existing reports show their evidence, uncertainty,
+missing information and diagnostic steps under **MOCK REPORT — DEMONSTRATION ONLY**.
+No investigation or report starts on page load.
+
+Job and report status polling has a fixed limit and stops on terminal states. Displayed evidence
+and reports are reauthorized periodically, cleared on access failure or when the tab is hidden,
+and expire after a bounded viewing period. There can be a delay between a remote revocation and
+the next check. The same-origin proxy supplies the existing CSRF header on the server; backend
+session, origin, CSRF, tenant, repository and snapshot checks remain authoritative. Source and
+issue text are rendered as text. No real model is enabled, and retrieved candidates and mock
+output are not verified causes. Read-only browser verification and a separately approved live
+submission remain pending; see `docs/verification.md`.

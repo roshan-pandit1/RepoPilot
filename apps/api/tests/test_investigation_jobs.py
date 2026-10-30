@@ -32,6 +32,7 @@ def test_submit_outbox_duplicate_dispatch_and_terminal(client, factory, github_a
     assert client.post(SUBMIT).status_code == 401
     setup_issue(client, github_auth, factory)
     assert client.post(SUBMIT).status_code == 403
+    assert client.post(SUBMIT, headers={**csrf(client), 'Origin': 'https://attacker.invalid'}).status_code == 403
     job = submit(client)
     assert submit(client) == job
     with factory() as db:

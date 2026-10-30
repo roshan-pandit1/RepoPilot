@@ -9,3 +9,6 @@ button:disabled { opacity: .4; cursor: not-allowed; }
 .eyebrow { color: #38715f; font-size: 10px; font-weight: 700; letter-spacing: .15em; }
 .button { border: 1px solid #cddbd4; border-radius: 8px; background: white; padding: 10px 17px; font-size: 13px; font-weight: 600; }
 .button:hover { background: #edf5f1; }
+.button-primary { background: #065f46; border-color: #065f46; color: white; }
+.button-primary:hover:not(:disabled) { background: #064e3b; }
+.button-primary:disabled { opacity: 1; background: #edf2ef; border-color: #dce5df; color: #53645d; }

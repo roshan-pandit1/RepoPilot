@@ -107,11 +107,11 @@ export function GitHubAccount({ onConnected, connectedIds }: { onConnected: () =
       window.location.reload();
     } catch (error) { setMessage(error instanceof Error ? error.message : "Unable to sign out"); }
   }
-  if (checking) return <p className="text-xs text-slate-500" role="status">Checking account…</p>;
-  if (!identity) return <div><form action="/api/auth/start" method="get"><button className="button">Sign in with GitHub</button></form>{message && <p role="alert" className="mt-2 text-sm text-red-700">{message}</p>}</div>;
-  if (identity.demo) return <p className="text-xs text-slate-500">Development demo account</p>;
+  if (checking) return <p id="github-account" className="text-xs text-slate-500" role="status">Checking account…</p>;
+  if (!identity) return <div id="github-account"><form action="/api/auth/start" method="get"><button className="button">Sign in with GitHub</button></form>{message && <p role="alert" className="mt-2 text-sm text-red-700">{message}</p>}</div>;
+  if (identity.demo) return <p id="github-account" className="text-xs text-slate-500">Development demo account</p>;
   const visibleRepos = repos.filter(repo => repo.full_name.toLowerCase().includes(query.trim().toLowerCase()));
-  return <section className="panel my-6 p-5 sm:p-6" aria-label="GitHub account">
+  return <section id="github-account" className="panel my-6 scroll-mt-6 p-5 sm:p-6" aria-label="GitHub account">
     <div className="flex flex-wrap items-center justify-between gap-4">
       <div><p className="text-xs font-semibold uppercase tracking-wider text-emerald-700">GitHub connected</p><p className="mt-1 text-sm text-slate-600">Signed in as <strong className="text-slate-900">{identity.user.login}</strong></p></div>
       <button className="button" onClick={() => { void logout(); }}>Sign out</button>

@@ -1,0 +1,4015 @@
+{
+  "dataset": "issue-report-v1",
+  "dataset_sha256": "416cbf9e46b9399cf78d118f581a882d16cf512da439d352d3af29674c447bf6",
+  "source_commit": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+  "source_tree_sha": "beac4e3116133a810f679761e17a7441fa77c2d7",
+  "snapshot_id": "1a8e0d9e-1cf1-4e0a-9cac-f8ced23f1694",
+  "database": "repopilot_4f_disposable_4f762b71ae8d9569",
+  "database_server": {
+    "address": "172.17.0.13/32",
+    "port": 5432,
+    "version": "16.15 (Debian 16.15-1.pgdg12+2)"
+  },
+  "migration": "0009",
+  "snapshot_counts": {
+    "files": 104,
+    "chunks": 889,
+    "skipped_files": 1
+  },
+  "evaluated_at": "2026-10-29T16:43:30.566125+00:00",
+  "execution": "disposable PostgreSQL, authorized test client, fake GitHub, direct workers",
+  "retrieval_configuration": {
+    "mode": "keyword",
+    "query_limit": 3,
+    "per_query": 10,
+    "evidence_limit": 20,
+    "statement_timeout_seconds": 3
+  },
+  "model": "mock/deterministic-v1",
+  "evaluator_head": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+  "implementation_sha256": {
+    "apps/api/app/evaluation/issue_report.py": "f6c170be82d1d7a2436d964d1b563e783df927cdc098ac47834a323f8b4ec4da",
+    "apps/api/app/evaluation/issue_report_disposable.py": "1bf7fdb6c58847d5bb5bef7d2ff8e6009ab0a72c0f728098c4696883be262de1",
+    "apps/api/app/evaluation/git_source.py": "aa45bea7390d6f783cbb0cfbfdf47a197aff34757840318121c09760554686a8",
+    "apps/api/app/evaluation/retrieval.py": "26d905d25834f66621576499d1cafe28ec4af89f696a7711220afb90bb6290d1",
+    "apps/api/app/evaluation/verify_labels.py": "9258e0923914560cab83bb4ba7685147fbf83ab634e7fce0c10d82335abe709f",
+    "apps/api/app/workers/tasks.py": "121f00f677f53386e7076cd88f25f113b3252b39d4ae7f6faf9bd6c8c2b586da",
+    "apps/api/app/core/config.py": "fcec9b1f9498b89135a91f16da6f8b41388c5207389470885d9c54b12a68976a",
+    "apps/api/app/domain/models.py": "3a88d4e01694f4ddc82fd1ad2c7a9dc6e8e7a577d76b43a4cbc8ce8be64cd1fd",
+    "apps/api/app/modules/investigation/query_builder.py": "42e0b770a5bb57a0d91c95ec6f8a4a14cd06d73e7b5888e8894da7d52c7bb9d7",
+    "apps/api/app/modules/investigation/retrieval.py": "507ab978985146381ff9ed5af05aba103b0ec4161b0a9a2b47358220760175a4",
+    "apps/api/app/modules/investigation/routes.py": "f87460d524ee9a72208ac97fcd07f6f688e783faf0c06c7b22306f467be719a5",
+    "apps/api/app/modules/investigation/report_model.py": "2cc42e802940051dd891b7c792785e3a1885a535e702a32942c04b54178fc9a2",
+    "apps/api/app/modules/investigation/report_worker.py": "a3d6911a63a5a83a12069c838355c9aaac32bb5e8cac16b4c817f3306a553f73",
+    "apps/api/app/modules/investigation/reporting.py": "8082ea7753bf56b32be8e690d28df590036eac1faf71334021f432197f88e6e1",
+    "apps/api/app/modules/investigation/report_routes.py": "577940850325424d12f5a95a34cafcd50dc37ca44ff1b18f177eaa4297726487",
+    "apps/api/app/modules/ingestion/keyword_search.py": "0e9f4168f3c42ab35a7260d632dc08cc24aec59b465ca7bfe26d587613e76d43",
+    "apps/api/app/modules/ingestion/code_collect.py": "f0577feb36530d3c300d9c304989cd8c071d8b4c0e76df3031dc8f216ad46d87",
+    "apps/api/app/modules/ingestion/code_chunking.py": "ce05a23c8bcafb37739545d45911940f8195f06c0bd56b5d98fb45a4eac41e9d",
+    "apps/api/app/modules/ingestion/code_persistence.py": "27518566b14edb7a20ce0989349a7bfd339ea3712226c49a34f1b8311c96d655",
+    "apps/api/app/modules/ingestion/code_selection.py": "5c3840c68773f5a580cc4d968a67a3087f71295881a6a32d3026634dcab6a48f",
+    "apps/api/app/modules/ingestion/code_snapshot.py": "44db77db9c80b7502d3435713157579556ffb910fd61ca7de457fbecda480e47",
+    "apps/api/app/modules/ingestion/citations.py": "0b7d4aa2e8c3a452e452498eac17397084dd3774fdfd880c7f38da24cd2030cb",
+    "apps/api/tests/test_auth_enrollment.py": "6d5698b307d478589d850c84d0f4f007d320bb351d157d45168648e555bc13b3"
+  },
+  "runtime_versions": {
+    "python": "3.14.8",
+    "sqlalchemy": "2.0.55",
+    "pydantic": "2.14.1",
+    "psycopg": "3.3.6"
+  },
+  "retrieval": {
+    "scored_cases": 16,
+    "unscored_cases": 3,
+    "recall": {
+      "1": 0.375,
+      "3": 0.5,
+      "5": 0.5625,
+      "10": 0.625
+    },
+    "mrr": 0.5141369047619048,
+    "ndcg_at_10": 0.5205375997853043,
+    "labeled_hit_at_10": 12,
+    "zero_result_cases": 2,
+    "evidence_items": 226,
+    "evidence_budget_per_case": 20,
+    "latency_p50_ms": 50.798,
+    "latency_p95_ms": 92.294,
+    "failures_by_category": {
+      "webhook": {
+        "scored": 2,
+        "no_labeled_hit_at_10": 0
+      },
+      "authentication": {
+        "scored": 1,
+        "no_labeled_hit_at_10": 0
+      },
+      "authorization": {
+        "scored": 2,
+        "no_labeled_hit_at_10": 1
+      },
+      "synchronization": {
+        "scored": 1,
+        "no_labeled_hit_at_10": 0
+      },
+      "indexing": {
+        "scored": 3,
+        "no_labeled_hit_at_10": 1
+      },
+      "chunking": {
+        "scored": 1,
+        "no_labeled_hit_at_10": 1
+      },
+      "embedding": {
+        "scored": 2,
+        "no_labeled_hit_at_10": 0
+      },
+      "dispatch": {
+        "scored": 1,
+        "no_labeled_hit_at_10": 0
+      },
+      "citations": {
+        "scored": 1,
+        "no_labeled_hit_at_10": 1
+      },
+      "reports": {
+        "scored": 1,
+        "no_labeled_hit_at_10": 0
+      },
+      "evidence": {
+        "scored": 1,
+        "no_labeled_hit_at_10": 0
+      }
+    },
+    "cases": [
+      {
+        "issue_id": "signature_exact",
+        "category": "webhook",
+        "answerability": "source_locatable",
+        "scored": true,
+        "retrieval_status": "ready",
+        "evidence_count": 18,
+        "query_version": "terms-v1",
+        "queries": [
+          {
+            "id": "identifier_1",
+            "sha256": "8de7925d5be7d1e81bd52e8c108f2b2a88b2fac36c35660ab8ac80adf33162a7",
+            "retained_evidence": 10,
+            "labeled_retained_ranks": [
+              1
+            ]
+          },
+          {
+            "id": "title_terms",
+            "sha256": "00c1b2c68cbf7421087e2ffb759e3e9fffe946d22a65f91ab6d94f567d4f9ef2",
+            "retained_evidence": 8,
+            "labeled_retained_ranks": []
+          }
+        ],
+        "query_input_truncated": false,
+        "evidence": [
+          {
+            "rank": 1,
+            "chunk_id": "587f905d-a911-406b-af35-7ff0dc56a881",
+            "path": "apps/api/app/modules/github/security.py",
+            "symbol": "valid_signature",
+            "start_line": 6,
+            "end_line": 8,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/modules/github/security.py#L6-L8",
+            "query_id": "identifier_1",
+            "query_rank": 1,
+            "method": "keyword"
+          },
+          {
+            "rank": 2,
+            "chunk_id": "c3e20748-c882-4ab4-9022-7c2e8a3c52b2",
+            "path": "apps/api/app/modules/ingestion/service.py",
+            "symbol": "accept",
+            "start_line": 14,
+            "end_line": 70,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/modules/ingestion/service.py#L14-L70",
+            "query_id": "title_terms",
+            "query_rank": 1,
+            "method": "keyword"
+          },
+          {
+            "rank": 3,
+            "chunk_id": "8871c06a-c76b-41a6-9b2c-da66448abb22",
+            "path": "apps/api/tests/test_report_evaluation.py",
+            "symbol": "test_synthetic_mock_report_evaluation",
+            "start_line": 23,
+            "end_line": 110,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/tests/test_report_evaluation.py#L23-L110",
+            "query_id": "identifier_1",
+            "query_rank": 2,
+            "method": "keyword"
+          },
+          {
+            "rank": 4,
+            "chunk_id": "8173932d-e99d-47a3-8c9f-e233b4c5e14b",
+            "path": "apps/api/tests/unit/test_security.py",
+            "symbol": "test_raw_bytes_are_not_normalized",
+            "start_line": 22,
+            "end_line": 27,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/tests/unit/test_security.py#L22-L27",
+            "query_id": "identifier_1",
+            "query_rank": 3,
+            "method": "keyword"
+          },
+          {
+            "rank": 5,
+            "chunk_id": "74e623d9-a2ed-4fac-a7da-93982516996f",
+            "path": "apps/api/app/smoke.py",
+            "symbol": "main",
+            "start_line": 18,
+            "end_line": 72,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/smoke.py#L18-L72",
+            "query_id": "title_terms",
+            "query_rank": 3,
+            "method": "keyword"
+          },
+          {
+            "rank": 6,
+            "chunk_id": "9597d782-7633-41ec-948a-78c2a9db0baa",
+            "path": "apps/api/app/api/v1/routes.py",
+            "symbol": "webhook",
+            "start_line": 24,
+            "end_line": 59,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/api/v1/routes.py#L24-L59",
+            "query_id": "identifier_1",
+            "query_rank": 4,
+            "method": "keyword"
+          },
+          {
+            "rank": 7,
+            "chunk_id": "27366584-fad1-4a14-9ae3-d70d55615759",
+            "path": "apps/api/tests/test_ingestion.py",
+            "symbol": "test_publish_failure_and_broker_loss_are_recoverable",
+            "start_line": 144,
+            "end_line": 163,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/tests/test_ingestion.py#L144-L163",
+            "query_id": "title_terms",
+            "query_rank": 4,
+            "method": "keyword"
+          },
+          {
+            "rank": 8,
+            "chunk_id": "9745b35e-41ce-4899-bc80-e76364df43f0",
+            "path": "apps/api/tests/test_ingestion.py",
+            "symbol": "test_invalid_signature",
+            "start_line": 35,
+            "end_line": 43,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/tests/test_ingestion.py#L35-L43",
+            "query_id": "identifier_1",
+            "query_rank": 5,
+            "method": "keyword"
+          },
+          {
+            "rank": 9,
+            "chunk_id": "04f98ed8-2062-4463-b884-3170d3365f26",
+            "path": "apps/api/tests/unit/test_security.py",
+            "symbol": "test_invalid_signature",
+            "start_line": 17,
+            "end_line": 19,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/tests/unit/test_security.py#L17-L19",
+            "query_id": "identifier_1",
+            "query_rank": 6,
+            "method": "keyword"
+          },
+          {
+            "rank": 10,
+            "chunk_id": "c19ce3f2-c04b-40f0-82dd-9bfb2f4516f1",
+            "path": "apps/api/tests/test_ingestion.py",
+            "symbol": "test_duplicate_and_conflicting_delivery",
+            "start_line": 52,
+            "end_line": 59,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/tests/test_ingestion.py#L52-L59",
+            "query_id": "title_terms",
+            "query_rank": 6,
+            "method": "keyword"
+          },
+          {
+            "rank": 11,
+            "chunk_id": "267a7994-db6f-4344-9797-ed65ca2dc9c1",
+            "path": "apps/api/app/evaluation/verify_labels.py",
+            "symbol": "valid_label",
+            "start_line": 12,
+            "end_line": 25,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/evaluation/verify_labels.py#L12-L25",
+            "query_id": "identifier_1",
+            "query_rank": 7,
+            "method": "keyword"
+          },
+          {
+            "rank": 12,
+            "chunk_id": "b575ea3d-afa0-4ba1-b236-c9f32f9f7b5b",
+            "path": "apps/api/tests/test_ingestion.py",
+            "symbol": "test_worker_failure_rolls_back_issue_and_remains_retryable",
+            "start_line": 239,
+            "end_line": 257,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/tests/test_ingestion.py#L239-L257",
+            "query_id": "title_terms",
+            "query_rank": 7,
+            "method": "keyword"
+          },
+          {
+            "rank": 13,
+            "chunk_id": "27b2a0f7-f597-462e-aa75-b5a696df5b24",
+            "path": "apps/api/app/evaluation/postgres_scale.py",
+            "symbol": "run",
+            "start_line": 52,
+            "end_line": 142,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/evaluation/postgres_scale.py#L52-L142",
+            "query_id": "identifier_1",
+            "query_rank": 8,
+            "method": "keyword"
+          },
+          {
+            "rank": 14,
+            "chunk_id": "7694e008-fea4-4eda-bcd4-1347aec54e46",
+            "path": "apps/api/tests/test_ingestion.py",
+            "symbol": "test_dispatch_budget_exhaustion",
+            "start_line": 166,
+            "end_line": 174,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/tests/test_ingestion.py#L166-L174",
+            "query_id": "title_terms",
+            "query_rank": 8,
+            "method": "keyword"
+          },
+          {
+            "rank": 15,
+            "chunk_id": "cd2bb79b-72fa-41e0-a057-2bb93da1552b",
+            "path": "apps/api/app/modules/investigation/reporting.py",
+            "symbol": "render_report_payload",
+            "start_line": 22,
+            "end_line": 49,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/modules/investigation/reporting.py#L22-L49",
+            "query_id": "identifier_1",
+            "query_rank": 9,
+            "method": "keyword"
+          },
+          {
+            "rank": 16,
+            "chunk_id": "6fad6413-253c-46b1-bb15-78b36c196467",
+            "path": "apps/api/app/domain/models.py",
+            "symbol": "Delivery",
+            "start_line": 79,
+            "end_line": 84,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/domain/models.py#L79-L84",
+            "query_id": "title_terms",
+            "query_rank": 9,
+            "method": "keyword"
+          },
+          {
+            "rank": 17,
+            "chunk_id": "98715939-4ac5-4877-a3bf-10753ed199eb",
+            "path": "apps/api/tests/test_retrieval_evaluation.py",
+            "symbol": "test_v2_labels_support_decorators_and_require_one_complete_chunk",
+            "start_line": 103,
+            "end_line": 110,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/tests/test_retrieval_evaluation.py#L103-L110",
+            "query_id": "identifier_1",
+            "query_rank": 10,
+            "method": "keyword"
+          },
+          {
+            "rank": 18,
+            "chunk_id": "75cc7347-45b9-49ea-a807-d8c92d98d17d",
+            "path": "apps/api/tests/conftest.py",
+            "symbol": "signed",
+            "start_line": 66,
+            "end_line": 72,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/tests/conftest.py#L66-L72",
+            "query_id": "title_terms",
+            "query_rank": 10,
+            "method": "keyword"
+          }
+        ],
+        "latency_ms": 80.744,
+        "scores": {
+          "recall": {
+            "1": 1.0,
+            "3": 1.0,
+            "5": 1.0,
+            "10": 1.0
+          },
+          "reciprocal_rank": 1.0,
+          "ndcg_at_10": 1.0,
+          "relevant_ranks": [
+            1
+          ]
+        },
+        "outcome": "labeled_hit"
+      },
+      {
+        "issue_id": "signature_natural",
+        "category": "webhook",
+        "answerability": "source_locatable",
+        "scored": true,
+        "retrieval_status": "ready",
+        "evidence_count": 10,
+        "query_version": "terms-v1",
+        "queries": [
+          {
+            "id": "title_terms",
+            "sha256": "9a7d9d0316dd0133f1e03562054a0362b821f249288dac2d2413b5335339db44",
+            "retained_evidence": 10,
+            "labeled_retained_ranks": [
+              2
+            ]
+          }
+        ],
+        "query_input_truncated": false,
+        "evidence": [
+          {
+            "rank": 1,
+            "chunk_id": "dfb1f69a-444d-4a60-9b12-8c8c3180891a",
+            "path": "apps/api/app/modules/investigation/report_worker.py",
+            "symbol": "process_report",
+            "start_line": 155,
+            "end_line": 274,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/modules/investigation/report_worker.py#L155-L274",
+            "query_id": "title_terms",
+            "query_rank": 1,
+            "method": "keyword"
+          },
+          {
+            "rank": 2,
+            "chunk_id": "9597d782-7633-41ec-948a-78c2a9db0baa",
+            "path": "apps/api/app/api/v1/routes.py",
+            "symbol": "webhook",
+            "start_line": 24,
+            "end_line": 59,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/api/v1/routes.py#L24-L59",
+            "query_id": "title_terms",
+            "query_rank": 2,
+            "method": "keyword"
+          },
+          {
+            "rank": 3,
+            "chunk_id": "afc6b2e0-a0a9-4539-bbe8-613e1076388b",
+            "path": "apps/api/app/workers/dispatcher.py",
+            "symbol": "dispatch_once",
+            "start_line": 15,
+            "end_line": 124,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/workers/dispatcher.py#L15-L124",
+            "query_id": "title_terms",
+            "query_rank": 3,
+            "method": "keyword"
+          },
+          {
+            "rank": 4,
+            "chunk_id": "27b2a0f7-f597-462e-aa75-b5a696df5b24",
+            "path": "apps/api/app/evaluation/postgres_scale.py",
+            "symbol": "run",
+            "start_line": 52,
+            "end_line": 142,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/evaluation/postgres_scale.py#L52-L142",
+            "query_id": "title_terms",
+            "query_rank": 4,
+            "method": "keyword"
+          },
+          {
+            "rank": 5,
+            "chunk_id": "e888d6c1-74eb-49fb-8b42-a78509146137",
+            "path": "apps/api/app/workers/tasks.py",
+            "symbol": "process_index",
+            "start_line": 162,
+            "end_line": 281,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/workers/tasks.py#L162-L281",
+            "query_id": "title_terms",
+            "query_rank": 5,
+            "method": "keyword"
+          },
+          {
+            "rank": 6,
+            "chunk_id": "9745b35e-41ce-4899-bc80-e76364df43f0",
+            "path": "apps/api/tests/test_ingestion.py",
+            "symbol": "test_invalid_signature",
+            "start_line": 35,
+            "end_line": 43,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/tests/test_ingestion.py#L35-L43",
+            "query_id": "title_terms",
+            "query_rank": 6,
+            "method": "keyword"
+          },
+          {
+            "rank": 7,
+            "chunk_id": "6963038f-8f19-4874-b890-5594b6d1bb7f",
+            "path": "apps/api/app/workers/tasks.py",
+            "symbol": "process_investigation",
+            "start_line": 629,
+            "end_line": 748,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/workers/tasks.py#L629-L748",
+            "query_id": "title_terms",
+            "query_rank": 7,
+            "method": "keyword"
+          },
+          {
+            "rank": 8,
+            "chunk_id": "8173932d-e99d-47a3-8c9f-e233b4c5e14b",
+            "path": "apps/api/tests/unit/test_security.py",
+            "symbol": "test_raw_bytes_are_not_normalized",
+            "start_line": 22,
+            "end_line": 27,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/tests/unit/test_security.py#L22-L27",
+            "query_id": "title_terms",
+            "query_rank": 8,
+            "method": "keyword"
+          },
+          {
+            "rank": 9,
+            "chunk_id": "29c4de5f-2477-4e51-a09a-095e0078c1a9",
+            "path": "apps/api/app/modules/investigation/report_worker.py",
+            "symbol": "process_report",
+            "start_line": 35,
+            "end_line": 154,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/modules/investigation/report_worker.py#L35-L154",
+            "query_id": "title_terms",
+            "query_rank": 9,
+            "method": "keyword"
+          },
+          {
+            "rank": 10,
+            "chunk_id": "c7704bb2-a7a7-4787-91fa-a6cd0b1c66e7",
+            "path": "apps/api/app/workers/tasks.py",
+            "symbol": "process_embedding",
+            "start_line": 325,
+            "end_line": 444,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/workers/tasks.py#L325-L444",
+            "query_id": "title_terms",
+            "query_rank": 10,
+            "method": "keyword"
+          }
+        ],
+        "latency_ms": 47.711,
+        "scores": {
+          "recall": {
+            "1": 0.0,
+            "3": 0.5,
+            "5": 0.5,
+            "10": 0.5
+          },
+          "reciprocal_rank": 0.5,
+          "ndcg_at_10": 0.38685280723454163,
+          "relevant_ranks": [
+            2
+          ]
+        },
+        "outcome": "labeled_hit"
+      },
+      {
+        "issue_id": "oauth_callback",
+        "category": "authentication",
+        "answerability": "source_locatable",
+        "scored": true,
+        "retrieval_status": "ready",
+        "evidence_count": 15,
+        "query_version": "terms-v1",
+        "queries": [
+          {
+            "id": "identifier_1",
+            "sha256": "f911e414cf6bdfc595532ab166b5ba0f63d73c021452fcdacbda363dda6ad8fb",
+            "retained_evidence": 9,
+            "labeled_retained_ranks": [
+              1
+            ]
+          },
+          {
+            "id": "title_terms",
+            "sha256": "57fdc47dd8046fa22e83e544d8ffb1bb3ced90e14d43e1acf796cbc2dedf176c",
+            "retained_evidence": 6,
+            "labeled_retained_ranks": []
+          }
+        ],
+        "query_input_truncated": false,
+        "evidence": [
+          {
+            "rank": 1,
+            "chunk_id": "8d6d6dc3-2491-43b9-8285-75ae33a20705",
+            "path": "apps/api/app/modules/auth/routes.py",
+            "symbol": "callback",
+            "start_line": 44,
+            "end_line": 114,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/modules/auth/routes.py#L44-L114",
+            "query_id": "identifier_1",
+            "query_rank": 1,
+            "method": "keyword"
+          },
+          {
+            "rank": 2,
+            "chunk_id": "dfb1f69a-444d-4a60-9b12-8c8c3180891a",
+            "path": "apps/api/app/modules/investigation/report_worker.py",
+            "symbol": "process_report",
+            "start_line": 155,
+            "end_line": 274,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/modules/investigation/report_worker.py#L155-L274",
+            "query_id": "title_terms",
+            "query_rank": 1,
+            "method": "keyword"
+          },
+          {
+            "rank": 3,
+            "chunk_id": "e888d6c1-74eb-49fb-8b42-a78509146137",
+            "path": "apps/api/app/workers/tasks.py",
+            "symbol": "process_index",
+            "start_line": 162,
+            "end_line": 281,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/workers/tasks.py#L162-L281",
+            "query_id": "identifier_1",
+            "query_rank": 2,
+            "method": "keyword"
+          },
+          {
+            "rank": 4,
+            "chunk_id": "afc6b2e0-a0a9-4539-bbe8-613e1076388b",
+            "path": "apps/api/app/workers/dispatcher.py",
+            "symbol": "dispatch_once",
+            "start_line": 15,
+            "end_line": 124,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/workers/dispatcher.py#L15-L124",
+            "query_id": "title_terms",
+            "query_rank": 2,
+            "method": "keyword"
+          },
+          {
+            "rank": 5,
+            "chunk_id": "9c4a96d4-2069-4a3e-93b6-efa2d5cabb57",
+            "path": "apps/api/app/modules/github/source_client.py",
+            "symbol": "GitHubSourceClient",
+            "start_line": 17,
+            "end_line": 110,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/modules/github/source_client.py#L17-L110",
+            "query_id": "identifier_1",
+            "query_rank": 3,
+            "method": "keyword"
+          },
+          {
+            "rank": 6,
+            "chunk_id": "59027aa5-4bbd-42c0-b999-30c91bb3ac1e",
+            "path": "apps/api/app/workers/tasks.py",
+            "symbol": "process_sync",
+            "start_line": 75,
+            "end_line": 148,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/workers/tasks.py#L75-L148",
+            "query_id": "identifier_1",
+            "query_rank": 4,
+            "method": "keyword"
+          },
+          {
+            "rank": 7,
+            "chunk_id": "4351a07c-67e7-4cb4-9900-700381423e47",
+            "path": "apps/api/app/evaluation/v2_disposable.py",
+            "symbol": "main",
+            "start_line": 17,
+            "end_line": 136,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/evaluation/v2_disposable.py#L17-L136",
+            "query_id": "identifier_1",
+            "query_rank": 5,
+            "method": "keyword"
+          },
+          {
+            "rank": 8,
+            "chunk_id": "edc30dec-1ede-42aa-b27a-2c409000cd0e",
+            "path": "apps/api/app/modules/github/client.py",
+            "symbol": "HttpGitHubClient",
+            "start_line": 22,
+            "end_line": 90,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/modules/github/client.py#L22-L90",
+            "query_id": "title_terms",
+            "query_rank": 5,
+            "method": "keyword"
+          },
+          {
+            "rank": 9,
+            "chunk_id": "c7704bb2-a7a7-4787-91fa-a6cd0b1c66e7",
+            "path": "apps/api/app/workers/tasks.py",
+            "symbol": "process_embedding",
+            "start_line": 325,
+            "end_line": 444,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/workers/tasks.py#L325-L444",
+            "query_id": "identifier_1",
+            "query_rank": 6,
+            "method": "keyword"
+          },
+          {
+            "rank": 10,
+            "chunk_id": "29c4de5f-2477-4e51-a09a-095e0078c1a9",
+            "path": "apps/api/app/modules/investigation/report_worker.py",
+            "symbol": "process_report",
+            "start_line": 35,
+            "end_line": 154,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/modules/investigation/report_worker.py#L35-L154",
+            "query_id": "title_terms",
+            "query_rank": 6,
+            "method": "keyword"
+          },
+          {
+            "rank": 11,
+            "chunk_id": "9a5a2684-2838-447d-ac43-12766d17f187",
+            "path": "apps/api/app/workers/tasks.py",
+            "symbol": "process_investigation",
+            "start_line": 509,
+            "end_line": 628,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/workers/tasks.py#L509-L628",
+            "query_id": "identifier_1",
+            "query_rank": 7,
+            "method": "keyword"
+          },
+          {
+            "rank": 12,
+            "chunk_id": "eef56f5e-3eb4-4b65-8ec9-5b5ab1a8fc4b",
+            "path": "apps/api/tests/test_config.py",
+            "symbol": "test_oauth_requires_valid_key_origin_and_https_in_production",
+            "start_line": 33,
+            "end_line": 47,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/tests/test_config.py#L33-L47",
+            "query_id": "identifier_1",
+            "query_rank": 8,
+            "method": "keyword"
+          },
+          {
+            "rank": 13,
+            "chunk_id": "4732728a-8820-443f-99e0-b9341f05421b",
+            "path": "apps/api/app/core/config.py",
+            "symbol": "Settings",
+            "start_line": 9,
+            "end_line": 85,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/core/config.py#L9-L85",
+            "query_id": "title_terms",
+            "query_rank": 8,
+            "method": "keyword"
+          },
+          {
+            "rank": 14,
+            "chunk_id": "65c4afee-b3d8-409a-984f-ea50966beb57",
+            "path": "apps/api/tests/test_auth_enrollment.py",
+            "symbol": "sign_in",
+            "start_line": 63,
+            "end_line": 73,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/tests/test_auth_enrollment.py#L63-L73",
+            "query_id": "title_terms",
+            "query_rank": 9,
+            "method": "keyword"
+          },
+          {
+            "rank": 15,
+            "chunk_id": "6963038f-8f19-4874-b890-5594b6d1bb7f",
+            "path": "apps/api/app/workers/tasks.py",
+            "symbol": "process_investigation",
+            "start_line": 629,
+            "end_line": 748,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/workers/tasks.py#L629-L748",
+            "query_id": "identifier_1",
+            "query_rank": 10,
+            "method": "keyword"
+          }
+        ],
+        "latency_ms": 92.294,
+        "scores": {
+          "recall": {
+            "1": 1.0,
+            "3": 1.0,
+            "5": 1.0,
+            "10": 1.0
+          },
+          "reciprocal_rank": 1.0,
+          "ndcg_at_10": 1.0,
+          "relevant_ranks": [
+            1
+          ]
+        },
+        "outcome": "labeled_hit"
+      },
+      {
+        "issue_id": "installation_enrollment",
+        "category": "authorization",
+        "answerability": "source_locatable",
+        "scored": true,
+        "retrieval_status": "ready",
+        "evidence_count": 18,
+        "query_version": "terms-v1",
+        "queries": [
+          {
+            "id": "identifier_1",
+            "sha256": "f911e414cf6bdfc595532ab166b5ba0f63d73c021452fcdacbda363dda6ad8fb",
+            "retained_evidence": 8,
+            "labeled_retained_ranks": []
+          },
+          {
+            "id": "title_terms",
+            "sha256": "770bd1e14b74181c75c2ce54a237522539e2501367f370fb7b9194ce8166ceee",
+            "retained_evidence": 10,
+            "labeled_retained_ranks": [
+              2
+            ]
+          }
+        ],
+        "query_input_truncated": false,
+        "evidence": [
+          {
+            "rank": 1,
+            "chunk_id": "8d6d6dc3-2491-43b9-8285-75ae33a20705",
+            "path": "apps/api/app/modules/auth/routes.py",
+            "symbol": "callback",
+            "start_line": 44,
+            "end_line": 114,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/modules/auth/routes.py#L44-L114",
+            "query_id": "identifier_1",
+            "query_rank": 1,
+            "method": "keyword"
+          },
+          {
+            "rank": 2,
+            "chunk_id": "12357232-a072-4994-afb4-283b8150a97a",
+            "path": "apps/api/app/modules/github/enrollment.py",
+            "symbol": "enroll",
+            "start_line": 56,
+            "end_line": 79,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/modules/github/enrollment.py#L56-L79",
+            "query_id": "title_terms",
+            "query_rank": 1,
+            "method": "keyword"
+          },
+          {
+            "rank": 3,
+            "chunk_id": "e888d6c1-74eb-49fb-8b42-a78509146137",
+            "path": "apps/api/app/workers/tasks.py",
+            "symbol": "process_index",
+            "start_line": 162,
+            "end_line": 281,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/workers/tasks.py#L162-L281",
+            "query_id": "identifier_1",
+            "query_rank": 2,
+            "method": "keyword"
+          },
+          {
+            "rank": 4,
+            "chunk_id": "6963038f-8f19-4874-b890-5594b6d1bb7f",
+            "path": "apps/api/app/workers/tasks.py",
+            "symbol": "process_investigation",
+            "start_line": 629,
+            "end_line": 748,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/workers/tasks.py#L629-L748",
+            "query_id": "title_terms",
+            "query_rank": 2,
+            "method": "keyword"
+          },
+          {
+            "rank": 5,
+            "chunk_id": "9c4a96d4-2069-4a3e-93b6-efa2d5cabb57",
+            "path": "apps/api/app/modules/github/source_client.py",
+            "symbol": "GitHubSourceClient",
+            "start_line": 17,
+            "end_line": 110,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/modules/github/source_client.py#L17-L110",
+            "query_id": "identifier_1",
+            "query_rank": 3,
+            "method": "keyword"
+          },
+          {
+            "rank": 6,
+            "chunk_id": "c3e20748-c882-4ab4-9022-7c2e8a3c52b2",
+            "path": "apps/api/app/modules/ingestion/service.py",
+            "symbol": "accept",
+            "start_line": 14,
+            "end_line": 70,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/modules/ingestion/service.py#L14-L70",
+            "query_id": "title_terms",
+            "query_rank": 3,
+            "method": "keyword"
+          },
+          {
+            "rank": 7,
+            "chunk_id": "59027aa5-4bbd-42c0-b999-30c91bb3ac1e",
+            "path": "apps/api/app/workers/tasks.py",
+            "symbol": "process_sync",
+            "start_line": 75,
+            "end_line": 148,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/workers/tasks.py#L75-L148",
+            "query_id": "identifier_1",
+            "query_rank": 4,
+            "method": "keyword"
+          },
+          {
+            "rank": 8,
+            "chunk_id": "daca4e75-729d-4e59-9b13-f621a8f243bb",
+            "path": "apps/api/app/modules/github/enrollment.py",
+            "symbol": "select_repository",
+            "start_line": 82,
+            "end_line": 120,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/modules/github/enrollment.py#L82-L120",
+            "query_id": "title_terms",
+            "query_rank": 4,
+            "method": "keyword"
+          },
+          {
+            "rank": 9,
+            "chunk_id": "4351a07c-67e7-4cb4-9900-700381423e47",
+            "path": "apps/api/app/evaluation/v2_disposable.py",
+            "symbol": "main",
+            "start_line": 17,
+            "end_line": 136,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/evaluation/v2_disposable.py#L17-L136",
+            "query_id": "identifier_1",
+            "query_rank": 5,
+            "method": "keyword"
+          },
+          {
+            "rank": 10,
+            "chunk_id": "c7704bb2-a7a7-4787-91fa-a6cd0b1c66e7",
+            "path": "apps/api/app/workers/tasks.py",
+            "symbol": "process_embedding",
+            "start_line": 325,
+            "end_line": 444,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/workers/tasks.py#L325-L444",
+            "query_id": "title_terms",
+            "query_rank": 5,
+            "method": "keyword"
+          },
+          {
+            "rank": 11,
+            "chunk_id": "29c4de5f-2477-4e51-a09a-095e0078c1a9",
+            "path": "apps/api/app/modules/investigation/report_worker.py",
+            "symbol": "process_report",
+            "start_line": 35,
+            "end_line": 154,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/modules/investigation/report_worker.py#L35-L154",
+            "query_id": "title_terms",
+            "query_rank": 6,
+            "method": "keyword"
+          },
+          {
+            "rank": 12,
+            "chunk_id": "9a5a2684-2838-447d-ac43-12766d17f187",
+            "path": "apps/api/app/workers/tasks.py",
+            "symbol": "process_investigation",
+            "start_line": 509,
+            "end_line": 628,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/workers/tasks.py#L509-L628",
+            "query_id": "identifier_1",
+            "query_rank": 7,
+            "method": "keyword"
+          },
+          {
+            "rank": 13,
+            "chunk_id": "07c468c0-7d4c-4220-8af3-db55df9ab8e1",
+            "path": "apps/api/app/modules/investigation/report_routes.py",
+            "symbol": "request_report",
+            "start_line": 128,
+            "end_line": 167,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/modules/investigation/report_routes.py#L128-L167",
+            "query_id": "title_terms",
+            "query_rank": 7,
+            "method": "keyword"
+          },
+          {
+            "rank": 14,
+            "chunk_id": "eef56f5e-3eb4-4b65-8ec9-5b5ab1a8fc4b",
+            "path": "apps/api/tests/test_config.py",
+            "symbol": "test_oauth_requires_valid_key_origin_and_https_in_production",
+            "start_line": 33,
+            "end_line": 47,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/tests/test_config.py#L33-L47",
+            "query_id": "identifier_1",
+            "query_rank": 8,
+            "method": "keyword"
+          },
+          {
+            "rank": 15,
+            "chunk_id": "7fd63883-0584-484e-b24a-7ecf1adbfed2",
+            "path": "apps/api/app/modules/investigation/routes.py",
+            "symbol": "submit",
+            "start_line": 23,
+            "end_line": 75,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/modules/investigation/routes.py#L23-L75",
+            "query_id": "title_terms",
+            "query_rank": 8,
+            "method": "keyword"
+          },
+          {
+            "rank": 16,
+            "chunk_id": "edc30dec-1ede-42aa-b27a-2c409000cd0e",
+            "path": "apps/api/app/modules/github/client.py",
+            "symbol": "HttpGitHubClient",
+            "start_line": 22,
+            "end_line": 90,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/modules/github/client.py#L22-L90",
+            "query_id": "identifier_1",
+            "query_rank": 9,
+            "method": "keyword"
+          },
+          {
+            "rank": 17,
+            "chunk_id": "e2bdd359-2718-4fc9-a8bf-83a7f8fb8c74",
+            "path": "apps/api/app/modules/investigation/report_routes.py",
+            "symbol": "lock_report_read_access",
+            "start_line": 99,
+            "end_line": 125,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/modules/investigation/report_routes.py#L99-L125",
+            "query_id": "title_terms",
+            "query_rank": 9,
+            "method": "keyword"
+          },
+          {
+            "rank": 18,
+            "chunk_id": "dfb1f69a-444d-4a60-9b12-8c8c3180891a",
+            "path": "apps/api/app/modules/investigation/report_worker.py",
+            "symbol": "process_report",
+            "start_line": 155,
+            "end_line": 274,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/modules/investigation/report_worker.py#L155-L274",
+            "query_id": "title_terms",
+            "query_rank": 10,
+            "method": "keyword"
+          }
+        ],
+        "latency_ms": 86.775,
+        "scores": {
+          "recall": {
+            "1": 0.0,
+            "3": 0.5,
+            "5": 0.5,
+            "10": 0.5
+          },
+          "reciprocal_rank": 0.5,
+          "ndcg_at_10": 0.38685280723454163,
+          "relevant_ranks": [
+            2
+          ]
+        },
+        "outcome": "labeled_hit"
+      },
+      {
+        "issue_id": "repository_access",
+        "category": "authorization",
+        "answerability": "ambiguous",
+        "scored": true,
+        "retrieval_status": "ready",
+        "evidence_count": 10,
+        "query_version": "terms-v1",
+        "queries": [
+          {
+            "id": "title_terms",
+            "sha256": "89d655aaff15d24dd671c29408809bce897f6e5c44a4a886a266511326a4a790",
+            "retained_evidence": 10,
+            "labeled_retained_ranks": []
+          }
+        ],
+        "query_input_truncated": false,
+        "evidence": [
+          {
+            "rank": 1,
+            "chunk_id": "f6531973-1a79-4d85-85b9-40af81e47ec2",
+            "path": "apps/api/alembic/env.py",
+            "symbol": null,
+            "start_line": 1,
+            "end_line": 16,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/alembic/env.py#L1-L16",
+            "query_id": "title_terms",
+            "query_rank": 1,
+            "method": "keyword"
+          },
+          {
+            "rank": 2,
+            "chunk_id": "b87286a2-2cac-4d1f-a0a6-6dc0a610cf82",
+            "path": "apps/api/tests/conftest.py",
+            "symbol": "factory",
+            "start_line": 24,
+            "end_line": 44,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/tests/conftest.py#L24-L44",
+            "query_id": "title_terms",
+            "query_rank": 2,
+            "method": "keyword"
+          },
+          {
+            "rank": 3,
+            "chunk_id": "12462a5b-fd70-4f2b-82cf-46ec1e9ca221",
+            "path": "apps/api/app/evaluation/lexical_diagnostic.py",
+            "symbol": "main",
+            "start_line": 50,
+            "end_line": 81,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/evaluation/lexical_diagnostic.py#L50-L81",
+            "query_id": "title_terms",
+            "query_rank": 3,
+            "method": "keyword"
+          },
+          {
+            "rank": 4,
+            "chunk_id": "258eb078-f965-412b-9406-6f5d41a7446f",
+            "path": "apps/api/app/evaluation/postgres_scale.py",
+            "symbol": "plan_nodes",
+            "start_line": 40,
+            "end_line": 49,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/evaluation/postgres_scale.py#L40-L49",
+            "query_id": "title_terms",
+            "query_rank": 4,
+            "method": "keyword"
+          },
+          {
+            "rank": 5,
+            "chunk_id": "18151df9-74b2-44d9-8402-dbce7ae80798",
+            "path": "apps/api/app/main.py",
+            "symbol": "ready",
+            "start_line": 64,
+            "end_line": 76,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/main.py#L64-L76",
+            "query_id": "title_terms",
+            "query_rank": 5,
+            "method": "keyword"
+          },
+          {
+            "rank": 6,
+            "chunk_id": "6a68a0d3-35c8-4587-9371-5c9c93df0a50",
+            "path": "apps/api/app/modules/github/issue_context_client.py",
+            "symbol": "IssueContextClient",
+            "start_line": 11,
+            "end_line": 55,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/modules/github/issue_context_client.py#L11-L55",
+            "query_id": "title_terms",
+            "query_rank": 6,
+            "method": "keyword"
+          },
+          {
+            "rank": 7,
+            "chunk_id": "658035df-a8d5-47e8-abae-d9c02a8dea7e",
+            "path": "apps/api/app/infra/database.py",
+            "symbol": "get_engine",
+            "start_line": 9,
+            "end_line": 13,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/infra/database.py#L9-L13",
+            "query_id": "title_terms",
+            "query_rank": 7,
+            "method": "keyword"
+          },
+          {
+            "rank": 8,
+            "chunk_id": "e2bdd359-2718-4fc9-a8bf-83a7f8fb8c74",
+            "path": "apps/api/app/modules/investigation/report_routes.py",
+            "symbol": "lock_report_read_access",
+            "start_line": 99,
+            "end_line": 125,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/modules/investigation/report_routes.py#L99-L125",
+            "query_id": "title_terms",
+            "query_rank": 8,
+            "method": "keyword"
+          },
+          {
+            "rank": 9,
+            "chunk_id": "0179c9b8-846d-4f50-83f1-78dae4f928fe",
+            "path": "apps/api/tests/test_auth_enrollment.py",
+            "symbol": "test_changed_installation_permissions_disable_reads",
+            "start_line": 162,
+            "end_line": 171,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/tests/test_auth_enrollment.py#L162-L171",
+            "query_id": "title_terms",
+            "query_rank": 9,
+            "method": "keyword"
+          },
+          {
+            "rank": 10,
+            "chunk_id": "07b9546b-583f-434b-8ca2-2ba08a915856",
+            "path": "apps/api/tests/test_auth_enrollment.py",
+            "symbol": "test_distinct_user_cannot_read_or_claim_another_tenant_repository",
+            "start_line": 201,
+            "end_line": 210,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/tests/test_auth_enrollment.py#L201-L210",
+            "query_id": "title_terms",
+            "query_rank": 10,
+            "method": "keyword"
+          }
+        ],
+        "latency_ms": 49.667,
+        "scores": {
+          "recall": {
+            "1": 0.0,
+            "3": 0.0,
+            "5": 0.0,
+            "10": 0.0
+          },
+          "reciprocal_rank": 0,
+          "ndcg_at_10": 0.0,
+          "relevant_ranks": []
+        },
+        "outcome": "no_labeled_hit_in_top_10"
+      },
+      {
+        "issue_id": "repository_sync",
+        "category": "synchronization",
+        "answerability": "source_locatable",
+        "scored": true,
+        "retrieval_status": "ready",
+        "evidence_count": 18,
+        "query_version": "terms-v1",
+        "queries": [
+          {
+            "id": "identifier_1",
+            "sha256": "1959dc6b3a9e016f194bea8557dfda5b7da58b0e97332133a6e80eed1fc1d97e",
+            "retained_evidence": 9,
+            "labeled_retained_ranks": [
+              1
+            ]
+          },
+          {
+            "id": "title_terms",
+            "sha256": "242714c343cdc2a4c62c43e7c70092f98796b9a5b076044703861d02d88d1324",
+            "retained_evidence": 9,
+            "labeled_retained_ranks": []
+          }
+        ],
+        "query_input_truncated": false,
+        "evidence": [
+          {
+            "rank": 1,
+            "chunk_id": "59027aa5-4bbd-42c0-b999-30c91bb3ac1e",
+            "path": "apps/api/app/workers/tasks.py",
+            "symbol": "process_sync",
+            "start_line": 75,
+            "end_line": 148,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/workers/tasks.py#L75-L148",
+            "query_id": "identifier_1",
+            "query_rank": 1,
+            "method": "keyword"
+          },
+          {
+            "rank": 2,
+            "chunk_id": "e888d6c1-74eb-49fb-8b42-a78509146137",
+            "path": "apps/api/app/workers/tasks.py",
+            "symbol": "process_index",
+            "start_line": 162,
+            "end_line": 281,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/workers/tasks.py#L162-L281",
+            "query_id": "title_terms",
+            "query_rank": 1,
+            "method": "keyword"
+          },
+          {
+            "rank": 3,
+            "chunk_id": "6b1ee7ce-feb9-4e4d-92b7-bbbdd2fd42ef",
+            "path": "apps/api/tests/test_auth_enrollment.py",
+            "symbol": "test_initial_sync_is_durable_idempotent_and_honors_revocation",
+            "start_line": 174,
+            "end_line": 198,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/tests/test_auth_enrollment.py#L174-L198",
+            "query_id": "identifier_1",
+            "query_rank": 2,
+            "method": "keyword"
+          },
+          {
+            "rank": 4,
+            "chunk_id": "29c4de5f-2477-4e51-a09a-095e0078c1a9",
+            "path": "apps/api/app/modules/investigation/report_worker.py",
+            "symbol": "process_report",
+            "start_line": 35,
+            "end_line": 154,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/modules/investigation/report_worker.py#L35-L154",
+            "query_id": "title_terms",
+            "query_rank": 2,
+            "method": "keyword"
+          },
+          {
+            "rank": 5,
+            "chunk_id": "79845724-703d-452d-8c35-6fb8059ecfc3",
+            "path": "apps/api/tests/test_auth_enrollment.py",
+            "symbol": "test_sync_retries_upstream_failure_without_partial_database_effects",
+            "start_line": 305,
+            "end_line": 323,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/tests/test_auth_enrollment.py#L305-L323",
+            "query_id": "identifier_1",
+            "query_rank": 3,
+            "method": "keyword"
+          },
+          {
+            "rank": 6,
+            "chunk_id": "c7704bb2-a7a7-4787-91fa-a6cd0b1c66e7",
+            "path": "apps/api/app/workers/tasks.py",
+            "symbol": "process_embedding",
+            "start_line": 325,
+            "end_line": 444,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/workers/tasks.py#L325-L444",
+            "query_id": "title_terms",
+            "query_rank": 3,
+            "method": "keyword"
+          },
+          {
+            "rank": 7,
+            "chunk_id": "02268633-87a9-4939-818d-7ad01e6f876c",
+            "path": "apps/api/tests/test_auth_enrollment.py",
+            "symbol": "test_sync_fails_closed_when_session_is_logged_out",
+            "start_line": 213,
+            "end_line": 225,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/tests/test_auth_enrollment.py#L213-L225",
+            "query_id": "identifier_1",
+            "query_rank": 4,
+            "method": "keyword"
+          },
+          {
+            "rank": 8,
+            "chunk_id": "dfb1f69a-444d-4a60-9b12-8c8c3180891a",
+            "path": "apps/api/app/modules/investigation/report_worker.py",
+            "symbol": "process_report",
+            "start_line": 155,
+            "end_line": 274,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/modules/investigation/report_worker.py#L155-L274",
+            "query_id": "title_terms",
+            "query_rank": 4,
+            "method": "keyword"
+          },
+          {
+            "rank": 9,
+            "chunk_id": "7eec5ee7-f7d1-474e-87e0-48caf4982491",
+            "path": "apps/api/tests/test_auth_enrollment.py",
+            "symbol": "test_sync_reports_first_page_limit_without_claiming_complete",
+            "start_line": 326,
+            "end_line": 339,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/tests/test_auth_enrollment.py#L326-L339",
+            "query_id": "identifier_1",
+            "query_rank": 5,
+            "method": "keyword"
+          },
+          {
+            "rank": 10,
+            "chunk_id": "afc6b2e0-a0a9-4539-bbe8-613e1076388b",
+            "path": "apps/api/app/workers/dispatcher.py",
+            "symbol": "dispatch_once",
+            "start_line": 15,
+            "end_line": 124,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/workers/dispatcher.py#L15-L124",
+            "query_id": "title_terms",
+            "query_rank": 5,
+            "method": "keyword"
+          },
+          {
+            "rank": 11,
+            "chunk_id": "df6e7a1a-8211-4424-8784-6a7122000bc7",
+            "path": "apps/api/tests/test_auth_enrollment.py",
+            "symbol": "test_sync_discards_fetched_data_if_access_changes_in_flight",
+            "start_line": 342,
+            "end_line": 360,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/tests/test_auth_enrollment.py#L342-L360",
+            "query_id": "identifier_1",
+            "query_rank": 6,
+            "method": "keyword"
+          },
+          {
+            "rank": 12,
+            "chunk_id": "0ed64ded-da03-4395-8f77-fccdf815a38e",
+            "path": "apps/api/app/workers/tasks.py",
+            "symbol": "process_event",
+            "start_line": 18,
+            "end_line": 52,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/workers/tasks.py#L18-L52",
+            "query_id": "title_terms",
+            "query_rank": 6,
+            "method": "keyword"
+          },
+          {
+            "rank": 13,
+            "chunk_id": "686f9acd-01ca-439f-9c56-75d406836c9b",
+            "path": "apps/api/tests/test_investigation_evidence.py",
+            "symbol": "context",
+            "start_line": 22,
+            "end_line": 40,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/tests/test_investigation_evidence.py#L22-L40",
+            "query_id": "identifier_1",
+            "query_rank": 8,
+            "method": "keyword"
+          },
+          {
+            "rank": 14,
+            "chunk_id": "9a5a2684-2838-447d-ac43-12766d17f187",
+            "path": "apps/api/app/workers/tasks.py",
+            "symbol": "process_investigation",
+            "start_line": 509,
+            "end_line": 628,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/workers/tasks.py#L509-L628",
+            "query_id": "title_terms",
+            "query_rank": 8,
+            "method": "keyword"
+          },
+          {
+            "rank": 15,
+            "chunk_id": "eac4199c-fae1-41a2-ba8d-5112bd64adaf",
+            "path": "apps/api/tests/test_investigation_evidence.py",
+            "symbol": "test_queries_and_citations_are_bounded_and_data_only",
+            "start_line": 209,
+            "end_line": 217,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/tests/test_investigation_evidence.py#L209-L217",
+            "query_id": "identifier_1",
+            "query_rank": 9,
+            "method": "keyword"
+          },
+          {
+            "rank": 16,
+            "chunk_id": "dee62324-3f36-49cf-bc34-50d73fe52007",
+            "path": "apps/api/tests/test_ingestion.py",
+            "symbol": "test_worker_idempotency_and_stale_updates",
+            "start_line": 108,
+            "end_line": 123,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/tests/test_ingestion.py#L108-L123",
+            "query_id": "title_terms",
+            "query_rank": 9,
+            "method": "keyword"
+          },
+          {
+            "rank": 17,
+            "chunk_id": "aa0d78f6-bb99-44cd-8ed4-ec7a6b873114",
+            "path": "apps/api/tests/test_report_model.py",
+            "symbol": "package",
+            "start_line": 15,
+            "end_line": 22,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/tests/test_report_model.py#L15-L22",
+            "query_id": "identifier_1",
+            "query_rank": 10,
+            "method": "keyword"
+          },
+          {
+            "rank": 18,
+            "chunk_id": "e2bdd359-2718-4fc9-a8bf-83a7f8fb8c74",
+            "path": "apps/api/app/modules/investigation/report_routes.py",
+            "symbol": "lock_report_read_access",
+            "start_line": 99,
+            "end_line": 125,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/modules/investigation/report_routes.py#L99-L125",
+            "query_id": "title_terms",
+            "query_rank": 10,
+            "method": "keyword"
+          }
+        ],
+        "latency_ms": 81.721,
+        "scores": {
+          "recall": {
+            "1": 1.0,
+            "3": 1.0,
+            "5": 1.0,
+            "10": 1.0
+          },
+          "reciprocal_rank": 1.0,
+          "ndcg_at_10": 1.0,
+          "relevant_ranks": [
+            1
+          ]
+        },
+        "outcome": "labeled_hit"
+      },
+      {
+        "issue_id": "index_incomplete_tree",
+        "category": "indexing",
+        "answerability": "source_locatable",
+        "scored": true,
+        "retrieval_status": "ready",
+        "evidence_count": 10,
+        "query_version": "terms-v1",
+        "queries": [
+          {
+            "id": "title_terms",
+            "sha256": "53158e6abdcd2f5d8bdde536744405f541e0753e59261735161b9261a854b4a5",
+            "retained_evidence": 10,
+            "labeled_retained_ranks": [
+              7
+            ]
+          }
+        ],
+        "query_input_truncated": false,
+        "evidence": [
+          {
+            "rank": 1,
+            "chunk_id": "e888d6c1-74eb-49fb-8b42-a78509146137",
+            "path": "apps/api/app/workers/tasks.py",
+            "symbol": "process_index",
+            "start_line": 162,
+            "end_line": 281,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/workers/tasks.py#L162-L281",
+            "query_id": "title_terms",
+            "query_rank": 1,
+            "method": "keyword"
+          },
+          {
+            "rank": 2,
+            "chunk_id": "411a2536-c5d2-4633-83d3-fcdaa59d95b1",
+            "path": "apps/api/alembic/versions/0003_code_index.py",
+            "symbol": "upgrade",
+            "start_line": 11,
+            "end_line": 75,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/alembic/versions/0003_code_index.py#L11-L75",
+            "query_id": "title_terms",
+            "query_rank": 2,
+            "method": "keyword"
+          },
+          {
+            "rank": 3,
+            "chunk_id": "9c4a96d4-2069-4a3e-93b6-efa2d5cabb57",
+            "path": "apps/api/app/modules/github/source_client.py",
+            "symbol": "GitHubSourceClient",
+            "start_line": 17,
+            "end_line": 110,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/modules/github/source_client.py#L17-L110",
+            "query_id": "title_terms",
+            "query_rank": 3,
+            "method": "keyword"
+          },
+          {
+            "rank": 4,
+            "chunk_id": "27b2a0f7-f597-462e-aa75-b5a696df5b24",
+            "path": "apps/api/app/evaluation/postgres_scale.py",
+            "symbol": "run",
+            "start_line": 52,
+            "end_line": 142,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/evaluation/postgres_scale.py#L52-L142",
+            "query_id": "title_terms",
+            "query_rank": 4,
+            "method": "keyword"
+          },
+          {
+            "rank": 5,
+            "chunk_id": "afc6b2e0-a0a9-4539-bbe8-613e1076388b",
+            "path": "apps/api/app/workers/dispatcher.py",
+            "symbol": "dispatch_once",
+            "start_line": 15,
+            "end_line": 124,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/workers/dispatcher.py#L15-L124",
+            "query_id": "title_terms",
+            "query_rank": 5,
+            "method": "keyword"
+          },
+          {
+            "rank": 6,
+            "chunk_id": "758237e3-48a7-42c2-be7e-cf516ba7e65c",
+            "path": "apps/api/app/workers/tasks.py",
+            "symbol": "index_repository",
+            "start_line": 309,
+            "end_line": 322,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/workers/tasks.py#L309-L322",
+            "query_id": "title_terms",
+            "query_rank": 6,
+            "method": "keyword"
+          },
+          {
+            "rank": 7,
+            "chunk_id": "afc852fa-31b8-4401-a495-ff236d53d832",
+            "path": "apps/api/app/modules/ingestion/code_snapshot.py",
+            "symbol": "plan_snapshot",
+            "start_line": 36,
+            "end_line": 83,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/modules/ingestion/code_snapshot.py#L36-L83",
+            "query_id": "title_terms",
+            "query_rank": 7,
+            "method": "keyword"
+          },
+          {
+            "rank": 8,
+            "chunk_id": "1faec8bc-da8a-4190-8905-3d5aa306884c",
+            "path": "apps/api/tests/test_index_metadata.py",
+            "symbol": "test_postgres_fts_metadata_matches_reflected_expression",
+            "start_line": 8,
+            "end_line": 13,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/tests/test_index_metadata.py#L8-L13",
+            "query_id": "title_terms",
+            "query_rank": 8,
+            "method": "keyword"
+          },
+          {
+            "rank": 9,
+            "chunk_id": "596b680a-6849-460d-86e3-f2b8fc5469cf",
+            "path": "apps/api/app/evaluation/git_source.py",
+            "symbol": "GitSource",
+            "start_line": 7,
+            "end_line": 66,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/evaluation/git_source.py#L7-L66",
+            "query_id": "title_terms",
+            "query_rank": 9,
+            "method": "keyword"
+          },
+          {
+            "rank": 10,
+            "chunk_id": "42d038a0-f7e9-431b-ad69-68c6480cecdc",
+            "path": "apps/api/tests/test_code_workflow.py",
+            "symbol": "test_lifecycle_events_correlate_job_without_source_or_token",
+            "start_line": 60,
+            "end_line": 74,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/tests/test_code_workflow.py#L60-L74",
+            "query_id": "title_terms",
+            "query_rank": 10,
+            "method": "keyword"
+          }
+        ],
+        "latency_ms": 46.642,
+        "scores": {
+          "recall": {
+            "1": 0.0,
+            "3": 0.0,
+            "5": 0.0,
+            "10": 1.0
+          },
+          "reciprocal_rank": 0.14285714285714285,
+          "ndcg_at_10": 0.3333333333333333,
+          "relevant_ranks": [
+            7
+          ]
+        },
+        "outcome": "labeled_hit"
+      },
+      {
+        "issue_id": "index_lease",
+        "category": "indexing",
+        "answerability": "source_locatable",
+        "scored": true,
+        "retrieval_status": "ready",
+        "evidence_count": 20,
+        "query_version": "terms-v1",
+        "queries": [
+          {
+            "id": "identifier_1",
+            "sha256": "cbcbea13bdde20782aadc291ffd87782f9623c1761c7b061cf7d8d3ceab6c112",
+            "retained_evidence": 10,
+            "labeled_retained_ranks": [
+              1
+            ]
+          },
+          {
+            "id": "title_terms",
+            "sha256": "e8cf306b5d032ee2bf62996f33521e7cc2e6f052f17aa56d39fcb93096049fc8",
+            "retained_evidence": 10,
+            "labeled_retained_ranks": []
+          }
+        ],
+        "query_input_truncated": false,
+        "evidence": [
+          {
+            "rank": 1,
+            "chunk_id": "e888d6c1-74eb-49fb-8b42-a78509146137",
+            "path": "apps/api/app/workers/tasks.py",
+            "symbol": "process_index",
+            "start_line": 162,
+            "end_line": 281,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/workers/tasks.py#L162-L281",
+            "query_id": "identifier_1",
+            "query_rank": 1,
+            "method": "keyword"
+          },
+          {
+            "rank": 2,
+            "chunk_id": "8871c06a-c76b-41a6-9b2c-da66448abb22",
+            "path": "apps/api/tests/test_report_evaluation.py",
+            "symbol": "test_synthetic_mock_report_evaluation",
+            "start_line": 23,
+            "end_line": 110,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/tests/test_report_evaluation.py#L23-L110",
+            "query_id": "title_terms",
+            "query_rank": 1,
+            "method": "keyword"
+          },
+          {
+            "rank": 3,
+            "chunk_id": "806f4da9-332d-477c-9aad-2099b270d357",
+            "path": "apps/api/app/workers/tasks.py",
+            "symbol": "process_index",
+            "start_line": 282,
+            "end_line": 306,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/workers/tasks.py#L282-L306",
+            "query_id": "identifier_1",
+            "query_rank": 2,
+            "method": "keyword"
+          },
+          {
+            "rank": 4,
+            "chunk_id": "59027aa5-4bbd-42c0-b999-30c91bb3ac1e",
+            "path": "apps/api/app/workers/tasks.py",
+            "symbol": "process_sync",
+            "start_line": 75,
+            "end_line": 148,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/workers/tasks.py#L75-L148",
+            "query_id": "title_terms",
+            "query_rank": 2,
+            "method": "keyword"
+          },
+          {
+            "rank": 5,
+            "chunk_id": "411a2536-c5d2-4633-83d3-fcdaa59d95b1",
+            "path": "apps/api/alembic/versions/0003_code_index.py",
+            "symbol": "upgrade",
+            "start_line": 11,
+            "end_line": 75,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/alembic/versions/0003_code_index.py#L11-L75",
+            "query_id": "identifier_1",
+            "query_rank": 3,
+            "method": "keyword"
+          },
+          {
+            "rank": 6,
+            "chunk_id": "dd96b4ac-2e2f-4743-a622-bc3ec158a4ef",
+            "path": "apps/api/app/workers/tasks.py",
+            "symbol": null,
+            "start_line": 1,
+            "end_line": 17,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/workers/tasks.py#L1-L17",
+            "query_id": "title_terms",
+            "query_rank": 3,
+            "method": "keyword"
+          },
+          {
+            "rank": 7,
+            "chunk_id": "27b2a0f7-f597-462e-aa75-b5a696df5b24",
+            "path": "apps/api/app/evaluation/postgres_scale.py",
+            "symbol": "run",
+            "start_line": 52,
+            "end_line": 142,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/evaluation/postgres_scale.py#L52-L142",
+            "query_id": "identifier_1",
+            "query_rank": 4,
+            "method": "keyword"
+          },
+          {
+            "rank": 8,
+            "chunk_id": "74e623d9-a2ed-4fac-a7da-93982516996f",
+            "path": "apps/api/app/smoke.py",
+            "symbol": "main",
+            "start_line": 18,
+            "end_line": 72,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/smoke.py#L18-L72",
+            "query_id": "title_terms",
+            "query_rank": 4,
+            "method": "keyword"
+          },
+          {
+            "rank": 9,
+            "chunk_id": "758237e3-48a7-42c2-be7e-cf516ba7e65c",
+            "path": "apps/api/app/workers/tasks.py",
+            "symbol": "index_repository",
+            "start_line": 309,
+            "end_line": 322,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/workers/tasks.py#L309-L322",
+            "query_id": "identifier_1",
+            "query_rank": 5,
+            "method": "keyword"
+          },
+          {
+            "rank": 10,
+            "chunk_id": "e63fdc55-ca39-49d1-b01b-e9d4e2758f29",
+            "path": "apps/api/tests/test_ingestion.py",
+            "symbol": "test_concurrent_workers_postgres",
+            "start_line": 230,
+            "end_line": 236,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/tests/test_ingestion.py#L230-L236",
+            "query_id": "title_terms",
+            "query_rank": 5,
+            "method": "keyword"
+          },
+          {
+            "rank": 11,
+            "chunk_id": "afc6b2e0-a0a9-4539-bbe8-613e1076388b",
+            "path": "apps/api/app/workers/dispatcher.py",
+            "symbol": "dispatch_once",
+            "start_line": 15,
+            "end_line": 124,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/workers/dispatcher.py#L15-L124",
+            "query_id": "identifier_1",
+            "query_rank": 6,
+            "method": "keyword"
+          },
+          {
+            "rank": 12,
+            "chunk_id": "36b8bbf7-7d68-4267-829d-b61ad42ecbba",
+            "path": "apps/api/tests/test_investigation_evaluation_pg.py",
+            "symbol": "test_evidence_quality_against_git_commit_postgres",
+            "start_line": 22,
+            "end_line": 119,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/tests/test_investigation_evaluation_pg.py#L22-L119",
+            "query_id": "title_terms",
+            "query_rank": 6,
+            "method": "keyword"
+          },
+          {
+            "rank": 13,
+            "chunk_id": "1faec8bc-da8a-4190-8905-3d5aa306884c",
+            "path": "apps/api/tests/test_index_metadata.py",
+            "symbol": "test_postgres_fts_metadata_matches_reflected_expression",
+            "start_line": 8,
+            "end_line": 13,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/tests/test_index_metadata.py#L8-L13",
+            "query_id": "identifier_1",
+            "query_rank": 7,
+            "method": "keyword"
+          },
+          {
+            "rank": 14,
+            "chunk_id": "43cec18a-26f0-458e-9c69-55f07943a38b",
+            "path": "apps/api/tests/test_investigation_evidence.py",
+            "symbol": "test_crashed_worker_lease_recovery_and_no_partial_results",
+            "start_line": 265,
+            "end_line": 283,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/tests/test_investigation_evidence.py#L265-L283",
+            "query_id": "title_terms",
+            "query_rank": 7,
+            "method": "keyword"
+          },
+          {
+            "rank": 15,
+            "chunk_id": "5fe192dd-63ff-45d2-9178-d2d9e742c7d2",
+            "path": "apps/api/tests/test_code_workflow.py",
+            "symbol": "test_index_job_is_durable_deduplicated_and_processes",
+            "start_line": 35,
+            "end_line": 57,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/tests/test_code_workflow.py#L35-L57",
+            "query_id": "identifier_1",
+            "query_rank": 8,
+            "method": "keyword"
+          },
+          {
+            "rank": 16,
+            "chunk_id": "350bfb5d-0226-461f-ae79-b5489c2af83b",
+            "path": "apps/api/tests/test_investigation_reports.py",
+            "symbol": "test_model_receives_untrusted_redacted_content_without_execution",
+            "start_line": 380,
+            "end_line": 399,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/tests/test_investigation_reports.py#L380-L399",
+            "query_id": "title_terms",
+            "query_rank": 8,
+            "method": "keyword"
+          },
+          {
+            "rank": 17,
+            "chunk_id": "42d038a0-f7e9-431b-ad69-68c6480cecdc",
+            "path": "apps/api/tests/test_code_workflow.py",
+            "symbol": "test_lifecycle_events_correlate_job_without_source_or_token",
+            "start_line": 60,
+            "end_line": 74,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/tests/test_code_workflow.py#L60-L74",
+            "query_id": "identifier_1",
+            "query_rank": 9,
+            "method": "keyword"
+          },
+          {
+            "rank": 18,
+            "chunk_id": "dfb1f69a-444d-4a60-9b12-8c8c3180891a",
+            "path": "apps/api/app/modules/investigation/report_worker.py",
+            "symbol": "process_report",
+            "start_line": 155,
+            "end_line": 274,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/modules/investigation/report_worker.py#L155-L274",
+            "query_id": "title_terms",
+            "query_rank": 9,
+            "method": "keyword"
+          },
+          {
+            "rank": 19,
+            "chunk_id": "e431c3ab-73a6-44f3-a6d0-65535f751d52",
+            "path": "apps/api/tests/test_index_logging.py",
+            "symbol": "test_index_events_are_json_with_safe_fields_and_warning_severity",
+            "start_line": 7,
+            "end_line": 16,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/tests/test_index_logging.py#L7-L16",
+            "query_id": "identifier_1",
+            "query_rank": 10,
+            "method": "keyword"
+          },
+          {
+            "rank": 20,
+            "chunk_id": "6963038f-8f19-4874-b890-5594b6d1bb7f",
+            "path": "apps/api/app/workers/tasks.py",
+            "symbol": "process_investigation",
+            "start_line": 629,
+            "end_line": 748,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/workers/tasks.py#L629-L748",
+            "query_id": "title_terms",
+            "query_rank": 10,
+            "method": "keyword"
+          }
+        ],
+        "latency_ms": 84.507,
+        "scores": {
+          "recall": {
+            "1": 1.0,
+            "3": 1.0,
+            "5": 1.0,
+            "10": 1.0
+          },
+          "reciprocal_rank": 1.0,
+          "ndcg_at_10": 1.0,
+          "relevant_ranks": [
+            1
+          ]
+        },
+        "outcome": "labeled_hit"
+      },
+      {
+        "issue_id": "python_chunking",
+        "category": "chunking",
+        "answerability": "source_locatable",
+        "scored": true,
+        "retrieval_status": "ready",
+        "evidence_count": 10,
+        "query_version": "terms-v1",
+        "queries": [
+          {
+            "id": "title_terms",
+            "sha256": "547f42e287879ae65bfd4e65c0bf0e3ffa55760a333eac3ad4a6df5996925bd3",
+            "retained_evidence": 10,
+            "labeled_retained_ranks": []
+          }
+        ],
+        "query_input_truncated": false,
+        "evidence": [
+          {
+            "rank": 1,
+            "chunk_id": "ac4850fe-e8b5-4dc9-ac16-636db82357cd",
+            "path": "apps/api/app/modules/ingestion/code_routes.py",
+            "symbol": "search_code",
+            "start_line": 142,
+            "end_line": 207,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/modules/ingestion/code_routes.py#L142-L207",
+            "query_id": "title_terms",
+            "query_rank": 1,
+            "method": "keyword"
+          },
+          {
+            "rank": 2,
+            "chunk_id": "27b2a0f7-f597-462e-aa75-b5a696df5b24",
+            "path": "apps/api/app/evaluation/postgres_scale.py",
+            "symbol": "run",
+            "start_line": 52,
+            "end_line": 142,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/evaluation/postgres_scale.py#L52-L142",
+            "query_id": "title_terms",
+            "query_rank": 2,
+            "method": "keyword"
+          },
+          {
+            "rank": 3,
+            "chunk_id": "f4c90c0f-352f-4cfe-85a6-cfaadb61f619",
+            "path": "apps/api/tests/test_retrieval_evaluation.py",
+            "symbol": "test_whitespace_chunks_preserve_gaps_and_exact_line_slices",
+            "start_line": 13,
+            "end_line": 20,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/tests/test_retrieval_evaluation.py#L13-L20",
+            "query_id": "title_terms",
+            "query_rank": 3,
+            "method": "keyword"
+          },
+          {
+            "rank": 4,
+            "chunk_id": "32ad97b8-120f-454c-91f2-940767020842",
+            "path": "apps/api/app/workers/tasks.py",
+            "symbol": "process_embedding",
+            "start_line": 445,
+            "end_line": 492,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/workers/tasks.py#L445-L492",
+            "query_id": "title_terms",
+            "query_rank": 4,
+            "method": "keyword"
+          },
+          {
+            "rank": 5,
+            "chunk_id": "ea24a5c1-def1-4520-990d-2f57e5d376e0",
+            "path": "apps/api/tests/test_code_primitives.py",
+            "symbol": "test_invalid_and_large_files_are_deterministic_and_bounded",
+            "start_line": 17,
+            "end_line": 25,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/tests/test_code_primitives.py#L17-L25",
+            "query_id": "title_terms",
+            "query_rank": 5,
+            "method": "keyword"
+          },
+          {
+            "rank": 6,
+            "chunk_id": "c7704bb2-a7a7-4787-91fa-a6cd0b1c66e7",
+            "path": "apps/api/app/workers/tasks.py",
+            "symbol": "process_embedding",
+            "start_line": 325,
+            "end_line": 444,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/workers/tasks.py#L325-L444",
+            "query_id": "title_terms",
+            "query_rank": 6,
+            "method": "keyword"
+          },
+          {
+            "rank": 7,
+            "chunk_id": "e6caaffd-c48d-4d73-bc12-e77167eca62e",
+            "path": "apps/api/tests/test_investigation_reports.py",
+            "symbol": "test_other_investigation_chunk_is_rejected",
+            "start_line": 299,
+            "end_line": 334,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/tests/test_investigation_reports.py#L299-L334",
+            "query_id": "title_terms",
+            "query_rank": 7,
+            "method": "keyword"
+          },
+          {
+            "rank": 8,
+            "chunk_id": "28744881-3663-4e59-9384-19f8ae33c8b2",
+            "path": "apps/api/app/modules/ingestion/code_collect.py",
+            "symbol": "collect_source",
+            "start_line": 33,
+            "end_line": 63,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/modules/ingestion/code_collect.py#L33-L63",
+            "query_id": "title_terms",
+            "query_rank": 8,
+            "method": "keyword"
+          },
+          {
+            "rank": 9,
+            "chunk_id": "21e40ff4-6051-43a1-925f-2af64925d62a",
+            "path": "apps/api/tests/test_4c_citation_verifier.py",
+            "symbol": "test_local_git_citation_verifier_detects_changed_chunk",
+            "start_line": 17,
+            "end_line": 34,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/tests/test_4c_citation_verifier.py#L17-L34",
+            "query_id": "title_terms",
+            "query_rank": 9,
+            "method": "keyword"
+          },
+          {
+            "rank": 10,
+            "chunk_id": "0bccf79f-970f-423a-a0a7-93c811bd95a0",
+            "path": "apps/api/tests/test_code_primitives.py",
+            "symbol": "test_decorated_symbols_and_lines_are_preserved",
+            "start_line": 7,
+            "end_line": 14,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/tests/test_code_primitives.py#L7-L14",
+            "query_id": "title_terms",
+            "query_rank": 10,
+            "method": "keyword"
+          }
+        ],
+        "latency_ms": 48.091,
+        "scores": {
+          "recall": {
+            "1": 0.0,
+            "3": 0.0,
+            "5": 0.0,
+            "10": 0.0
+          },
+          "reciprocal_rank": 0,
+          "ndcg_at_10": 0.0,
+          "relevant_ranks": []
+        },
+        "outcome": "no_labeled_hit_in_top_10"
+      },
+      {
+        "issue_id": "embedding_cache",
+        "category": "embedding",
+        "answerability": "source_locatable",
+        "scored": true,
+        "retrieval_status": "ready",
+        "evidence_count": 10,
+        "query_version": "terms-v1",
+        "queries": [
+          {
+            "id": "title_terms",
+            "sha256": "427efdeb6f44d2cfe67d336061fca665a8e670a0ef39eab69ff9cf23d577a7fe",
+            "retained_evidence": 10,
+            "labeled_retained_ranks": [
+              4
+            ]
+          }
+        ],
+        "query_input_truncated": false,
+        "evidence": [
+          {
+            "rank": 1,
+            "chunk_id": "ac4850fe-e8b5-4dc9-ac16-636db82357cd",
+            "path": "apps/api/app/modules/ingestion/code_routes.py",
+            "symbol": "search_code",
+            "start_line": 142,
+            "end_line": 207,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/modules/ingestion/code_routes.py#L142-L207",
+            "query_id": "title_terms",
+            "query_rank": 1,
+            "method": "keyword"
+          },
+          {
+            "rank": 2,
+            "chunk_id": "27b2a0f7-f597-462e-aa75-b5a696df5b24",
+            "path": "apps/api/app/evaluation/postgres_scale.py",
+            "symbol": "run",
+            "start_line": 52,
+            "end_line": 142,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/evaluation/postgres_scale.py#L52-L142",
+            "query_id": "title_terms",
+            "query_rank": 2,
+            "method": "keyword"
+          },
+          {
+            "rank": 3,
+            "chunk_id": "32ad97b8-120f-454c-91f2-940767020842",
+            "path": "apps/api/app/workers/tasks.py",
+            "symbol": "process_embedding",
+            "start_line": 445,
+            "end_line": 492,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/workers/tasks.py#L445-L492",
+            "query_id": "title_terms",
+            "query_rank": 3,
+            "method": "keyword"
+          },
+          {
+            "rank": 4,
+            "chunk_id": "c7704bb2-a7a7-4787-91fa-a6cd0b1c66e7",
+            "path": "apps/api/app/workers/tasks.py",
+            "symbol": "process_embedding",
+            "start_line": 325,
+            "end_line": 444,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/workers/tasks.py#L325-L444",
+            "query_id": "title_terms",
+            "query_rank": 4,
+            "method": "keyword"
+          },
+          {
+            "rank": 5,
+            "chunk_id": "f4c90c0f-352f-4cfe-85a6-cfaadb61f619",
+            "path": "apps/api/tests/test_retrieval_evaluation.py",
+            "symbol": "test_whitespace_chunks_preserve_gaps_and_exact_line_slices",
+            "start_line": 13,
+            "end_line": 20,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/tests/test_retrieval_evaluation.py#L13-L20",
+            "query_id": "title_terms",
+            "query_rank": 5,
+            "method": "keyword"
+          },
+          {
+            "rank": 6,
+            "chunk_id": "e6caaffd-c48d-4d73-bc12-e77167eca62e",
+            "path": "apps/api/tests/test_investigation_reports.py",
+            "symbol": "test_other_investigation_chunk_is_rejected",
+            "start_line": 299,
+            "end_line": 334,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/tests/test_investigation_reports.py#L299-L334",
+            "query_id": "title_terms",
+            "query_rank": 6,
+            "method": "keyword"
+          },
+          {
+            "rank": 7,
+            "chunk_id": "4351a07c-67e7-4cb4-9900-700381423e47",
+            "path": "apps/api/app/evaluation/v2_disposable.py",
+            "symbol": "main",
+            "start_line": 17,
+            "end_line": 136,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/evaluation/v2_disposable.py#L17-L136",
+            "query_id": "title_terms",
+            "query_rank": 7,
+            "method": "keyword"
+          },
+          {
+            "rank": 8,
+            "chunk_id": "28744881-3663-4e59-9384-19f8ae33c8b2",
+            "path": "apps/api/app/modules/ingestion/code_collect.py",
+            "symbol": "collect_source",
+            "start_line": 33,
+            "end_line": 63,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/modules/ingestion/code_collect.py#L33-L63",
+            "query_id": "title_terms",
+            "query_rank": 8,
+            "method": "keyword"
+          },
+          {
+            "rank": 9,
+            "chunk_id": "21e40ff4-6051-43a1-925f-2af64925d62a",
+            "path": "apps/api/tests/test_4c_citation_verifier.py",
+            "symbol": "test_local_git_citation_verifier_detects_changed_chunk",
+            "start_line": 17,
+            "end_line": 34,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/tests/test_4c_citation_verifier.py#L17-L34",
+            "query_id": "title_terms",
+            "query_rank": 9,
+            "method": "keyword"
+          },
+          {
+            "rank": 10,
+            "chunk_id": "ea24a5c1-def1-4520-990d-2f57e5d376e0",
+            "path": "apps/api/tests/test_code_primitives.py",
+            "symbol": "test_invalid_and_large_files_are_deterministic_and_bounded",
+            "start_line": 17,
+            "end_line": 25,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/tests/test_code_primitives.py#L17-L25",
+            "query_id": "title_terms",
+            "query_rank": 10,
+            "method": "keyword"
+          }
+        ],
+        "latency_ms": 48.033,
+        "scores": {
+          "recall": {
+            "1": 0.0,
+            "3": 0.0,
+            "5": 0.5,
+            "10": 0.5
+          },
+          "reciprocal_rank": 0.25,
+          "ndcg_at_10": 0.2640681225725909,
+          "relevant_ranks": [
+            4
+          ]
+        },
+        "outcome": "labeled_hit"
+      },
+      {
+        "issue_id": "embedding_idempotence",
+        "category": "embedding",
+        "answerability": "source_locatable",
+        "scored": true,
+        "retrieval_status": "ready",
+        "evidence_count": 20,
+        "query_version": "terms-v1",
+        "queries": [
+          {
+            "id": "identifier_1",
+            "sha256": "afadcadd678af1f601ef6f1d7b3a1e9646b347d4874eb51454977b5aafed9e75",
+            "retained_evidence": 10,
+            "labeled_retained_ranks": [
+              1
+            ]
+          },
+          {
+            "id": "title_terms",
+            "sha256": "f7c0b3ce63a46780930199dbc6a285033996d349c84fcf8d06e2a040a9bd260d",
+            "retained_evidence": 10,
+            "labeled_retained_ranks": []
+          }
+        ],
+        "query_input_truncated": false,
+        "evidence": [
+          {
+            "rank": 1,
+            "chunk_id": "fc2e2675-ccb6-43be-b2b3-48f21eeb841c",
+            "path": "apps/api/app/modules/ingestion/embedding_store.py",
+            "symbol": "persist_embedding",
+            "start_line": 18,
+            "end_line": 37,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/modules/ingestion/embedding_store.py#L18-L37",
+            "query_id": "identifier_1",
+            "query_rank": 1,
+            "method": "keyword"
+          },
+          {
+            "rank": 2,
+            "chunk_id": "27b2a0f7-f597-462e-aa75-b5a696df5b24",
+            "path": "apps/api/app/evaluation/postgres_scale.py",
+            "symbol": "run",
+            "start_line": 52,
+            "end_line": 142,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/evaluation/postgres_scale.py#L52-L142",
+            "query_id": "title_terms",
+            "query_rank": 1,
+            "method": "keyword"
+          },
+          {
+            "rank": 3,
+            "chunk_id": "4224c858-fd71-40dc-aa1e-be228b1b7f6e",
+            "path": "apps/api/app/workers/tasks.py",
+            "symbol": "embed_repository",
+            "start_line": 495,
+            "end_line": 506,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/workers/tasks.py#L495-L506",
+            "query_id": "identifier_1",
+            "query_rank": 2,
+            "method": "keyword"
+          },
+          {
+            "rank": 4,
+            "chunk_id": "b48e8607-ad38-4a59-b4ba-c85daad16045",
+            "path": "apps/api/tests/test_investigation_migration.py",
+            "symbol": "test_postgres_legacy_job_survives_migration",
+            "start_line": 56,
+            "end_line": 120,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/tests/test_investigation_migration.py#L56-L120",
+            "query_id": "title_terms",
+            "query_rank": 2,
+            "method": "keyword"
+          },
+          {
+            "rank": 5,
+            "chunk_id": "b265660e-334a-4139-8713-24e0d55bad5d",
+            "path": "apps/api/tests/test_embedding_workflow.py",
+            "symbol": "test_embedding_revoked_during_provider_call_is_not_persisted",
+            "start_line": 64,
+            "end_line": 77,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/tests/test_embedding_workflow.py#L64-L77",
+            "query_id": "identifier_1",
+            "query_rank": 3,
+            "method": "keyword"
+          },
+          {
+            "rank": 6,
+            "chunk_id": "8871c06a-c76b-41a6-9b2c-da66448abb22",
+            "path": "apps/api/tests/test_report_evaluation.py",
+            "symbol": "test_synthetic_mock_report_evaluation",
+            "start_line": 23,
+            "end_line": 110,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/tests/test_report_evaluation.py#L23-L110",
+            "query_id": "title_terms",
+            "query_rank": 3,
+            "method": "keyword"
+          },
+          {
+            "rank": 7,
+            "chunk_id": "9adc3253-5d56-4d9f-8046-075cfea8bad9",
+            "path": "apps/api/tests/test_embeddings.py",
+            "symbol": "test_cache_reuses_content_per_tenant_repository_model_and_dimensions",
+            "start_line": 59,
+            "end_line": 73,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/tests/test_embeddings.py#L59-L73",
+            "query_id": "identifier_1",
+            "query_rank": 4,
+            "method": "keyword"
+          },
+          {
+            "rank": 8,
+            "chunk_id": "411a2536-c5d2-4633-83d3-fcdaa59d95b1",
+            "path": "apps/api/alembic/versions/0003_code_index.py",
+            "symbol": "upgrade",
+            "start_line": 11,
+            "end_line": 75,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/alembic/versions/0003_code_index.py#L11-L75",
+            "query_id": "title_terms",
+            "query_rank": 4,
+            "method": "keyword"
+          },
+          {
+            "rank": 9,
+            "chunk_id": "32cc9eb2-d642-445e-9d53-f98f7eb5266e",
+            "path": "apps/api/tests/test_embeddings.py",
+            "symbol": null,
+            "start_line": 1,
+            "end_line": 17,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/tests/test_embeddings.py#L1-L17",
+            "query_id": "identifier_1",
+            "query_rank": 5,
+            "method": "keyword"
+          },
+          {
+            "rank": 10,
+            "chunk_id": "f20934b9-fad2-4bb8-a9d2-bbc251ebf83a",
+            "path": "apps/api/tests/test_investigation_migration.py",
+            "symbol": "test_legacy_job_survives_evidence_migration",
+            "start_line": 9,
+            "end_line": 53,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/tests/test_investigation_migration.py#L9-L53",
+            "query_id": "title_terms",
+            "query_rank": 5,
+            "method": "keyword"
+          },
+          {
+            "rank": 11,
+            "chunk_id": "d074ca5a-d33d-431e-9613-a82ef8fc056d",
+            "path": "apps/api/tests/test_investigation_evidence.py",
+            "symbol": "test_access_revoked_before_and_after_persistence",
+            "start_line": 141,
+            "end_line": 152,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/tests/test_investigation_evidence.py#L141-L152",
+            "query_id": "identifier_1",
+            "query_rank": 6,
+            "method": "keyword"
+          },
+          {
+            "rank": 12,
+            "chunk_id": "f612a5b7-ec02-41a8-aa90-80a3d56da488",
+            "path": "apps/api/app/modules/ingestion/code_routes.py",
+            "symbol": "start_index",
+            "start_line": 34,
+            "end_line": 55,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/modules/ingestion/code_routes.py#L34-L55",
+            "query_id": "title_terms",
+            "query_rank": 6,
+            "method": "keyword"
+          },
+          {
+            "rank": 13,
+            "chunk_id": "8738155a-ddd5-4001-987e-57ab7d3f8d31",
+            "path": "apps/api/tests/test_investigation_reports.py",
+            "symbol": "test_malformed_and_foreign_model_citations_never_persist",
+            "start_line": 133,
+            "end_line": 147,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/tests/test_investigation_reports.py#L133-L147",
+            "query_id": "identifier_1",
+            "query_rank": 7,
+            "method": "keyword"
+          },
+          {
+            "rank": 14,
+            "chunk_id": "b87286a2-2cac-4d1f-a0a6-6dc0a610cf82",
+            "path": "apps/api/tests/conftest.py",
+            "symbol": "factory",
+            "start_line": 24,
+            "end_line": 44,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/tests/conftest.py#L24-L44",
+            "query_id": "title_terms",
+            "query_rank": 7,
+            "method": "keyword"
+          },
+          {
+            "rank": 15,
+            "chunk_id": "2560b80d-37b8-4c65-93b9-08fa60c976da",
+            "path": "apps/api/tests/test_investigation_reports.py",
+            "symbol": "test_lifecycle_logs_and_persisted_report_exclude_untrusted_input_and_credentials",
+            "start_line": 536,
+            "end_line": 550,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/tests/test_investigation_reports.py#L536-L550",
+            "query_id": "identifier_1",
+            "query_rank": 8,
+            "method": "keyword"
+          },
+          {
+            "rank": 16,
+            "chunk_id": "f6531973-1a79-4d85-85b9-40af81e47ec2",
+            "path": "apps/api/alembic/env.py",
+            "symbol": null,
+            "start_line": 1,
+            "end_line": 16,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/alembic/env.py#L1-L16",
+            "query_id": "title_terms",
+            "query_rank": 8,
+            "method": "keyword"
+          },
+          {
+            "rank": 17,
+            "chunk_id": "0901384e-313c-4ba4-9f75-d760aebc6d6d",
+            "path": "apps/api/app/evaluation/retrieval.py",
+            "symbol": null,
+            "start_line": 1,
+            "end_line": 17,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/evaluation/retrieval.py#L1-L17",
+            "query_id": "identifier_1",
+            "query_rank": 9,
+            "method": "keyword"
+          },
+          {
+            "rank": 18,
+            "chunk_id": "0913f5d9-f520-460e-a4a0-b6d436daceef",
+            "path": "apps/api/alembic/versions/0005_embedding_storage.py",
+            "symbol": "upgrade",
+            "start_line": 19,
+            "end_line": 53,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/alembic/versions/0005_embedding_storage.py#L19-L53",
+            "query_id": "title_terms",
+            "query_rank": 9,
+            "method": "keyword"
+          },
+          {
+            "rank": 19,
+            "chunk_id": "ed475c28-5176-4cfc-ae01-d365a8e4cd21",
+            "path": "apps/api/app/modules/ingestion/code_collect.py",
+            "symbol": null,
+            "start_line": 1,
+            "end_line": 10,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/modules/ingestion/code_collect.py#L1-L10",
+            "query_id": "identifier_1",
+            "query_rank": 10,
+            "method": "keyword"
+          },
+          {
+            "rank": 20,
+            "chunk_id": "2ff21e4d-4654-4106-b20e-2862cef0fd6b",
+            "path": "apps/api/alembic/versions/0009_investigation_reports.py",
+            "symbol": "upgrade",
+            "start_line": 11,
+            "end_line": 47,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/alembic/versions/0009_investigation_reports.py#L11-L47",
+            "query_id": "title_terms",
+            "query_rank": 10,
+            "method": "keyword"
+          }
+        ],
+        "latency_ms": 75.105,
+        "scores": {
+          "recall": {
+            "1": 1.0,
+            "3": 1.0,
+            "5": 1.0,
+            "10": 1.0
+          },
+          "reciprocal_rank": 1.0,
+          "ndcg_at_10": 1.0,
+          "relevant_ranks": [
+            1
+          ]
+        },
+        "outcome": "labeled_hit"
+      },
+      {
+        "issue_id": "celery_redelivery",
+        "category": "dispatch",
+        "answerability": "ambiguous",
+        "scored": true,
+        "retrieval_status": "ready",
+        "evidence_count": 10,
+        "query_version": "terms-v1",
+        "queries": [
+          {
+            "id": "title_terms",
+            "sha256": "fcf7f33ee20d78d520f4843b60f39f804e88c0e83bff902e63df8394b0ff1b9a",
+            "retained_evidence": 10,
+            "labeled_retained_ranks": [
+              2,
+              4
+            ]
+          }
+        ],
+        "query_input_truncated": false,
+        "evidence": [
+          {
+            "rank": 1,
+            "chunk_id": "2ff21e4d-4654-4106-b20e-2862cef0fd6b",
+            "path": "apps/api/alembic/versions/0009_investigation_reports.py",
+            "symbol": "upgrade",
+            "start_line": 11,
+            "end_line": 47,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/alembic/versions/0009_investigation_reports.py#L11-L47",
+            "query_id": "title_terms",
+            "query_rank": 1,
+            "method": "keyword"
+          },
+          {
+            "rank": 2,
+            "chunk_id": "afc6b2e0-a0a9-4539-bbe8-613e1076388b",
+            "path": "apps/api/app/workers/dispatcher.py",
+            "symbol": "dispatch_once",
+            "start_line": 15,
+            "end_line": 124,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/workers/dispatcher.py#L15-L124",
+            "query_id": "title_terms",
+            "query_rank": 2,
+            "method": "keyword"
+          },
+          {
+            "rank": 3,
+            "chunk_id": "e888d6c1-74eb-49fb-8b42-a78509146137",
+            "path": "apps/api/app/workers/tasks.py",
+            "symbol": "process_index",
+            "start_line": 162,
+            "end_line": 281,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/workers/tasks.py#L162-L281",
+            "query_id": "title_terms",
+            "query_rank": 3,
+            "method": "keyword"
+          },
+          {
+            "rank": 4,
+            "chunk_id": "fcdad6d8-2c0e-41ed-aecf-4536cfbb63e3",
+            "path": "apps/api/app/workers/tasks.py",
+            "symbol": "investigate_issue",
+            "start_line": 756,
+            "end_line": 767,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/workers/tasks.py#L756-L767",
+            "query_id": "title_terms",
+            "query_rank": 4,
+            "method": "keyword"
+          },
+          {
+            "rank": 5,
+            "chunk_id": "71a544e0-b15e-4b45-9109-cfe39aa35310",
+            "path": "apps/api/alembic/versions/0008_investigation_evidence.py",
+            "symbol": "upgrade",
+            "start_line": 11,
+            "end_line": 45,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/alembic/versions/0008_investigation_evidence.py#L11-L45",
+            "query_id": "title_terms",
+            "query_rank": 5,
+            "method": "keyword"
+          },
+          {
+            "rank": 6,
+            "chunk_id": "13c7d980-95e0-4c81-8f38-e1529cbaa394",
+            "path": "apps/api/app/domain/models.py",
+            "symbol": "InvestigationReportJob",
+            "start_line": 411,
+            "end_line": 437,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/domain/models.py#L411-L437",
+            "query_id": "title_terms",
+            "query_rank": 6,
+            "method": "keyword"
+          },
+          {
+            "rank": 7,
+            "chunk_id": "29c4de5f-2477-4e51-a09a-095e0078c1a9",
+            "path": "apps/api/app/modules/investigation/report_worker.py",
+            "symbol": "process_report",
+            "start_line": 35,
+            "end_line": 154,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/modules/investigation/report_worker.py#L35-L154",
+            "query_id": "title_terms",
+            "query_rank": 7,
+            "method": "keyword"
+          },
+          {
+            "rank": 8,
+            "chunk_id": "6d77de84-3106-4ec1-95d3-80e3e0348e88",
+            "path": "apps/api/alembic/versions/0007_investigation_jobs.py",
+            "symbol": "upgrade",
+            "start_line": 11,
+            "end_line": 40,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/alembic/versions/0007_investigation_jobs.py#L11-L40",
+            "query_id": "title_terms",
+            "query_rank": 8,
+            "method": "keyword"
+          },
+          {
+            "rank": 9,
+            "chunk_id": "48d4f17d-fd57-4ba9-ba7d-7c764706a2dc",
+            "path": "apps/api/app/domain/models.py",
+            "symbol": "InvestigationReport",
+            "start_line": 457,
+            "end_line": 482,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/domain/models.py#L457-L482",
+            "query_id": "title_terms",
+            "query_rank": 9,
+            "method": "keyword"
+          },
+          {
+            "rank": 10,
+            "chunk_id": "f20934b9-fad2-4bb8-a9d2-bbc251ebf83a",
+            "path": "apps/api/tests/test_investigation_migration.py",
+            "symbol": "test_legacy_job_survives_evidence_migration",
+            "start_line": 9,
+            "end_line": 53,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/tests/test_investigation_migration.py#L9-L53",
+            "query_id": "title_terms",
+            "query_rank": 10,
+            "method": "keyword"
+          }
+        ],
+        "latency_ms": 49.351,
+        "scores": {
+          "recall": {
+            "1": 0.0,
+            "3": 0.5,
+            "5": 1.0,
+            "10": 1.0
+          },
+          "reciprocal_rank": 0.5,
+          "ndcg_at_10": 0.6509209298071326,
+          "relevant_ranks": [
+            2,
+            4
+          ]
+        },
+        "outcome": "labeled_hit"
+      },
+      {
+        "issue_id": "snapshot_publication",
+        "category": "indexing",
+        "answerability": "source_locatable",
+        "scored": true,
+        "retrieval_status": "ready",
+        "evidence_count": 10,
+        "query_version": "terms-v1",
+        "queries": [
+          {
+            "id": "title_terms",
+            "sha256": "81d07d013ff46d043d21860e4602d48ef78dfed39e1d5abea18938b6ca54060c",
+            "retained_evidence": 10,
+            "labeled_retained_ranks": []
+          }
+        ],
+        "query_input_truncated": false,
+        "evidence": [
+          {
+            "rank": 1,
+            "chunk_id": "e888d6c1-74eb-49fb-8b42-a78509146137",
+            "path": "apps/api/app/workers/tasks.py",
+            "symbol": "process_index",
+            "start_line": 162,
+            "end_line": 281,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/workers/tasks.py#L162-L281",
+            "query_id": "title_terms",
+            "query_rank": 1,
+            "method": "keyword"
+          },
+          {
+            "rank": 2,
+            "chunk_id": "411a2536-c5d2-4633-83d3-fcdaa59d95b1",
+            "path": "apps/api/alembic/versions/0003_code_index.py",
+            "symbol": "upgrade",
+            "start_line": 11,
+            "end_line": 75,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/alembic/versions/0003_code_index.py#L11-L75",
+            "query_id": "title_terms",
+            "query_rank": 2,
+            "method": "keyword"
+          },
+          {
+            "rank": 3,
+            "chunk_id": "36b8bbf7-7d68-4267-829d-b61ad42ecbba",
+            "path": "apps/api/tests/test_investigation_evaluation_pg.py",
+            "symbol": "test_evidence_quality_against_git_commit_postgres",
+            "start_line": 22,
+            "end_line": 119,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/tests/test_investigation_evaluation_pg.py#L22-L119",
+            "query_id": "title_terms",
+            "query_rank": 3,
+            "method": "keyword"
+          },
+          {
+            "rank": 4,
+            "chunk_id": "71a544e0-b15e-4b45-9109-cfe39aa35310",
+            "path": "apps/api/alembic/versions/0008_investigation_evidence.py",
+            "symbol": "upgrade",
+            "start_line": 11,
+            "end_line": 45,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/alembic/versions/0008_investigation_evidence.py#L11-L45",
+            "query_id": "title_terms",
+            "query_rank": 4,
+            "method": "keyword"
+          },
+          {
+            "rank": 5,
+            "chunk_id": "806f4da9-332d-477c-9aad-2099b270d357",
+            "path": "apps/api/app/workers/tasks.py",
+            "symbol": "process_index",
+            "start_line": 282,
+            "end_line": 306,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/workers/tasks.py#L282-L306",
+            "query_id": "title_terms",
+            "query_rank": 5,
+            "method": "keyword"
+          },
+          {
+            "rank": 6,
+            "chunk_id": "27b2a0f7-f597-462e-aa75-b5a696df5b24",
+            "path": "apps/api/app/evaluation/postgres_scale.py",
+            "symbol": "run",
+            "start_line": 52,
+            "end_line": 142,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/evaluation/postgres_scale.py#L52-L142",
+            "query_id": "title_terms",
+            "query_rank": 6,
+            "method": "keyword"
+          },
+          {
+            "rank": 7,
+            "chunk_id": "29c4de5f-2477-4e51-a09a-095e0078c1a9",
+            "path": "apps/api/app/modules/investigation/report_worker.py",
+            "symbol": "process_report",
+            "start_line": 35,
+            "end_line": 154,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/modules/investigation/report_worker.py#L35-L154",
+            "query_id": "title_terms",
+            "query_rank": 7,
+            "method": "keyword"
+          },
+          {
+            "rank": 8,
+            "chunk_id": "6963038f-8f19-4874-b890-5594b6d1bb7f",
+            "path": "apps/api/app/workers/tasks.py",
+            "symbol": "process_investigation",
+            "start_line": 629,
+            "end_line": 748,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/workers/tasks.py#L629-L748",
+            "query_id": "title_terms",
+            "query_rank": 8,
+            "method": "keyword"
+          },
+          {
+            "rank": 9,
+            "chunk_id": "afc6b2e0-a0a9-4539-bbe8-613e1076388b",
+            "path": "apps/api/app/workers/dispatcher.py",
+            "symbol": "dispatch_once",
+            "start_line": 15,
+            "end_line": 124,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/workers/dispatcher.py#L15-L124",
+            "query_id": "title_terms",
+            "query_rank": 9,
+            "method": "keyword"
+          },
+          {
+            "rank": 10,
+            "chunk_id": "758237e3-48a7-42c2-be7e-cf516ba7e65c",
+            "path": "apps/api/app/workers/tasks.py",
+            "symbol": "index_repository",
+            "start_line": 309,
+            "end_line": 322,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/workers/tasks.py#L309-L322",
+            "query_id": "title_terms",
+            "query_rank": 10,
+            "method": "keyword"
+          }
+        ],
+        "latency_ms": 51.523,
+        "scores": {
+          "recall": {
+            "1": 0.0,
+            "3": 0.0,
+            "5": 0.0,
+            "10": 0.0
+          },
+          "reciprocal_rank": 0,
+          "ndcg_at_10": 0.0,
+          "relevant_ranks": []
+        },
+        "outcome": "no_labeled_hit_in_top_10"
+      },
+      {
+        "issue_id": "citation_boundaries",
+        "category": "citations",
+        "answerability": "source_locatable",
+        "scored": true,
+        "retrieval_status": "ready",
+        "evidence_count": 10,
+        "query_version": "terms-v1",
+        "queries": [
+          {
+            "id": "title_terms",
+            "sha256": "9204681e58b400349912262007ff5fd0e7c565fc30a8e2d649935c1071fea757",
+            "retained_evidence": 10,
+            "labeled_retained_ranks": []
+          }
+        ],
+        "query_input_truncated": false,
+        "evidence": [
+          {
+            "rank": 1,
+            "chunk_id": "36b8bbf7-7d68-4267-829d-b61ad42ecbba",
+            "path": "apps/api/tests/test_investigation_evaluation_pg.py",
+            "symbol": "test_evidence_quality_against_git_commit_postgres",
+            "start_line": 22,
+            "end_line": 119,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/tests/test_investigation_evaluation_pg.py#L22-L119",
+            "query_id": "title_terms",
+            "query_rank": 1,
+            "method": "keyword"
+          },
+          {
+            "rank": 2,
+            "chunk_id": "8871c06a-c76b-41a6-9b2c-da66448abb22",
+            "path": "apps/api/tests/test_report_evaluation.py",
+            "symbol": "test_synthetic_mock_report_evaluation",
+            "start_line": 23,
+            "end_line": 110,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/tests/test_report_evaluation.py#L23-L110",
+            "query_id": "title_terms",
+            "query_rank": 2,
+            "method": "keyword"
+          },
+          {
+            "rank": 3,
+            "chunk_id": "4351a07c-67e7-4cb4-9900-700381423e47",
+            "path": "apps/api/app/evaluation/v2_disposable.py",
+            "symbol": "main",
+            "start_line": 17,
+            "end_line": 136,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/evaluation/v2_disposable.py#L17-L136",
+            "query_id": "title_terms",
+            "query_rank": 3,
+            "method": "keyword"
+          },
+          {
+            "rank": 4,
+            "chunk_id": "598e3a67-3acc-4792-870d-76f47f647173",
+            "path": "apps/api/evaluation/verify_4c_citations.py",
+            "symbol": "main",
+            "start_line": 13,
+            "end_line": 41,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/evaluation/verify_4c_citations.py#L13-L41",
+            "query_id": "title_terms",
+            "query_rank": 4,
+            "method": "keyword"
+          },
+          {
+            "rank": 5,
+            "chunk_id": "cd2bb79b-72fa-41e0-a057-2bb93da1552b",
+            "path": "apps/api/app/modules/investigation/reporting.py",
+            "symbol": "render_report_payload",
+            "start_line": 22,
+            "end_line": 49,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/modules/investigation/reporting.py#L22-L49",
+            "query_id": "title_terms",
+            "query_rank": 5,
+            "method": "keyword"
+          },
+          {
+            "rank": 6,
+            "chunk_id": "10f7a809-e424-42d5-8242-384d0aed908c",
+            "path": "apps/api/app/modules/investigation/routes.py",
+            "symbol": "evidence",
+            "start_line": 114,
+            "end_line": 148,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/modules/investigation/routes.py#L114-L148",
+            "query_id": "title_terms",
+            "query_rank": 6,
+            "method": "keyword"
+          },
+          {
+            "rank": 7,
+            "chunk_id": "8d5a9cfc-a01d-4d85-8c65-70c539c65d30",
+            "path": "apps/api/app/evaluation/compare_reports.py",
+            "symbol": "markdown",
+            "start_line": 34,
+            "end_line": 57,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/evaluation/compare_reports.py#L34-L57",
+            "query_id": "title_terms",
+            "query_rank": 7,
+            "method": "keyword"
+          },
+          {
+            "rank": 8,
+            "chunk_id": "ad6255db-567e-4979-8430-def33270d7c5",
+            "path": "apps/api/app/modules/investigation/report_model.py",
+            "symbol": "build_package",
+            "start_line": 184,
+            "end_line": 224,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/modules/investigation/report_model.py#L184-L224",
+            "query_id": "title_terms",
+            "query_rank": 8,
+            "method": "keyword"
+          },
+          {
+            "rank": 9,
+            "chunk_id": "c7f674ee-b959-4164-9fcc-6a412cecb5db",
+            "path": "apps/api/app/modules/investigation/retrieval.py",
+            "symbol": "retrieve_candidates",
+            "start_line": 52,
+            "end_line": 82,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/modules/investigation/retrieval.py#L52-L82",
+            "query_id": "title_terms",
+            "query_rank": 9,
+            "method": "keyword"
+          },
+          {
+            "rank": 10,
+            "chunk_id": "6963038f-8f19-4874-b890-5594b6d1bb7f",
+            "path": "apps/api/app/workers/tasks.py",
+            "symbol": "process_investigation",
+            "start_line": 629,
+            "end_line": 748,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/workers/tasks.py#L629-L748",
+            "query_id": "title_terms",
+            "query_rank": 10,
+            "method": "keyword"
+          }
+        ],
+        "latency_ms": 50.798,
+        "scores": {
+          "recall": {
+            "1": 0.0,
+            "3": 0.0,
+            "5": 0.0,
+            "10": 0.0
+          },
+          "reciprocal_rank": 0,
+          "ndcg_at_10": 0.0,
+          "relevant_ranks": []
+        },
+        "outcome": "no_labeled_hit_in_top_10"
+      },
+      {
+        "issue_id": "report_grounding",
+        "category": "reports",
+        "answerability": "source_locatable",
+        "scored": true,
+        "retrieval_status": "ready",
+        "evidence_count": 17,
+        "query_version": "terms-v1",
+        "queries": [
+          {
+            "id": "identifier_1",
+            "sha256": "0c39b941b1f2cd0db319b3089f43da834d2d617bb0b035a08dbff2f75652f574",
+            "retained_evidence": 9,
+            "labeled_retained_ranks": [
+              1
+            ]
+          },
+          {
+            "id": "title_terms",
+            "sha256": "8400beeac688f9ed3052360450f6c6bb4fc00cfe94f14bce19f2a7fe71276364",
+            "retained_evidence": 8,
+            "labeled_retained_ranks": []
+          }
+        ],
+        "query_input_truncated": false,
+        "evidence": [
+          {
+            "rank": 1,
+            "chunk_id": "c06aabe5-3977-466a-8ae9-a00b09398573",
+            "path": "apps/api/app/modules/investigation/report_model.py",
+            "symbol": "validate_draft",
+            "start_line": 227,
+            "end_line": 271,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/modules/investigation/report_model.py#L227-L271",
+            "query_id": "identifier_1",
+            "query_rank": 1,
+            "method": "keyword"
+          },
+          {
+            "rank": 2,
+            "chunk_id": "36b8bbf7-7d68-4267-829d-b61ad42ecbba",
+            "path": "apps/api/tests/test_investigation_evaluation_pg.py",
+            "symbol": "test_evidence_quality_against_git_commit_postgres",
+            "start_line": 22,
+            "end_line": 119,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/tests/test_investigation_evaluation_pg.py#L22-L119",
+            "query_id": "title_terms",
+            "query_rank": 1,
+            "method": "keyword"
+          },
+          {
+            "rank": 3,
+            "chunk_id": "8871c06a-c76b-41a6-9b2c-da66448abb22",
+            "path": "apps/api/tests/test_report_evaluation.py",
+            "symbol": "test_synthetic_mock_report_evaluation",
+            "start_line": 23,
+            "end_line": 110,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/tests/test_report_evaluation.py#L23-L110",
+            "query_id": "identifier_1",
+            "query_rank": 2,
+            "method": "keyword"
+          },
+          {
+            "rank": 4,
+            "chunk_id": "c483be63-d2c0-4864-b1cf-7ffdcbb0a568",
+            "path": "apps/api/tests/test_report_model.py",
+            "symbol": "test_unsupported_hypothesis_and_invalid_model_output",
+            "start_line": 80,
+            "end_line": 91,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/tests/test_report_model.py#L80-L91",
+            "query_id": "identifier_1",
+            "query_rank": 3,
+            "method": "keyword"
+          },
+          {
+            "rank": 5,
+            "chunk_id": "ce16ce50-ffae-4476-a6b8-4d1e34331d6e",
+            "path": "apps/api/tests/test_report_model.py",
+            "symbol": "test_hallucinated_or_malformed_evidence_and_extra_fields_are_rejected",
+            "start_line": 53,
+            "end_line": 77,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/tests/test_report_model.py#L53-L77",
+            "query_id": "title_terms",
+            "query_rank": 3,
+            "method": "keyword"
+          },
+          {
+            "rank": 6,
+            "chunk_id": "cd2bb79b-72fa-41e0-a057-2bb93da1552b",
+            "path": "apps/api/app/modules/investigation/reporting.py",
+            "symbol": "render_report_payload",
+            "start_line": 22,
+            "end_line": 49,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/modules/investigation/reporting.py#L22-L49",
+            "query_id": "identifier_1",
+            "query_rank": 4,
+            "method": "keyword"
+          },
+          {
+            "rank": 7,
+            "chunk_id": "ec7babb7-96bb-41f5-9eb2-e8f1b252c30e",
+            "path": "apps/api/tests/test_report_model.py",
+            "symbol": "test_duplicate_json_keys_and_untrusted_urls_are_rejected",
+            "start_line": 138,
+            "end_line": 144,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/tests/test_report_model.py#L138-L144",
+            "query_id": "identifier_1",
+            "query_rank": 5,
+            "method": "keyword"
+          },
+          {
+            "rank": 8,
+            "chunk_id": "71a544e0-b15e-4b45-9109-cfe39aa35310",
+            "path": "apps/api/alembic/versions/0008_investigation_evidence.py",
+            "symbol": "upgrade",
+            "start_line": 11,
+            "end_line": 45,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/alembic/versions/0008_investigation_evidence.py#L11-L45",
+            "query_id": "title_terms",
+            "query_rank": 5,
+            "method": "keyword"
+          },
+          {
+            "rank": 9,
+            "chunk_id": "267a7994-db6f-4344-9797-ed65ca2dc9c1",
+            "path": "apps/api/app/evaluation/verify_labels.py",
+            "symbol": "valid_label",
+            "start_line": 12,
+            "end_line": 25,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/evaluation/verify_labels.py#L12-L25",
+            "query_id": "identifier_1",
+            "query_rank": 6,
+            "method": "keyword"
+          },
+          {
+            "rank": 10,
+            "chunk_id": "dfb1f69a-444d-4a60-9b12-8c8c3180891a",
+            "path": "apps/api/app/modules/investigation/report_worker.py",
+            "symbol": "process_report",
+            "start_line": 155,
+            "end_line": 274,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/modules/investigation/report_worker.py#L155-L274",
+            "query_id": "title_terms",
+            "query_rank": 6,
+            "method": "keyword"
+          },
+          {
+            "rank": 11,
+            "chunk_id": "033fbcbd-9bd5-4cb4-8ff4-c963745b61f5",
+            "path": "apps/api/tests/test_report_model.py",
+            "symbol": "test_contradictory_evidence_is_validated_and_kept_separate",
+            "start_line": 109,
+            "end_line": 122,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/tests/test_report_model.py#L109-L122",
+            "query_id": "identifier_1",
+            "query_rank": 7,
+            "method": "keyword"
+          },
+          {
+            "rank": 12,
+            "chunk_id": "10f7a809-e424-42d5-8242-384d0aed908c",
+            "path": "apps/api/app/modules/investigation/routes.py",
+            "symbol": "evidence",
+            "start_line": 114,
+            "end_line": 148,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/modules/investigation/routes.py#L114-L148",
+            "query_id": "title_terms",
+            "query_rank": 7,
+            "method": "keyword"
+          },
+          {
+            "rank": 13,
+            "chunk_id": "98715939-4ac5-4877-a3bf-10753ed199eb",
+            "path": "apps/api/tests/test_retrieval_evaluation.py",
+            "symbol": "test_v2_labels_support_decorators_and_require_one_complete_chunk",
+            "start_line": 103,
+            "end_line": 110,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/tests/test_retrieval_evaluation.py#L103-L110",
+            "query_id": "identifier_1",
+            "query_rank": 8,
+            "method": "keyword"
+          },
+          {
+            "rank": 14,
+            "chunk_id": "6963038f-8f19-4874-b890-5594b6d1bb7f",
+            "path": "apps/api/app/workers/tasks.py",
+            "symbol": "process_investigation",
+            "start_line": 629,
+            "end_line": 748,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/workers/tasks.py#L629-L748",
+            "query_id": "title_terms",
+            "query_rank": 8,
+            "method": "keyword"
+          },
+          {
+            "rank": 15,
+            "chunk_id": "9597d782-7633-41ec-948a-78c2a9db0baa",
+            "path": "apps/api/app/api/v1/routes.py",
+            "symbol": "webhook",
+            "start_line": 24,
+            "end_line": 59,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/api/v1/routes.py#L24-L59",
+            "query_id": "identifier_1",
+            "query_rank": 9,
+            "method": "keyword"
+          },
+          {
+            "rank": 16,
+            "chunk_id": "29c4de5f-2477-4e51-a09a-095e0078c1a9",
+            "path": "apps/api/app/modules/investigation/report_worker.py",
+            "symbol": "process_report",
+            "start_line": 35,
+            "end_line": 154,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/modules/investigation/report_worker.py#L35-L154",
+            "query_id": "title_terms",
+            "query_rank": 9,
+            "method": "keyword"
+          },
+          {
+            "rank": 17,
+            "chunk_id": "52eccf74-87ca-4d38-9bb2-92517a1fa6d7",
+            "path": "apps/api/tests/test_investigation_evidence.py",
+            "symbol": "test_snapshot_job_evidence_is_atomic_fenced_and_idempotent",
+            "start_line": 66,
+            "end_line": 89,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/tests/test_investigation_evidence.py#L66-L89",
+            "query_id": "title_terms",
+            "query_rank": 10,
+            "method": "keyword"
+          }
+        ],
+        "latency_ms": 78.958,
+        "scores": {
+          "recall": {
+            "1": 1.0,
+            "3": 1.0,
+            "5": 1.0,
+            "10": 1.0
+          },
+          "reciprocal_rank": 1.0,
+          "ndcg_at_10": 1.0,
+          "relevant_ranks": [
+            1
+          ]
+        },
+        "outcome": "labeled_hit"
+      },
+      {
+        "issue_id": "snapshot_unavailable",
+        "category": "evidence",
+        "answerability": "source_locatable",
+        "scored": true,
+        "retrieval_status": "ready",
+        "evidence_count": 10,
+        "query_version": "terms-v1",
+        "queries": [
+          {
+            "id": "title_terms",
+            "sha256": "030dd07f2e619777b8e9c2598d27895e7906f54374a1374351aa4856f4018d11",
+            "retained_evidence": 10,
+            "labeled_retained_ranks": [
+              3
+            ]
+          }
+        ],
+        "query_input_truncated": false,
+        "evidence": [
+          {
+            "rank": 1,
+            "chunk_id": "36b8bbf7-7d68-4267-829d-b61ad42ecbba",
+            "path": "apps/api/tests/test_investigation_evaluation_pg.py",
+            "symbol": "test_evidence_quality_against_git_commit_postgres",
+            "start_line": 22,
+            "end_line": 119,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/tests/test_investigation_evaluation_pg.py#L22-L119",
+            "query_id": "title_terms",
+            "query_rank": 1,
+            "method": "keyword"
+          },
+          {
+            "rank": 2,
+            "chunk_id": "71a544e0-b15e-4b45-9109-cfe39aa35310",
+            "path": "apps/api/alembic/versions/0008_investigation_evidence.py",
+            "symbol": "upgrade",
+            "start_line": 11,
+            "end_line": 45,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/alembic/versions/0008_investigation_evidence.py#L11-L45",
+            "query_id": "title_terms",
+            "query_rank": 2,
+            "method": "keyword"
+          },
+          {
+            "rank": 3,
+            "chunk_id": "6963038f-8f19-4874-b890-5594b6d1bb7f",
+            "path": "apps/api/app/workers/tasks.py",
+            "symbol": "process_investigation",
+            "start_line": 629,
+            "end_line": 748,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/workers/tasks.py#L629-L748",
+            "query_id": "title_terms",
+            "query_rank": 3,
+            "method": "keyword"
+          },
+          {
+            "rank": 4,
+            "chunk_id": "29c4de5f-2477-4e51-a09a-095e0078c1a9",
+            "path": "apps/api/app/modules/investigation/report_worker.py",
+            "symbol": "process_report",
+            "start_line": 35,
+            "end_line": 154,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/modules/investigation/report_worker.py#L35-L154",
+            "query_id": "title_terms",
+            "query_rank": 4,
+            "method": "keyword"
+          },
+          {
+            "rank": 5,
+            "chunk_id": "dfb1f69a-444d-4a60-9b12-8c8c3180891a",
+            "path": "apps/api/app/modules/investigation/report_worker.py",
+            "symbol": "process_report",
+            "start_line": 155,
+            "end_line": 274,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/modules/investigation/report_worker.py#L155-L274",
+            "query_id": "title_terms",
+            "query_rank": 5,
+            "method": "keyword"
+          },
+          {
+            "rank": 6,
+            "chunk_id": "0e311876-b32f-45d3-90df-fa6f7f0f9e7c",
+            "path": "apps/api/tests/test_embedding_workflow.py",
+            "symbol": "test_postgres_exact_vector_search_respects_owner",
+            "start_line": 101,
+            "end_line": 138,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/tests/test_embedding_workflow.py#L101-L138",
+            "query_id": "title_terms",
+            "query_rank": 6,
+            "method": "keyword"
+          },
+          {
+            "rank": 7,
+            "chunk_id": "8871c06a-c76b-41a6-9b2c-da66448abb22",
+            "path": "apps/api/tests/test_report_evaluation.py",
+            "symbol": "test_synthetic_mock_report_evaluation",
+            "start_line": 23,
+            "end_line": 110,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/tests/test_report_evaluation.py#L23-L110",
+            "query_id": "title_terms",
+            "query_rank": 7,
+            "method": "keyword"
+          },
+          {
+            "rank": 8,
+            "chunk_id": "bd7f6cdc-d5fe-43c4-a087-de2244978cc6",
+            "path": "apps/api/app/domain/models.py",
+            "symbol": "InvestigationJob",
+            "start_line": 321,
+            "end_line": 365,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/domain/models.py#L321-L365",
+            "query_id": "title_terms",
+            "query_rank": 8,
+            "method": "keyword"
+          },
+          {
+            "rank": 9,
+            "chunk_id": "10f7a809-e424-42d5-8242-384d0aed908c",
+            "path": "apps/api/app/modules/investigation/routes.py",
+            "symbol": "evidence",
+            "start_line": 114,
+            "end_line": 148,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/modules/investigation/routes.py#L114-L148",
+            "query_id": "title_terms",
+            "query_rank": 9,
+            "method": "keyword"
+          },
+          {
+            "rank": 10,
+            "chunk_id": "c71ded7f-809c-4f8e-8a2f-2a15ab6d0d15",
+            "path": "apps/api/app/evaluation/compare_reports.py",
+            "symbol": "compare",
+            "start_line": 7,
+            "end_line": 31,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/evaluation/compare_reports.py#L7-L31",
+            "query_id": "title_terms",
+            "query_rank": 10,
+            "method": "keyword"
+          }
+        ],
+        "latency_ms": 52.084,
+        "scores": {
+          "recall": {
+            "1": 0.0,
+            "3": 0.5,
+            "5": 0.5,
+            "10": 0.5
+          },
+          "reciprocal_rank": 0.3333333333333333,
+          "ndcg_at_10": 0.3065735963827292,
+          "relevant_ranks": [
+            3
+          ]
+        },
+        "outcome": "labeled_hit"
+      },
+      {
+        "issue_id": "insufficient_details",
+        "category": "insufficient",
+        "answerability": "insufficient",
+        "scored": false,
+        "retrieval_status": "ready",
+        "evidence_count": 10,
+        "query_version": "terms-v1",
+        "queries": [
+          {
+            "id": "title_terms",
+            "sha256": "814247ac75e48148970fa31f5154aa34a253019ed2f26793f1071256d40db36e",
+            "retained_evidence": 10,
+            "labeled_retained_ranks": []
+          }
+        ],
+        "query_input_truncated": false,
+        "evidence": [
+          {
+            "rank": 1,
+            "chunk_id": "dfb1f69a-444d-4a60-9b12-8c8c3180891a",
+            "path": "apps/api/app/modules/investigation/report_worker.py",
+            "symbol": "process_report",
+            "start_line": 155,
+            "end_line": 274,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/modules/investigation/report_worker.py#L155-L274",
+            "query_id": "title_terms",
+            "query_rank": 1,
+            "method": "keyword"
+          },
+          {
+            "rank": 2,
+            "chunk_id": "afc6b2e0-a0a9-4539-bbe8-613e1076388b",
+            "path": "apps/api/app/workers/dispatcher.py",
+            "symbol": "dispatch_once",
+            "start_line": 15,
+            "end_line": 124,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/workers/dispatcher.py#L15-L124",
+            "query_id": "title_terms",
+            "query_rank": 2,
+            "method": "keyword"
+          },
+          {
+            "rank": 3,
+            "chunk_id": "e888d6c1-74eb-49fb-8b42-a78509146137",
+            "path": "apps/api/app/workers/tasks.py",
+            "symbol": "process_index",
+            "start_line": 162,
+            "end_line": 281,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/workers/tasks.py#L162-L281",
+            "query_id": "title_terms",
+            "query_rank": 3,
+            "method": "keyword"
+          },
+          {
+            "rank": 4,
+            "chunk_id": "29c4de5f-2477-4e51-a09a-095e0078c1a9",
+            "path": "apps/api/app/modules/investigation/report_worker.py",
+            "symbol": "process_report",
+            "start_line": 35,
+            "end_line": 154,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/modules/investigation/report_worker.py#L35-L154",
+            "query_id": "title_terms",
+            "query_rank": 4,
+            "method": "keyword"
+          },
+          {
+            "rank": 5,
+            "chunk_id": "c7704bb2-a7a7-4787-91fa-a6cd0b1c66e7",
+            "path": "apps/api/app/workers/tasks.py",
+            "symbol": "process_embedding",
+            "start_line": 325,
+            "end_line": 444,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/workers/tasks.py#L325-L444",
+            "query_id": "title_terms",
+            "query_rank": 5,
+            "method": "keyword"
+          },
+          {
+            "rank": 6,
+            "chunk_id": "9a5a2684-2838-447d-ac43-12766d17f187",
+            "path": "apps/api/app/workers/tasks.py",
+            "symbol": "process_investigation",
+            "start_line": 509,
+            "end_line": 628,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/workers/tasks.py#L509-L628",
+            "query_id": "title_terms",
+            "query_rank": 6,
+            "method": "keyword"
+          },
+          {
+            "rank": 7,
+            "chunk_id": "6963038f-8f19-4874-b890-5594b6d1bb7f",
+            "path": "apps/api/app/workers/tasks.py",
+            "symbol": "process_investigation",
+            "start_line": 629,
+            "end_line": 748,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/workers/tasks.py#L629-L748",
+            "query_id": "title_terms",
+            "query_rank": 7,
+            "method": "keyword"
+          },
+          {
+            "rank": 8,
+            "chunk_id": "a8c1c70c-5e9f-4781-8a47-7ce6086a733d",
+            "path": "apps/api/tests/test_investigation_reports.py",
+            "symbol": "test_known_application_secret_in_source_metadata_fails_closed",
+            "start_line": 440,
+            "end_line": 459,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/tests/test_investigation_reports.py#L440-L459",
+            "query_id": "title_terms",
+            "query_rank": 8,
+            "method": "keyword"
+          },
+          {
+            "rank": 9,
+            "chunk_id": "df1c24ca-8dd4-4055-af3a-7e309f14d075",
+            "path": "apps/api/tests/test_investigation_reports.py",
+            "symbol": "test_known_application_secret_in_model_output_fails_closed",
+            "start_line": 462,
+            "end_line": 477,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/tests/test_investigation_reports.py#L462-L477",
+            "query_id": "title_terms",
+            "query_rank": 9,
+            "method": "keyword"
+          },
+          {
+            "rank": 10,
+            "chunk_id": "8d6d6dc3-2491-43b9-8285-75ae33a20705",
+            "path": "apps/api/app/modules/auth/routes.py",
+            "symbol": "callback",
+            "start_line": 44,
+            "end_line": 114,
+            "commit_sha": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+            "url": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/modules/auth/routes.py#L44-L114",
+            "query_id": "title_terms",
+            "query_rank": 10,
+            "method": "keyword"
+          }
+        ],
+        "latency_ms": 47.823,
+        "scores": null,
+        "outcome": "unscored_candidates"
+      },
+      {
+        "issue_id": "unreviewed_negative",
+        "category": "negative",
+        "answerability": "unreviewed_negative",
+        "scored": false,
+        "retrieval_status": "no_matches",
+        "evidence_count": 0,
+        "query_version": "terms-v1",
+        "queries": [
+          {
+            "id": "title_terms",
+            "sha256": "8356f8466cea07593efb7f469cb0346865a75c47125dfba9c39d862e8078d791",
+            "retained_evidence": 0,
+            "labeled_retained_ranks": []
+          }
+        ],
+        "query_input_truncated": false,
+        "evidence": [],
+        "latency_ms": 34.62,
+        "scores": null,
+        "outcome": "no_evidence"
+      },
+      {
+        "issue_id": "malicious_prompt",
+        "category": "security",
+        "answerability": "insufficient",
+        "scored": false,
+        "retrieval_status": "no_usable_queries",
+        "evidence_count": 0,
+        "query_version": "terms-v1",
+        "queries": [],
+        "query_input_truncated": false,
+        "evidence": [],
+        "latency_ms": 10.418,
+        "scores": null,
+        "outcome": "no_evidence"
+      }
+    ]
+  },
+  "citation_checks": {
+    "locally_matched": 226,
+    "mismatches": 0
+  },
+  "report_mechanics": {
+    "cases": 19,
+    "schema_valid": 19,
+    "provenance_valid": 19,
+    "references": 17,
+    "valid_references": 17,
+    "valid_reference_rate": 1.0,
+    "support_labels_valid": 19,
+    "empty_evidence_cases": 2,
+    "empty_evidence_abstentions": 2,
+    "idempotent_replays": 19,
+    "cases_detail": [
+      {
+        "issue_id": "signature_exact",
+        "investigation_id": "cf933699-d20c-4b16-aac4-ae367f8811c2",
+        "report_job_id": "c49decb4-675c-4017-b0b6-2ef6f0739c1d",
+        "schema_valid": true,
+        "provenance_valid": true,
+        "references": 1,
+        "valid_references": 1,
+        "support_labels_valid": true,
+        "empty_evidence_abstention": null,
+        "idempotent": true
+      },
+      {
+        "issue_id": "signature_natural",
+        "investigation_id": "261dc47b-1cba-49a3-b1b7-27a6350309b1",
+        "report_job_id": "78ec63e1-e866-4c85-b9e4-34aadd4f8bef",
+        "schema_valid": true,
+        "provenance_valid": true,
+        "references": 1,
+        "valid_references": 1,
+        "support_labels_valid": true,
+        "empty_evidence_abstention": null,
+        "idempotent": true
+      },
+      {
+        "issue_id": "oauth_callback",
+        "investigation_id": "bb39955a-cf3c-4aaf-aa1e-1a779babb487",
+        "report_job_id": "6113f881-832a-44c1-b1df-31e4a3e25e00",
+        "schema_valid": true,
+        "provenance_valid": true,
+        "references": 1,
+        "valid_references": 1,
+        "support_labels_valid": true,
+        "empty_evidence_abstention": null,
+        "idempotent": true
+      },
+      {
+        "issue_id": "installation_enrollment",
+        "investigation_id": "734779b2-6278-4933-8cbd-b8edddcf924c",
+        "report_job_id": "d1b5f0fe-0970-4e41-9246-bba35a0a084b",
+        "schema_valid": true,
+        "provenance_valid": true,
+        "references": 1,
+        "valid_references": 1,
+        "support_labels_valid": true,
+        "empty_evidence_abstention": null,
+        "idempotent": true
+      },
+      {
+        "issue_id": "repository_access",
+        "investigation_id": "f8310c26-8c5f-48a2-8e21-1394542d822c",
+        "report_job_id": "c866e86f-cfa3-4e1d-aa65-aeba4477fcde",
+        "schema_valid": true,
+        "provenance_valid": true,
+        "references": 1,
+        "valid_references": 1,
+        "support_labels_valid": true,
+        "empty_evidence_abstention": null,
+        "idempotent": true
+      },
+      {
+        "issue_id": "repository_sync",
+        "investigation_id": "2756bac6-d008-41f1-a2d4-03fd7b865d24",
+        "report_job_id": "bc241a81-f220-4342-a0e1-c7be61805dfe",
+        "schema_valid": true,
+        "provenance_valid": true,
+        "references": 1,
+        "valid_references": 1,
+        "support_labels_valid": true,
+        "empty_evidence_abstention": null,
+        "idempotent": true
+      },
+      {
+        "issue_id": "index_incomplete_tree",
+        "investigation_id": "7af0c993-6264-40e4-a520-5e9b5afc68f8",
+        "report_job_id": "f1097933-63b5-4024-b70f-78773dfe52a9",
+        "schema_valid": true,
+        "provenance_valid": true,
+        "references": 1,
+        "valid_references": 1,
+        "support_labels_valid": true,
+        "empty_evidence_abstention": null,
+        "idempotent": true
+      },
+      {
+        "issue_id": "index_lease",
+        "investigation_id": "81fb6b8b-2d56-455a-abf9-feacd6694c17",
+        "report_job_id": "52856a92-4784-4532-9085-9833f943d16b",
+        "schema_valid": true,
+        "provenance_valid": true,
+        "references": 1,
+        "valid_references": 1,
+        "support_labels_valid": true,
+        "empty_evidence_abstention": null,
+        "idempotent": true
+      },
+      {
+        "issue_id": "python_chunking",
+        "investigation_id": "eaa4677e-678f-4d92-acf5-25fa68e9d162",
+        "report_job_id": "1c1ede72-51d6-4b16-b7bb-6da48b19b7d5",
+        "schema_valid": true,
+        "provenance_valid": true,
+        "references": 1,
+        "valid_references": 1,
+        "support_labels_valid": true,
+        "empty_evidence_abstention": null,
+        "idempotent": true
+      },
+      {
+        "issue_id": "embedding_cache",
+        "investigation_id": "40e06c4a-b267-453d-ad07-b6243c996e02",
+        "report_job_id": "74a5c3be-a913-42f5-9016-a7f62811c191",
+        "schema_valid": true,
+        "provenance_valid": true,
+        "references": 1,
+        "valid_references": 1,
+        "support_labels_valid": true,
+        "empty_evidence_abstention": null,
+        "idempotent": true
+      },
+      {
+        "issue_id": "embedding_idempotence",
+        "investigation_id": "a5a7168c-c660-4e98-9033-6bd4c6043f5f",
+        "report_job_id": "aa15b125-08b1-426d-b8af-02ee4663b750",
+        "schema_valid": true,
+        "provenance_valid": true,
+        "references": 1,
+        "valid_references": 1,
+        "support_labels_valid": true,
+        "empty_evidence_abstention": null,
+        "idempotent": true
+      },
+      {
+        "issue_id": "celery_redelivery",
+        "investigation_id": "3f1dcae2-04e7-4d9e-ae0e-d6ad69c8899c",
+        "report_job_id": "43873641-8d5a-4385-96dc-0bd68eefe814",
+        "schema_valid": true,
+        "provenance_valid": true,
+        "references": 1,
+        "valid_references": 1,
+        "support_labels_valid": true,
+        "empty_evidence_abstention": null,
+        "idempotent": true
+      },
+      {
+        "issue_id": "snapshot_publication",
+        "investigation_id": "90a8dc9a-6c95-4e62-a1a5-e478095e57d2",
+        "report_job_id": "67773d93-69e0-481c-a82f-9e9549aa84aa",
+        "schema_valid": true,
+        "provenance_valid": true,
+        "references": 1,
+        "valid_references": 1,
+        "support_labels_valid": true,
+        "empty_evidence_abstention": null,
+        "idempotent": true
+      },
+      {
+        "issue_id": "citation_boundaries",
+        "investigation_id": "fd038b41-3d77-4714-b8d1-4e410531646f",
+        "report_job_id": "1ceda5aa-35c7-4ba0-b0fe-1b7776e29268",
+        "schema_valid": true,
+        "provenance_valid": true,
+        "references": 1,
+        "valid_references": 1,
+        "support_labels_valid": true,
+        "empty_evidence_abstention": null,
+        "idempotent": true
+      },
+      {
+        "issue_id": "report_grounding",
+        "investigation_id": "59cdad9c-e6a6-44e4-b0b8-3b8ea4ae2e00",
+        "report_job_id": "7fef0fc4-dc6a-414e-99e8-59b0d33fd6b0",
+        "schema_valid": true,
+        "provenance_valid": true,
+        "references": 1,
+        "valid_references": 1,
+        "support_labels_valid": true,
+        "empty_evidence_abstention": null,
+        "idempotent": true
+      },
+      {
+        "issue_id": "snapshot_unavailable",
+        "investigation_id": "b9ca0e5f-6be6-489b-86fc-2668489794b2",
+        "report_job_id": "7ac1bf00-104a-462e-ae58-2489bf68eaed",
+        "schema_valid": true,
+        "provenance_valid": true,
+        "references": 1,
+        "valid_references": 1,
+        "support_labels_valid": true,
+        "empty_evidence_abstention": null,
+        "idempotent": true
+      },
+      {
+        "issue_id": "insufficient_details",
+        "investigation_id": "80bb24f5-fcbb-4d30-8fde-48b347b84e59",
+        "report_job_id": "6ccec490-3498-4e24-8f79-3087ce4deb32",
+        "schema_valid": true,
+        "provenance_valid": true,
+        "references": 1,
+        "valid_references": 1,
+        "support_labels_valid": true,
+        "empty_evidence_abstention": null,
+        "idempotent": true
+      },
+      {
+        "issue_id": "unreviewed_negative",
+        "investigation_id": "40993432-7400-45a8-992a-0926f70412a8",
+        "report_job_id": "ffd3a392-41c4-4410-bc3f-5aecd0f439f0",
+        "schema_valid": true,
+        "provenance_valid": true,
+        "references": 0,
+        "valid_references": 0,
+        "support_labels_valid": true,
+        "empty_evidence_abstention": true,
+        "idempotent": true
+      },
+      {
+        "issue_id": "malicious_prompt",
+        "investigation_id": "45d2dd25-75b8-4ec9-8632-386ccc4095fc",
+        "report_job_id": "1414d3c3-6236-4593-8bb5-08e99a3d7e5f",
+        "schema_valid": true,
+        "provenance_valid": true,
+        "references": 0,
+        "valid_references": 0,
+        "support_labels_valid": true,
+        "empty_evidence_abstention": true,
+        "idempotent": true
+      }
+    ]
+  },
+  "grounding_probes": {
+    "malformed_json_rejected": true,
+    "oversized_output_rejected": true,
+    "foreign_evidence_rejected": true,
+    "cross_snapshot_rejected": true,
+    "wrong_commit_rejected": true,
+    "out_of_range_rejected": true,
+    "duplicate_reference_rejected": true,
+    "malicious_output_rejected": true,
+    "unsupported_marked": true,
+    "contradictory_reference_preserved": true
+  },
+  "security_checks": {
+    "unauthenticated_http": 401,
+    "revoked_report_http": 404,
+    "unpublished_snapshot_http": 409,
+    "other_tenant_http": 404
+  },
+  "limitations": [
+    "Synthetic issues and incomplete labels; unlabeled results are not necessarily irrelevant.",
+    "Negative and insufficient cases are unscored.",
+    "Direct workers and mocked GitHub, not real Celery or AI reasoning.",
+    "Citations checked against local Git blobs; remote GitHub resolution was not checked."
+  ]
+}

@@ -80,6 +80,7 @@ def test_snapshot_job_evidence_is_atomic_fenced_and_idempotent(client, factory, 
         assert len(evidence) == 1 and evidence[0].chunk_id == chunk_id
     status = client.get(f'/v1/repositories/902/investigations/{job_id}').json()
     assert status['operation'] == 'code_evidence' and status['evidence_count'] == 1
+    assert status['issue_id'] == '990' and status['issue_number'] == 5
     response = client.get(f'/v1/repositories/902/investigations/{job_id}/evidence')
     assert response.status_code == 200
     item = response.json()['items'][0]
@@ -87,6 +88,55 @@ def test_snapshot_job_evidence_is_atomic_fenced_and_idempotent(client, factory, 
     assert item['query_id'] == 'identifier_1' and item['query_rank'] == 1 and item['method'] == 'keyword'
     assert ATTACK not in response.text and 'sensitive-github-token' not in response.text
     assert 'snippet' not in item
+
+
+def test_explicit_evidence_excerpt_is_bounded_and_revocation_fenced(client, factory, github_auth, monkeypatch):
+    _, chunk_id = context(client, factory, github_auth)
+    with factory.begin() as db:
+        db.get(CodeChunk, chunk_id).source_text = 'def process_sync():\n    ' + 'x' * 5000 + '\n'
+    stub_retrieval(monkeypatch, factory, chunk_id)
+    job_id = submit(client)
+    process_investigation(job_id, factory, github_auth)
+    url = f'/v1/repositories/902/investigations/{job_id}/evidence?include_snippets=true'
+    response = client.get(url)
+    assert response.status_code == 200
+    item = response.json()['items'][0]
+    assert len(item['snippet']) == 4000 and item['snippet_truncated']
+    assert not item['snippet_unavailable'] and 'sensitive-github-token' not in response.text
+    github_auth.include_repository = False
+    assert client.get(url).status_code == 404
+    github_auth.include_repository = True
+    with factory.begin() as db:
+        db.get(Installation, 901).active = False
+    assert client.get(url).status_code == 404
+
+
+def test_excerpt_with_known_session_secret_is_withheld(client, factory, github_auth, monkeypatch):
+    _, chunk_id = context(client, factory, github_auth)
+    with factory.begin() as db:
+        db.get(CodeChunk, chunk_id).source_text = 'def process_sync():\n    x = "sensitive-github-token"\n'
+    stub_retrieval(monkeypatch, factory, chunk_id)
+    job_id = submit(client)
+    process_investigation(job_id, factory, github_auth)
+    response = client.get(f'/v1/repositories/902/investigations/{job_id}/evidence?include_snippets=true')
+    assert response.status_code == 200
+    item = response.json()['items'][0]
+    assert item['snippet'] is None and item['snippet_unavailable']
+    assert 'sensitive-github-token' not in response.text
+
+
+def test_excerpt_with_recognizable_credential_is_withheld(client, factory, github_auth, monkeypatch):
+    _, chunk_id = context(client, factory, github_auth)
+    fixture_credential = 'ghp_' + 'x' * 36
+    with factory.begin() as db:
+        db.get(CodeChunk, chunk_id).source_text = 'def process_sync():\n    x = "' + fixture_credential + '"\n'
+    stub_retrieval(monkeypatch, factory, chunk_id)
+    job_id = submit(client)
+    process_investigation(job_id, factory, github_auth)
+    response = client.get(f'/v1/repositories/902/investigations/{job_id}/evidence?include_snippets=true')
+    assert response.status_code == 200
+    assert response.json()['items'][0]['snippet_unavailable']
+    assert fixture_credential not in response.text
 
 
 def test_missing_snapshot_rejected_and_legacy_job_unchanged(client, factory, github_auth):
@@ -104,8 +154,12 @@ def test_missing_snapshot_rejected_and_legacy_job_unchanged(client, factory, git
         db.add(legacy)
         legacy_id = legacy.id
     status = client.get(f'/v1/repositories/902/investigations/{legacy_id}')
-    assert status.status_code == 200 and status.json()['operation'] == 'mock_orchestration'
-    assert status.json()['snapshot_id'] is None and status.json()['retrieval_status'] == 'not_applicable'
+    assert status.status_code == 200
+    data = status.json()
+    assert (data['issue_id'], data['issue_number'], data['operation']) == ('990', 5, 'mock_orchestration')
+    assert data['snapshot_id'] is None and data['commit_sha'] is None
+    assert data['retrieval_status'] == 'not_applicable' and data['snapshot_partial'] is None
+    assert data['evidence_count'] == 0
     assert client.get(f'/v1/repositories/902/investigations/{legacy_id}/evidence').status_code == 409
 
 
@@ -160,9 +214,11 @@ def test_cross_tenant_and_unauthenticated_evidence(client, factory, github_auth,
     url = f'/v1/repositories/902/investigations/{job_id}/evidence'
     assert client.post('/v1/auth/logout', headers=csrf(client)).status_code == 200
     assert client.get(url).status_code == 401
+    assert client.get(url + '?include_snippets=true').status_code == 401
     github_auth.user_id = github_auth.account_id = 78
     sign_in(client)
     assert client.get(url).status_code == 404
+    assert client.get(url + '?include_snippets=true').status_code == 404
 
 
 def test_changed_file_or_missing_chunk_cannot_leak_as_evidence(client, factory, github_auth, monkeypatch):

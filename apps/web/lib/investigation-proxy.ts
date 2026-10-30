@@ -11,6 +11,16 @@ export async function forwardInvestigation(request: NextRequest, path: string) {
     const value = request.headers.get(name);
     if (value) headers[name] = value;
   }
+  if (request.method === "POST" && !headers["x-csrf-token"] && headers.cookie) {
+    // Keep the existing double-submit CSRF check while deriving its header server-side.
+    const part = headers.cookie.split(";").map(value => value.trim()).find(value => value.startsWith("rp_csrf="));
+    if (part) {
+      try {
+        const value = decodeURIComponent(part.slice("rp_csrf=".length));
+        if (value.length <= 256) headers["x-csrf-token"] = value;
+      } catch { /* The backend will reject a malformed or missing CSRF value. */ }
+    }
+  }
   const responseHeaders = { "Cache-Control": "no-store", "Referrer-Policy": "no-referrer" };
   try {
     const upstream = await fetch(`${process.env.API_INTERNAL_URL ?? "http://api:8000"}${path}`, {
