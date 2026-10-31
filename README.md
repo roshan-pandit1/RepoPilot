@@ -4,7 +4,7 @@ A modular monolith for GitHub issue ingestion, commit-pinned source retrieval an
 investigations. Sprint 4 checkpoint 4D produces evidence-grounded reports with a deterministic
 mock provider. Real AI inference and GitHub write operations are not enabled.
 
-**Status: Sprint 3 C3 and Sprint 4 checkpoints 4A–4F were verified locally**, including
+**Status: Sprint 3 C3, Sprint 4 checkpoints 4A–4F and Sprint 5A were verified locally**, including
 authorized GitHub reads and the earlier 4D PostgreSQL/Redis/Celery workflow. These checks do not
 establish production readiness or real-model diagnostic quality. See [verification results](docs/verification.md).
 
@@ -520,7 +520,7 @@ The issue inbox lets a signed-in user select a synchronized issue or enter an is
 an authorized repository. Load the issue to see bounded GitHub context, then explicitly start
 an investigation or open an existing job by UUID. The dashboard shows actual job states,
 snapshot, bounded source excerpts and validated commit-pinned citations. A completed job can
-explicitly request its one mock report; existing reports show their evidence, uncertainty,
+explicitly request its one report; the default mock report shows evidence, uncertainty,
 missing information and diagnostic steps under **MOCK REPORT — DEMONSTRATION ONLY**.
 No investigation or report starts on page load.
 
@@ -529,6 +529,27 @@ and reports are reauthorized periodically, cleared on access failure or when the
 and expire after a bounded viewing period. There can be a delay between a remote revocation and
 the next check. The same-origin proxy supplies the existing CSRF header on the server; backend
 session, origin, CSRF, tenant, repository and snapshot checks remain authoritative. Source and
-issue text are rendered as text. No real model is enabled, and retrieved candidates and mock
-output are not verified causes. Read-only browser verification and a separately approved live
-submission remain pending; see `docs/verification.md`.
+issue text are rendered as text. Retrieved candidates and mock output are not verified causes.
+The user reported read-only browser verification and one separately approved live submission;
+the original submission response body was not captured. See `docs/verification.md`.
+
+### Real-provider foundation (Sprint 5B1)
+
+The default remains the deterministic mock. The server-side OpenAI Responses adapter, separate
+real-report storage, and PostgreSQL reservation ledger are disabled for real use by default.
+An API key alone does not select or enable paid generation. Any future paid experiment requires
+separate approval, reviewed pricing, explicit server-side gates, an enabled tenant-bound
+experiment and a reserved budget. No provider calls have been made during this work.
+
+Migration `0010` is additive on upgrade and has **not** been applied to the normal application
+database. The user-reported disposable PostgreSQL suite, concurrency tests and migration
+checks passed. These mock-transport checks do not verify actual provider behavior or
+real-model reasoning. The configuration, conservative cost calculation, retry rules,
+remaining limitations and proposed experiment are documented in
+[`docs/sprint-5b-provider-plan.md`](docs/sprint-5b-provider-plan.md).
+
+Sprint 5B2A adds a fake-transport evaluation for the pinned `signature_exact` fixture,
+using a dedicated disposable database and a deliberately partial source snapshot. Its
+runner, budget audit and future approval worksheet are described in
+[`docs/sprint-5b2a-evaluation.md`](docs/sprint-5b2a-evaluation.md). The runner has no
+paid execution mode.

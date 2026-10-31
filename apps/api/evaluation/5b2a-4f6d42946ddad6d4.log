@@ -1,0 +1,21 @@
+New disposable container: repopilot-5b2a-4f6d42946ddad6d4; database: repopilot_5b2a_4f6d42946ddad6d4; run: 4f6d42946ddad6d4
+Confirmed empty dedicated database: repopilot_5b2a_4f6d42946ddad6d4; server=172.17.0.14/32:5432; host port=49399
+........................................................................ [ 21%]
+........................................................................ [ 42%]
+........................................................................ [ 63%]
+........................................................................ [ 85%]
+..................................................                       [100%]
+338 passed in 55.40s
+Security fixture: 33/33 passed; SHA-256=b7ba2f58a21d3c349198ccdaf2dfbfed968a7e384618cef7530c86fc44c020e6
+All checks passed!
+0010 (head)
+No new upgrade operations detected.
+{"event": "investigation_job_claimed", "job_id": "963c85ef-679a-4f14-9581-42d87eb91614", "repository_id": 902, "level": "INFO"}
+{"event": "investigation_evidence_published", "job_id": "963c85ef-679a-4f14-9581-42d87eb91614", "repository_id": 902, "snapshot_id": "505277be-9f2e-45a4-900e-cf528a9052c2", "level": "INFO"}
+{"event": "investigation_job_finalized", "job_id": "963c85ef-679a-4f14-9581-42d87eb91614", "repository_id": 902, "level": "INFO"}
+{"event": "report_job_claimed", "job_id": "c1eb290c-a627-421e-b271-9b5072bfcb55", "repository_id": 902, "snapshot_id": "505277be-9f2e-45a4-900e-cf528a9052c2", "level": "INFO"}
+{"event": "report_job_completed", "job_id": "c1eb290c-a627-421e-b271-9b5072bfcb55", "repository_id": 902, "snapshot_id": "505277be-9f2e-45a4-900e-cf528a9052c2", "level": "INFO"}
+Evaluation complete: run=4f6d42946ddad6d4; database=repopilot_5b2a_4f6d42946ddad6d4; snapshot=505277be-9f2e-45a4-900e-cf528a9052c2; evidence=2; valid_citations=1/1.
+Artifacts: /Volumes/Samsung SSD/Project/RepoPilot/apps/api/evaluation/5b2a-4f6d42946ddad6d4.json, /Volumes/Samsung SSD/Project/RepoPilot/apps/api/evaluation/5b2a-4f6d42946ddad6d4.md, /Volumes/Samsung SSD/Project/RepoPilot/apps/api/evaluation/5b2a-4f6d42946ddad6d4-preview.json
+Completed disposable fake-transport run: 4f6d42946ddad6d4
+Retained container and volume: repopilot-5b2a-4f6d42946ddad6d4; log: /Volumes/Samsung SSD/Project/RepoPilot/apps/api/evaluation/5b2a-4f6d42946ddad6d4.log

@@ -1,4 +1,4 @@
-"""Lease-fenced, mock-only report task; no DB transaction spans model execution."""
+"""Lease-fenced report task; no DB transaction spans model execution."""
 from dataclasses import asdict
 from datetime import timedelta
 from uuid import uuid4
@@ -14,8 +14,9 @@ from urllib.parse import unquote, urlsplit
 
 from app.core.config import get_settings
 from app.core.index_logging import index_event
-from app.domain.models import (AuthSession, CodeSnapshot, Installation, InvestigationJob, InvestigationReport,
-    InvestigationReportJob, InvestigationReportOutbox, Membership, Repository, User, now)
+from app.domain.models import (AuthSession, CodeSnapshot, Installation, InvestigationExperiment, InvestigationJob, InvestigationReport,
+    InvestigationProviderSelection, InvestigationRealReport, InvestigationReportJob,
+    InvestigationReportOutbox, Membership, Repository, User, now)
 from app.infra.database import get_session_factory
 from app.modules.auth.session import Principal, cipher, utc
 from app.modules.github.client import GitHubFailure, HttpGitHubClient, get_github_client
@@ -35,7 +36,6 @@ class ReportTransientError(Exception):
 def process_report(job_id: str, factory=None, github=None, model=None):
     factory = factory or get_session_factory()
     github = github or get_github_client()
-    model = model or get_investigation_model()
     lease = str(uuid4())
 
     def terminal(db, task, state, code):
@@ -84,6 +84,14 @@ def process_report(job_id: str, factory=None, github=None, model=None):
         identity = Principal(user.id, task.tenant_id, user.github_user_id, token, session.id_hash)
         repo_id, repo_name, installation_id = repo.id, repo.full_name, installation.id
         parent_id, snapshot_id, commit = parent.id, snapshot.id, snapshot.commit_sha
+        selection = db.get(InvestigationProviderSelection, task.id)
+        real_selected = bool(selection)
+        if selection and (selection.tenant_id != task.tenant_id or selection.repository_id != task.repository_id):
+            terminal(db, task, 'failed', 'model_not_enabled')
+            return
+        experiment = db.get(InvestigationExperiment, selection.experiment_id) if selection else None
+        experiment_id = selection.experiment_id if selection else None
+        experiment_mode = experiment.mode if experiment else None
         issue_id, issue_number, updated = parent.issue_id, parent.issue_number, utc(parent.issue_updated_at)
         task.attempts += 1
         task.status, task.lease_token = 'running', lease
@@ -129,6 +137,21 @@ def process_report(job_id: str, factory=None, github=None, model=None):
         return parent, snapshot
 
     try:
+        if real_selected:
+            from app.modules.investigation.openai_provider import OpenAIInvestigationModel
+            from app.modules.investigation.reporting_config import real_provider_enabled
+            settings = get_settings()
+            if experiment_mode == 'actual' and (not real_provider_enabled(settings)
+                    or settings.investigation_experiment_id != experiment_id):
+                raise ModelError('model_not_enabled')
+            if model is None:
+                if experiment_mode != 'actual' or not real_provider_enabled(settings):
+                    raise ModelError('model_not_enabled')
+                model = OpenAIInvestigationModel(settings.investigation_openai_api_key.get_secret_value())
+            if not isinstance(model, OpenAIInvestigationModel):
+                raise ModelError('model_not_enabled')
+        else:
+            model = model or get_investigation_model()
         if not check_remote():
             fail('cancelled', 'repository_unavailable')
             return
@@ -188,9 +211,12 @@ def process_report(job_id: str, factory=None, github=None, model=None):
                               row['citation'], row['fingerprint']) for row in current]
             if current_state != evidence_state:
                 raise ModelError('evidence_unavailable')
-        # Only a synchronous deterministic in-process mock can be selected by configuration.
         try:
-            draft, usage = execute_model(model, package)
+            if real_selected:
+                from app.modules.investigation.openai_provider import execute_budgeted_model
+                draft, usage = execute_budgeted_model(model, package, factory, job_id, lease)
+            else:
+                draft, usage = execute_model(model, package)
             if any(secret and contains_identifier(draft, secret)
                    for secret in (identity.token, identity.session_hash, *runtime_secrets)):
                 raise ModelError('model_output_unsafe')
@@ -240,7 +266,9 @@ def process_report(job_id: str, factory=None, github=None, model=None):
         else:
             fail('failed', code if code in {'model_output_invalid', 'model_output_too_large',
                 'model_output_unsafe', 'model_evidence_invalid', 'model_not_enabled',
-                'model_usage_invalid', 'model_input_invalid', 'context_limit', 'sensitive_input'} else 'model_failed')
+                'model_usage_invalid', 'model_input_invalid', 'context_limit', 'sensitive_input',
+                'model_billing_unknown', 'model_refused', 'model_incomplete',
+                'budget_exhausted', 'budget_unavailable', 'stale_worker'} else 'model_failed')
         return
     except SoftTimeLimitExceeded:
         fail('queued', 'worker_timeout')
@@ -280,10 +308,13 @@ def process_report(job_id: str, factory=None, github=None, model=None):
         except ModelError:
             terminal(db, task, 'cancelled', 'evidence_unavailable')
             return
-        if db.scalar(select(InvestigationReport.id).where(InvestigationReport.investigation_id == parent_id).limit(1)):
+        if (db.scalar(select(InvestigationReport.id).where(InvestigationReport.investigation_id == parent_id).limit(1))
+                or db.scalar(select(InvestigationRealReport.id).where(
+                    InvestigationRealReport.investigation_id == parent_id).limit(1))):
             terminal(db, task, 'failed', 'report_exists')
             return
-        db.add(InvestigationReport(id=str(uuid4()), report_job_id=job_id, investigation_id=parent_id,
+        report_class = InvestigationRealReport if real_selected else InvestigationReport
+        db.add(report_class(id=str(uuid4()), report_job_id=job_id, investigation_id=parent_id,
             snapshot_id=snapshot_id, repository_id=repo_id, tenant_id=identity.tenant_id, commit_sha=commit,
             provider=model.provider, model=model.model, payload=draft, input_tokens=usage.input_tokens,
             output_tokens=usage.output_tokens, cost_microusd=usage.cost_microusd, input_truncated=package.truncated))

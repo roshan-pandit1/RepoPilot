@@ -153,6 +153,7 @@ class ModelResult:
     input_tokens: int | None = None
     output_tokens: int | None = None
     cost_microusd: int | None = None
+    error_code: str | None = None
 
 
 class InvestigationModel(Protocol):

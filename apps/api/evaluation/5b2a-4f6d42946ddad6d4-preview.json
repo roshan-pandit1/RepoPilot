@@ -1,0 +1,69 @@
+{
+  "run_id": "4f6d42946ddad6d4",
+  "database": "repopilot_5b2a_4f6d42946ddad6d4",
+  "source_commit": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+  "snapshot_id": "505277be-9f2e-45a4-900e-cf528a9052c2",
+  "case_id": "signature_exact",
+  "request_sha256": "80b760417efaa83a712868784c93dc111d781d814985cd7ffee766bb5567c08b",
+  "canonical_request_bytes": 3858,
+  "request_fields": [
+    "input",
+    "instructions",
+    "max_output_tokens",
+    "model",
+    "prompt_cache_options",
+    "service_tier",
+    "store",
+    "text",
+    "truncation"
+  ],
+  "untrusted_fields": [
+    "body",
+    "comments",
+    "commit_sha",
+    "content_is_untrusted",
+    "evidence",
+    "investigation_id",
+    "issue_created_at",
+    "issue_id",
+    "issue_number",
+    "issue_retrieved_at",
+    "issue_state",
+    "issue_updated_at",
+    "labels",
+    "repository_id",
+    "snapshot_id",
+    "title",
+    "truncated"
+  ],
+  "title_bytes": 34,
+  "body_bytes": 84,
+  "comment_count": 0,
+  "evidence_count": 2,
+  "evidence": [
+    {
+      "chunk_id": "8b6322b2-7b52-44b2-b08b-9df06d9af357",
+      "path": "apps/api/app/modules/github/security.py",
+      "symbol": "valid_signature",
+      "start_line": 6,
+      "end_line": 8,
+      "excerpt_bytes": 249
+    },
+    {
+      "chunk_id": "e6d2d89b-832f-410f-aff3-708b148d758f",
+      "path": "apps/api/app/modules/github/security.py",
+      "symbol": null,
+      "start_line": 1,
+      "end_line": 5,
+      "excerpt_bytes": 51
+    }
+  ],
+  "expected_evidence_ids": [
+    "8b6322b2-7b52-44b2-b08b-9df06d9af357",
+    "e6d2d89b-832f-410f-aff3-708b148d758f"
+  ],
+  "input_token_upper_bound": 1050000,
+  "output_token_limit": 2048,
+  "exact_input_tokens": null,
+  "exact_input_tokens_note": "Not measured; no provider token-count request made."
+}

@@ -36,6 +36,11 @@ class Settings(BaseSettings):
     embedding_dimensions: int = 32
     embedding_api_key: SecretStr = SecretStr("")
     embedding_allow_paid: bool = False
+    investigation_provider: Literal["mock", "openai"] = "mock"
+    investigation_real_enabled: bool = False
+    investigation_paid_background_enabled: bool = False
+    investigation_openai_api_key: SecretStr = SecretStr("")
+    investigation_experiment_id: str = ""
 
     @model_validator(mode="after")
     def secure_defaults(self):

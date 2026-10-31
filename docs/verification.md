@@ -1604,11 +1604,11 @@ SHA-256 is `3644dd628b40cea7edc570e44aaf2ef5ada9dcbfc083067551119c84edfc1d91`.
 
 Docker and the local web service remain inaccessible from the sandbox. The user supplied host
 evidence of rebuilt, healthy API and web services and a successful disposable PostgreSQL run,
-recorded below. Authenticated browser verification remains pending. Read-only host verification
-can use the previously completed issue #1 job `457d40bf-7e15-4e10-9a27-b8a0de9e513b` and its
-report. A new live investigation or report requires separate user approval. No normal
-application database, GitHub issue, live index, paid provider, deployment, commit or push was
-changed for this checkpoint.
+recorded below. The user subsequently reported successful authenticated read-only dashboard
+verification, also recorded below. A new live investigation or report requires separate user
+approval. At this stage, no normal application database, GitHub issue, live index, paid provider,
+deployment, commit or push had been changed for this checkpoint; the user later explicitly
+authorized the commit recorded below.
 
 #### Sprint 5A final verification review
 
@@ -1664,9 +1664,9 @@ The user subsequently reported rebuilding and starting the local web service and
 **HTTP 401** from an unauthenticated host `curl` request to the issue #1 context endpoint. This
 confirms rejection of that request, but is not an incognito-browser observation. The user's
 earlier unauthenticated report HTTP 401 and 288-test disposable PostgreSQL run preceded this
-frontend-only change; neither proves that the corrected issue workspace loads in Chrome. The
-read-only authenticated issue and existing evidence/report display remain pending. No new live
-investigation or report was created.
+frontend-only change; neither alone proves that the corrected issue workspace loads in Chrome.
+The user later reported successful read-only browser behavior as recorded below. No new live
+investigation or report was created for this fix.
 
 #### Sprint 5A historical status compatibility
 
@@ -1686,10 +1686,231 @@ An earlier user-supplied read-only application-database result associated mock r
 `dbcbaa32-6330-475a-9da9-7bbb0f8e3305` with investigation
 `457d40bf-7e15-4e10-9a27-b8a0de9e513b` for `roshan-pandit1/RepoPilot`, issue #1; it is not
 the older orchestration job. A fresh read-only host query was requested because the sandbox
-cannot reach Docker. Its result and authenticated browser verification of the corrected UI are
-pending. The old and new response fixtures, inconsistent metadata, revocation, and switching from
+cannot reach Docker; no result from that fresh query was supplied. The old and new response
+fixtures, inconsistent metadata, revocation, and switching from
 a historical job to a snapshot-backed mock report are covered by tests. **53 frontend tests**,
 TypeScript, ESLint and production build passed on Node 22; focused backend tests reported
 **58 passed, 3 PostgreSQL-only skips** on SQLite. Ruff and `git diff --check` passed. The earlier
 288-test PostgreSQL host run preceded this frontend-only change. No database records, jobs,
 reports, GitHub issues or application migrations were created or modified for this fix.
+
+#### Sprint 5A read-only browser evidence and remaining acceptance gap
+
+The user subsequently reported that the authenticated dashboard displays GitHub issue #1, a
+completed historical investigation, 20 persisted source-evidence results, and an existing mock
+report. They reported opening a verified GitHub source citation and seeing the visible
+**MOCK REPORT — DEMONSTRATION ONLY** label, hypothesis, uncertainty, supporting evidence and
+limitations. They also reported that the historical-status compatibility issue was corrected.
+This is user-reported browser evidence; no screenshot, job ID or Network trace accompanied this
+confirmation, so it is not an independent verification of every displayed item or link. Earlier
+host evidence separately associated report `dbcbaa32-6330-475a-9da9-7bbb0f8e3305` with
+investigation `457d40bf-7e15-4e10-9a27-b8a0de9e513b` and issue #1, but the latest browser
+statement did not specify a job or report ID. The mock output is a demonstration, not AI
+reasoning or a verified root cause.
+
+The most recent supplied PostgreSQL regression result remains **288 passed, no skips**, plus
+**33/33** adversarial fixtures, Ruff, and Alembic 0009 with no drift on a new disposable database;
+the separately gated committed-source snapshot test was excluded. That run preceded the final
+frontend compatibility adjustment and an additional backend test assertion. The latest recorded
+frontend checks on that adjustment were **53 passed**, typecheck, ESLint and production build;
+the focused SQLite backend checks were **58 passed, 3 skipped**. The API routes source hash
+recorded for the PostgreSQL run remained unchanged. The changes were subsequently committed
+and pushed at the user's request as `bcea57041721c895659ed38c398438ea91519d70`.
+
+The read-only UI path is reported verified, but **SPRINT 5A remains NOT YET VERIFIED** in full:
+the evidence supplied so far does not show the current dashboard's **Investigate issue** action
+submitting a job through the real local backend and observing its lifecycle. The earlier 4C
+live browser/API submission exercised the backend and real outbox/Redis/Celery pipeline, while
+the current dashboard submission tests use mocked network responses. Evidence that the current
+dashboard already submitted a real job would satisfy this gap without necessarily creating
+another one. Otherwise a controlled new live submission requires separate authorization. The
+request at that time prohibited creating an investigation or report, so neither was created in
+that step. The user's later, limited authorization is recorded below.
+
+#### Sprint 5A live dashboard submission verification — pending
+
+The user has approved exactly one browser-initiated investigation for issue #1 in
+`roshan-pandit1/RepoPilot` if existing evidence does not already demonstrate submission by the
+current dashboard. The existing records demonstrate a real 4C backend pipeline and later
+read-only dashboard access, but do not identify a verified dashboard-button POST for the later
+job. Confirmation of any such prior evidence is pending. No new report, migration, reindex,
+GitHub write, paid provider call, commit, push or deployment is authorized for this verification.
+
+The agent cannot access Docker or the authenticated host browser. A read-only host preflight
+was prepared to check service state, Redis and worker responsiveness, API/worker/dispatcher
+fingerprints, the web bundle, the published snapshot, and issue-job counts before any submission.
+Its actual output was pending at that point. No new investigation or report has been created by the agent.
+The generic issue must not be used to claim root-cause relevance. **SPRINT 5A remains NOT YET
+VERIFIED** until the browser submission and resulting live pipeline are demonstrated or prior
+equivalent evidence is supplied.
+
+The user attempted the host preflight, but its first Docker command failed because the Docker
+daemon socket was unavailable (`no such file or directory`). The script was configured to stop
+on that failure, before the read-only database and service checks. No browser submission was
+reported at that point; Docker availability and preflight results were still outstanding.
+
+The user subsequently supplied successful preflight output: one Celery node online, API HTTP
+200 readiness, matching API/worker/dispatcher source fingerprints, web-to-API readiness,
+embedding provider disabled, and a read-only transaction against the local `repopilot`
+database. The enabled and active repository was `roshan-pandit1/RepoPilot`; its published
+snapshot was `24e51533-c612-4833-921d-447cfed7df99` at commit
+`63491908290e6874dbaaf2b15c2a96473aad1324`, with 278 chunks. The baseline was five issue #1
+jobs, none queued or running. The web bundle contained the reviewed dashboard markers, but its
+reported SHA-256 `6a69624ac52d7083ca0c466afd161dbde54d7b59bf4b8a9d7766d27deb83bac7` differs
+from the agent's local build artifact; that difference and any prior dashboard POST evidence
+are being checked before proceeding. No new submission has been reported.
+
+The user then copied the running web page bundle for comparison. Both it and the locally tested
+bundle were 59,653 bytes. Parsing their webpack page payloads showed that both executable module
+bodies were byte-identical; their order and the generated entry-module ID differed. The outer
+wrappers also matched after normalizing that entry ID. The investigation controller class,
+including submission and status handling, matched byte-for-byte. This establishes equivalence
+for the compared page modules, not every server-side file in the image. The earlier-recorded
+issue #1 job still has no supplied evidence identifying a dashboard-button POST.
+
+The user next supplied a dashboard screenshot showing issue #1, a Network row with HTTP 202,
+and job `810a7792-7f48-45bf-8331-ad9aaaf416a4` displayed as queued with zero attempts and
+zero evidence. The displayed snapshot was `24e51533-c612-4833-921d-447cfed7df99` at commit
+`63491908290e6874dbaaf2b15c2a96473aad1324`. The screenshot did not open the 202 response
+body or show the request method, so the returned ID and status still need direct confirmation.
+The UI stated that polling had paused while the tab was inactive. A read-only status refresh,
+persisted job/outbox and worker evidence, evidence display, and a duplicate check remain
+pending; no report-generation action is authorized.
+
+The user subsequently supplied the end of the correlated host evidence output. It shows two
+`investigation_job_dispatched` events, two task receipts, one claim, evidence publication,
+finalization and task completion for `810a7792-7f48-45bf-8331-ad9aaaf416a4`. The existing
+4C evidence script reported that **20 evidence chunks** match local Git commit
+`63491908290e6874dbaaf2b15c2a96473aad1324`. That script's successful validation requires a
+completed job, processed outbox, published matching snapshot, unique evidence chunks and
+contiguous ranks; the displayed screenshot does not include the initial job/outbox row or its
+attempt counts. It does not check remote GitHub link resolution. A POST response body, the
+compact database counts, and an authenticated dashboard terminal/reopen view remain pending.
+The generic issue's results are not evidence of root-cause relevance.
+
+The user then supplied the compact read-only database results for this job: `completed`, one
+worker attempt, no error, outbox `processed` with two dispatch attempts, 20 evidence rows with
+20 distinct chunks and ranks, and zero associated report jobs. The issue #1 job count increased
+from five at preflight to six, consistent with one new job. Together with the two receipts and
+single claim in the supplied logs, this supports safe handling of the observed duplicate
+deliveries; no deliberate replay or second submission was performed. The 202 response body and
+authenticated dashboard terminal/reopen observations were pending at that point.
+
+#### Sprint 5A final verdict
+
+**SPRINT 5A VERIFIED LOCALLY**, based on the combined user-supplied browser and host evidence.
+The user reports that the authenticated dashboard submitted issue #1, displayed the completed
+job and its 20 evidence results, and reopened job `810a7792-7f48-45bf-8331-ad9aaaf416a4`.
+The correlated database and worker observations above show completion, one worker attempt,
+a processed outbox with two dispatch attempts, and 20 unique chunks and ranks. The user also
+reported opening a commit-pinned GitHub citation and viewing an existing mock report, its
+uncertainty, supporting evidence and the demonstration-only label. The original submission
+POST response body was not captured, and the screenshot's 202 row did not show its method;
+these details have not been independently reconstructed. The generic issue and deterministic
+mock report do not establish retrieval relevance or AI reasoning quality.
+
+### Sprint 5B1 real-provider foundation — 2026-10-30
+
+**SPRINT 5B1 VERIFIED LOCALLY within the mock-transport foundation scope.** The working tree based on
+`bcea57041721c895659ed38c398438ea91519d70` adds an OpenAI Responses adapter, tenant-bound
+experiment selection, a PostgreSQL reservation ledger and a separate real-report table.
+Mock reports remain the default. Real generation and paid background execution both default
+to disabled; a credential alone is insufficient. The provider adapter was exercised only
+with an in-process mocked HTTP transport and synthetic content. No real model request,
+paid embedding call, live investigation, report generation or normal-database migration
+was performed for 5B1.
+
+The simulated workflow tests cover provider and experiment gates, tenant selection,
+grounded report publication, duplicate delivery, changed authorization, malformed output,
+foreign citations, wrong commits, unexpected provider-model identity, no-evidence abstention, timeouts and unknown billing,
+reservation lease takeover, request limits, and conservative usage reconciliation. The
+request uses separate application instructions and untrusted data, no tools, strict JSON
+schema, bounded response size and server-side citation validation. Prompt-injection
+resistance and secret filtering remain incomplete for any future real model.
+
+Executed in this sandbox on the current uncommitted working tree:
+
+- Backend SQLite pytest: **301 passed, 17 skipped**. The skipped tests include both new
+  PostgreSQL budget/concurrency races and the gated actual-mode fake-transport test;
+  SQLite does not establish row-lock safety.
+- Synthetic 4E adversarial fixture: **33/33 passed**, dataset SHA-256
+  `b7ba2f58a21d3c349198ccdaf2dfbfed968a7e384618cef7530c86fc44c020e6`.
+- Frontend: **54 tests passed**, TypeScript, ESLint and production build passed.
+- Backend Ruff and `git diff --check` passed.
+- On a newly created temporary SQLite database, Alembic upgraded through `0009` to
+  **`0010 (head)`**, and `alembic check` reported no new operations. SQLite emitted
+  warnings that the two existing full-text expression indexes could not be reflected;
+  this does not substitute for PostgreSQL migration or drift verification.
+
+Docker returned permission denied on the sandbox's Docker socket. A host runner is prepared:
+
+```bash
+cd "/Volumes/Samsung SSD/Project/RepoPilot"
+bash apps/api/evaluation/run-5b1-checks.sh
+```
+
+It creates a uniquely named disposable container and empty database, fails on skipped selected
+tests, runs the security fixture, upgrades an isolated database from `0009` to `0010` while
+checking a pre-existing fixture, runs Alembic drift checks and retains its new container and
+volume. The separately approval-gated committed-source snapshot evaluation is excluded.
+The user's first host run reported **314 passed, 1 skipped**: the existing PostgreSQL
+legacy-migration test's database-prefix guard did not yet recognize the new 5B1 disposable
+name. The runner intentionally stopped before its security, Ruff and Alembic steps. The
+guard has since been extended for this disposable prefix, and the legacy test now checks
+that an existing mock report survives 0010. The user's next output reported successful
+security, preservation, 0010 and drift checks, but the pasted pytest count reads
+`16 passed`; its full count was not established from that output. A further
+PostgreSQL-only actual-mode fake-transport test and a minimum collection guard were then
+added. The user subsequently reported the final runner result: **317 passed in 33.12s**,
+security fixture **33/33**, Ruff passing, the 0009 fixture preserved by the 0010 upgrade,
+`0010 (head)`, and no new Alembic upgrade operations. The final success marker is printed
+only after the runner verifies an empty dedicated database, at least 300 selected tests
+and zero skips. The retained container was `repopilot-5b1-checks-414af65032edcbf5`.
+The separately approval-gated committed-source snapshot test remained intentionally excluded.
+The normal local application database has not received `0010`.
+
+The proposed one-request experiment, rate assumptions, $10 total cap and $5.815551 maximum
+reservation, accounting limitations and further approval requirements are detailed in
+`docs/sprint-5b-provider-plan.md`. The existing 4F runner remains mock-only, and an
+isolated real-model evaluation harness must be prepared and reviewed before any paid
+experiment. Neither the adapter's fake transport tests nor the mock evaluations measure
+real-model reasoning quality.
+
+### Sprint 5B2A isolated provider evaluation — 2026-10-31
+
+**SPRINT 5B2A NOT YET VERIFIED.** The evaluation now prepares a partial disposable snapshot
+from the committed `signature_exact` source, runs the existing retrieval and report
+workflow with a fake GitHub client and `httpx.MockTransport`, and records a simulated
+ledger reservation and a metadata-only request preview. It has no real-provider execution
+mode. The official pricing and provider-contract review found that the earlier adapter
+could inherit a project-selected service tier. It now explicitly requests the standard
+tier and 30-minute cache lifetime and holds the reservation for inconsistent response
+metadata. Refusal and incomplete-response handling and related regressions were added.
+
+The current uncommitted working tree passed **322 backend tests with 17 PostgreSQL-only
+skips** on SQLite, the **33/33** synthetic adversarial fixture, Ruff and
+`git diff --check`. Frontend regression checks passed **54 tests**, TypeScript and
+ESLint; no frontend files were changed for this checkpoint. A newly created temporary
+SQLite database upgraded to `0010` and
+reported no Alembic drift, with existing SQLite expression-index reflection warnings.
+SQLite does not verify PostgreSQL row locks, the PostgreSQL migration or the real keyword
+retrieval path.
+
+Docker remains inaccessible from this sandbox. The subsequently generated host artifacts
+record a successful isolated run `4f6d42946ddad6d4` in newly created database
+`repopilot_5b2a_4f6d42946ddad6d4`: **338 PostgreSQL tests passed with no skips**,
+the adversarial fixture passed **33/33**, Ruff passed, and Alembic reported `0010 (head)`
+with no drift. The separately approval-gated 4F committed-source benchmark was excluded.
+The evaluation used a synthetic partial snapshot at commit
+`30705da4c044192cab4ac207e253ab8e8a1bd100`, returned two evidence records, and
+validated one of one report references. The report records one fake HTTP request, one
+worker attempt, a simulated $5.815551 reservation and no actual provider cost.
+The JSON, preview and test summary share the same run, database and snapshot IDs; their
+recorded implementation fingerprints match the current working files. The run log and
+artifacts are retained under `apps/api/evaluation/5b2a-4f6d42946ddad6d4*`.
+
+A runnable paid-execution entry point remains a separate future implementation and
+review, so the approval-ready real-experiment criterion is not yet established. No real
+model call, paid embedding call, live job, normal-database migration or repository reindex
+was made. See `docs/sprint-5b2a-evaluation.md` for the pricing audit, safety limitations
+and future-experiment review worksheet.

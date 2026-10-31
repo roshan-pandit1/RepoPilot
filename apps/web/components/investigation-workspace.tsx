@@ -15,7 +15,11 @@ const safeErrors: Record<string, string> = { repository_unavailable: "Repository
   issue_changed: "The issue changed during processing.", attempts_exhausted: "The retry limit was reached.",
   worker_timeout: "The worker timed out and may retry.", database_temporarily_unavailable: "Storage is temporarily unavailable.",
   github_verification_unavailable: "GitHub access could not be verified.", invalid_evidence: "The evidence could not be verified.",
-  model_output_invalid: "The mock report response was invalid.", model_output_too_large: "The mock report response was too large." };
+  model_output_invalid: "The report response was invalid.", model_output_too_large: "The report response was too large.",
+  model_not_enabled: "The selected report provider is disabled.",
+  budget_exhausted: "The report experiment budget is exhausted.",
+  budget_unavailable: "The report experiment is unavailable.",
+  model_billing_unknown: "The request outcome is uncertain and will not be retried automatically." };
 const safeError = (code: string | null) => code && Object.hasOwn(safeErrors, code) ? safeErrors[code] : null;
 
 function date(value: string) {
@@ -85,12 +89,13 @@ function TextList({ title, items }: { title: string; items: string[] }) {
 export function InvestigationReport({ envelope, repository }: { envelope: ReportEnvelope; repository: Repository }) {
   if (envelope.status !== "completed" || !envelope.report) return <section aria-label="Report status" className="rounded-xl border border-slate-200 p-4">
     <h3 className="font-semibold">Report {label[envelope.status]}</h3>
-    {(envelope.status === "failed" || envelope.status === "cancelled") && <p role="alert" className="mt-2 text-sm text-red-700">The mock report could not be completed.</p>}
+    {(envelope.status === "failed" || envelope.status === "cancelled") && <p role="alert" className="mt-2 text-sm text-red-700">The report could not be completed.</p>}
     {safeError(envelope.error_code) && <p className="mt-2 text-xs text-slate-600">{safeError(envelope.error_code)}</p>}
   </section>;
   const report = envelope.report;
   return <section aria-label="Investigation report" className="rounded-xl border border-amber-200 bg-amber-50/50 p-4 sm:p-5">
-    <p className="text-xs font-bold tracking-wide text-amber-900">MOCK REPORT — DEMONSTRATION ONLY</p>
+    <p className="text-xs font-bold tracking-wide text-amber-900">{report.provider === "mock"
+      ? "MOCK REPORT — DEMONSTRATION ONLY" : "MODEL-GENERATED REPORT — HUMAN REVIEW REQUIRED"}</p>
     <h3 className="mt-2 text-lg font-semibold">Investigation report</h3>
     <p className="mt-1 text-xs text-slate-600">{report.provider} · {report.model} · {date(report.created_at)}</p>
     <p className="mt-3 text-sm text-slate-700">{report.disclaimer}</p>
@@ -134,7 +139,7 @@ export function InvestigationWorkspace({ repository, selectedIssue }: { reposito
   }, []);
   return <section id="issue-investigation" className="panel mt-8 p-5 sm:p-6">
     <div><p className="eyebrow">ISSUE INVESTIGATION</p><h2 className="mt-2 text-xl font-semibold">From issue to code evidence</h2>
-      <p className="mt-2 text-sm text-slate-500">Explore an authorized issue in {repository.full_name}. Reports use a deterministic mock and are not diagnoses.</p></div>
+      <p className="mt-2 text-sm text-slate-500">Explore an authorized issue in {repository.full_name}. Reports identify their provider and are not diagnoses.</p></div>
     <form className="mt-5 flex flex-wrap items-end gap-3" onSubmit={event => { event.preventDefault(); void controller.current?.loadIssue(issue); }}>
       <label className="text-sm font-medium">GitHub issue number<input value={issue} onChange={event => { setIssue(event.target.value); controller.current?.clear(); }} disabled={view.busy === "submit" || view.busy === "report"} inputMode="numeric" maxLength={10}
         className="mt-1 block w-48 rounded-lg border border-slate-300 px-3 py-2.5" placeholder="e.g. 1" /></label>
@@ -160,7 +165,7 @@ export function InvestigationWorkspace({ repository, selectedIssue }: { reposito
           {view.evidence ? <EvidenceView evidence={view.evidence} repository={repository} /> : <button className="button" onClick={() => { void controller.current?.refreshResults(); }}>Refresh evidence and report</button>}
           {view.report && <InvestigationReport envelope={view.report} repository={repository} />}
           {view.reportMissing && <div className="rounded-xl border border-slate-200 p-4"><p className="text-sm text-slate-600">No report exists for this investigation.</p>
-            <button className="button mt-3" disabled={!!view.busy} onClick={() => { void controller.current?.generateReport(); }}>{view.busy === "report" ? "Submitting…" : "Generate mock report"}</button></div>}
+            <button className="button mt-3" disabled={!!view.busy} onClick={() => { void controller.current?.generateReport(); }}>{view.busy === "report" ? "Submitting…" : "Generate report"}</button></div>}
         </>}
       </>}
     </div>}

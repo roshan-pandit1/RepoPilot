@@ -399,3 +399,23 @@ test("views escape untrusted issue and source text and show mock limitations", (
   assert.match(reportHtml, /Missing evidence/); assert.match(reportHtml, /Next diagnostic steps/);
   assert.equal(safeCitation({ ...item, url: "javascript:alert(1)" }, repository), null);
 });
+
+test("real-provider reports retain grounding and are labeled for human review", async () => {
+  const real = structuredClone(report);
+  real.report.provider = "openai";
+  real.report.model = "gpt-5.6-terra";
+  real.report.disclaimer = "Model-generated possibilities require human review; they are not verified diagnoses.";
+  const api = backend({ reportValue: real });
+  const c = new InvestigationController(repository, api.fetch, new FakeClock());
+  await c.loadIssue("5"); await c.openJob(jobId);
+  assert.equal(c.state.report.report.provider, "openai");
+  const html = render(views.InvestigationReport, { envelope: c.state.report, repository });
+  assert.match(html, /MODEL-GENERATED REPORT — HUMAN REVIEW REQUIRED/);
+  assert.doesNotMatch(html, /MOCK REPORT — DEMONSTRATION ONLY/);
+  c.dispose();
+  const mismatch = structuredClone(real); mismatch.report.model = "deterministic-v1";
+  const other = new InvestigationController(repository, backend({ reportValue: mismatch }).fetch, new FakeClock());
+  await other.loadIssue("5"); await other.openJob(jobId);
+  assert.match(other.state.error, /Invalid report response/);
+  other.dispose();
+});

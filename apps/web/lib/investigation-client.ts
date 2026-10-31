@@ -19,7 +19,7 @@ export type Citation = { chunk_id: string; snapshot_id: string; commit_sha: stri
 export type Hypothesis = { title: string; explanation: string; observations: string[]; missing_or_contradictory: string[];
   evidence: Citation[]; contradictory_evidence: Citation[]; support_status: "speculative" | "unsupported"; uncertainty: "high" };
 export type Report = { investigation_id: string; repository_id: string; issue_id: string; issue_number: number;
-  snapshot_id: string; commit_sha: string; provider: "mock"; model: "deterministic-v1"; status: "completed";
+  snapshot_id: string; commit_sha: string; provider: "mock" | "openai"; model: "deterministic-v1" | "gpt-5.6-terra"; status: "completed";
   summary: string; hypotheses: Hypothesis[]; missing_evidence: string[]; next_steps: string[]; warnings: string[];
   disclaimer: string; input_truncated: boolean; snapshot_partial: boolean; created_at: string };
 export type ReportEnvelope = { report_job_id: string; status: JobState; attempts: number;
@@ -120,7 +120,8 @@ function reportResponse(value: unknown, job: Job, context: IssueContext, evidenc
   const r = value.report;
   if (!object(r) || r.investigation_id !== job.job_id || r.repository_id !== repo.id || r.issue_id !== context.issue_id ||
       r.issue_number !== context.number || r.snapshot_id !== job.snapshot_id || r.commit_sha !== job.commit_sha ||
-      r.provider !== "mock" || r.model !== "deterministic-v1" || r.status !== "completed" ||
+      !((r.provider === "mock" && r.model === "deterministic-v1") ||
+        (r.provider === "openai" && r.model === "gpt-5.6-terra")) || r.status !== "completed" ||
       !text(r.summary, 600) || !text(r.disclaimer, 300) || !text(r.created_at, 64) ||
       !Array.isArray(r.hypotheses) || r.hypotheses.length > 3 || !strings(r.missing_evidence, 4) ||
       !strings(r.next_steps, 4) || !strings(r.warnings, 4) || typeof r.input_truncated !== "boolean" ||
@@ -314,7 +315,7 @@ export class InvestigationController {
     this.cancel(); this.submitting = true; const epoch = this.epoch; this.update({ busy: "report", error: "" });
     try {
       const value = await this.request(`/api/investigations/${this.repo.id}/jobs/${job.job_id}/report`, "POST");
-      if (!object(value) || !validId(value.report_job_id) || !text(value.status, 20) || !states.has(value.status) || value.provider !== "mock") throw new Error("Invalid report submission response.");
+      if (!object(value) || !validId(value.report_job_id) || !text(value.status, 20) || !states.has(value.status) || !["mock", "openai"].includes(value.provider as string)) throw new Error("Invalid report submission response.");
       if (epoch === this.epoch) { this.reportPolls = 0; await this.loadResults(epoch, true); }
     } catch (error) { this.failed(error, epoch); }
     finally { if (epoch === this.epoch) this.submitting = false; }

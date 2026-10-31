@@ -160,7 +160,8 @@ def score_retrieval(dataset: dict, results: list[dict], *, snapshot_id: str) -> 
 
 def assess_report(envelope: dict, *, investigation_id: str, repository_id: int,
                   snapshot_id: str, commit: str, evidence: list[dict],
-                  issue_id: int | None = None, issue_number: int | None = None) -> dict:
+                  issue_id: int | None = None, issue_number: int | None = None,
+                  expected_provider: str = 'mock', expected_model: str = 'deterministic-v1') -> dict:
     """Measure report mechanics against previously authorized, persisted evidence."""
     try:
         parsed = ReportEnvelope.model_validate(envelope)
@@ -175,7 +176,7 @@ def assess_report(envelope: dict, *, investigation_id: str, repository_id: int,
                   and report.snapshot_id == snapshot_id and report.commit_sha == commit
                   and (issue_id is None or report.issue_id == str(issue_id))
                   and (issue_number is None or report.issue_number == issue_number)
-                  and report.provider == 'mock' and report.model == 'deterministic-v1')
+                  and report.provider == expected_provider and report.model == expected_model)
     allowed = {item['chunk_id']: item for item in evidence}
     references = [ref for hypothesis in report.hypotheses
                   for ref in [*hypothesis.evidence, *hypothesis.contradictory_evidence]]

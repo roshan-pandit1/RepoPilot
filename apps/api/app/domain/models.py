@@ -480,3 +480,111 @@ class InvestigationReport(Base):
         CheckConstraint("provider = 'mock' AND model = 'deterministic-v1'", name="ck_report_mock_provider"),
         CheckConstraint("(input_tokens IS NULL OR input_tokens >= 0) AND (output_tokens IS NULL OR output_tokens >= 0) AND (cost_microusd IS NULL OR cost_microusd >= 0)", name="ck_report_usage"),
     )
+
+
+class InvestigationExperiment(Base):
+    __tablename__ = "investigation_experiments"
+    id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    tenant_id: Mapped[int] = mapped_column(ForeignKey("tenants.id"))
+    enabled: Mapped[bool] = mapped_column(Boolean, default=False)
+    mode: Mapped[str] = mapped_column(String(16))
+    provider: Mapped[str] = mapped_column(String(40))
+    model: Mapped[str] = mapped_column(String(80))
+    budget_microusd: Mapped[int] = mapped_column(BigInteger)
+    investigation_budget_microusd: Mapped[int] = mapped_column(BigInteger)
+    max_input_tokens: Mapped[int] = mapped_column(Integer)
+    max_output_tokens: Mapped[int] = mapped_column(Integer)
+    max_concurrent: Mapped[int] = mapped_column(Integer)
+    max_requests: Mapped[int] = mapped_column(Integer)
+    pricing_checked_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=now)
+    __table_args__ = (
+        UniqueConstraint("id", "tenant_id", name="uq_experiment_tenant"),
+        CheckConstraint("mode IN ('actual', 'simulated') AND provider = 'openai' AND "
+            "budget_microusd > 0 AND investigation_budget_microusd > 0 AND max_input_tokens > 0 AND "
+            "max_output_tokens > 0 AND max_concurrent > 0 AND max_requests > 0", name="ck_experiment_limits"),
+    )
+
+
+class InvestigationProviderSelection(Base):
+    __tablename__ = "investigation_provider_selections"
+    job_id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    repository_id: Mapped[int] = mapped_column(BigInteger)
+    tenant_id: Mapped[int] = mapped_column(Integer)
+    experiment_id: Mapped[str] = mapped_column(String(36))
+    __table_args__ = (
+        ForeignKeyConstraint(["job_id", "repository_id", "tenant_id"],
+            ["investigation_report_jobs.id", "investigation_report_jobs.repository_id", "investigation_report_jobs.tenant_id"], name="fk_provider_selection_job"),
+        ForeignKeyConstraint(["experiment_id", "tenant_id"],
+            ["investigation_experiments.id", "investigation_experiments.tenant_id"], name="fk_provider_selection_experiment"),
+        UniqueConstraint("job_id", "experiment_id", "tenant_id", name="uq_provider_selection_experiment"),
+    )
+
+
+class InvestigationUsageReservation(Base):
+    __tablename__ = "investigation_usage_reservations"
+    id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    job_id: Mapped[str] = mapped_column(String(36), unique=True)
+    experiment_id: Mapped[str] = mapped_column(String(36))
+    tenant_id: Mapped[int] = mapped_column(Integer)
+    repository_id: Mapped[int] = mapped_column(BigInteger)
+    investigation_id: Mapped[str] = mapped_column(String(36))
+    snapshot_id: Mapped[str] = mapped_column(String(36))
+    lease_token: Mapped[str] = mapped_column(String(36))
+    state: Mapped[str] = mapped_column(String(16))
+    mode: Mapped[str] = mapped_column(String(16))
+    reserved_microusd: Mapped[int] = mapped_column(BigInteger)
+    max_input_tokens: Mapped[int] = mapped_column(Integer)
+    max_output_tokens: Mapped[int] = mapped_column(Integer)
+    model: Mapped[str] = mapped_column(String(80))
+    pricing_policy: Mapped[str] = mapped_column(String(80))
+    input_rate_tenths: Mapped[int] = mapped_column(Integer)
+    output_rate_tenths: Mapped[int] = mapped_column(Integer)
+    accounted_microusd: Mapped[int | None] = mapped_column(BigInteger)
+    input_tokens: Mapped[int | None] = mapped_column(Integer)
+    output_tokens: Mapped[int | None] = mapped_column(Integer)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=now)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=now)
+    __table_args__ = (
+        ForeignKeyConstraint(["experiment_id", "tenant_id"],
+            ["investigation_experiments.id", "investigation_experiments.tenant_id"], name="fk_usage_experiment"),
+        ForeignKeyConstraint(["job_id", "investigation_id", "snapshot_id", "repository_id", "tenant_id"],
+            ["investigation_report_jobs.id", "investigation_report_jobs.investigation_id", "investigation_report_jobs.snapshot_id", "investigation_report_jobs.repository_id", "investigation_report_jobs.tenant_id"], name="fk_usage_job"),
+        ForeignKeyConstraint(["job_id", "experiment_id", "tenant_id"],
+            ["investigation_provider_selections.job_id", "investigation_provider_selections.experiment_id",
+             "investigation_provider_selections.tenant_id"], name="fk_usage_selection"),
+        CheckConstraint("state IN ('reserved', 'sent', 'known', 'uncertain') AND "
+            "mode IN ('actual', 'simulated') AND reserved_microusd > 0 AND max_input_tokens > 0 AND max_output_tokens > 0 AND input_rate_tenths > 0 AND output_rate_tenths > 0 AND "
+            "(accounted_microusd IS NULL OR accounted_microusd >= 0) AND "
+            "(input_tokens IS NULL OR input_tokens >= 0) AND (output_tokens IS NULL OR output_tokens >= 0) AND "
+            "((state = 'known' AND accounted_microusd IS NOT NULL AND accounted_microusd <= reserved_microusd "
+            "AND input_tokens IS NOT NULL AND output_tokens IS NOT NULL) OR "
+            "(state <> 'known' AND accounted_microusd IS NULL AND input_tokens IS NULL AND output_tokens IS NULL))", name="ck_usage_reservation"),
+        Index("ix_usage_experiment", "experiment_id", "investigation_id"),
+    )
+
+
+class InvestigationRealReport(Base):
+    __tablename__ = "investigation_real_reports"
+    id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    report_job_id: Mapped[str] = mapped_column(String(36), unique=True)
+    investigation_id: Mapped[str] = mapped_column(String(36), unique=True)
+    snapshot_id: Mapped[str] = mapped_column(String(36))
+    repository_id: Mapped[int] = mapped_column(BigInteger)
+    tenant_id: Mapped[int] = mapped_column(Integer)
+    commit_sha: Mapped[str] = mapped_column(String(40))
+    provider: Mapped[str] = mapped_column(String(40))
+    model: Mapped[str] = mapped_column(String(80))
+    payload: Mapped[dict] = mapped_column(JSON)
+    input_tokens: Mapped[int | None] = mapped_column(Integer)
+    output_tokens: Mapped[int | None] = mapped_column(Integer)
+    cost_microusd: Mapped[int | None] = mapped_column(BigInteger)
+    input_truncated: Mapped[bool] = mapped_column(Boolean)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=now)
+    __table_args__ = (
+        ForeignKeyConstraint(["report_job_id", "investigation_id", "snapshot_id", "repository_id", "tenant_id"],
+            ["investigation_report_jobs.id", "investigation_report_jobs.investigation_id", "investigation_report_jobs.snapshot_id", "investigation_report_jobs.repository_id", "investigation_report_jobs.tenant_id"], name="fk_real_report_job_full_owner"),
+        ForeignKeyConstraint(["report_job_id"], ["investigation_provider_selections.job_id"], name="fk_real_report_selection"),
+        CheckConstraint("provider = 'openai' AND model = 'gpt-5.6-terra'", name="ck_real_report_provider"),
+    )

@@ -67,7 +67,7 @@ def test_postgres_legacy_job_survives_migration():
     url = make_url(raw_url)
     if url.get_backend_name() != 'postgresql' or not (url.database or '').startswith(
             ('repopilot_4c_disposable_', 'repopilot_4d_disposable_', 'repopilot_4e_disposable_',
-             'repopilot_4f_checks_')):
+             'repopilot_4f_checks_', 'repopilot_5b1_checks_', 'repopilot_5b2a_')):
         pytest.skip('Requires a dedicated checkpoint disposable PostgreSQL database')
     schema = 'legacy4c_' + uuid4().hex
     admin = create_engine(url, hide_parameters=True)
@@ -111,8 +111,19 @@ def test_postgres_legacy_job_survives_migration():
                 db.execute(text(sql))
         subprocess.run([sys.executable, '-m', 'alembic', 'upgrade', '0009'], cwd=api, env=env,
                        capture_output=True, text=True, check=True)
-        with scoped.connect() as db:
+        with scoped.begin() as db:
             assert tuple(db.execute(text("SELECT status,snapshot_id FROM investigation_jobs WHERE id='v4c'")).one()) == ('completed', 'snap')
+            assert db.execute(text("SELECT chunk_id FROM investigation_evidence WHERE id='ev'")).scalar_one() == 'chunk'
+            assert tuple(db.execute(text("SELECT status,attempts FROM investigation_outbox WHERE job_id='legacy'")).one()) == ('processed', 2)
+            db.execute(text("INSERT INTO investigation_report_jobs(id,investigation_id,snapshot_id,repository_id,tenant_id,user_id,session_hash,status,attempts,created_at,updated_at) VALUES ('report-job','v4c','snap',20,1,1,'fixture','completed',1,'2026-01-01','2026-01-01')"))
+            db.execute(text("INSERT INTO investigation_report_outbox(job_id,repository_id,tenant_id,status,attempts,next_dispatch_at) VALUES ('report-job',20,1,'processed',2,'2026-01-01')"))
+            db.execute(text("INSERT INTO investigation_reports(id,report_job_id,investigation_id,snapshot_id,repository_id,tenant_id,commit_sha,provider,model,payload,cost_microusd,input_truncated,created_at) VALUES ('report','report-job','v4c','snap',20,1,'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa','mock','deterministic-v1',CAST(:payload AS JSON),0,false,'2026-01-01')"), {'payload': '{"summary":"Legacy fixture","hypotheses":[],"missing_evidence":[],"next_steps":[],"warnings":[]}'})
+        subprocess.run([sys.executable, '-m', 'alembic', 'upgrade', 'head'], cwd=api, env=env,
+                       capture_output=True, text=True, check=True)
+        with scoped.connect() as db:
+            assert tuple(db.execute(text("SELECT status,attempts FROM investigation_report_jobs WHERE id='report-job'")).one()) == ('completed', 1)
+            assert tuple(db.execute(text("SELECT provider,model,snapshot_id FROM investigation_reports WHERE id='report'")).one()) == ('mock', 'deterministic-v1', 'snap')
+            assert db.execute(text("SELECT payload FROM investigation_reports WHERE id='report'")).scalar_one()['summary'] == 'Legacy fixture'
             assert db.execute(text("SELECT chunk_id FROM investigation_evidence WHERE id='ev'")).scalar_one() == 'chunk'
             assert tuple(db.execute(text("SELECT status,attempts FROM investigation_outbox WHERE job_id='legacy'")).one()) == ('processed', 2)
     finally:

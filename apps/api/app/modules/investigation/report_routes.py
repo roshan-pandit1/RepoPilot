@@ -8,8 +8,8 @@ from pydantic import BaseModel
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.domain.models import (AuthSession, CodeSnapshot, Installation, InstallationGuard, InvestigationJob,
-                               InvestigationReport, InvestigationReportJob, InvestigationReportOutbox,
+from app.domain.models import (AuthSession, CodeSnapshot, Installation, InstallationGuard, InvestigationExperiment, InvestigationJob,
+                               InvestigationProviderSelection, InvestigationRealReport, InvestigationReport, InvestigationReportJob, InvestigationReportOutbox,
                                Membership, Repository, RepositoryGuard, now)
 from app.infra.database import get_db
 from app.modules.auth.session import Principal, principal, require_csrf, utc
@@ -18,6 +18,9 @@ from app.modules.github.guards import installation_guard, repository_guard
 from app.modules.github.issue_context import authorize
 from app.modules.investigation.report_model import ModelError
 from app.modules.investigation.reporting import evidence_inputs, render_report_payload
+from app.modules.investigation.reporting_config import real_provider_enabled
+from app.modules.investigation.usage_ledger import experiment_is_eligible
+from app.core.config import get_settings
 
 router = APIRouter(prefix='/v1/repositories')
 
@@ -51,10 +54,10 @@ class ReportView(BaseModel):
     issue_number: int
     snapshot_id: str
     commit_sha: str
-    provider: Literal['mock']
-    model: Literal['deterministic-v1']
+    provider: Literal['mock', 'openai']
+    model: Literal['deterministic-v1', 'gpt-5.6-terra']
     status: Literal['completed']
-    disclaimer: Literal['Deterministic mock output; not AI reasoning or a diagnosis.']
+    disclaimer: str
     summary: str
     hypotheses: list[HypothesisView]
     missing_evidence: list[str]
@@ -156,13 +159,24 @@ def request_report(request: Request, repository_id: int = Path(gt=0, lt=2**63), 
         raise HTTPException(409, 'Evidence is unavailable') from None
     task = db.scalar(select(InvestigationReportJob).where(InvestigationReportJob.investigation_id == parent.id))
     if not task:
+        settings = get_settings()
+        if settings.investigation_provider == 'openai':
+            if not real_provider_enabled(settings):
+                raise HTTPException(503, 'Real report generation is disabled')
+            exp = db.get(InvestigationExperiment, settings.investigation_experiment_id)
+            if not experiment_is_eligible(exp, identity.tenant_id, actual=True):
+                raise HTTPException(503, 'Real report experiment is unavailable')
         task = InvestigationReportJob(id=str(uuid4()), investigation_id=parent.id, snapshot_id=snapshot.id,
             repository_id=repository_id, tenant_id=identity.tenant_id, user_id=identity.user_id,
             session_hash=identity.session_hash)
         db.add(task)
         db.flush()
+        if settings.investigation_provider == 'openai':
+            db.add(InvestigationProviderSelection(job_id=task.id, repository_id=repository_id,
+                tenant_id=identity.tenant_id, experiment_id=exp.id))
         db.add(InvestigationReportOutbox(job_id=task.id, repository_id=repository_id, tenant_id=identity.tenant_id))
-    result = {'report_job_id': task.id, 'status': task.status, 'provider': 'mock'}
+    selection = db.get(InvestigationProviderSelection, task.id)
+    result = {'report_job_id': task.id, 'status': task.status, 'provider': 'openai' if selection else 'mock'}
     db.commit()
     return result
 
@@ -188,6 +202,11 @@ def get_report(repository_id: int = Path(gt=0, lt=2**63), job_id: UUID = Path(),
             InvestigationReport.commit_sha == snapshot.commit_sha, InvestigationReport.repository_id == repository_id,
             InvestigationReport.tenant_id == identity.tenant_id))
         if not report:
+            report = db.scalar(select(InvestigationRealReport).where(InvestigationRealReport.report_job_id == task.id,
+                InvestigationRealReport.investigation_id == parent.id, InvestigationRealReport.snapshot_id == snapshot.id,
+                InvestigationRealReport.commit_sha == snapshot.commit_sha, InvestigationRealReport.repository_id == repository_id,
+                InvestigationRealReport.tenant_id == identity.tenant_id))
+        if not report:
             raise HTTPException(409, 'Report is unavailable')
         try:
             rows = evidence_inputs(db, parent, snapshot)
@@ -197,7 +216,8 @@ def get_report(repository_id: int = Path(gt=0, lt=2**63), job_id: UUID = Path(),
         result['report'] = {'investigation_id': parent.id, 'repository_id': str(repository_id),
             'issue_id': str(parent.issue_id), 'issue_number': parent.issue_number, 'snapshot_id': snapshot.id,
             'commit_sha': snapshot.commit_sha, 'provider': report.provider, 'model': report.model, 'status': 'completed',
-            'disclaimer': 'Deterministic mock output; not AI reasoning or a diagnosis.',
+            'disclaimer': ('Deterministic mock output; not AI reasoning or a diagnosis.' if report.provider == 'mock'
+                           else 'Model-generated possibilities require human review; they are not verified diagnoses.'),
             'input_truncated': report.input_truncated, 'snapshot_partial': bool(snapshot.skipped_count),
             'input_tokens': report.input_tokens,
             'output_tokens': report.output_tokens, 'cost_microusd': report.cost_microusd,
