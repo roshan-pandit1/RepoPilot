@@ -521,7 +521,7 @@ def process_investigation(job_id: str, factory=None, github=None, work=None):
     from app.modules.github.client import GitHubFailure, HttpGitHubClient, get_github_client
     from app.modules.github.issue_context import IssueData
     from app.modules.github.issue_context_client import IssueContextClient
-    from app.modules.investigation.query_builder import build_queries
+    from app.modules.investigation.query_builder import build_queries_for_version
     from app.modules.investigation.retrieval import (InvalidEvidence, SnapshotUnavailable,
                                                        fingerprint_chunk, retrieve_candidates)
     from app.modules.github.enrollment import visible_github_repositories
@@ -572,10 +572,10 @@ def process_investigation(job_id: str, factory=None, github=None, work=None):
         repo_id, repo_name, installation_id = repo.id, repo.full_name, installation.id
         operation, snapshot_id, commit = job.operation, job.snapshot_id, job.snapshot_commit_sha
         issue_id, issue_number, issue_updated_at = job.issue_id, job.issue_number, utc(job.issue_updated_at)
-        query_limit, per_query_limit = job.query_limit, job.per_query_limit
+        query_limit, per_query_limit, query_version = job.query_limit, job.per_query_limit, job.query_version
         evidence_limit, query_body_limit = job.evidence_limit, job.query_body_limit
         if operation == "code_evidence":
-            if job.query_version != "terms-v1":
+            if query_version not in ("terms-v1", "terms-v2"):
                 terminal(db, job, "failed", "query_version_unavailable")
                 return
             snapshot = db.get(CodeSnapshot, snapshot_id)
@@ -629,7 +629,8 @@ def process_investigation(job_id: str, factory=None, github=None, work=None):
             labels = [label["name"] for label in issue.labels]
             query_input_truncated = (len(issue.title) > 1024 or len(issue.body or "") > query_body_limit
                                      or len(labels) > 20 or any(len(label) > 100 for label in labels[:20]))
-            queries = build_queries(issue.title, (issue.body or "")[:query_body_limit], labels, query_limit)
+            bounded_body = (issue.body or "")[:query_body_limit]
+            queries = build_queries_for_version(query_version, issue.title, bounded_body, labels, query_limit)
             allowed = visible_github_repositories(identity, auth_client, installation_id)
             if not any(item["id"] == repo_id and item["full_name"] == repo_name for item in allowed):
                 finish_failure("cancelled", "repository_unavailable")
@@ -654,7 +655,8 @@ def process_investigation(job_id: str, factory=None, github=None, work=None):
             work()
             candidates = retrieve_candidates(factory, queries=queries, snapshot_id=snapshot_id,
                 repository_id=repo_id, tenant_id=identity.tenant_id, commit=commit, full_name=repo_name,
-                per_query_limit=per_query_limit, evidence_limit=evidence_limit)
+                per_query_limit=per_query_limit, evidence_limit=evidence_limit,
+                ranking_context=(issue.title, bounded_body) if query_version == "terms-v2" else None)
             warning = "no_usable_queries" if not queries else "no_matches" if not candidates else None
         else:
             work()

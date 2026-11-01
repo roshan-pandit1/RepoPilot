@@ -1,0 +1,151 @@
+{
+  "run_id": "b3fa0088237c0c7a",
+  "database": "repopilot_5b2b_b3fa0088237c0c7a",
+  "migration": "0011",
+  "dataset": "issue-report-v1",
+  "case_id": "signature_exact",
+  "source_commit": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+  "source_blob": "9d1ca57c87b5f6a7141baf3abb8c0a097d1dbae3",
+  "snapshot_id": "afa6679c-4822-44c2-bfd9-3ac635068945",
+  "investigation_id": "98678679-7c39-4cca-9ae2-f516542e350a",
+  "report_job_id": "91fa2b4b-6695-4a12-bad9-63118cd36ae1",
+  "experiment_id": "e707c7d9-203c-45df-92f6-9722316eb317",
+  "tenant_id": 1,
+  "repository_id": 902,
+  "evidence": [
+    {
+      "evidence_id": "00cb929f-6008-4218-8e0f-ee24e7bbfca5",
+      "chunk_id": "62584d6c-554b-45d6-a646-030cc8c222c1",
+      "rank": 1
+    },
+    {
+      "evidence_id": "73edb9c9-e1be-4693-ac6f-65d511461543",
+      "chunk_id": "f5b2039a-d923-4b00-a432-d5e0dae1f9a2",
+      "rank": 2
+    }
+  ],
+  "counts": {
+    "investigations": 1,
+    "report_jobs": 1,
+    "approvals": 0,
+    "reservations": 0,
+    "reports": 0
+  },
+  "experiment_mode": "simulated",
+  "report_job_state": "queued",
+  "request_sha256": "9211ff97ef966d0d648d3d175a1808116c576e7cd80adee746fed82a8a2700b5",
+  "manifest_sha256": "87f82f93e7338fe567cd43270b163dc268ad2e47326da8968f78977da5a46b0b",
+  "disclosure_screening": {
+    "status": "pattern_screen_passed; human review and current billing confirmation required",
+    "source_path": "apps/api/app/modules/github/security.py",
+    "source_blob": "9d1ca57c87b5f6a7141baf3abb8c0a097d1dbae3",
+    "source_sha256": "b49bb45a35edd38fc5bcbf010a692ba3453cc8ec97824c67b9fc1913095e5fcd",
+    "source_ranges": [
+      {
+        "start_line": 1,
+        "end_line": 5,
+        "bytes": 96,
+        "sha256": "47b45bc1ec79dafd217949051ed894e0d79bafd925a0075e84a6285444e7166d"
+      },
+      {
+        "start_line": 6,
+        "end_line": 8,
+        "bytes": 226,
+        "sha256": "e45f500e3be82c8361cc1c268c01b4dab0f38131c6451d2f9409c82a7dc35dd7"
+      }
+    ],
+    "request_sha256": "9211ff97ef966d0d648d3d175a1808116c576e7cd80adee746fed82a8a2700b5",
+    "manifest_sha256": "87f82f93e7338fe567cd43270b163dc268ad2e47326da8968f78977da5a46b0b",
+    "instructions_sha256": "92967e953d2a471714d98aa532e843f91f826f1b595a6c4223ac1d59e56cdd76",
+    "output_schema_sha256": "01a5052e4d0525866c0a87edeab1c12fdb6f923e767bbe7d4e23655032da7f23",
+    "request_fields": [
+      "input",
+      "instructions",
+      "max_output_tokens",
+      "model",
+      "prompt_cache_options",
+      "service_tier",
+      "store",
+      "text",
+      "truncation"
+    ],
+    "input_fields": [
+      "body",
+      "comments",
+      "commit_sha",
+      "content_is_untrusted",
+      "evidence",
+      "investigation_id",
+      "issue_created_at",
+      "issue_id",
+      "issue_number",
+      "issue_retrieved_at",
+      "issue_state",
+      "issue_updated_at",
+      "labels",
+      "repository_id",
+      "snapshot_id",
+      "title",
+      "truncated"
+    ],
+    "issue_title": "valid_signature rejects a delivery",
+    "title_sha256": "0ecfdfedc453032bab8bfd1edb52662511f758cd39b13f3f12d48e50cf4854bb",
+    "body_sha256": "0f7c6d1149e1bf832f25271da33fed269ad552cf8b2f09ce60039362a9a0192c",
+    "screened_patterns": {
+      "provider_or_github_key": {
+        "source": 0,
+        "request": 0
+      },
+      "private_key": {
+        "source": 0,
+        "request": 0
+      },
+      "email_address": {
+        "source": 0,
+        "request": 0
+      },
+      "credential_header": {
+        "source": 0,
+        "request": 0
+      },
+      "known_injection": {
+        "source": 0,
+        "request": 0
+      }
+    },
+    "evidence": [
+      {
+        "chunk_id": "62584d6c-554b-45d6-a646-030cc8c222c1",
+        "path": "apps/api/app/modules/github/security.py",
+        "symbol": "valid_signature",
+        "start_line": 6,
+        "end_line": 8,
+        "citation": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/modules/github/security.py#L6-L8",
+        "excerpt_bytes": 249,
+        "excerpt_sha256": "bec83e08d9555d3527d64e7936f50406682b0b5e5ff9e1e31305763adc3ef293"
+      },
+      {
+        "chunk_id": "f5b2039a-d923-4b00-a432-d5e0dae1f9a2",
+        "path": "apps/api/app/modules/github/security.py",
+        "symbol": null,
+        "start_line": 1,
+        "end_line": 5,
+        "citation": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/modules/github/security.py#L1-L5",
+        "excerpt_bytes": 51,
+        "excerpt_sha256": "6019d85f8bb86d1f2542a1deec81ae85e39d8d146857e050acda62281f680a72"
+      }
+    ],
+    "limitations": [
+      "Pattern screening cannot prove that arbitrary secrets or injection are absent.",
+      "The authorization header value and provider-internal processing are not reviewed here.",
+      "Exact request and source disclosure require human review before any paid approval."
+    ]
+  },
+  "review_directory": "/var/folders/_c/0_0hnx511fv_xrhvjwxw5c840000gn/T/repopilot-5b2b-b3fa0088237c0c7a-l8mxzzg3",
+  "session_expires_at": "2026-11-01T03:25:25.939400+00:00",
+  "experiment_expires_at": "2026-11-01T03:20:26.146556+00:00",
+  "limitations": [
+    "Synthetic disposable records only; no paid approval or provider request.",
+    "Human review and separate approval are required before any actual execution."
+  ]
+}

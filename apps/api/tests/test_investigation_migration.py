@@ -40,6 +40,13 @@ def test_legacy_job_survives_evidence_migration(tmp_path):
         db.execute("INSERT INTO code_chunks(id,file_id,repository_id,tenant_id,symbol,start_line,end_line,source_text) VALUES ('chunk','file',20,1,'f',1,1,'def f(): pass')")
         db.execute("INSERT INTO investigation_jobs(id,repository_id,tenant_id,user_id,session_hash,issue_id,issue_number,issue_updated_at,context_retrieved_at,status,attempts,created_at,updated_at,completed_at,operation,snapshot_id,snapshot_commit_sha,source_repository_name,query_version,query_limit,per_query_limit,evidence_limit,query_body_limit) VALUES ('v4c',20,1,1,'fixture',31,3,'2026-01-01','2026-01-01','completed',1,'2026-01-01','2026-01-01','2026-01-01','code_evidence','snap',?,'fixture/public','terms-v1',3,10,20,4000)", ('a' * 40,))
         db.execute("INSERT INTO investigation_evidence(id,job_id,snapshot_id,repository_id,tenant_id,chunk_id,rank,query_id,query_hash,chunk_fingerprint,query_rank,method,created_at) VALUES ('ev','v4c','snap',20,1,'chunk',1,'fixture',?,?,1,'keyword','2026-01-01')", ('c' * 64, 'd' * 64))
+    alembic('upgrade', '0012')
+    with sqlite3.connect(database) as db:
+        db.execute('PRAGMA foreign_keys=ON')
+        db.execute("INSERT INTO investigation_report_jobs(id,investigation_id,snapshot_id,repository_id,tenant_id,user_id,session_hash,status,attempts,created_at,updated_at) VALUES ('report-job','v4c','snap',20,1,1,'fixture','completed',1,'2026-01-01','2026-01-01')")
+        db.execute("INSERT INTO investigation_experiments(id,tenant_id,enabled,mode,provider,model,budget_microusd,investigation_budget_microusd,max_input_tokens,max_output_tokens,max_concurrent,max_requests,pricing_checked_at,expires_at,created_at) VALUES ('fixture-exp',1,1,'simulated','openai','fixture-model',10000000,6000000,1050000,2048,1,1,'2026-01-01','2030-01-01','2026-01-01')")
+        db.execute("INSERT INTO investigation_provider_selections(job_id,repository_id,tenant_id,experiment_id) VALUES ('report-job',20,1,'fixture-exp')")
+        db.execute("INSERT INTO investigation_token_counts(id,job_id,experiment_id,investigation_id,snapshot_id,repository_id,tenant_id,source_commit,fixture_id,mode,provider,model,account_sha256,project_sha256,generation_sha256,count_sha256,manifest_sha256,binding_sha256,pricing_policy,max_output_tokens,max_input_tokens,status,created_at,expires_at) VALUES ('sim-count','report-job','fixture-exp','v4c','snap',20,1,'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa','fixture','simulated','openai','fixture-model','account','project','generation','count','manifest','binding','fixture',2048,16384,'ready','2026-01-01','2030-01-01')")
     alembic('upgrade', 'head')
     with sqlite3.connect(database) as db:
         row = db.execute('select status, attempts, operation, snapshot_id from investigation_jobs where id=?', ('legacy',)).fetchone()
@@ -47,6 +54,8 @@ def test_legacy_job_survives_evidence_migration(tmp_path):
         assert db.execute("SELECT status, snapshot_id FROM investigation_jobs WHERE id='v4c'").fetchone() == ('completed', 'snap')
         assert db.execute("SELECT chunk_id FROM investigation_evidence WHERE id='ev'").fetchone() == ('chunk',)
         assert db.execute('select status,attempts from investigation_outbox where job_id=?', ('legacy',)).fetchone() == ('processed', 2)
+        assert db.execute("SELECT mode,status,max_input_tokens FROM investigation_token_counts WHERE id='sim-count'").fetchone() == ('simulated', 'ready', 16384)
+        assert db.execute('SELECT count(*) FROM investigation_provider_token_counts').fetchone()[0] == 0
         sql = db.execute("select sql from sqlite_master where name='investigation_jobs'").fetchone()[0]
         assert "issue_number > 0 AND issue_id > 0 AND attempts >= 0" in sql
         assert "status IN ('queued', 'running', 'completed', 'failed', 'cancelled')" in sql
@@ -67,7 +76,7 @@ def test_postgres_legacy_job_survives_migration():
     url = make_url(raw_url)
     if url.get_backend_name() != 'postgresql' or not (url.database or '').startswith(
             ('repopilot_4c_disposable_', 'repopilot_4d_disposable_', 'repopilot_4e_disposable_',
-             'repopilot_4f_checks_', 'repopilot_5b1_checks_', 'repopilot_5b2a_')):
+             'repopilot_4f_checks_', 'repopilot_5b1_checks_', 'repopilot_5b2a_', 'repopilot_5b2b_')):
         pytest.skip('Requires a dedicated checkpoint disposable PostgreSQL database')
     schema = 'legacy4c_' + uuid4().hex
     admin = create_engine(url, hide_parameters=True)
@@ -118,6 +127,12 @@ def test_postgres_legacy_job_survives_migration():
             db.execute(text("INSERT INTO investigation_report_jobs(id,investigation_id,snapshot_id,repository_id,tenant_id,user_id,session_hash,status,attempts,created_at,updated_at) VALUES ('report-job','v4c','snap',20,1,1,'fixture','completed',1,'2026-01-01','2026-01-01')"))
             db.execute(text("INSERT INTO investigation_report_outbox(job_id,repository_id,tenant_id,status,attempts,next_dispatch_at) VALUES ('report-job',20,1,'processed',2,'2026-01-01')"))
             db.execute(text("INSERT INTO investigation_reports(id,report_job_id,investigation_id,snapshot_id,repository_id,tenant_id,commit_sha,provider,model,payload,cost_microusd,input_truncated,created_at) VALUES ('report','report-job','v4c','snap',20,1,'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa','mock','deterministic-v1',CAST(:payload AS JSON),0,false,'2026-01-01')"), {'payload': '{"summary":"Legacy fixture","hypotheses":[],"missing_evidence":[],"next_steps":[],"warnings":[]}'})
+        subprocess.run([sys.executable, '-m', 'alembic', 'upgrade', '0012'], cwd=api, env=env,
+                       capture_output=True, text=True, check=True)
+        with scoped.begin() as db:
+            db.execute(text("INSERT INTO investigation_experiments(id,tenant_id,enabled,mode,provider,model,budget_microusd,investigation_budget_microusd,max_input_tokens,max_output_tokens,max_concurrent,max_requests,pricing_checked_at,expires_at,created_at) VALUES ('fixture-exp',1,true,'simulated','openai','fixture-model',10000000,6000000,1050000,2048,1,1,'2026-01-01','2030-01-01','2026-01-01')"))
+            db.execute(text("INSERT INTO investigation_provider_selections(job_id,repository_id,tenant_id,experiment_id) VALUES ('report-job',20,1,'fixture-exp')"))
+            db.execute(text("INSERT INTO investigation_token_counts(id,job_id,experiment_id,investigation_id,snapshot_id,repository_id,tenant_id,source_commit,fixture_id,mode,provider,model,account_sha256,project_sha256,generation_sha256,count_sha256,manifest_sha256,binding_sha256,pricing_policy,max_output_tokens,max_input_tokens,status,created_at,expires_at) VALUES ('sim-count','report-job','fixture-exp','v4c','snap',20,1,'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa','fixture','simulated','openai','fixture-model','account','project','generation','count','manifest','binding','fixture',2048,16384,'ready','2026-01-01','2030-01-01')"))
         subprocess.run([sys.executable, '-m', 'alembic', 'upgrade', 'head'], cwd=api, env=env,
                        capture_output=True, text=True, check=True)
         with scoped.connect() as db:
@@ -126,6 +141,8 @@ def test_postgres_legacy_job_survives_migration():
             assert db.execute(text("SELECT payload FROM investigation_reports WHERE id='report'")).scalar_one()['summary'] == 'Legacy fixture'
             assert db.execute(text("SELECT chunk_id FROM investigation_evidence WHERE id='ev'")).scalar_one() == 'chunk'
             assert tuple(db.execute(text("SELECT status,attempts FROM investigation_outbox WHERE job_id='legacy'")).one()) == ('processed', 2)
+            assert tuple(db.execute(text("SELECT mode,status,max_input_tokens FROM investigation_token_counts WHERE id='sim-count'")).one()) == ('simulated', 'ready', 16384)
+            assert db.execute(text('SELECT count(*) FROM investigation_provider_token_counts')).scalar_one() == 0
     finally:
         scoped.dispose()
         with admin.begin() as db:

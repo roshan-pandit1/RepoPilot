@@ -565,6 +565,152 @@ class InvestigationUsageReservation(Base):
     )
 
 
+class InvestigationExecutorApproval(Base):
+    """One-use simulated executor binding; no actual-mode approval is created here."""
+    __tablename__ = "investigation_executor_approvals"
+    id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    job_id: Mapped[str] = mapped_column(String(36), unique=True)
+    experiment_id: Mapped[str] = mapped_column(String(36), unique=True)
+    tenant_id: Mapped[int] = mapped_column(Integer)
+    snapshot_id: Mapped[str] = mapped_column(String(36))
+    source_commit: Mapped[str] = mapped_column(String(40))
+    fixture_id: Mapped[str] = mapped_column(String(80))
+    mode: Mapped[str] = mapped_column(String(16))
+    provider: Mapped[str] = mapped_column(String(40))
+    model: Mapped[str] = mapped_column(String(80))
+    request_sha256: Mapped[str] = mapped_column(String(64))
+    manifest_sha256: Mapped[str] = mapped_column(String(64))
+    state: Mapped[str] = mapped_column(String(16))
+    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=now)
+    consumed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    __table_args__ = (
+        ForeignKeyConstraint(["job_id", "experiment_id", "tenant_id"],
+            ["investigation_provider_selections.job_id", "investigation_provider_selections.experiment_id",
+             "investigation_provider_selections.tenant_id"], name="fk_executor_approval_selection"),
+        CheckConstraint("state IN ('ready', 'consumed') AND mode IN ('simulated', 'actual') AND provider = 'openai' AND "
+            "((state = 'ready' AND consumed_at IS NULL) OR (state = 'consumed' AND consumed_at IS NOT NULL))",
+            name="ck_executor_approval_state"),
+    )
+
+
+class InvestigationTokenCount(Base):
+    """Separate, simulated one-use count authorization and its bounded result."""
+    __tablename__ = "investigation_token_counts"
+    id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    job_id: Mapped[str] = mapped_column(String(36), unique=True)
+    experiment_id: Mapped[str] = mapped_column(String(36), unique=True)
+    investigation_id: Mapped[str] = mapped_column(String(36))
+    snapshot_id: Mapped[str] = mapped_column(String(36))
+    repository_id: Mapped[int] = mapped_column(BigInteger)
+    tenant_id: Mapped[int] = mapped_column(Integer)
+    source_commit: Mapped[str] = mapped_column(String(40))
+    fixture_id: Mapped[str] = mapped_column(String(80))
+    mode: Mapped[str] = mapped_column(String(16))
+    provider: Mapped[str] = mapped_column(String(40))
+    model: Mapped[str] = mapped_column(String(80))
+    account_sha256: Mapped[str] = mapped_column(String(64))
+    project_sha256: Mapped[str] = mapped_column(String(64))
+    generation_sha256: Mapped[str] = mapped_column(String(64))
+    count_sha256: Mapped[str] = mapped_column(String(64))
+    manifest_sha256: Mapped[str] = mapped_column(String(64))
+    binding_sha256: Mapped[str] = mapped_column(String(64))
+    pricing_policy: Mapped[str] = mapped_column(String(80))
+    max_output_tokens: Mapped[int] = mapped_column(Integer)
+    max_input_tokens: Mapped[int] = mapped_column(Integer)
+    status: Mapped[str] = mapped_column(String(16))
+    input_tokens: Mapped[int | None] = mapped_column(Integer)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=now)
+    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    sent_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    completed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    invalidated_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    __table_args__ = (
+        ForeignKeyConstraint(["job_id", "investigation_id", "snapshot_id", "repository_id", "tenant_id"],
+            ["investigation_report_jobs.id", "investigation_report_jobs.investigation_id",
+             "investigation_report_jobs.snapshot_id", "investigation_report_jobs.repository_id",
+             "investigation_report_jobs.tenant_id"], name="fk_token_count_job_owner"),
+        ForeignKeyConstraint(["job_id", "experiment_id", "tenant_id"],
+            ["investigation_provider_selections.job_id", "investigation_provider_selections.experiment_id",
+             "investigation_provider_selections.tenant_id"], name="fk_token_count_selection"),
+        CheckConstraint("mode = 'simulated' AND provider = 'openai' AND max_input_tokens > 0 AND "
+            "max_output_tokens > 0 AND status IN ('ready', 'sent', 'complete', 'uncertain') AND "
+            "((status = 'ready' AND sent_at IS NULL AND completed_at IS NULL AND input_tokens IS NULL) OR "
+            "(status = 'sent' AND sent_at IS NOT NULL AND completed_at IS NULL AND input_tokens IS NULL) OR "
+            "(status = 'complete' AND sent_at IS NOT NULL AND completed_at IS NOT NULL AND input_tokens IS NOT NULL AND input_tokens >= 0) OR "
+            "(status = 'uncertain' AND sent_at IS NOT NULL AND completed_at IS NOT NULL AND input_tokens IS NULL))",
+            name="ck_token_count_state"),
+    )
+
+
+class InvestigationProviderTokenCount(Base):
+    """Externally sourced count authorization; separate from all simulated counts."""
+    __tablename__ = "investigation_provider_token_counts"
+    id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    job_id: Mapped[str] = mapped_column(String(36), unique=True)
+    experiment_id: Mapped[str] = mapped_column(String(36), unique=True)
+    investigation_id: Mapped[str] = mapped_column(String(36))
+    snapshot_id: Mapped[str] = mapped_column(String(36))
+    repository_id: Mapped[int] = mapped_column(BigInteger)
+    tenant_id: Mapped[int] = mapped_column(Integer)
+    source_commit: Mapped[str] = mapped_column(String(40))
+    fixture_id: Mapped[str] = mapped_column(String(80))
+    origin: Mapped[str] = mapped_column(String(16))
+    provider: Mapped[str] = mapped_column(String(40))
+    model: Mapped[str] = mapped_column(String(80))
+    account_sha256: Mapped[str] = mapped_column(String(64))
+    project_sha256: Mapped[str] = mapped_column(String(64))
+    generation_sha256: Mapped[str] = mapped_column(String(64))
+    count_sha256: Mapped[str] = mapped_column(String(64))
+    manifest_sha256: Mapped[str] = mapped_column(String(64))
+    binding_sha256: Mapped[str] = mapped_column(String(64))
+    pricing_policy: Mapped[str] = mapped_column(String(80))
+    fee_policy: Mapped[str] = mapped_column(String(80))
+    service_tier: Mapped[str] = mapped_column(String(24))
+    cache_ttl: Mapped[str] = mapped_column(String(8))
+    max_input_tokens: Mapped[int] = mapped_column(Integer)
+    max_output_tokens: Mapped[int] = mapped_column(Integer)
+    status: Mapped[str] = mapped_column(String(16))
+    input_tokens: Mapped[int | None] = mapped_column(Integer)
+    fee_state: Mapped[str] = mapped_column(String(16))
+    fee_reserved_microusd: Mapped[int] = mapped_column(BigInteger)
+    fee_accounted_microusd: Mapped[int | None] = mapped_column(BigInteger)
+    generation_approval_id: Mapped[str | None] = mapped_column(ForeignKey("investigation_executor_approvals.id"))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=now)
+    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    sent_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    completed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    invalidated_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    consumed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    __table_args__ = (
+        ForeignKeyConstraint(["job_id", "investigation_id", "snapshot_id", "repository_id", "tenant_id"],
+            ["investigation_report_jobs.id", "investigation_report_jobs.investigation_id",
+             "investigation_report_jobs.snapshot_id", "investigation_report_jobs.repository_id",
+             "investigation_report_jobs.tenant_id"], name="fk_provider_count_job_owner"),
+        ForeignKeyConstraint(["job_id", "experiment_id", "tenant_id"],
+            ["investigation_provider_selections.job_id", "investigation_provider_selections.experiment_id",
+             "investigation_provider_selections.tenant_id"], name="fk_provider_count_selection"),
+        CheckConstraint("origin = 'external' AND provider = 'openai' AND max_input_tokens > 0 AND "
+            "max_output_tokens > 0 AND fee_reserved_microusd >= 0 AND "
+            "fee_state IN ('reserved', 'known', 'uncertain') AND "
+            "((fee_state = 'known' AND fee_accounted_microusd IS NOT NULL AND fee_accounted_microusd >= 0 "
+            "AND fee_accounted_microusd <= fee_reserved_microusd) OR "
+            "(fee_state <> 'known' AND fee_accounted_microusd IS NULL)) AND "
+            "((status = 'pending' AND sent_at IS NULL AND completed_at IS NULL AND input_tokens IS NULL "
+            "AND invalidated_at IS NULL AND consumed_at IS NULL AND generation_approval_id IS NULL) OR "
+            "(status = 'sent' AND sent_at IS NOT NULL AND completed_at IS NULL AND input_tokens IS NULL "
+            "AND invalidated_at IS NULL AND consumed_at IS NULL AND generation_approval_id IS NULL) OR "
+            "(status = 'verified' AND sent_at IS NOT NULL AND completed_at IS NOT NULL AND input_tokens IS NOT NULL "
+            "AND input_tokens >= 0 AND invalidated_at IS NULL AND consumed_at IS NULL AND generation_approval_id IS NULL) OR "
+            "(status = 'uncertain' AND sent_at IS NOT NULL AND completed_at IS NOT NULL AND input_tokens IS NULL "
+            "AND invalidated_at IS NULL AND consumed_at IS NULL AND generation_approval_id IS NULL) OR "
+            "(status = 'invalid' AND invalidated_at IS NOT NULL AND consumed_at IS NULL AND generation_approval_id IS NULL) OR "
+            "(status = 'consumed' AND sent_at IS NOT NULL AND completed_at IS NOT NULL AND input_tokens IS NOT NULL "
+            "AND input_tokens >= 0 AND invalidated_at IS NULL AND consumed_at IS NOT NULL AND generation_approval_id IS NOT NULL))",
+            name="ck_provider_count_state"),
+    )
+
+
 class InvestigationRealReport(Base):
     __tablename__ = "investigation_real_reports"
     id: Mapped[str] = mapped_column(String(36), primary_key=True)

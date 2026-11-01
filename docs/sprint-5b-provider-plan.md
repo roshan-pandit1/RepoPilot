@@ -51,7 +51,7 @@ Simulated and actual reservations are distinct, and simulated execution requires
 
 Only one reservation can exist per report job. The current model's documented context window
 is used as the conservative input bound: **1,050,000 tokens**, despite the much smaller
-48,000-byte request limit. This avoids treating an approximate local tokenizer as an enforced
+8,192-byte canonical request limit introduced in checkpoint 2B. This avoids treating an approximate local tokenizer as an enforced
 input-token limit. Output is at most **2,048 tokens**, including reasoning tokens. Other
 configured input limits, output limits, model identities, or pricing assumptions fail closed.
 The reservation stores the model, token bounds and rate policy so later reconciliation
@@ -68,6 +68,12 @@ It does not guarantee protection from provider price changes, other fees or bill
 An experiment requires a recorded pricing review less than 24 hours old and an expiry no more
 than 24 hours after that review. An operator must actually review provider terms; a timestamp
 is not proof that this happened.
+
+Checkpoint 2B blocks actual approval and live execution while project-specific pricing and a
+safe smaller input-token bound remain unverified. Using the existing rounded reservation as
+the base, two additional hypothetical 10% stress uplifts exceed the $6 cap. See the current
+[pricing and access packet](sprint-5b2b-first-experiment-approval.md); the simulated ledger
+and historical runs remain available for regression tests.
 
 The worker marks a reservation `sent` under a valid lease before leaving the transaction.
 A stale worker cannot send from a reservation that a new lease took over. After a response

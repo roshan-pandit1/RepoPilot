@@ -40,6 +40,9 @@ class Settings(BaseSettings):
     investigation_real_enabled: bool = False
     investigation_paid_background_enabled: bool = False
     investigation_openai_api_key: SecretStr = SecretStr("")
+    investigation_openai_organization: SecretStr = SecretStr("")
+    investigation_openai_project: SecretStr = SecretStr("")
+    investigation_count_external_enabled: bool = False
     investigation_experiment_id: str = ""
 
     @model_validator(mode="after")

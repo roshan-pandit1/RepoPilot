@@ -64,7 +64,7 @@ def main():
     from app.infra.database import get_db
     from app.main import app
     from app.modules.github.client import get_github_client
-    from app.modules.investigation.query_builder import build_queries
+    from app.modules.investigation.query_builder import build_queries_for_version
     from app.modules.investigation.report_model import build_package
     from app.modules.investigation.report_worker import process_report
     from app.modules.investigation.reporting import evidence_inputs
@@ -169,7 +169,8 @@ def main():
                     assert 1 <= chunk.start_line <= chunk.end_line <= len(lines)
                     assert chunk.source_text == ''.join(lines[chunk.start_line - 1:chunk.end_line])
             limits = status['retrieval_limits']
-            queries = build_queries(case['title'], case['body'][:limits['body_chars']], [], limits['queries'])
+            queries = build_queries_for_version(status['query_version'], case['title'],
+                                                case['body'][:limits['body_chars']], [], limits['queries'])
             results.append({'issue_id': case['issue_id'], 'snapshot_id': snapshot_id, 'commit_sha': COMMIT,
                 'retrieval_status': data['retrieval_status'], 'items': data['items'], 'latency_ms': round(elapsed, 3),
                 'query_version': data['query_version'], 'query_input_truncated': data['query_input_truncated'],

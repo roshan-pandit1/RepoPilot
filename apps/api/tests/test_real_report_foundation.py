@@ -12,9 +12,9 @@ from sqlalchemy import select
 from app.core.config import get_settings
 from app.domain.models import (Installation, InvestigationExperiment, InvestigationJob, InvestigationProviderSelection,
     InvestigationRealReport, InvestigationReport, InvestigationReportJob, InvestigationUsageReservation, Tenant, now)
-from app.modules.investigation.openai_provider import OpenAIInvestigationModel, strict_schema
+from app.modules.investigation.openai_provider import OpenAIInvestigationModel, _valid_usage, strict_schema
 from app.modules.investigation.report_model import ModelError, model_request
-from app.modules.investigation.reporting_config import real_provider_enabled
+from app.modules.investigation.reporting_config import real_executor_enabled, real_provider_enabled
 from app.modules.investigation.report_worker import process_report
 from app.modules.investigation.usage_ledger import INPUT_WINDOW, MODEL, finish, mark_sent, reserve, upper_cost
 from app.workers.tasks import process_investigation
@@ -70,6 +70,18 @@ def test_provider_is_disabled_by_default_even_with_key(monkeypatch):
         'investigation_experiment_id': str(uuid4())}))
 
 
+def test_executor_requires_its_own_gate_and_rejects_paid_background():
+    settings = get_settings().model_copy(update={'investigation_provider': 'openai',
+        'investigation_real_enabled': True, 'investigation_paid_background_enabled': False,
+        'investigation_openai_api_key': SecretStr('synthetic-test-key'),
+        'investigation_experiment_id': str(uuid4())})
+    assert real_executor_enabled(settings)
+    assert not real_provider_enabled(settings)
+    assert not real_executor_enabled(settings.model_copy(update={'investigation_paid_background_enabled': True}))
+    assert not real_executor_enabled(settings.model_copy(update={'investigation_real_enabled': False}))
+    assert not real_executor_enabled(settings.model_copy(update={'investigation_openai_api_key': SecretStr('')}))
+
+
 def test_unbudgeted_adapter_cannot_call_network(factory):
     called = []
     adapter = OpenAIInvestigationModel('test-key', transport=httpx.MockTransport(lambda req: called.append(req)))
@@ -87,6 +99,15 @@ def test_strict_schema_requires_all_fields_and_forbids_extra():
         if obj.get('type') == 'object':
             assert obj['additionalProperties'] is False
             assert set(obj['required']) == set(obj['properties'])
+
+
+def test_complete_consistent_usage_metadata_is_accepted():
+    assert _valid_usage({'input_tokens': 1200, 'output_tokens': 250, 'total_tokens': 1450,
+        'input_tokens_details': {'cached_tokens': 200, 'cache_write_tokens': 300,
+                                 'cache_write_tokens_details': {'ttl_30m_tokens': 300, 'ttl_12h_tokens': 0}},
+        'output_tokens_details': {'reasoning_tokens': 200}})
+    assert _valid_usage({'input_tokens': 10, 'output_tokens': 2,
+                         'input_tokens_details': {'cached_tokens': 0, 'cache_write_tokens': 0}})
 
 
 def test_simulated_report_accounted_and_grounded(client, factory, github_auth, monkeypatch, caplog):
@@ -132,7 +153,7 @@ def test_simulated_report_accounted_and_grounded(client, factory, github_auth, m
     assert client.get(report_url(parent)).status_code == 401
 
 
-def test_postgres_actual_mode_uses_only_injected_transport(client, factory, github_auth, monkeypatch):
+def test_postgres_actual_mode_rejects_unapproved_injected_transport(client, factory, github_auth, monkeypatch):
     if factory.kw['bind'].dialect.name != 'postgresql':
         pytest.skip('PostgreSQL row locks required for actual mode')
     parent, snapshot, chunk = setup_parent(client, factory, github_auth, monkeypatch)
@@ -152,11 +173,10 @@ def test_postgres_actual_mode_uses_only_injected_transport(client, factory, gith
     process_report(task, factory, github_auth, model)
     process_report(task, factory, github_auth, model)
     with factory() as db:
-        assert db.get(InvestigationReportJob, task).status == 'completed'
-        usage = db.scalar(select(InvestigationUsageReservation))
-        assert usage.mode == 'actual' and usage.state == 'known'
-        assert db.scalar(select(InvestigationRealReport)) is not None
-    assert len(requests) == 1
+        assert db.get(InvestigationReportJob, task).status == 'failed'
+        assert db.scalar(select(InvestigationUsageReservation)) is None
+        assert db.scalar(select(InvestigationRealReport)) is None
+    assert not requests
 
 
 @pytest.mark.parametrize('case', ['malformed', 'foreign', 'timeout', 'missing_usage', 'malicious', 'commit',
@@ -215,6 +235,38 @@ def test_bad_response_or_unknown_billing_never_publishes_or_retries(
             'unexpected_cache', 'missing_tier', 'unexpected_cache_usage') else 'known')
         if case in ('refusal', 'incomplete'):
             assert job.error_code == ('model_refused' if case == 'refusal' else 'model_incomplete')
+        assert db.scalar(select(InvestigationRealReport)) is None
+    assert len(calls) == 1
+
+
+@pytest.mark.parametrize('bad_details', [
+    {'input_tokens_details': {'cached_tokens': 1201}},
+    {'input_tokens_details': {'cached_tokens': 1000, 'cache_write_tokens': 300}},
+    {'input_tokens_details': {'cache_write_tokens': 1}},
+    {'input_tokens_details': {'cache_write_tokens': 2,
+                              'cache_write_tokens_details': {'ttl_30m_tokens': 1, 'ttl_12h_tokens': 0}}},
+    {'output_tokens_details': {'reasoning_tokens': 251}},
+    {'total_tokens': 1},
+    {'unexpected_pricing_field': 1},
+])
+def test_inconsistent_billing_metadata_retains_reservation(bad_details, client, factory, github_auth, monkeypatch):
+    parent, snapshot, chunk = setup_parent(client, factory, github_auth, monkeypatch)
+    task = request_report(client, parent)
+    add_experiment(factory, task)
+    calls = []
+    def handle(request):
+        calls.append(request)
+        result = response(json.dumps(draft(chunk, snapshot)))
+        body = json.loads(result.content)
+        body['usage'].update(bad_details)
+        return httpx.Response(200, json=body)
+    process_report(task, factory, github_auth,
+                   OpenAIInvestigationModel('test-key', transport=httpx.MockTransport(handle)))
+    with factory() as db:
+        usage = db.scalar(select(InvestigationUsageReservation))
+        job = db.get(InvestigationReportJob, task)
+        assert usage.state == 'uncertain' and usage.reserved_microusd == upper_cost(INPUT_WINDOW, 2048)
+        assert job.status == 'failed' and job.error_code == 'model_billing_unknown'
         assert db.scalar(select(InvestigationRealReport)) is None
     assert len(calls) == 1
 

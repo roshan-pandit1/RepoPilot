@@ -1,11 +1,12 @@
 """Durable, lease-fenced reservations; amounts are integer millionths of a USD."""
 from uuid import uuid4
-from datetime import timedelta
+from dataclasses import dataclass
+from datetime import datetime, timedelta
 
 from sqlalchemy import case, func, select
 
 from app.domain.models import (InvestigationExperiment, InvestigationProviderSelection,
-    InvestigationReportJob, InvestigationUsageReservation, now)
+    InvestigationProviderTokenCount, InvestigationReportJob, InvestigationUsageReservation, now)
 from app.modules.auth.session import utc
 from app.modules.investigation.report_model import ModelError
 
@@ -22,6 +23,50 @@ OUTPUT_RATE_TENTHS = 198
 
 def upper_cost(input_tokens: int, output_tokens: int) -> int:
     return (input_tokens * INPUT_RATE_TENTHS + output_tokens * OUTPUT_RATE_TENTHS + 9) // 10
+
+
+def stress_reservation(reservation_microusd: int, additional_uplifts: int) -> int:
+    """Round a hypothetical 10%-per-uplift stress scenario up to a microdollar."""
+    if (type(reservation_microusd) is not int or reservation_microusd < 0
+            or type(additional_uplifts) is not int or not 0 <= additional_uplifts <= 2):
+        raise ModelError('budget_unavailable')
+    denominator = 10 ** additional_uplifts
+    numerator = reservation_microusd * 11 ** additional_uplifts
+    return (numerator + denominator - 1) // denominator
+
+
+def require_stress_capacity(reservation_microusd: int, investigation_cap: int, experiment_cap: int):
+    """Fail closed if the base reservation plus two hypothetical uplifts exceeds either cap."""
+    if (type(investigation_cap) is not int or investigation_cap <= 0
+            or type(experiment_cap) is not int or experiment_cap <= 0
+            or stress_reservation(reservation_microusd, 2) > min(investigation_cap, experiment_cap)):
+        raise ModelError('budget_exhausted')
+
+
+def require_verified_actual_pricing():
+    """No project-specific billing evidence or verified reduced input bound exists yet.
+
+    A CLI acknowledgement is not independent evidence. A future reviewed implementation
+    must bind verified account pricing and an input-token upper bound to the exact request.
+    """
+    raise ModelError('pricing_unverified')
+
+
+@dataclass(frozen=True)
+class VerifiedCountFee:
+    """Shape of independently reviewed fee terms; no such terms are configured yet."""
+    policy: str
+    bound_microusd: int
+    account_sha256: str
+    project_sha256: str
+    model: str
+    generation_policy: str
+    valid_until: datetime
+
+
+def require_verified_count_pricing():
+    """No account-specific bound for a separately billed count call is established."""
+    raise ModelError('count_pricing_unverified')
 
 
 def experiment_is_eligible(exp, tenant_id, *, actual=False):
@@ -46,11 +91,19 @@ def _usage_totals(db, experiment_id, investigation_id):
     row = InvestigationUsageReservation
     charge = case((row.state == 'known', func.coalesce(row.accounted_microusd, row.reserved_microusd)),
                   else_=row.reserved_microusd)
-    return db.execute(select(func.coalesce(func.sum(charge), 0),
+    total, per_job, active, request_count = db.execute(select(func.coalesce(func.sum(charge), 0),
         func.coalesce(func.sum(case((row.investigation_id == investigation_id, charge), else_=0)), 0),
         func.coalesce(func.sum(case((row.state.in_(('reserved', 'sent', 'uncertain')), 1), else_=0)), 0),
         func.count(row.id))
         .where(row.experiment_id == experiment_id)).one()
+    count = InvestigationProviderTokenCount
+    fee = case((count.fee_state == 'known', count.fee_accounted_microusd), else_=count.fee_reserved_microusd)
+    count_total, count_per_job = db.execute(select(func.coalesce(func.sum(fee), 0),
+        func.coalesce(func.sum(case((count.investigation_id == investigation_id, fee), else_=0)), 0))
+        .where(count.experiment_id == experiment_id)).one()
+    # Count calls have a separate one-use authorization, but spend against the same caps.
+    # In-flight or uncertain fees remain fully reserved, including invalidated operations.
+    return total + count_total, per_job + count_per_job, active, request_count
 
 
 def reserve(factory, job_id, lease):
@@ -91,9 +144,12 @@ def reserve(factory, job_id, lease):
         return reservation.id, reservation.max_output_tokens, reservation.mode
 
 
-def mark_sent(factory, job_id, lease, reservation_id):
+def mark_sent(factory, job_id, lease, reservation_id, *, before_mark=None, before_selection=None):
     with factory.begin() as db:
         job = _locked_job(db, job_id, lease)
+        if before_selection is not None:
+            # Access locks must precede experiment and reservation locks.
+            before_selection(db, job)
         selection = db.get(InvestigationProviderSelection, job_id)
         if not selection:
             raise ModelError('model_not_enabled')
@@ -106,12 +162,16 @@ def mark_sent(factory, job_id, lease, reservation_id):
                 or row.mode != exp.mode or row.max_output_tokens != exp.max_output_tokens
                 or row.max_input_tokens != INPUT_WINDOW or row.model != MODEL
                 or row.pricing_policy != PRICING_POLICY or row.input_rate_tenths != INPUT_RATE_TENTHS
-                or row.output_rate_tenths != OUTPUT_RATE_TENTHS):
+                or row.output_rate_tenths != OUTPUT_RATE_TENTHS
+                or row.reserved_microusd != upper_cost(INPUT_WINDOW, row.max_output_tokens)):
             raise ModelError('budget_unavailable')
         total, per_job, active, request_count = _usage_totals(db, exp.id, job.investigation_id)
         if (total > exp.budget_microusd or per_job > exp.investigation_budget_microusd
                 or active > exp.max_concurrent or request_count > exp.max_requests):
             raise ModelError('budget_exhausted')
+        if before_mark is not None:
+            # Approval consumption and the send marker commit together under the same locks.
+            before_mark(db, job, exp, row)
         row.state, row.updated_at = 'sent', now()
         return row.max_output_tokens, row.mode, row.experiment_id
 

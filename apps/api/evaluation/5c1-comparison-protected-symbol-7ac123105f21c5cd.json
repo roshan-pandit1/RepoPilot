@@ -1,0 +1,276 @@
+{
+  "dataset": "issue-report-v1",
+  "dataset_sha256": "416cbf9e46b9399cf78d118f581a882d16cf512da439d352d3af29674c447bf6",
+  "source_commit": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+  "source_tree_sha": "beac4e3116133a810f679761e17a7441fa77c2d7",
+  "snapshot_id": "1a8e0d9e-1cf1-4e0a-9cac-f8ced23f1694",
+  "database": "repopilot_4f_disposable_4f762b71ae8d9569",
+  "before_run": "eda70e4b43a14eb6",
+  "after_run": "7ac123105f21c5cd",
+  "implementation_changes": [
+    "app/evaluation/issue_retrieval_candidates.py",
+    "app/evaluation/issue_retrieval_replay.py",
+    "app/evaluation/issue_retrieval_rerank.py"
+  ],
+  "before_strategy": "terms-v1",
+  "after_strategy": "evaluation-protected-symbol",
+  "before": {
+    "recall": {
+      "1": 0.375,
+      "3": 0.5,
+      "5": 0.5625,
+      "10": 0.625
+    },
+    "mrr": 0.5141369047619048,
+    "ndcg_at_10": 0.5205375997853043,
+    "labeled_hit_at_10": 12,
+    "zero_result_cases": 2,
+    "evidence_items": 226,
+    "latency_p50_ms": 54.52,
+    "latency_p95_ms": 97.672
+  },
+  "after": {
+    "recall": {
+      "1": 0.375,
+      "3": 0.5,
+      "5": 0.5625,
+      "10": 0.71875
+    },
+    "mrr": 0.5177083333333333,
+    "ndcg_at_10": 0.54691482516571,
+    "labeled_hit_at_10": 13,
+    "zero_result_cases": 2,
+    "evidence_items": 298,
+    "latency_p50_ms": 77.391,
+    "latency_p95_ms": 137.332
+  },
+  "cases": [
+    {
+      "issue_id": "signature_exact",
+      "category": "webhook",
+      "scored": true,
+      "before_ranks": [
+        1
+      ],
+      "after_ranks": [
+        1
+      ],
+      "before_evidence": 18,
+      "after_evidence": 20
+    },
+    {
+      "issue_id": "signature_natural",
+      "category": "webhook",
+      "scored": true,
+      "before_ranks": [
+        2
+      ],
+      "after_ranks": [
+        2
+      ],
+      "before_evidence": 10,
+      "after_evidence": 18
+    },
+    {
+      "issue_id": "oauth_callback",
+      "category": "authentication",
+      "scored": true,
+      "before_ranks": [
+        1
+      ],
+      "after_ranks": [
+        1
+      ],
+      "before_evidence": 15,
+      "after_evidence": 16
+    },
+    {
+      "issue_id": "installation_enrollment",
+      "category": "authorization",
+      "scored": true,
+      "before_ranks": [
+        2
+      ],
+      "after_ranks": [
+        2,
+        10
+      ],
+      "before_evidence": 18,
+      "after_evidence": 20
+    },
+    {
+      "issue_id": "repository_access",
+      "category": "authorization",
+      "scored": true,
+      "before_ranks": [],
+      "after_ranks": [],
+      "before_evidence": 10,
+      "after_evidence": 20
+    },
+    {
+      "issue_id": "repository_sync",
+      "category": "synchronization",
+      "scored": true,
+      "before_ranks": [
+        1
+      ],
+      "after_ranks": [
+        1
+      ],
+      "before_evidence": 18,
+      "after_evidence": 20
+    },
+    {
+      "issue_id": "index_incomplete_tree",
+      "category": "indexing",
+      "scored": true,
+      "before_ranks": [
+        7
+      ],
+      "after_ranks": [
+        10
+      ],
+      "before_evidence": 10,
+      "after_evidence": 15
+    },
+    {
+      "issue_id": "index_lease",
+      "category": "indexing",
+      "scored": true,
+      "before_ranks": [
+        1
+      ],
+      "after_ranks": [
+        1
+      ],
+      "before_evidence": 20,
+      "after_evidence": 20
+    },
+    {
+      "issue_id": "python_chunking",
+      "category": "chunking",
+      "scored": true,
+      "before_ranks": [],
+      "after_ranks": [],
+      "before_evidence": 10,
+      "after_evidence": 19
+    },
+    {
+      "issue_id": "embedding_cache",
+      "category": "embedding",
+      "scored": true,
+      "before_ranks": [
+        4
+      ],
+      "after_ranks": [
+        4
+      ],
+      "before_evidence": 10,
+      "after_evidence": 19
+    },
+    {
+      "issue_id": "embedding_idempotence",
+      "category": "embedding",
+      "scored": true,
+      "before_ranks": [
+        1
+      ],
+      "after_ranks": [
+        1
+      ],
+      "before_evidence": 20,
+      "after_evidence": 20
+    },
+    {
+      "issue_id": "celery_redelivery",
+      "category": "dispatch",
+      "scored": true,
+      "before_ranks": [
+        2,
+        4
+      ],
+      "after_ranks": [
+        2,
+        4
+      ],
+      "before_evidence": 10,
+      "after_evidence": 15
+    },
+    {
+      "issue_id": "snapshot_publication",
+      "category": "indexing",
+      "scored": true,
+      "before_ranks": [],
+      "after_ranks": [
+        10
+      ],
+      "before_evidence": 10,
+      "after_evidence": 15
+    },
+    {
+      "issue_id": "citation_boundaries",
+      "category": "citations",
+      "scored": true,
+      "before_ranks": [],
+      "after_ranks": [],
+      "before_evidence": 10,
+      "after_evidence": 17
+    },
+    {
+      "issue_id": "report_grounding",
+      "category": "reports",
+      "scored": true,
+      "before_ranks": [
+        1
+      ],
+      "after_ranks": [
+        1
+      ],
+      "before_evidence": 17,
+      "after_evidence": 20
+    },
+    {
+      "issue_id": "snapshot_unavailable",
+      "category": "evidence",
+      "scored": true,
+      "before_ranks": [
+        3
+      ],
+      "after_ranks": [
+        3
+      ],
+      "before_evidence": 10,
+      "after_evidence": 14
+    },
+    {
+      "issue_id": "insufficient_details",
+      "category": "insufficient",
+      "scored": false,
+      "before_ranks": null,
+      "after_ranks": null,
+      "before_evidence": 10,
+      "after_evidence": 10
+    },
+    {
+      "issue_id": "unreviewed_negative",
+      "category": "negative",
+      "scored": false,
+      "before_ranks": null,
+      "after_ranks": null,
+      "before_evidence": 0,
+      "after_evidence": 0
+    },
+    {
+      "issue_id": "malicious_prompt",
+      "category": "security",
+      "scored": false,
+      "before_ranks": null,
+      "after_ranks": null,
+      "before_evidence": 0,
+      "after_evidence": 0
+    }
+  ],
+  "latency_note": "Retrieval latency is inherited from the body-query run and excludes reranking.",
+  "rerank_latency_p50_ms": 0.09500000010120857,
+  "rerank_latency_p95_ms": 0.19183300014447013
+}

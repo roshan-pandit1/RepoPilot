@@ -1,0 +1,2 @@
+failed to connect to the docker API at unix:///Users/roshan/.docker/run/docker.sock; check if the path is correct and if the daemon is running: dial unix /Users/roshan/.docker/run/docker.sock: connect: no such file or directory
+Script final exit status: 1; run: 62f1e9e2d10223b2; log: /Volumes/Samsung SSD/Project/RepoPilot/apps/api/evaluation/5b2c-62f1e9e2d10223b2.log

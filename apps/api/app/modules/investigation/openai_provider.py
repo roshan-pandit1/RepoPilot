@@ -1,17 +1,40 @@
 """Responses API adapter. A paid call is only reachable through the durable ledger."""
 from dataclasses import asdict
 import json
+import re
 import time
+from uuid import UUID
 
 import httpx
 
 from app.modules.investigation.report_model import (Draft, ModelError, ModelRequest,
     ModelResult, REPORT_INSTRUCTIONS, model_request, validate_draft)
 from app.modules.investigation.usage_ledger import MODEL, finish, mark_sent, reserve
+from app.core.index_logging import logger as event_logger
 
 ENDPOINT = 'https://api.openai.com/v1/responses'
 MAX_RESPONSE_BYTES = 64_000
-MAX_REQUEST_BYTES = 48_000
+MAX_REQUEST_BYTES = 8_192
+
+
+def canonical_payload_bytes(payload):
+    """Count exactly the serialized body sent, including instructions and output schema."""
+    return json.dumps(payload, ensure_ascii=True, sort_keys=True, separators=(',', ':')).encode('utf-8')
+
+
+def _provider_event(event, job_id, *, status=None, request_id=None, returned_model=None):
+    """Emit only bounded provider metadata; never log prompts, headers or exceptions."""
+    data = {'event': event, 'job_id': job_id, 'client_request_id': job_id,
+            'requested_model': MODEL}
+    if type(status) is int and 100 <= status <= 599:
+        data['http_status'] = status
+    # Opaque upstream IDs can change format. Omit unfamiliar values rather than logging
+    # potentially attacker-controlled credentials or response text.
+    if isinstance(request_id, str) and re.fullmatch(r'req_[0-9a-f]{8,64}', request_id):
+        data['provider_request_id'] = request_id
+    if returned_model is not None:
+        data['returned_model'] = MODEL if returned_model == MODEL else 'unrecognized'
+    event_logger.info(json.dumps(data, separators=(',', ':')))
 
 
 def _unique_response_keys(pairs):
@@ -21,6 +44,48 @@ def _unique_response_keys(pairs):
             raise ValueError('duplicate_key')
         result[key] = value
     return result
+
+
+def _valid_usage(usage):
+    """Reject inconsistent usage rather than reconciling against ambiguous charges."""
+    if not isinstance(usage, dict) or set(usage) - {
+            'input_tokens', 'output_tokens', 'total_tokens', 'input_tokens_details', 'output_tokens_details'}:
+        return False
+    input_tokens, output_tokens = usage.get('input_tokens'), usage.get('output_tokens')
+    if (type(input_tokens) is not int or input_tokens < 0
+            or type(output_tokens) is not int or output_tokens < 0):
+        return False
+    if 'total_tokens' in usage and (type(usage['total_tokens']) is not int
+                                    or usage['total_tokens'] != input_tokens + output_tokens):
+        return False
+    details = usage.get('input_tokens_details')
+    if details is not None:
+        if not isinstance(details, dict) or set(details) - {
+                'cached_tokens', 'cache_write_tokens', 'cache_write_tokens_details'}:
+            return False
+        for name in ('cached_tokens', 'cache_write_tokens'):
+            if name in details and (type(details[name]) is not int or not 0 <= details[name] <= input_tokens):
+                return False
+        cached, written = details.get('cached_tokens', 0), details.get('cache_write_tokens', 0)
+        if cached + written > input_tokens:
+            return False
+        writes = details.get('cache_write_tokens_details')
+        if writes is None:
+            if written:
+                return False
+        elif (not isinstance(writes, dict) or set(writes) - {'ttl_30m_tokens', 'ttl_12h_tokens'}
+              or type(writes.get('ttl_12h_tokens')) is not int or writes['ttl_12h_tokens'] != 0
+              or type(writes.get('ttl_30m_tokens', 0)) is not int
+              or not 0 <= writes.get('ttl_30m_tokens', 0) <= input_tokens
+              or writes.get('ttl_30m_tokens', 0) != written):
+            return False
+    output_details = usage.get('output_tokens_details')
+    if output_details is not None:
+        if (not isinstance(output_details, dict) or set(output_details) - {'reasoning_tokens'}
+                or 'reasoning_tokens' in output_details and (type(output_details['reasoning_tokens']) is not int
+                    or not 0 <= output_details['reasoning_tokens'] <= output_tokens)):
+            return False
+    return True
 
 
 def strict_schema():
@@ -63,7 +128,7 @@ def build_responses_payload(request: ModelRequest, max_output_tokens: int) -> di
         'store': False,
         'truncation': 'disabled',
     }
-    if len(json.dumps(payload, ensure_ascii=True).encode()) > MAX_REQUEST_BYTES:
+    if len(canonical_payload_bytes(payload)) > MAX_REQUEST_BYTES:
         raise ModelError('model_input_invalid')
     return payload
 
@@ -80,6 +145,9 @@ class OpenAIInvestigationModel:
         # The standard unbudgeted interface is intentionally unusable for a paid model.
         raise ModelError('ledger_required')
 
+    def _mark_sent(self, factory, job_id, lease, reservation_id, payload):
+        return mark_sent(factory, job_id, lease, reservation_id)
+
     def _generate_reserved(self, request: ModelRequest, *, factory, job_id, lease, reservation_id) -> ModelResult:
         if self.provider != 'openai' or self.model != MODEL:
             raise ModelError('model_not_enabled')
@@ -94,23 +162,43 @@ class OpenAIInvestigationModel:
         if mode == 'simulated' and not isinstance(self._transport, httpx.MockTransport):
             raise ModelError('model_not_enabled')
         if mode == 'actual':
+            # Only the separately invoked, approval-bound executor may use live transport.
+            # A fake transport is never permission to bypass that production preflight.
+            from app.evaluation.experiment_executor import ApprovedLiveModel
+            if type(self) is not ApprovedLiveModel:
+                raise ModelError('model_not_enabled')
             from app.core.config import get_settings
-            from app.modules.investigation.reporting_config import real_provider_enabled
+            from app.modules.investigation.reporting_config import real_executor_enabled
             settings = get_settings()
-            if (not real_provider_enabled(settings) or experiment_id != settings.investigation_experiment_id
-                    or self._api_key != settings.investigation_openai_api_key.get_secret_value()):
+            if (not real_executor_enabled(settings) or experiment_id != settings.investigation_experiment_id
+                    or self._api_key != settings.investigation_openai_api_key.get_secret_value()
+                    or not self._organization or not self._project
+                    or self._organization != settings.investigation_openai_organization.get_secret_value()
+                    or self._project != settings.investigation_openai_project.get_secret_value()):
                 raise ModelError('model_not_enabled')
         payload = build_responses_payload(request, max_output_tokens)
         if not self._api_key:
             raise ModelError('model_input_invalid')
-        if mark_sent(factory, job_id, lease, reservation_id) != (max_output_tokens, mode, experiment_id):
+        try:
+            if str(UUID(job_id)) != job_id:
+                raise ValueError('invalid_job_id')
+        except (TypeError, ValueError, AttributeError):
+            raise ModelError('model_input_invalid') from None
+        if self._mark_sent(factory, job_id, lease, reservation_id, payload) != (max_output_tokens, mode, experiment_id):
             raise ModelError('budget_unavailable')
-        headers = {'Authorization': 'Bearer ' + self._api_key}
+        headers = {'Authorization': 'Bearer ' + self._api_key, 'Content-Type': 'application/json',
+                   'X-Client-Request-Id': job_id}
+        if mode == 'actual':
+            headers['OpenAI-Organization'], headers['OpenAI-Project'] = self._organization, self._project
+        # The approved canonical bytes are the bytes sent; no serializer can change them later.
+        encoded_payload = canonical_payload_bytes(payload)
         deadline = time.monotonic() + 30
         try:
             with httpx.Client(transport=self._transport, timeout=httpx.Timeout(10.0),
                               trust_env=False, follow_redirects=False) as client:
-                with client.stream('POST', ENDPOINT, headers=headers, json=payload) as response:
+                with client.stream('POST', ENDPOINT, headers=headers, content=encoded_payload) as response:
+                    _provider_event('model_http_response', job_id, status=response.status_code,
+                                    request_id=response.headers.get('x-request-id'))
                     if response.status_code != 200:
                         raise ModelError('model_billing_unknown')
                     chunks = bytearray()
@@ -121,12 +209,17 @@ class OpenAIInvestigationModel:
                         if len(chunks) > MAX_RESPONSE_BYTES:
                             raise ModelError('model_billing_unknown')
         except httpx.HTTPError:
+            _provider_event('model_transport_failed', job_id)
             raise ModelError('model_billing_unknown') from None
         try:
             data = json.loads(chunks, object_pairs_hook=_unique_response_keys,
                               parse_constant=lambda _: (_ for _ in ()).throw(ValueError('invalid_number')))
             usage = data.get('usage', {})
+            if not _valid_usage(usage):
+                return ModelResult('{')
             input_tokens, output_tokens = usage.get('input_tokens'), usage.get('output_tokens')
+            _provider_event('model_response_identity', job_id,
+                            returned_model=data.get('model') if data.get('model') is not None else 'missing')
             if data.get('model') != self.model or data.get('service_tier') != 'default':
                 # A different model or service tier may have a different billing policy.
                 return ModelResult('{')
@@ -134,12 +227,6 @@ class OpenAIInvestigationModel:
             if cache_options is not None and (not isinstance(cache_options, dict)
                                                or cache_options.get('ttl') != '30m'):
                 return ModelResult('{')
-            details = usage.get('input_tokens_details')
-            if details is not None:
-                writes = details.get('cache_write_tokens_details')
-                if writes is not None and (not isinstance(writes, dict)
-                        or type(writes.get('ttl_12h_tokens')) is not int or writes['ttl_12h_tokens'] != 0):
-                    return ModelResult('{')
             if data.get('status') == 'incomplete':
                 return ModelResult('{', input_tokens=input_tokens, output_tokens=output_tokens,
                                    error_code='model_incomplete')

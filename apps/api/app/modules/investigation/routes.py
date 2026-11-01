@@ -84,7 +84,7 @@ def submit(request: Request, repository_id: int = Path(gt=0, lt=2**63),
         query_limit=settings.investigation_query_limit, per_query_limit=settings.investigation_per_query_limit,
         evidence_limit=settings.investigation_evidence_limit,
         query_body_limit=min(4000, settings.issue_context_body_chars),
-        operation="code_evidence", query_version="terms-v1", snapshot_id=snapshot.id, snapshot_commit_sha=snapshot.commit_sha,
+        operation="code_evidence", query_version="terms-v2", snapshot_id=snapshot.id, snapshot_commit_sha=snapshot.commit_sha,
         source_repository_name=repo.full_name,
         repository_id=repository_id, session_hash=identity.session_hash, issue_id=int(context["issue_id"]),
         issue_number=issue_number, issue_updated_at=context["updated_at"], context_retrieved_at=context["retrieved_at"])

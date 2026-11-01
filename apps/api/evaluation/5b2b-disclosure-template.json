@@ -1,0 +1,111 @@
+{
+  "status": "offline template; placeholder identifiers; not a live approval",
+  "manifest_sha256": "f8b62ef29ded70fa0177b02ebc1a0269358b211fb839fb81f418f4bf9ef2af1c",
+  "manifest": {
+    "version": "5b2b-disclosure-v1",
+    "fixture_id": "signature_exact",
+    "dataset_sha256": "416cbf9e46b9399cf78d118f581a882d16cf512da439d352d3af29674c447bf6",
+    "source_commit": "30705da4c044192cab4ac207e253ab8e8a1bd100",
+    "source_tree": "beac4e3116133a810f679761e17a7441fa77c2d7",
+    "source_blob": "9d1ca57c87b5f6a7141baf3abb8c0a097d1dbae3",
+    "source_sha256": "b49bb45a35edd38fc5bcbf010a692ba3453cc8ec97824c67b9fc1913095e5fcd",
+    "repository": "roshan-pandit1/RepoPilot",
+    "repository_id": "902",
+    "investigation_id": "22222222-2222-4222-8222-222222222222",
+    "report_job_id": "66666666-6666-4666-8666-666666666666",
+    "experiment_id": "55555555-5555-4555-8555-555555555555",
+    "snapshot_id": "11111111-1111-4111-8111-111111111111",
+    "request_sha256": "2448dd78bafd00dad82a7a4e39addafb6b0309d5bffa3e6174367119abff019c",
+    "request_bytes": 3816,
+    "instructions_sha256": "92967e953d2a471714d98aa532e843f91f826f1b595a6c4223ac1d59e56cdd76",
+    "output_schema_sha256": "01a5052e4d0525866c0a87edeab1c12fdb6f923e767bbe7d4e23655032da7f23",
+    "input_fields": [
+      "body",
+      "comments",
+      "commit_sha",
+      "content_is_untrusted",
+      "evidence",
+      "investigation_id",
+      "issue_created_at",
+      "issue_id",
+      "issue_number",
+      "issue_retrieved_at",
+      "issue_state",
+      "issue_updated_at",
+      "labels",
+      "repository_id",
+      "snapshot_id",
+      "title",
+      "truncated"
+    ],
+    "issue_title_bytes": 34,
+    "issue_title_sha256": "0ecfdfedc453032bab8bfd1edb52662511f758cd39b13f3f12d48e50cf4854bb",
+    "issue_body_bytes": 84,
+    "issue_body_sha256": "0f7c6d1149e1bf832f25271da33fed269ad552cf8b2f09ce60039362a9a0192c",
+    "label_count": 0,
+    "comment_count": 0,
+    "evidence": [
+      {
+        "chunk_id": "00000003-3333-4333-8333-333333333333",
+        "path": "apps/api/app/modules/github/security.py",
+        "symbol": "valid_signature",
+        "start_line": 6,
+        "end_line": 8,
+        "citation": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/modules/github/security.py#L6-L8",
+        "excerpt_bytes": 249,
+        "excerpt_sha256": "bec83e08d9555d3527d64e7936f50406682b0b5e5ff9e1e31305763adc3ef293"
+      },
+      {
+        "chunk_id": "00000004-3333-4333-8333-333333333333",
+        "path": "apps/api/app/modules/github/security.py",
+        "symbol": null,
+        "start_line": 1,
+        "end_line": 5,
+        "citation": "https://github.com/roshan-pandit1/RepoPilot/blob/30705da4c044192cab4ac207e253ab8e8a1bd100/apps/api/app/modules/github/security.py#L1-L5",
+        "excerpt_bytes": 51,
+        "excerpt_sha256": "6019d85f8bb86d1f2542a1deec81ae85e39d8d146857e050acda62281f680a72"
+      }
+    ],
+    "model": "gpt-5.6-terra",
+    "provider": "openai",
+    "service_tier": "default",
+    "http_metadata": {
+      "client_request_id": "66666666-6666-4666-8666-666666666666",
+      "explicit_headers": [
+        "Authorization",
+        "Content-Type",
+        "X-Client-Request-Id"
+      ],
+      "authorization_value": "server-side credential omitted",
+      "automatic_transport_headers": [
+        "Host",
+        "Content-Length",
+        "Accept",
+        "Accept-Encoding",
+        "Connection",
+        "User-Agent"
+      ]
+    },
+    "prompt_cache_options": {
+      "ttl": "30m"
+    },
+    "store": false,
+    "truncation": "disabled",
+    "tools": [],
+    "output_format": "strict_json_schema",
+    "max_output_tokens": 2048,
+    "heuristic_request_bytes_div_4": 954,
+    "token_estimate_note": "Byte/4 heuristic only; not a verified token count or billing bound.",
+    "reservation_input_tokens": 1050000,
+    "reservation_microusd": 5815551,
+    "redactions": [
+      "Source literals, comments, numeric literals and sensitive identifiers are sanitized.",
+      "Issue sensitive patterns are omitted; issue retrieval time is omitted."
+    ],
+    "disclosure_risks": [
+      "Screening is incomplete; sanitized source still leaves the machine.",
+      "Provider retention and billing depend on account terms."
+    ],
+    "omitted_eligible_files": 104
+  }
+}

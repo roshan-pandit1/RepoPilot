@@ -1878,7 +1878,7 @@ real-model reasoning quality.
 
 ### Sprint 5B2A isolated provider evaluation — 2026-10-31
 
-**SPRINT 5B2A NOT YET VERIFIED.** The evaluation now prepares a partial disposable snapshot
+**SPRINT 5B2A VERIFIED LOCALLY — FAKE-TRANSPORT SCOPE.** The evaluation prepares a partial disposable snapshot
 from the committed `signature_exact` source, runs the existing retrieval and report
 workflow with a fake GitHub client and `httpx.MockTransport`, and records a simulated
 ledger reservation and a metadata-only request preview. It has no real-provider execution
@@ -1887,7 +1887,7 @@ could inherit a project-selected service tier. It now explicitly requests the st
 tier and 30-minute cache lifetime and holds the reservation for inconsistent response
 metadata. Refusal and incomplete-response handling and related regressions were added.
 
-The current uncommitted working tree passed **322 backend tests with 17 PostgreSQL-only
+The then-uncommitted working tree passed **322 backend tests with 17 PostgreSQL-only
 skips** on SQLite, the **33/33** synthetic adversarial fixture, Ruff and
 `git diff --check`. Frontend regression checks passed **54 tests**, TypeScript and
 ESLint; no frontend files were changed for this checkpoint. A newly created temporary
@@ -1896,21 +1896,486 @@ reported no Alembic drift, with existing SQLite expression-index reflection warn
 SQLite does not verify PostgreSQL row locks, the PostgreSQL migration or the real keyword
 retrieval path.
 
-Docker remains inaccessible from this sandbox. The subsequently generated host artifacts
-record a successful isolated run `4f6d42946ddad6d4` in newly created database
-`repopilot_5b2a_4f6d42946ddad6d4`: **338 PostgreSQL tests passed with no skips**,
-the adversarial fixture passed **33/33**, Ruff passed, and Alembic reported `0010 (head)`
-with no drift. The separately approval-gated 4F committed-source benchmark was excluded.
-The evaluation used a synthetic partial snapshot at commit
-`30705da4c044192cab4ac207e253ab8e8a1bd100`, returned two evidence records, and
-validated one of one report references. The report records one fake HTTP request, one
-worker attempt, a simulated $5.815551 reservation and no actual provider cost.
-The JSON, preview and test summary share the same run, database and snapshot IDs; their
-recorded implementation fingerprints match the current working files. The run log and
-artifacts are retained under `apps/api/evaluation/5b2a-4f6d42946ddad6d4*`.
+Docker remains inaccessible from this sandbox, but the user supplied a successful host run
+and its retained log and artifacts. The log confirms an empty, newly created database
+`repopilot_5b2a_4f6d42946ddad6d4`, run `4f6d42946ddad6d4`, **338 selected PostgreSQL
+tests passed with zero skips**, **33/33** adversarial checks, Ruff, and Alembic `0010 (head)`
+without drift. The pytest summary has exit code 0 and all **40/40** recorded provider cases
+passed, including the 17 cases required by the runner. The separately gated 4F
+committed-source benchmark test was intentionally excluded. The final log records successful
+evaluation completion; the user separately reported overall script exit status 0.
 
-A runnable paid-execution entry point remains a separate future implementation and
-review, so the approval-ready real-experiment criterion is not yet established. No real
-model call, paid embedding call, live job, normal-database migration or repository reindex
-was made. See `docs/sprint-5b2a-evaluation.md` for the pricing audit, safety limitations
-and future-experiment review worksheet.
+The log, report and preview identify snapshot `505277be-9f2e-45a4-900e-cf528a9052c2` in
+that disposable database. The partial synthetic snapshot is pinned to commit
+`30705da4c044192cab4ac207e253ab8e8a1bd100`; local Git and the dataset confirm its source
+tree, blob and `valid_signature` label at lines 6–8. It returned two evidence records and
+validated **1/1** report references. It omits 104 eligible files and is not a retrieval
+quality benchmark. The report records one fake HTTP request, one worker attempt, a
+simulated **$5.815551** reservation and no actual provider cost. Empty-evidence abstention
+is covered by separate tests, not by this two-evidence evaluation.
+
+The run recorded evaluator HEAD `bcea57041721c895659ed38c398438ea91519d70` while its
+implementation was still uncommitted. Those changes were subsequently committed as
+`0ccf57a349c553cca72ef112166ffb7c4c9fc4ef`; at reconciliation all **12/12** recorded
+implementation fingerprints matched that committed tree. Sprint 5B2B subsequently changed
+the Git reader, evaluation harness, adapter and ledger, so this historical run does not
+verify the later code. Other supporting files were not fingerprinted, so the saved artifacts do not
+independently establish byte-for-byte identity for every file used by the run. The preview
+and report contain the same request-projection hash, but the omitted raw projection cannot
+be independently rehashed from these metadata-only artifacts. The retained log and reports
+are under `apps/api/evaluation/5b2a-4f6d42946ddad6d4*`.
+
+**SPRINT 5B2B NOT YET VERIFIED** for a real-model experiment. The later checkpoint adds an
+approval-bound executor; its fake-transport PostgreSQL verification is recorded below, while
+independent security review and actual provider behavior remain pending.
+The separate draft in `docs/sprint-5b2b-first-experiment-approval.md` records the proposed bounds
+and remaining prerequisites. No real model call, paid embedding call, live job,
+normal-database migration or repository reindex was made for this evaluation. See
+`docs/sprint-5b2a-evaluation.md` for the pricing audit and safety limitations.
+
+### Sprint 5B2B checkpoint 1 — executor and approval preflight
+
+**SPRINT 5B2B CHECKPOINT 1 VERIFIED LOCALLY — DRY-RUN AND FAKE-TRANSPORT SCOPE.** The executor creates an offline disclosure
+preview and supports an isolated simulated approval and fake HTTP transport. Approval is bound
+to the fixture, commit, snapshot, experiment, report job, request bytes and manifest; the
+existing ledger consumes the one-use approval in the same transaction as its send marker.
+Ordinary report workers cannot use live transport. The separately invoked actual path requires
+its own recorded approval, isolated PostgreSQL target, server-side gates and key; it has not
+been enabled or exercised with live transport.
+
+The local SQLite backend suite reported **358 passed, 19 skipped**; those skips include the
+new PostgreSQL approval races and existing PostgreSQL concurrency tests. The 33-case
+adversarial fixture passed; an earlier focused executor, report-model and adversarial regression
+run reported **103 passed, 2 PostgreSQL-only skips** before the module-entry fix, and those
+tests were included in the subsequent full run. Ruff, shell syntax and `git diff --check`
+passed. A newly created
+temporary SQLite database upgraded from `0010` to `0011`, preserved a fixture row, contained
+the approval fields and reported no Alembic drift. SQLite does not establish PostgreSQL
+migration correctness. No frontend code changed. The normal application database was not
+migrated.
+
+The fake-only host script `apps/api/evaluation/run-5b2b-checks.sh` creates a uniquely named
+disposable PostgreSQL container and empty database, runs the selected backend suite with
+mandatory fake-executor and locking cases and no skips, checks the security fixture, Ruff,
+upgrade and drift, and retains its container and volume. It records and compares a combined
+fingerprint of the API Python source, migrations, tests, runner and two fixture datasets
+before and after the run. The current working-tree fingerprint is
+`23ab78b696013fc7fc2c4651160996624a848a88c528e6beaae6e37af8f6aa64` over 124 files;
+it does not fingerprint installed dependencies or documentation. It excludes the separately gated
+4F committed-source benchmark. Docker access from this sandbox returned permission denied,
+but the retained host log `apps/api/evaluation/5b2b-35c39ab76d883faa.log` records a
+successful run in newly created, confirmed-empty database `repopilot_5b2b_35c39ab76d883faa`:
+**376 PostgreSQL tests passed**, the **33/33** adversarial fixture passed, Ruff passed, and
+Alembic reached **0011 (head)** with no drift. The runner's final success marker requires
+zero test skips and its named executor, approval-race and budget-race cases to pass. The
+before and after fingerprints both matched the then-current 124-file source fingerprint above.
+The log records completion and retains the container and volume; it does not independently
+record the shell's final exit status.
+
+The source disclosure template is `apps/api/evaluation/5b2b-disclosure-template.json`; its
+IDs are placeholders and cannot authorize a future request. The offline command writes the
+full sanitized request and manifest to a temporary directory with mode `0700` and files with
+mode `0600`. See `docs/sprint-5b2b-first-experiment-approval.md` for the exact review and
+approval steps and the unresolved security and billing risks. The tests include an isolated
+actual-mode ledger simulation with fake transport. No real-provider request, paid embedding
+call, live paid experiment, normal-database migration or live job was made.
+
+### Sprint 5B2B checkpoint 2 — security and exact-input review
+
+**SPRINT 5B2B CHECKPOINT 2 NOT YET VERIFIED.** The checkpoint 1 run above predates the
+checkpoint 2 modifications. This sandbox cannot access the Docker socket, but the user ran
+`apps/api/evaluation/run-5b2b-readiness.sh` on the host. Its retained log and screenshot show
+**222 selected PostgreSQL tests passed with zero skips**, including the fake approval and
+reservation concurrency guards, **33/33** adversarial checks, Ruff, and Alembic
+`0011 (head)` with no drift. A final success marker was recorded; a separate shell exit-code
+value was not captured. The then-current 128-file API/test/migration/fixture fingerprint
+`ff00ca67caf579027c77442542dd4efd98125e884258934d768d768903671f47` independently matches
+the before and after values in the log. Installed dependencies and docs are not fingerprinted.
+The runner retained its newly created container and volume; the normal application database
+was not its target.
+
+The checkpoint 2 local focused suite reported **214 passed, 8 PostgreSQL-dependent skips**;
+Ruff, shell syntax, `git diff --check`, and the **33/33** adversarial fixture passed. These
+SQLite results do not demonstrate PostgreSQL row locking. No frontend files changed. No
+provider or paid embedding request was made. The historical checkpoint 1 host suite reported
+376 selected PostgreSQL passes and a success marker with no skips; the shell exit code was
+not independently captured.
+
+The exact staged `signature_exact` request reviewed the specified committed 322-byte source
+blob and both source ranges. Its synthetic database is `repopilot_5b2b_b3fa0088237c0c7a`,
+snapshot `afa6679c-4822-44c2-bfd9-3ac635068945`, investigation
+`98678679-7c39-4cca-9ae2-f516542e350a`, report job
+`91fa2b4b-6695-4a12-bad9-63118cd36ae1` and simulated experiment
+`e707c7d9-203c-45df-92f6-9722316eb317`. It has two evidence items, no paid approval,
+reservation, provider request or report. The canonical request and manifest SHA-256 values
+are `9211ff97ef966d0d648d3d175a1808116c576e7cd80adee746fed82a8a2700b5` and
+`87f82f93e7338fe567cd43270b163dc268ad2e47326da8968f78977da5a46b0b`. The private files
+were independently re-read, reconstructed, rehashed and their permissions checked against
+the same run's sanitized artifact and log. The synthetic experiment expires at
+`2026-11-01T03:20:26.146556+00:00`; after expiry a fresh run and review are needed. The
+sanitized [disclosure review](sprint-5b2b-disclosure-review.md) records source and excerpt
+hashes, request fields, pattern-screen results and limitations. The executor now requires
+additional operator acknowledgements for source screening and account pricing before it
+records an actual approval. Those acknowledgements are attestations, not proof of either.
+Inconsistent usage metadata retains the conservative reservation, and narrowly filtered
+provider events permit correlation without logging prompts, headers or credentials. An
+unexpected upstream request-ID format is omitted. A positive paid-approval execution has
+not been exercised, because creating or consuming a paid approval is prohibited here.
+
+The selected fake-transport tests cover successful grounded publication and duplicate
+rejection; missing, expired and mismatched approvals; modified request or manifest; budget
+exhaustion and concurrent reservations; lease takeover before send and crash after the send
+marker; timeouts, refusal, incomplete or malformed output; missing or inconsistent usage,
+incorrect model/tier/cache metadata; foreign citations, cross-tenant evidence and revoked
+access. The selected PostgreSQL race checks exercise atomic simulated-approval consumption
+with the ledger marker. Unknown billing remains reserved. The runner's Python socket fence
+and injected HTTP transport are test controls rather than an operating-system network sandbox.
+
+The fixed request, manifest, tenant, investigation, snapshot and model are checked before
+the fake provider sends; a one-use approval and ledger send marker share a transaction.
+That provided replay and concurrency controls in those fake-transport tests, not a
+guarantee against administrative database/code changes, provider invoice differences or a
+revocation racing a network request. The synthetic fixture uses a fake GitHub identity; it
+does not test current live GitHub access. Provider-internal processing and retention remain
+outside the request-body review. A valid citation proves structural grounding, not that a
+hypothesis is correct.
+
+On 2026-11-01 the reviewed public pricing supports a **$5.815551** local reservation only
+under the documented 30-minute cache, long-context and one 10% allowance assumptions. Taking
+the rounded reservation as the base, one *additional* 10% uplift yields $6.3971061, and two
+additional compounded uplifts yield $7.03681671; both exceed the $6 per-investigation cap.
+Those are hypothetical stress scenarios, not a claim that these fees apply or stack.
+Account-specific billing, model access, endpoint policy and any
+stacking remain unconfirmed; execution must remain blocked if they cannot be justified.
+The [draft approval packet](sprint-5b2b-first-experiment-approval.md) lists the separately
+authorized actions, private review, shutdown and uncertain-billing procedure. Real-model
+reasoning quality and provider billing accuracy remain unmeasured.
+
+### Sprint 5B2B checkpoint 2B — pricing and project access gate
+
+**SPRINT 5B2B CHECKPOINT 2 — BLOCKED.** Public documentation was rechecked on 2026-11-01;
+project-specific model access, billing and fee applicability remain unknown. The application
+now unconditionally rejects recording an actual approval and entering the live executor with
+`pricing_unverified`; an acknowledgement or API key alone cannot clear this code gate. The
+send-marker path repeats the gate and checks a stress-adjusted reservation against both caps.
+This is deliberately not a usable paid-execution configuration.
+
+The corrected microdollar calculation starts from the existing $5.815551 reservation,
+which already contains one 10% allowance. One and two **additional** 10% stress uplifts are
+$6.3971061 and $7.03681671, or $6.397107 and $7.036817 rounded up to whole microdollars.
+The maximum whole-microdollar base under a $6 cap after two additional uplifts is $4.958677.
+Neither additional uplift is asserted to be applicable to this account. The 30-minute cache
+write uses a total 1.25× input rate rather than a separate charge on top of input pricing.
+
+The historical staged request was independently rehashed at **3,826 canonical bytes**,
+including 445 instruction bytes and a 1,215-byte canonical schema; it contains two evidence
+items. The adapter now rejects canonical bodies above **8,192 bytes** before sending. A byte
+limit and bytes/4 heuristic do not verify the provider's input token count, which can include
+formatting and schema overhead. Therefore the ledger still reserves the full 1,050,000-token
+window, and the current $5.815551 reservation does not satisfy the added stress gate. An
+illustrative 16,384-token input and 2,048-token output would yield a $0.130663 base and
+$0.158103 after two additional stress uplifts, but that input bound is not verified or
+implemented and those numbers cannot authorize execution.
+
+At `2026-11-01T02:41:06Z` the staged experiment had not yet expired. Its documented expiry was
+`2026-11-01T03:20:26.146556+00:00`; it was expired when checked again after `03:23Z`. Its
+manifest is also invalid under the changed byte limit and pricing gate, so do not reuse or
+revive it. The old evidence and private files are
+retained. A later approved verification must generate fresh identifiers, request and manifest
+hashes, source review, pricing evidence and expiry. No new staged experiment was created.
+
+The [approval packet](sprint-5b2b-first-experiment-approval.md) now includes a private,
+non-API account and project checklist. If account terms or a safe, request-bound input-token
+upper limit cannot be independently established, pricing approval remains blocked. The
+provider input-token counting endpoint would itself be an external request and disclosure and
+was not called. A new durable-ledger policy and its own disposable PostgreSQL regression
+will be required before any paid approval can be considered.
+
+Local SQLite verification after the checkpoint 2B changes: **394 passed, 20 skipped**;
+the skips include PostgreSQL-specific tests. The **33/33** adversarial fixture, Ruff, shell
+syntax and `git diff --check` passed. A focused run of the new pricing, executor and provider
+tests reported **99 passed, 6 PostgreSQL-dependent skips**. The historical staged request
+was rehashed and its old manifest was rejected by the current policy without accessing its
+database. The earlier 222-test PostgreSQL run predates these changes and is not evidence for
+the new gates. Docker access in the sandbox is denied, so the user ran the fake-only host
+script `apps/api/evaluation/run-5b2b-pricing-checks.sh` against the confirmed-empty disposable
+database `repopilot_5b2b_845d50be264c481f`. Its retained
+[log](../apps/api/evaluation/5b2b-pricing-845d50be264c481f.log) records **239 passed**,
+the **33/33** security fixture, Ruff, Alembic **0011 (head)** and no drift, followed by the
+success marker. The runner requires zero skips and its named pricing, approval and PostgreSQL
+locking cases to pass. The before/after fingerprint
+`0defb35e5ff2f5fbea6381b5316927ebcf5fea56a0d370256bd35b78eef5b685` covers 128 files and
+matched the independently recomputed source fingerprint before checkpoint 2C; it excludes documentation and
+installed dependencies. The user reported overall script exit status **0**; the log itself
+does not separately capture that numeric shell status. The container and volume were retained.
+
+**PostgreSQL pricing-regression blocker: RESOLVED** for that tested source. Checkpoint 2
+remains **BLOCKED** on account-specific pricing/model access and a verified request-bound
+token budget. No paid provider, token-count endpoint, paid approval, normal database
+migration or new staged experiment was used in this checkpoint. Any future implementation
+change requires its own appropriate tests and fingerprint.
+
+The focused [request-bound token-budget plan](sprint-5b2b-token-budget-plan.md) describes
+the subsequent fake-only count implementation and the remaining ledger and provider-contract
+work needed to use a verified bound. A real count would be a separate external request and
+disclosure, requiring separate authorization. Account pricing, a reliable count-to-generation
+bound, model identity stability and the count endpoint's billing/retention terms remain
+unverified; the existing live gate stays closed.
+
+### Sprint 5B2B checkpoint 2C — simulated token counting
+
+**SPRINT 5B2B CHECKPOINT 2C VERIFIED LOCALLY — FAKE-TOKEN-COUNT SCOPE.** A fake-only input-count projection,
+separate simulated one-use approval, tenant/snapshot/request binding and generation preflight
+have been implemented. The persisted count state is restricted to simulated mode by additive
+migration `0012`; the ordinary application database has not been migrated. The count adapter
+accepts only an injected `httpx.MockTransport` and an isolated test database. It marks a fake
+send durably before transport, rejects replay and malformed or over-limit results, and keeps an
+uncertain outcome non-retryable. A separate simulated generation approval is still required.
+When a count is selected, the generation send-marker transaction rechecks the current source,
+authorization, request and count binding before consuming the approval. The original
+full-window $5.815551 generation reservation remains unchanged.
+
+OpenAI's [input-token count reference](https://developers.openai.com/api/reference/resources/responses/subresources/input_tokens/methods/count)
+and [token-counting guide](https://developers.openai.com/api/docs/guides/token-counting) were
+reviewed on 2026-11-01. The count response does not establish a pinned resolved model revision
+or guaranteed billed generation input; the reviewed request has no suitable documented
+provider-enforced input-token maximum. Fees and retention for an actual count are not
+established. Any real count would be a separate external disclosure and require a separate
+approval and justified fee policy. No real count, real generation, paid approval or new live
+staging was performed. Count-to-generation stability, account pricing and project access remain
+blockers for Sprint 5B2B real execution.
+
+The sandbox could not reach the local Docker daemon. The reviewed
+`apps/api/evaluation/run-5b2c-checks.sh` creates and retains a new disposable PostgreSQL
+container, checks the database identity and empty schema, enforces named cases and zero skips,
+runs the adversarial fixture and migration/drift checks, and records a source fingerprint and
+final exit status in a run-specific log. Python socket fencing is not an OS sandbox.
+
+On the updated local source, the full SQLite-backed backend suite reported **463 passed,
+21 skipped**; the skips include PostgreSQL-only cases and are not concurrency evidence. The
+focused fake-count suite reported **65 passed, 1 PostgreSQL-only skip**. The adversarial
+fixture reported **33/33**, dataset SHA-256
+`b7ba2f58a21d3c349198ccdaf2dfbfed968a7e384618cef7530c86fc44c020e6`. Ruff, the host
+runner's shell syntax and `git diff --check` passed. A new disposable SQLite database reached
+Alembic `0012`, contained the simulated count table and reported no drift; that check does not
+establish PostgreSQL migration compatibility. The earlier checkpoint 2B PostgreSQL results do
+not verify the later code or migration.
+
+The user subsequently ran the script in Mac Terminal. Its retained
+[host log](../apps/api/evaluation/5b2c-e1593aaca7524a85.log) records run
+`e1593aaca7524a85`, newly created disposable container `repopilot-5b2c-e1593aaca7524a85`
+and confirmed-empty database `repopilot_5b2b_e1593aaca7524a85`. It reports **309 passed**,
+with the runner requiring zero skips and its named count-approval, generation-marker,
+reservation-concurrency and legacy-migration cases to pass. The **33/33** adversarial
+fixture, Ruff, Alembic **0012 (head)** and no drift are recorded, followed by success and
+**script final exit status 0**. The before/after fingerprint
+`bd002c874e4370563e6c775db07cc1d8b1bcedf37b6bba690f5979b52cb274c9` covers 131 files and
+matched the independently recomputed fingerprint before the 5B2D test and runner changes; documentation and installed
+dependencies are outside that fingerprint. The runner records Git HEAD
+`0ccf57a349c553cca72ef112166ffb7c4c9fc4ef`, but the fingerprint includes uncommitted files
+and must not be interpreted as verification of that commit alone. The container and volume
+were retained. An earlier sandbox invocation `62f1e9e2d10223b2` exited 1 before creating a
+database because the Docker daemon was inaccessible; it does not represent the host run.
+
+These results verify simulated counting and the selected database/security regressions only.
+They do not establish real OpenAI model access, count fees, a provider-enforced input bound,
+real-model reasoning quality or invoice accuracy. Sprint 5B2B real-model execution remains
+**NOT YET VERIFIED** and blocked pending separate approvals and resolution of those issues.
+
+### Sprint 5B2D — token-budget policy and account review
+
+**SPRINT 5B2D VERIFIED LOCALLY — FORMAL POLICY AND FAKE-TRANSPORT SCOPE.** The audit
+confirmed that the **optional simulated** count path binds generation and count-projection
+hashes to the tenant, source snapshot and commit, model, synthetic account/project, manifest,
+pricing revision, expiry and limits. The full generation hash covers instructions, input,
+schema, cache options, output limit, disabled truncation and other accepted generation fields.
+At the simulated send marker, current local access and the exact request are rechecked before
+the distinct generation approval is consumed. The existing server-side evidence validation
+still controls report publication. At that checkpoint the count was not a mandatory
+real-generation preflight: `execute_fake` could run without one, `execute_live` did not accept
+one, and migration `0012` permitted simulated count records only. The actual-pricing gate
+still rejects real approval and execution. Checkpoint 5B2E adds explicit account/project
+binding and a separate, blocked external-count path; it does not establish project access.
+
+The [formal proposed policy](sprint-5b2b-token-budget-plan.md#sprint-5b2d-proposed-fail-closed-policy)
+requires independently verified account pricing and count-call fees, separate approval for the
+count disclosure, a matching nonexpired provider count and defensible input allowance, an
+unchanged canonical request, and an atomic ledger reservation and separate generation approval.
+At that checkpoint no implementation made a real count mandatory or reduced the ledger reservation;
+checkpoint 5B2E adds a blocked external-count preflight without reducing the reservation.
+The reviewed offline placeholder request contains both sanitized source ranges, its structured
+schema and **3,816 canonical bytes**; this is not a token count. The 16,384-token input and
+2,048-token output values are candidates only, and neither real input size nor report sufficiency
+has been measured. Its placeholder hash is not an approval; the earlier staged run is expired.
+
+On **2026-11-01**, the public [GPT-5.6 Terra model page](https://developers.openai.com/api/docs/models/gpt-5.6-terra)
+listed standard input/output rates of **$2/$12 per million tokens** and a 2× input/1.5× output
+long-context rate for prompts over 272,000 input tokens. The [prompt-caching guide](https://developers.openai.com/api/docs/guides/prompt-caching)
+describes the 30-minute write rate as a total 1.25× input rate, not an added charge on top.
+The [pricing page](https://developers.openai.com/api/docs/pricing) lists 10% regional and
+FedRAMP endpoint uplifts under their conditions; project applicability and stacking are unknown.
+The [token-counting guide](https://developers.openai.com/api/docs/guides/token-counting) says
+the output limit includes non-visible tokens. Count-endpoint fees and account terms remain
+unverified. No provider-side maximum input-token or invoice guarantee has been established.
+
+The existing full-window reservation remains **$5.815551** under its documented assumptions.
+Applying two additional hypothetical 10% stress uplifts gives **$7.036817**, exceeding the
+proposed $6 investigation cap; this is not a claim that those uplifts stack. If a 16,384-token
+input upper bound were independently justified, the same conservative rates and two additional
+stress uplifts yield an illustrative **$0.158103** for generation. That illustration excludes
+unknown count fees and other account-specific charges and is not an enforceable total ceiling.
+No reservation has been reduced and no spending has been approved.
+
+The updated local SQLite backend suite reported **477 passed, 22 skipped**; the focused new
+fake-transport and arithmetic cases reported **14 passed, 1 PostgreSQL-only skip**. The
+**33/33** adversarial fixture, Ruff, shell syntax and `git diff --check` passed. Docker access
+from the sandbox returned permission denied. The user ran the extended
+`apps/api/evaluation/run-5b2c-checks.sh` on the host. Its retained
+[log](../apps/api/evaluation/5b2c-383e0af929ee80d2.log) records run `383e0af929ee80d2`,
+new container `repopilot-5b2c-383e0af929ee80d2` and confirmed-empty disposable database
+`repopilot_5b2b_383e0af929ee80d2`: **324 passed, zero skips**, the **33/33** adversarial
+fixture, Ruff and Alembic **0012 (head)** without drift. Its guard requires the named 5B2D
+request-mutation, expiry, overflow, duplicate-approval and PostgreSQL concurrent-generation
+cases. The final exit status was **0**, and the container and volume were retained.
+
+The before/after fingerprint
+`11d1eb7789295c277c9e1ff54209cace62e3ff55617693a1c47fa484982e1916` covers 131 files and
+matched the independently recomputed source fingerprint at the time of that run, before
+the 5B2E source changes; it excludes documentation and installed dependencies. The log
+records Git HEAD `0ccf57a349c553cca72ef112166ffb7c4c9fc4ef`,
+but includes uncommitted files and is not evidence for that commit alone. The earlier 2C run
+predates the added tests and runner changes. These tests verify the existing simulated path
+and fail-closed gate, not an actual-count implementation or a real-provider spending ceiling.
+No live count, generation, paid approval, staging or normal-database migration was performed.
+Account and project review remains a private human task in the approval packet.
+
+### Sprint 5B2E — provider count and generation preflight
+
+**SPRINT 5B2E VERIFIED LOCALLY — FAKE-TRANSPORT INTEGRATION SCOPE.** A separate additive migration `0013` introduces an
+external-origin count authorization and its fee reservation; the existing `0012` simulated
+counts remain separate and cannot authorize the actual path. The provider count and separate
+generation approval are bound to the reviewed request, projected count payload, tenant,
+repository, source snapshot and commit, report job, fixture, model, hashed organization and
+project, pricing and fee policies, manifest, token limits, service tier and cache settings.
+Before the generation send marker, the worker rechecks access and request identities and
+atomically consumes the provider count and generation approval with the existing ledger
+marker. A direct actual-mode adapter call cannot bypass the approval-bound model even with a
+mock transport. The one-shot executor has its own configuration gate and requires paid
+background workers to remain disabled; actual count authorization and sending require
+PostgreSQL.
+
+The count sender records its one-use send marker before network I/O. An uncertain or invalid
+result retains its fee reservation, which is included in the same experiment and investigation
+totals as generation. The generation reservation remains **$5.815551**; the extra count fee
+and any unverified charges are not assumed to be free. The current generation-pricing and
+count-fee gates both fail closed, and the external-count switch defaults to disabled. The
+candidate 16,384-token allowance has not been verified against a real provider response or
+approved as a reduced spending bound. Two hypothetical additional 10% stress uplifts on the
+existing reservation total **$7.036817**, exceeding the proposed $6 per-investigation cap;
+this does not establish that the uplifts apply or stack.
+
+The updated local SQLite-backed backend suite reported **537 passed, 22 skipped**; its
+focused provider-count integration file reported **54 passed**. SQLite results do not
+establish PostgreSQL row locking. Earlier suites had reported **530 passed, 22 skipped** and
+**522 passed, 26 skipped** before the later approval-boundary and executor-gate changes.
+The current runner-compatible fingerprint is
+`5c3523ad8fa36e89d25846cfe3e2dcf5a0fd66e26296c669d2ce07fbec9b857c` over 133 files; it
+does not cover documentation or installed dependencies.
+The adversarial fixture reported **33/33**, SHA-256
+`b7ba2f58a21d3c349198ccdaf2dfbfed968a7e384618cef7530c86fc44c020e6`. Ruff, shell syntax,
+`git diff --check`, and an isolated SQLite upgrade to `0013` with no Alembic drift passed.
+The SQLite migration preservation test also passed. The sandbox could not access Docker;
+the 5B2D PostgreSQL run predates these source changes.
+
+The user's first 5B2E host run, retained as
+[0923d253fd6c203b](../apps/api/evaluation/5b2e-0923d253fd6c203b.log), confirmed a new empty
+database and recorded **373 passed, zero skips**, **33/33** adversarial checks, Ruff, Alembic
+`0013` without drift and exit status **0**. Its before/after fingerprint
+`2122c5db35233099d85a9d7fb36399775324c4a4bb572c6ac397abf87cdb9ab2` covered 133 files.
+That run predates the subsequent separation of the executor from the paid-background gate,
+the explicit PostgreSQL requirement for actual count authorization, and the expanded count
+sender tests. It is preserved as historical evidence and does not verify those later changes.
+
+The user then ran the updated fake-only host runner. Its retained
+[log](../apps/api/evaluation/5b2e-8d8ccdd6c8a29bc9.log) records run `8d8ccdd6c8a29bc9`,
+fresh container `repopilot-5b2e-8d8ccdd6c8a29bc9`, and confirmed-empty disposable database
+`repopilot_5b2b_8d8ccdd6c8a29bc9`. The selected PostgreSQL suite reported **384 passed,
+zero skips**; the runner's success guard required the named approval, count/generation
+concurrency, fee-retention, replay, citation, reservation and migration-preservation cases.
+It also recorded **33/33** adversarial checks, Ruff, Alembic **0013 (head)** without drift,
+and final exit status **0**. The container and volume were retained.
+
+The run's before/after fingerprint was
+`5c3523ad8fa36e89d25846cfe3e2dcf5a0fd66e26296c669d2ce07fbec9b857c` over 133 files, matching
+the independently recomputed fingerprint at the end of 5B2E, before later retrieval changes.
+It includes the test runner, application
+and test Python files, migrations and selected fixture/configuration files; documentation
+and installed dependencies are outside its scope. The log records Git HEAD
+`0ccf57a349c553cca72ef112166ffb7c4c9fc4ef`, but the fingerprint includes uncommitted source
+and is not evidence for that commit alone.
+
+The prepared `apps/api/evaluation/run-5b2e-checks.sh` creates a fresh, named disposable
+PostgreSQL database, verifies its identity and empty schema, fences Python network access,
+rejects real HTTP transports, requires named tests and zero skips, and records a source
+fingerprint and exit status. Its synthetic PostgreSQL tests exercise an actual-shaped approval
+and count only inside the disposable test database, with test-local pricing replacements,
+synthetic credentials and `MockTransport`; these are not live approvals or provider results.
+The Python fence is not an operating-system sandbox. No real count or generation request,
+live approval, new live job, or normal-database migration was performed. Real-model execution remains **BLOCKED** pending
+independent account and pricing review, a separately approved count disclosure, a valid
+request-bound provider count and a separate generation approval.
+
+### Sprint 5C1 — issue-to-code retrieval
+
+**SPRINT 5C1 NOT YET VERIFIED.** The pre-change pipeline and historical 4F weaknesses are
+documented in [sprint-5c1-retrieval.md](sprint-5c1-retrieval.md). A local read-only Git check
+verified the unchanged pinned fixture's **23 labels across 16 scored cases**, with three
+unscored cases. Rescoring the saved historical 4F evidence reproduced Recall@1/3/5/10 of
+**0.375/0.500/0.5625/0.625**, MRR **0.514137** and nDCG@10 **0.520538**; this is not a
+current-code PostgreSQL baseline.
+
+The current sandbox cannot access Docker. A new read-only runner targets only the previously
+retained 4F disposable snapshot and requires its expected database, snapshot, Git commit and
+read-only transaction. It checks every returned citation against local Git objects and records
+new run-specific artifacts. It does not create a snapshot or investigation job, access the
+normal application database or call an external provider. The separate approval gate for
+creating a new committed-source snapshot remains in place. The user ran the read-only replay;
+artifacts [JSON](../apps/api/evaluation/5c1-baseline-eda70e4b43a14eb6.json) and
+[Markdown](../apps/api/evaluation/5c1-baseline-eda70e4b43a14eb6.md) identify retained disposable
+database `repopilot_4f_disposable_4f762b71ae8d9569`, snapshot
+`1a8e0d9e-1cf1-4e0a-9cac-f8ced23f1694` and the unchanged pinned commit and dataset. Current
+`terms-v1` direct retrieval reproduced **0.375/0.500/0.5625/0.625** recall, **0.514137** MRR,
+**0.520538** nDCG@10, 12/16 labeled top-10 hits, and **226/226** citations checked against
+local committed source. Latency p50/p95 was **54.520/97.672 ms**, direct retrieval only.
+The stored implementation hashes matched the pre-change code. At that point no candidate comparison had been run.
+
+At this preparation stage the local SQLite-backed backend suite reported **553 passed,
+22 PostgreSQL-dependent skips**; focused replay/comparison and existing evaluation tests
+reported **33 passed** at that stage. After adding evaluation-only candidate queries, the
+focused replay/comparison/evaluation tests reported **37 passed**, and the full local suite
+reported **557 passed, 22 PostgreSQL-dependent skips**. After the versioned retrieval change,
+the full local suite reported **562 passed, 23 PostgreSQL-dependent skips**. The adversarial fixture reported **33/33**, Ruff, shell syntax and
+`git diff --check` passed. The new disposable PostgreSQL regression runner is prepared but
+has not been executed, so no PostgreSQL result is claimed for this work.
+
+The user ran three read-only body-query experiments as run `1fdf3b79925eaede` on the same
+snapshot. Plain body expansion kept Recall@10 at **0.6250** but reduced MRR to **0.4898**;
+generic-identifier filtering raised Recall@10 to **0.6562** while reducing Recall@1 to
+**0.3438** and MRR to **0.4742**; body-first had Recall@10 **0.6562** and MRR **0.4922**.
+The respective returned citation counts were **298/298**, **288/288** and **288/288** checked
+against local Git source. An offline rerank of the recorded plain-body candidates preserved
+the first four baseline results and used symbol overlap for the remainder; run
+`10c892705cc26aca` measured Recall@1/3/5/10 **0.3750/0.5000/0.5625/0.7188**, MRR **0.5177**,
+nDCG@10 **0.5469**, and 13/16 cases with a labeled top-ten hit. The snapshot-publication
+label appeared at rank 10, while the incomplete-tree label fell from rank 7 to rank 10.
+This is a same-dataset exploratory selection and may overfit.
+
+`terms-v2` now implements the selected bounded query expansion and protected symbol rerank;
+`terms-v1` remains available for earlier jobs. The observed candidate p50/p95
+**77.391/137.332 ms** is inherited from direct plain-body retrieval and excludes reranking;
+it is not yet a direct production-strategy measurement. A new same-snapshot `terms-v2` replay
+and disposable PostgreSQL regression run are still required before verification.
+An offline parity check confirmed that the production `terms-v2` query builder and shared
+reranker reproduce the recorded exploratory candidate order and query hashes for all 19 cases.
+The local frontend regression suite reported **54 passed**, and TypeScript and ESLint passed
+using Node 24.22.0. No frontend or proxy code changed for this checkpoint.

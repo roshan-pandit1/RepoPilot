@@ -1,5 +1,9 @@
 # Sprint 5B2A: isolated fake-provider evaluation
 
+**SPRINT 5B2A VERIFIED LOCALLY — FAKE-TRANSPORT SCOPE.** Real provider execution,
+reasoning quality and provider invoicing have not been verified. **SPRINT 5B2B NOT YET
+VERIFIED.**
+
 The evaluation runs only against a newly created, uniquely named disposable PostgreSQL
 database. It uses a local Git object, a synthetic authorized GitHub client, the existing
 keyword retrieval and report worker, and `httpx.MockTransport`. The evaluation command
@@ -58,12 +62,33 @@ uncommitted changes. The preview is a description of the actual fake request; it
 verified token count. The full input-window bound is reserved instead of relying on an
 approximate tokenizer. Local Git verification does not by itself verify GitHub-hosted links.
 
-The retained host run `4f6d42946ddad6d4` used disposable database
-`repopilot_5b2a_4f6d42946ddad6d4`, passed 338 selected PostgreSQL tests with no skips
-and 33/33 synthetic adversarial checks, and reached Alembic 0010 without drift. Its
-partial snapshot supplied two evidence items; one of one report citations passed grounding.
-The report records one fake request, one worker attempt, and a simulated $5.815551
-reservation. It does not measure actual model reasoning, provider behavior or invoice cost.
+The retained host run `4f6d42946ddad6d4` used the newly created, verified-empty database
+`repopilot_5b2a_4f6d42946ddad6d4` and snapshot
+`505277be-9f2e-45a4-900e-cf528a9052c2`. The log, JSON, preview and pytest summary agree on
+their shared run and database identifiers; the log, report and preview also agree on the
+snapshot. The saved pytest summary records **338 passed, zero failed, zero skipped**, with
+**40/40** provider cases passed, including all 17 cases explicitly required by the runner.
+The separately gated `tests/test_investigation_evaluation_pg.py` was intentionally
+excluded. The log also records **33/33** adversarial checks, Ruff, and Alembic **0010
+(head)** with no drift and its final success marker; the user reported overall script
+exit status 0.
+
+The partial snapshot supplied two evidence items; **1/1** report citations passed
+grounding. The report records one fake request, one worker attempt and a simulated
+**$5.815551** reservation. Its 1,200 input and 250 output tokens and $0.011550 accounted
+cost are simulated values, not provider measurements; actual provider cost is null. The
+run does not measure actual model reasoning, provider behavior or invoice cost.
+
+The report recorded evaluator HEAD `bcea57041721c895659ed38c398438ea91519d70` before the
+then-uncommitted implementation was committed as `0ccf57a349c553cca72ef112166ffb7c4c9fc4ef`.
+At reconciliation all **12/12** saved implementation fingerprints matched that committed
+tree. Sprint 5B2B subsequently changed the Git reader, harness, adapter and ledger; this
+historical result does not verify those later changes. The runner did not fingerprint every
+supporting file, so full byte-for-byte reproducibility cannot be proven from the saved
+metadata alone. The dataset hash and the commit's Git tree, source blob,
+function line range and preview ranges were independently checked locally. The preview's
+request-projection hash matches the report, but the omitted raw projection cannot be
+independently rehashed from the saved metadata.
 
 ## Pricing audit — 2026-10-31
 
@@ -116,16 +141,17 @@ Review the exact run-specific preview and a separate real-execution design befor
    application database or live GitHub issue.
 5. At most **one** provider request and **zero** automatic retries.
 6. Full 1,050,000-token input-window reservation, 2,048 maximum output tokens, and
-   the existing 48,000-byte request-body bound.
+   the then-existing 48,000-byte request-body bound. Checkpoint 2B later reduced the
+   canonical byte bound to 8,192; that change does not establish an input-token bound.
 7. Durable per-request reservation: **$5.815551** under the verified rate assumptions.
 8. Hard local experiment cap **$10**, per-investigation cap **$6**, concurrency one and
    request-count limit one; provider-side billing discrepancies remain possible.
 9. Treat timeouts, disconnects, unexpected identities or tier, and unknown usage as
    uncertain; retain the full reservation and require explicit reconciliation.
-10. Enable the real provider and paid background gate only in an expressly approved,
-    isolated execution process with an enabled tenant experiment and server-side key;
-    disable both gates and remove the temporary key after the operation. The current
-    evaluation runner has no real execution mode.
+10. The 5B2A proposal included a paid-background gate. That is superseded by 5B2E: its
+    isolated one-shot executor requires paid background workers to remain disabled. No
+    provider setting or request is authorized here. The 5B2A runner has no real execution
+    mode; consult the current approval packet for the remaining blockers.
 11. Review the sanitized issue, selected source excerpt and exact outbound projection:
     those fields, evidence metadata and commit-pinned citation metadata would leave the
     machine. Secret screening is incomplete and `store: false` is not zero retention.
@@ -134,9 +160,11 @@ Review the exact run-specific preview and a separate real-execution design befor
 13. Use the worksheet below and the existing
     `apps/api/evaluation/issue-report-v1-rubric.md` for human review.
 
-An isolated paid-execution entry point and its exact reviewed preview still need to be built
-and reviewed after the fake harness succeeds. Nothing in this document authorizes a paid
-request or a normal-database migration.
+An isolated approval-bound paid-execution entry point has since been implemented; its
+fake-transport PostgreSQL suite passed, while a separately prepared actual-mode preview and
+independent security review remain outstanding. The separate draft approval packet is
+`docs/sprint-5b2b-first-experiment-approval.md`. Nothing in either document authorizes a
+paid request or a normal-database migration.
 
 ## Human-review worksheet
 

@@ -1,0 +1,23 @@
+New disposable container: repopilot-5b2b-readiness-b3fa0088237c0c7a; database: repopilot_5b2b_b3fa0088237c0c7a; run: b3fa0088237c0c7a
+Test source fingerprint before: ff00ca67caf579027c77442542dd4efd98125e884258934d768d768903671f47 128; Git HEAD: 0ccf57a349c553cca72ef112166ffb7c4c9fc4ef
+Confirmed empty dedicated database: repopilot_5b2b_b3fa0088237c0c7a; server=172.17.0.4/32:5432; host port=49903
+........................................................................ [ 32%]
+........................................................................ [ 64%]
+........................................................................ [ 97%]
+......                                                                   [100%]
+222 passed in 64.62s (0:01:04)
+Security fixture: 33/33 passed; SHA-256=b7ba2f58a21d3c349198ccdaf2dfbfed968a7e384618cef7530c86fc44c020e6
+All checks passed!
+0011 (head)
+No new upgrade operations detected.
+{"event": "investigation_job_claimed", "job_id": "98678679-7c39-4cca-9ae2-f516542e350a", "repository_id": 902, "level": "INFO"}
+{"event": "investigation_evidence_published", "job_id": "98678679-7c39-4cca-9ae2-f516542e350a", "repository_id": 902, "snapshot_id": "afa6679c-4822-44c2-bfd9-3ac635068945", "level": "INFO"}
+{"event": "investigation_job_finalized", "job_id": "98678679-7c39-4cca-9ae2-f516542e350a", "repository_id": 902, "level": "INFO"}
+Synthetic preflight completed: run=b3fa0088237c0c7a; database=repopilot_5b2b_b3fa0088237c0c7a; snapshot=afa6679c-4822-44c2-bfd9-3ac635068945; evidence=2.
+Investigation=98678679-7c39-4cca-9ae2-f516542e350a; report_job=91fa2b4b-6695-4a12-bad9-63118cd36ae1; experiment=e707c7d9-203c-45df-92f6-9722316eb317; mode=simulated.
+Request SHA-256=9211ff97ef966d0d648d3d175a1808116c576e7cd80adee746fed82a8a2700b5; manifest SHA-256=87f82f93e7338fe567cd43270b163dc268ad2e47326da8968f78977da5a46b0b.
+Private review directory: /var/folders/_c/0_0hnx511fv_xrhvjwxw5c840000gn/T/repopilot-5b2b-b3fa0088237c0c7a-l8mxzzg3; sanitized metadata: /Volumes/Samsung SSD/Project/RepoPilot/apps/api/evaluation/5b2b-readiness-b3fa0088237c0c7a.json, /Volumes/Samsung SSD/Project/RepoPilot/apps/api/evaluation/5b2b-readiness-b3fa0088237c0c7a.md.
+No approval, reservation, provider request or report was created.
+Test source fingerprint after: ff00ca67caf579027c77442542dd4efd98125e884258934d768d768903671f47 128
+Completed fake-only security and synthetic preflight: b3fa0088237c0c7a
+Container and volume retained: repopilot-5b2b-readiness-b3fa0088237c0c7a; log: /Volumes/Samsung SSD/Project/RepoPilot/apps/api/evaluation/5b2b-readiness-b3fa0088237c0c7a.log

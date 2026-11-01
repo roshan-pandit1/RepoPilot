@@ -412,12 +412,15 @@ the worker cancels rather than switching snapshots. Historical 4B mock jobs rema
 for new submissions described in the 4B section above.
 
 Issue text is untrusted input. Each job pins its query-builder version and limits at
-submission. A deterministic heuristic chooses up to three bounded keyword queries from identifiers and title/label terms; it does not execute instructions or understand
-issue intent. The worker uses the existing English PostgreSQL lexical rank and three-second
+submission. New `terms-v2` jobs retain the existing identifier and title queries and may add
+a bounded body-derived query for an informative title. They preserve up to four original
+results and rank remaining bounded candidates by keyword order and issue/symbol term overlap.
+Already queued `terms-v1` jobs keep their original query and ranking behavior. The heuristics
+do not execute instructions or understand issue intent. The worker uses the existing English PostgreSQL lexical rank and three-second
 statement timeout, with defaults of 10 candidates per query and 20 total evidence items. Limits
 are configurable via `INVESTIGATION_QUERY_LIMIT` (1–3), `INVESTIGATION_PER_QUERY_LIMIT` (1–20)
-and `INVESTIGATION_EVIDENCE_LIMIT` (1–30). Results are deduplicated by chunk and ordered by best
-query rank, query order, path, line and chunk ID. A retrieved item is a candidate, not a finding
+and `INVESTIGATION_EVIDENCE_LIMIT` (1–30). Results are deduplicated by chunk; their underlying
+keyword ordering uses query rank, query order, path, line and chunk ID. A retrieved item is a candidate, not a finding
 of relevance or cause. The issue is fetched again and authorization rechecked without holding
 row locks over GitHub requests; evidence and terminal job status are committed together under
 the lease and repository/snapshot locks.
@@ -447,6 +450,8 @@ application-database changes or live test jobs require their own approval. The d
 PostgreSQL evaluation found top-10 labeled hits in two of three positive synthetic cases. One
 local 4C job completed through Redis and Celery with persisted evidence; the generic live issue
 does not establish retrieval relevance. No fake or real embeddings are used for this retrieval.
+The Sprint 5C1 evaluation, tradeoffs and verification status are recorded in
+`docs/sprint-5c1-retrieval.md`.
 
 ### Evidence-grounded mock reports (Sprint 4 checkpoint 4D)
 
@@ -553,3 +558,38 @@ using a dedicated disposable database and a deliberately partial source snapshot
 runner, budget audit and future approval worksheet are described in
 [`docs/sprint-5b2a-evaluation.md`](docs/sprint-5b2a-evaluation.md). The runner has no
 paid execution mode.
+
+### One-use experiment preflight (Sprint 5B2B checkpoint 1)
+
+An isolated executor can produce an offline disclosure preview and exercise one-use
+approvals through the existing adapter and budget ledger with fake transport. Its proposed
+actual path requires an exact separately recorded approval, an isolated synthetic PostgreSQL
+database and explicit process-only provider settings; ordinary report workers cannot use
+live transport. No real request or actual approval has been made. Additive migration `0011`
+is required for this work and has not been applied to the normal application database.
+The user-hosted disposable PostgreSQL suite passed within the fake-transport scope;
+independent security review and real-provider verification remain pending. See the
+[approval packet](docs/sprint-5b2b-first-experiment-approval.md) and
+[verification record](docs/verification.md).
+
+Checkpoint 2B blocks actual approval and live execution in code until project-specific pricing
+and a defensible input-token bound are verified. The adapter caps canonical request bodies at
+8,192 bytes, but the ledger still reserves the full documented model input window; byte size
+is not an input-token guarantee. The historical staged run and manifest must not be reused.
+
+Checkpoint 2C adds a separate **simulated-only** token-count approval and request binding,
+exercised solely through fake HTTP transport. Additive migration `0012` has not been applied
+to the normal application database; disposable PostgreSQL verification passed in run
+`e1593aaca7524a85`. A fake count cannot authorize a real request or reduce the existing reservation. Actual count fees,
+account access and a defensible count-to-generation bound remain unverified; both real counting
+and paid generation require separate future authorization. See the
+[token-budget plan](docs/sprint-5b2b-token-budget-plan.md).
+
+Sprint 5B2E adds a separate external-count authorization and requires it at the live generation
+send marker. Migration `0013` has not been applied to the normal application database. Both
+real-pricing gates remain closed, the external-count switch defaults off, and no real count or
+generation is authorized. The isolated generation executor requires paid background workers
+to remain disabled. The existing full-window reservation is unchanged; disposable
+PostgreSQL run `8d8ccdd6c8a29bc9` passed 384 selected tests and migration `0013` without
+drift, within fake-transport scope. See the
+[approval packet](docs/sprint-5b2b-first-experiment-approval.md).

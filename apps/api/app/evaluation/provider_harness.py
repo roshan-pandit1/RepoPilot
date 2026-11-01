@@ -149,7 +149,11 @@ def main():
             and os.environ.get('INVESTIGATION_REAL_ENABLED') == 'false'
             and os.environ.get('INVESTIGATION_PAID_BACKGROUND_ENABLED') == 'false'
             and os.environ.get('EMBEDDING_PROVIDER') == 'disabled'
-            and not os.environ.get('INVESTIGATION_OPENAI_API_KEY'), 'unsafe_evaluation_configuration')
+            and not os.environ.get('INVESTIGATION_OPENAI_API_KEY')
+            and not os.environ.get('INVESTIGATION_OPENAI_ORGANIZATION')
+            and not os.environ.get('INVESTIGATION_OPENAI_PROJECT')
+            and os.environ.get('INVESTIGATION_COUNT_EXTERNAL_ENABLED', 'false').lower() in ('false', '0', ''),
+            'unsafe_evaluation_configuration')
     root = Path(os.environ['REPOPILOT_GIT_ROOT']).resolve()
     output = root / 'apps/api/evaluation' / f'5b2a-{run_id}'
     summary_path = output.parent / f'5b2a-{run_id}-pytest.json'
@@ -204,7 +208,7 @@ def _evaluate(root, url, run_id, output, summary):
         with engine.connect() as db:
             database = db.execute(text('select current_database()')).scalar_one()
             revision = db.execute(text('select version_num from alembic_version')).scalar_one()
-            require(database == url.database and revision == '0010', 'wrong_database_or_revision')
+            require(database == url.database and revision in ('0010', '0011', '0012', '0013'), 'wrong_database_or_revision')
             preparer = engine.dialect.identifier_preparer
             for table in inspect(db).get_table_names(schema='public'):
                 if table != 'alembic_version':

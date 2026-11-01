@@ -1,5 +1,6 @@
 """Test-only, bounded reader of a single local Git commit; never executes source."""
 import re
+import os
 import subprocess
 from pathlib import Path
 
@@ -33,8 +34,13 @@ class GitSource:
             raise ValueError("Git tree exceeds entry limit")
 
     def _git(self, *args):
+        # Do not pass application credentials or Git configuration into the local reader.
+        env = {'PATH': os.environ.get('PATH', os.defpath), 'LC_ALL': 'C'}
+        env.update(GIT_TERMINAL_PROMPT='0', GIT_NO_LAZY_FETCH='1', GIT_ALLOW_PROTOCOL='',
+                   GIT_CONFIG_NOSYSTEM='1', GIT_CONFIG_GLOBAL=os.devnull,
+                   GIT_CONFIG_COUNT='1', GIT_CONFIG_KEY_0='protocol.allow', GIT_CONFIG_VALUE_0='never')
         return subprocess.run(["git", "-C", str(self.repo), *args], check=True,
-                              stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=30).stdout
+                              stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=30, env=env).stdout
 
     def _name(self, full_name):
         if full_name != self.full_name:

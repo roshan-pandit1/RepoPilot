@@ -1,0 +1,15 @@
+New disposable container: repopilot-5b2b-pricing-845d50be264c481f; database: repopilot_5b2b_845d50be264c481f; run: 845d50be264c481f
+Test source fingerprint before: 0defb35e5ff2f5fbea6381b5316927ebcf5fea56a0d370256bd35b78eef5b685 128; Git HEAD: 0ccf57a349c553cca72ef112166ffb7c4c9fc4ef
+Confirmed empty dedicated database: repopilot_5b2b_845d50be264c481f; host port=50605
+........................................................................ [ 30%]
+........................................................................ [ 60%]
+........................................................................ [ 90%]
+.......................                                                  [100%]
+239 passed in 40.02s
+Security fixture: 33/33 passed; SHA-256=b7ba2f58a21d3c349198ccdaf2dfbfed968a7e384618cef7530c86fc44c020e6
+All checks passed!
+0011 (head)
+No new upgrade operations detected.
+Test source fingerprint after: 0defb35e5ff2f5fbea6381b5316927ebcf5fea56a0d370256bd35b78eef5b685 128
+Completed fake-only pricing PostgreSQL verification: 845d50be264c481f
+Container and volume retained: repopilot-5b2b-pricing-845d50be264c481f; log: /Volumes/Samsung SSD/Project/RepoPilot/apps/api/evaluation/5b2b-pricing-845d50be264c481f.log

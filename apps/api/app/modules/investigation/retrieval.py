@@ -50,11 +50,14 @@ def validate_snapshot(db, *, snapshot_id, repository_id, tenant_id, commit):
 
 
 def retrieve_candidates(factory, *, queries, snapshot_id, repository_id, tenant_id, commit,
-                        full_name, per_query_limit, evidence_limit):
+                        full_name, per_query_limit, evidence_limit, ranking_context=None):
     """Run shared SQL against one snapshot; return IDs and metadata, never store source text."""
     if not 1 <= per_query_limit <= 20 or not 1 <= evidence_limit <= 30 or len(queries) > 3:
         raise ValueError("invalid_evidence_budget")
-    best = {}
+    if (ranking_context is not None and (not isinstance(ranking_context, tuple) or len(ranking_context) != 2
+            or not all(isinstance(value, str) for value in ranking_context))):
+        raise ValueError('invalid_ranking_context')
+    best, baseline = {}, {}
     for order, query in enumerate(queries):
         with factory() as db:
             validate_snapshot(db, snapshot_id=snapshot_id, repository_id=repository_id,
@@ -78,8 +81,24 @@ def retrieve_candidates(factory, *, queries, snapshot_id, repository_id, tenant_
                 previous = best.get(chunk.id)
                 if previous is None or (rank, order) < (previous.query_rank, previous.query_order):
                     best[chunk.id] = candidate
-    return sorted(best.values(), key=lambda c: (c.query_rank, c.query_order, c.path,
-                                                  c.start_line, c.chunk_id))[:evidence_limit]
+                if ranking_context is not None and not query.id.startswith('body_'):
+                    previous = baseline.get(chunk.id)
+                    if previous is None or (rank, order) < (previous.query_rank, previous.query_order):
+                        baseline[chunk.id] = candidate
+    def ordered(values):
+        return sorted(values, key=lambda c: (c.query_rank, c.query_order, c.path,
+                                              c.start_line, c.chunk_id))[:evidence_limit]
+    candidates = ordered(best.values())
+    if ranking_context is None:
+        return candidates
+    from app.modules.investigation.ranking import protected_symbol_order
+    original = ordered(baseline.values())
+    def pairs(values):
+        return [(candidate.chunk_id, candidate.symbol) for candidate in values]
+    order = protected_symbol_order(*ranking_context, pairs(original), pairs(candidates), evidence_limit)
+    lookup = {candidate.chunk_id: candidate for candidate in candidates}
+    lookup.update({candidate.chunk_id: candidate for candidate in original[:min(4, evidence_limit)]})
+    return [lookup[chunk_id] for chunk_id in order]
 
 
 def load_verified_evidence(db, job, snapshot):

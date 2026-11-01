@@ -139,15 +139,14 @@ def process_report(job_id: str, factory=None, github=None, model=None):
     try:
         if real_selected:
             from app.modules.investigation.openai_provider import OpenAIInvestigationModel
-            from app.modules.investigation.reporting_config import real_provider_enabled
+            from app.evaluation.experiment_executor import ApprovedLiveModel
+            from app.modules.investigation.reporting_config import real_executor_enabled
             settings = get_settings()
-            if experiment_mode == 'actual' and (not real_provider_enabled(settings)
-                    or settings.investigation_experiment_id != experiment_id):
+            if experiment_mode == 'actual' and (type(model) is not ApprovedLiveModel
+                    or not real_executor_enabled(settings) or settings.investigation_experiment_id != experiment_id):
                 raise ModelError('model_not_enabled')
             if model is None:
-                if experiment_mode != 'actual' or not real_provider_enabled(settings):
-                    raise ModelError('model_not_enabled')
-                model = OpenAIInvestigationModel(settings.investigation_openai_api_key.get_secret_value())
+                raise ModelError('model_not_enabled')
             if not isinstance(model, OpenAIInvestigationModel):
                 raise ModelError('model_not_enabled')
         else:
@@ -261,14 +260,16 @@ def process_report(job_id: str, factory=None, github=None, model=None):
         raise ReportTransientError('model_timeout') from None
     except ModelError as exc:
         code = str(exc)
-        if code in {'authorization_revoked', 'issue_unavailable', 'issue_changed', 'evidence_unavailable'}:
+        if code in {'authorization_revoked', 'count_access_denied', 'issue_unavailable', 'issue_changed', 'evidence_unavailable'}:
             fail('cancelled', code)
         else:
             fail('failed', code if code in {'model_output_invalid', 'model_output_too_large',
                 'model_output_unsafe', 'model_evidence_invalid', 'model_not_enabled',
                 'model_usage_invalid', 'model_input_invalid', 'context_limit', 'sensitive_input',
                 'model_billing_unknown', 'model_refused', 'model_incomplete',
-                'budget_exhausted', 'budget_unavailable', 'stale_worker'} else 'model_failed')
+                'budget_exhausted', 'budget_unavailable', 'pricing_unverified', 'stale_worker',
+                'count_approval_invalid', 'count_limit_exceeded', 'count_pricing_unverified',
+                'count_not_enabled', 'count_state_unavailable', 'count_billing_unknown'} else 'model_failed')
         return
     except SoftTimeLimitExceeded:
         fail('queued', 'worker_timeout')
