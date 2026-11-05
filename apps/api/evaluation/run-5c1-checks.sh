@@ -6,7 +6,10 @@ umask 077
 repo_root="$(git rev-parse --show-toplevel)"
 cd "$repo_root"
 python="$repo_root/.venv/bin/python"
-test -x "$python"
+if [ ! -x "$python" ]; then
+  printf 'Project Python is missing or not executable: %s\n' "$python" >&2
+  exit 1
+fi
 run_id="$("$python" -c 'import secrets; print(secrets.token_hex(8))')"
 log="$repo_root/apps/api/evaluation/5c1-checks-${run_id}.log"
 ( set -o noclobber; : > "$log" )
@@ -81,53 +84,7 @@ with create_engine(url, hide_parameters=True).connect() as db:
         raise SystemExit('Refusing nonempty or unexpected database.')
     print(f'Confirmed empty dedicated database: {name}; host port={url.port}')
 PY
-"$python" - <<'PYTEST'
-import os, sys
-from unittest.mock import patch
-import httpx
-import pytest
-from sqlalchemy.engine import make_url
-from app.evaluation.provider_harness import network_fence
-
-class Required:
-    def __init__(self): self.cases = {}
-    def pytest_runtest_logreport(self, report):
-        if report.when == 'call': self.cases[report.nodeid] = report.outcome
-    @pytest.hookimpl(trylast=True)
-    def pytest_sessionfinish(self, session, exitstatus):
-        reporter = session.config.pluginmanager.get_plugin('terminalreporter')
-        required = ('test_postgres_search_returns_commit_citation',
-            'test_postgres_keyword_search_handles_natural_language_and_identifiers',
-            'test_postgres_keyword_camelcase_and_bounded_results',
-            'test_postgres_v2_retrieval_deduplicates_and_fences_source',
-            'test_queued_v1_job_keeps_legacy_queries_and_ranking',
-            'test_v2_keeps_exact_symbols_and_adds_filtered_body_terms',
-            'test_v2_stack_trace_identifier_and_vague_input_are_bounded',
-            'test_snapshot_job_evidence_is_atomic_fenced_and_idempotent',
-            'test_reindex_after_submit_never_switches_snapshot',
-            'test_access_revoked_before_and_after_persistence',
-            'test_cross_tenant_and_unauthenticated_evidence',
-            'test_readonly_replay_rejects_mutations_and_write_locks',
-            'test_comparison_rejects_mixed_provenance',
-            'test_postgres_legacy_job_survives_migration')
-        if (exitstatus != 0 or session.testscollected < 200
-                or any(reporter.stats.get(x, []) for x in ('failed', 'skipped', 'error'))
-                or not all(any(name in node and outcome == 'passed' for node, outcome in self.cases.items())
-                           for name in required)):
-            print('Disposable verification incomplete: failed, skipped or missing required cases.')
-            session.exitstatus = pytest.ExitCode.TESTS_FAILED
-
-def deny_http(*args, **kwargs):
-    raise AssertionError('external_http_transport_forbidden')
-
-with (network_fence(make_url(os.environ['TEST_DATABASE_URL']).port),
-      patch.object(httpx.HTTPTransport, 'handle_request', deny_http),
-      patch.object(httpx.AsyncHTTPTransport, 'handle_async_request', deny_http)):
-    # This committed-Git snapshot publication is separately approval-gated.
-    status = pytest.main(['-q', '-ra', '--tb=short', '--show-capture=no',
-        '--ignore=tests/test_investigation_evaluation_pg.py'], plugins=[Required()])
-sys.exit(status)
-PYTEST
+"$python" -m app.evaluation.disposable_regression
 "$python" - <<'PY'
 from pathlib import Path
 from app.evaluation.adversarial import evaluate

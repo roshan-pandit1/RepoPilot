@@ -1,0 +1,112 @@
+New disposable container: repopilot-4f-disposable-68ed7b3fd6171439; new database: repopilot_4f_disposable_68ed7b3fd6171439
+Confirmed empty dedicated database: repopilot_4f_disposable_68ed7b3fd6171439; server=172.17.0.4/32:5432; host port=51075
+Verified 23 labels across 16 scored cases; 3 cases remain unscored.
+0013 (head)
+No new upgrade operations detected.
+{"event": "index_job_queued", "job_id": "0ad8baca-df29-4e23-b24f-cb9e36dab789", "repository_id": 902, "level": "INFO"}
+{"event": "index_job_claimed", "job_id": "0ad8baca-df29-4e23-b24f-cb9e36dab789", "repository_id": 902, "level": "INFO"}
+{"event": "index_source_started", "job_id": "0ad8baca-df29-4e23-b24f-cb9e36dab789", "repository_id": 902, "level": "INFO"}
+{"event": "index_source_collected", "job_id": "0ad8baca-df29-4e23-b24f-cb9e36dab789", "repository_id": 902, "level": "INFO"}
+{"event": "index_publication_started", "job_id": "0ad8baca-df29-4e23-b24f-cb9e36dab789", "repository_id": 902, "level": "INFO"}
+{"event": "index_snapshot_published", "job_id": "0ad8baca-df29-4e23-b24f-cb9e36dab789", "repository_id": 902, "snapshot_id": "95751038-f44e-4715-b4bd-932e446f457b", "level": "INFO"}
+{"event": "index_job_completed", "job_id": "0ad8baca-df29-4e23-b24f-cb9e36dab789", "repository_id": 902, "snapshot_id": "95751038-f44e-4715-b4bd-932e446f457b", "level": "INFO"}
+{"event": "investigation_job_claimed", "job_id": "35cab1d0-6117-4eeb-aa99-5e7ca18e6614", "repository_id": 902, "level": "INFO"}
+{"event": "investigation_evidence_published", "job_id": "35cab1d0-6117-4eeb-aa99-5e7ca18e6614", "repository_id": 902, "snapshot_id": "95751038-f44e-4715-b4bd-932e446f457b", "level": "INFO"}
+{"event": "investigation_job_finalized", "job_id": "35cab1d0-6117-4eeb-aa99-5e7ca18e6614", "repository_id": 902, "level": "INFO"}
+{"event": "report_job_claimed", "job_id": "0cc0c3bf-10d5-4593-9320-ff1a44687103", "repository_id": 902, "snapshot_id": "95751038-f44e-4715-b4bd-932e446f457b", "level": "INFO"}
+{"event": "report_job_completed", "job_id": "0cc0c3bf-10d5-4593-9320-ff1a44687103", "repository_id": 902, "snapshot_id": "95751038-f44e-4715-b4bd-932e446f457b", "level": "INFO"}
+{"event": "investigation_job_claimed", "job_id": "f7c9d902-ea25-494e-bf69-d01c034d300b", "repository_id": 902, "level": "INFO"}
+{"event": "investigation_evidence_published", "job_id": "f7c9d902-ea25-494e-bf69-d01c034d300b", "repository_id": 902, "snapshot_id": "95751038-f44e-4715-b4bd-932e446f457b", "level": "INFO"}
+{"event": "investigation_job_finalized", "job_id": "f7c9d902-ea25-494e-bf69-d01c034d300b", "repository_id": 902, "level": "INFO"}
+{"event": "report_job_claimed", "job_id": "6abe965d-4f0d-40af-b9af-b2cab16112e5", "repository_id": 902, "snapshot_id": "95751038-f44e-4715-b4bd-932e446f457b", "level": "INFO"}
+{"event": "report_job_completed", "job_id": "6abe965d-4f0d-40af-b9af-b2cab16112e5", "repository_id": 902, "snapshot_id": "95751038-f44e-4715-b4bd-932e446f457b", "level": "INFO"}
+{"event": "investigation_job_claimed", "job_id": "20f60c1e-4cb7-456b-b48d-6a14d95b717d", "repository_id": 902, "level": "INFO"}
+{"event": "investigation_evidence_published", "job_id": "20f60c1e-4cb7-456b-b48d-6a14d95b717d", "repository_id": 902, "snapshot_id": "95751038-f44e-4715-b4bd-932e446f457b", "level": "INFO"}
+{"event": "investigation_job_finalized", "job_id": "20f60c1e-4cb7-456b-b48d-6a14d95b717d", "repository_id": 902, "level": "INFO"}
+{"event": "report_job_claimed", "job_id": "5cd9ad0d-2bdd-48e5-b413-880c27dcf834", "repository_id": 902, "snapshot_id": "95751038-f44e-4715-b4bd-932e446f457b", "level": "INFO"}
+{"event": "report_job_completed", "job_id": "5cd9ad0d-2bdd-48e5-b413-880c27dcf834", "repository_id": 902, "snapshot_id": "95751038-f44e-4715-b4bd-932e446f457b", "level": "INFO"}
+{"event": "investigation_job_claimed", "job_id": "13db4cff-45d8-44ad-a46e-69e8b9066127", "repository_id": 902, "level": "INFO"}
+{"event": "investigation_evidence_published", "job_id": "13db4cff-45d8-44ad-a46e-69e8b9066127", "repository_id": 902, "snapshot_id": "95751038-f44e-4715-b4bd-932e446f457b", "level": "INFO"}
+{"event": "investigation_job_finalized", "job_id": "13db4cff-45d8-44ad-a46e-69e8b9066127", "repository_id": 902, "level": "INFO"}
+{"event": "report_job_claimed", "job_id": "2575c151-4098-45a1-aab1-4258ab1e638f", "repository_id": 902, "snapshot_id": "95751038-f44e-4715-b4bd-932e446f457b", "level": "INFO"}
+{"event": "report_job_completed", "job_id": "2575c151-4098-45a1-aab1-4258ab1e638f", "repository_id": 902, "snapshot_id": "95751038-f44e-4715-b4bd-932e446f457b", "level": "INFO"}
+{"event": "investigation_job_claimed", "job_id": "6a57b774-2a5e-437c-bfec-4b507ad07748", "repository_id": 902, "level": "INFO"}
+{"event": "investigation_evidence_published", "job_id": "6a57b774-2a5e-437c-bfec-4b507ad07748", "repository_id": 902, "snapshot_id": "95751038-f44e-4715-b4bd-932e446f457b", "level": "INFO"}
+{"event": "investigation_job_finalized", "job_id": "6a57b774-2a5e-437c-bfec-4b507ad07748", "repository_id": 902, "level": "INFO"}
+{"event": "report_job_claimed", "job_id": "cd78d542-c8df-422b-963a-301f63d87859", "repository_id": 902, "snapshot_id": "95751038-f44e-4715-b4bd-932e446f457b", "level": "INFO"}
+{"event": "report_job_completed", "job_id": "cd78d542-c8df-422b-963a-301f63d87859", "repository_id": 902, "snapshot_id": "95751038-f44e-4715-b4bd-932e446f457b", "level": "INFO"}
+{"event": "investigation_job_claimed", "job_id": "1f6e90db-a9b3-41c6-8a44-fb9fbf06b4fe", "repository_id": 902, "level": "INFO"}
+{"event": "investigation_evidence_published", "job_id": "1f6e90db-a9b3-41c6-8a44-fb9fbf06b4fe", "repository_id": 902, "snapshot_id": "95751038-f44e-4715-b4bd-932e446f457b", "level": "INFO"}
+{"event": "investigation_job_finalized", "job_id": "1f6e90db-a9b3-41c6-8a44-fb9fbf06b4fe", "repository_id": 902, "level": "INFO"}
+{"event": "report_job_claimed", "job_id": "d0698d19-1a1d-44b0-8707-7f58faeb192b", "repository_id": 902, "snapshot_id": "95751038-f44e-4715-b4bd-932e446f457b", "level": "INFO"}
+{"event": "report_job_completed", "job_id": "d0698d19-1a1d-44b0-8707-7f58faeb192b", "repository_id": 902, "snapshot_id": "95751038-f44e-4715-b4bd-932e446f457b", "level": "INFO"}
+{"event": "investigation_job_claimed", "job_id": "fe481265-27ff-4fa1-9f42-9f8544ff2a00", "repository_id": 902, "level": "INFO"}
+{"event": "investigation_evidence_published", "job_id": "fe481265-27ff-4fa1-9f42-9f8544ff2a00", "repository_id": 902, "snapshot_id": "95751038-f44e-4715-b4bd-932e446f457b", "level": "INFO"}
+{"event": "investigation_job_finalized", "job_id": "fe481265-27ff-4fa1-9f42-9f8544ff2a00", "repository_id": 902, "level": "INFO"}
+{"event": "report_job_claimed", "job_id": "524b0585-118e-4872-8d52-0b44835abfe4", "repository_id": 902, "snapshot_id": "95751038-f44e-4715-b4bd-932e446f457b", "level": "INFO"}
+{"event": "report_job_completed", "job_id": "524b0585-118e-4872-8d52-0b44835abfe4", "repository_id": 902, "snapshot_id": "95751038-f44e-4715-b4bd-932e446f457b", "level": "INFO"}
+{"event": "investigation_job_claimed", "job_id": "abc273a3-89e1-4e89-8600-65dfd4a198e3", "repository_id": 902, "level": "INFO"}
+{"event": "investigation_evidence_published", "job_id": "abc273a3-89e1-4e89-8600-65dfd4a198e3", "repository_id": 902, "snapshot_id": "95751038-f44e-4715-b4bd-932e446f457b", "level": "INFO"}
+{"event": "investigation_job_finalized", "job_id": "abc273a3-89e1-4e89-8600-65dfd4a198e3", "repository_id": 902, "level": "INFO"}
+{"event": "report_job_claimed", "job_id": "a15775e7-0adf-4d58-8bc4-c3455c953308", "repository_id": 902, "snapshot_id": "95751038-f44e-4715-b4bd-932e446f457b", "level": "INFO"}
+{"event": "report_job_completed", "job_id": "a15775e7-0adf-4d58-8bc4-c3455c953308", "repository_id": 902, "snapshot_id": "95751038-f44e-4715-b4bd-932e446f457b", "level": "INFO"}
+{"event": "investigation_job_claimed", "job_id": "d58059f3-dd6e-481e-b65c-bc5b3acd8f3e", "repository_id": 902, "level": "INFO"}
+{"event": "investigation_evidence_published", "job_id": "d58059f3-dd6e-481e-b65c-bc5b3acd8f3e", "repository_id": 902, "snapshot_id": "95751038-f44e-4715-b4bd-932e446f457b", "level": "INFO"}
+{"event": "investigation_job_finalized", "job_id": "d58059f3-dd6e-481e-b65c-bc5b3acd8f3e", "repository_id": 902, "level": "INFO"}
+{"event": "report_job_claimed", "job_id": "e71c93f5-0193-4049-8c09-b26a38e4523a", "repository_id": 902, "snapshot_id": "95751038-f44e-4715-b4bd-932e446f457b", "level": "INFO"}
+{"event": "report_job_completed", "job_id": "e71c93f5-0193-4049-8c09-b26a38e4523a", "repository_id": 902, "snapshot_id": "95751038-f44e-4715-b4bd-932e446f457b", "level": "INFO"}
+{"event": "investigation_job_claimed", "job_id": "5fd938c5-069a-410e-97cb-194b97afc15d", "repository_id": 902, "level": "INFO"}
+{"event": "investigation_evidence_published", "job_id": "5fd938c5-069a-410e-97cb-194b97afc15d", "repository_id": 902, "snapshot_id": "95751038-f44e-4715-b4bd-932e446f457b", "level": "INFO"}
+{"event": "investigation_job_finalized", "job_id": "5fd938c5-069a-410e-97cb-194b97afc15d", "repository_id": 902, "level": "INFO"}
+{"event": "report_job_claimed", "job_id": "57912276-4c58-4fdc-86c4-4064ecf77304", "repository_id": 902, "snapshot_id": "95751038-f44e-4715-b4bd-932e446f457b", "level": "INFO"}
+{"event": "report_job_completed", "job_id": "57912276-4c58-4fdc-86c4-4064ecf77304", "repository_id": 902, "snapshot_id": "95751038-f44e-4715-b4bd-932e446f457b", "level": "INFO"}
+{"event": "investigation_job_claimed", "job_id": "9203cc08-764a-4d65-bdad-3170d98c649d", "repository_id": 902, "level": "INFO"}
+{"event": "investigation_evidence_published", "job_id": "9203cc08-764a-4d65-bdad-3170d98c649d", "repository_id": 902, "snapshot_id": "95751038-f44e-4715-b4bd-932e446f457b", "level": "INFO"}
+{"event": "investigation_job_finalized", "job_id": "9203cc08-764a-4d65-bdad-3170d98c649d", "repository_id": 902, "level": "INFO"}
+{"event": "report_job_claimed", "job_id": "b75e71ff-387e-48e2-bc58-04d55ed84afb", "repository_id": 902, "snapshot_id": "95751038-f44e-4715-b4bd-932e446f457b", "level": "INFO"}
+{"event": "report_job_completed", "job_id": "b75e71ff-387e-48e2-bc58-04d55ed84afb", "repository_id": 902, "snapshot_id": "95751038-f44e-4715-b4bd-932e446f457b", "level": "INFO"}
+{"event": "investigation_job_claimed", "job_id": "a5a8ff0a-5fae-4c99-9d19-3252758166b8", "repository_id": 902, "level": "INFO"}
+{"event": "investigation_evidence_published", "job_id": "a5a8ff0a-5fae-4c99-9d19-3252758166b8", "repository_id": 902, "snapshot_id": "95751038-f44e-4715-b4bd-932e446f457b", "level": "INFO"}
+{"event": "investigation_job_finalized", "job_id": "a5a8ff0a-5fae-4c99-9d19-3252758166b8", "repository_id": 902, "level": "INFO"}
+{"event": "report_job_claimed", "job_id": "4c08e318-cd85-4441-8e6a-3d275996b4e0", "repository_id": 902, "snapshot_id": "95751038-f44e-4715-b4bd-932e446f457b", "level": "INFO"}
+{"event": "report_job_completed", "job_id": "4c08e318-cd85-4441-8e6a-3d275996b4e0", "repository_id": 902, "snapshot_id": "95751038-f44e-4715-b4bd-932e446f457b", "level": "INFO"}
+{"event": "investigation_job_claimed", "job_id": "9a453e1d-84a3-40fd-b820-e4c2056a396f", "repository_id": 902, "level": "INFO"}
+{"event": "investigation_evidence_published", "job_id": "9a453e1d-84a3-40fd-b820-e4c2056a396f", "repository_id": 902, "snapshot_id": "95751038-f44e-4715-b4bd-932e446f457b", "level": "INFO"}
+{"event": "investigation_job_finalized", "job_id": "9a453e1d-84a3-40fd-b820-e4c2056a396f", "repository_id": 902, "level": "INFO"}
+{"event": "report_job_claimed", "job_id": "4b15e1e1-0012-4dc8-abca-b46c670dae58", "repository_id": 902, "snapshot_id": "95751038-f44e-4715-b4bd-932e446f457b", "level": "INFO"}
+{"event": "report_job_completed", "job_id": "4b15e1e1-0012-4dc8-abca-b46c670dae58", "repository_id": 902, "snapshot_id": "95751038-f44e-4715-b4bd-932e446f457b", "level": "INFO"}
+{"event": "investigation_job_claimed", "job_id": "ec80fe97-d5f4-43ab-8e40-2671dd3fdce0", "repository_id": 902, "level": "INFO"}
+{"event": "investigation_evidence_published", "job_id": "ec80fe97-d5f4-43ab-8e40-2671dd3fdce0", "repository_id": 902, "snapshot_id": "95751038-f44e-4715-b4bd-932e446f457b", "level": "INFO"}
+{"event": "investigation_job_finalized", "job_id": "ec80fe97-d5f4-43ab-8e40-2671dd3fdce0", "repository_id": 902, "level": "INFO"}
+{"event": "report_job_claimed", "job_id": "70229dad-8c13-4272-8c6b-180a8ee43ce0", "repository_id": 902, "snapshot_id": "95751038-f44e-4715-b4bd-932e446f457b", "level": "INFO"}
+{"event": "report_job_completed", "job_id": "70229dad-8c13-4272-8c6b-180a8ee43ce0", "repository_id": 902, "snapshot_id": "95751038-f44e-4715-b4bd-932e446f457b", "level": "INFO"}
+{"event": "investigation_job_claimed", "job_id": "2c9e4de2-ed88-4784-9103-22a203b85401", "repository_id": 902, "level": "INFO"}
+{"event": "investigation_evidence_published", "job_id": "2c9e4de2-ed88-4784-9103-22a203b85401", "repository_id": 902, "snapshot_id": "95751038-f44e-4715-b4bd-932e446f457b", "level": "INFO"}
+{"event": "investigation_job_finalized", "job_id": "2c9e4de2-ed88-4784-9103-22a203b85401", "repository_id": 902, "level": "INFO"}
+{"event": "report_job_claimed", "job_id": "9bc72564-62e6-419f-8da4-82b987280f7f", "repository_id": 902, "snapshot_id": "95751038-f44e-4715-b4bd-932e446f457b", "level": "INFO"}
+{"event": "report_job_completed", "job_id": "9bc72564-62e6-419f-8da4-82b987280f7f", "repository_id": 902, "snapshot_id": "95751038-f44e-4715-b4bd-932e446f457b", "level": "INFO"}
+{"event": "investigation_job_claimed", "job_id": "6f128b5c-0d3c-41fb-940b-0d6c28ce0492", "repository_id": 902, "level": "INFO"}
+{"event": "investigation_evidence_published", "job_id": "6f128b5c-0d3c-41fb-940b-0d6c28ce0492", "repository_id": 902, "snapshot_id": "95751038-f44e-4715-b4bd-932e446f457b", "level": "INFO"}
+{"event": "investigation_job_finalized", "job_id": "6f128b5c-0d3c-41fb-940b-0d6c28ce0492", "repository_id": 902, "level": "INFO"}
+{"event": "report_job_claimed", "job_id": "3aa3aadf-819e-481f-aac0-127e4629b7f1", "repository_id": 902, "snapshot_id": "95751038-f44e-4715-b4bd-932e446f457b", "level": "INFO"}
+{"event": "report_job_completed", "job_id": "3aa3aadf-819e-481f-aac0-127e4629b7f1", "repository_id": 902, "snapshot_id": "95751038-f44e-4715-b4bd-932e446f457b", "level": "INFO"}
+{"event": "investigation_job_claimed", "job_id": "461fcbe1-b861-43ae-a2a7-c97c20c70020", "repository_id": 902, "level": "INFO"}
+{"event": "investigation_evidence_published", "job_id": "461fcbe1-b861-43ae-a2a7-c97c20c70020", "repository_id": 902, "snapshot_id": "95751038-f44e-4715-b4bd-932e446f457b", "level": "INFO"}
+{"event": "investigation_job_finalized", "job_id": "461fcbe1-b861-43ae-a2a7-c97c20c70020", "repository_id": 902, "level": "INFO"}
+{"event": "report_job_claimed", "job_id": "32258ab6-f066-4093-be13-1a42237b629b", "repository_id": 902, "snapshot_id": "95751038-f44e-4715-b4bd-932e446f457b", "level": "INFO"}
+{"event": "report_job_completed", "job_id": "32258ab6-f066-4093-be13-1a42237b629b", "repository_id": 902, "snapshot_id": "95751038-f44e-4715-b4bd-932e446f457b", "level": "INFO"}
+{"event": "investigation_job_claimed", "job_id": "de2b275f-f735-44f3-a250-3bd4fd00f54c", "repository_id": 902, "level": "INFO"}
+{"event": "investigation_evidence_published", "job_id": "de2b275f-f735-44f3-a250-3bd4fd00f54c", "repository_id": 902, "snapshot_id": "95751038-f44e-4715-b4bd-932e446f457b", "level": "INFO"}
+{"event": "investigation_job_finalized", "job_id": "de2b275f-f735-44f3-a250-3bd4fd00f54c", "repository_id": 902, "level": "INFO"}
+{"event": "report_job_claimed", "job_id": "3de99f21-046e-4d23-a292-7deb9381a89e", "repository_id": 902, "snapshot_id": "95751038-f44e-4715-b4bd-932e446f457b", "level": "INFO"}
+{"event": "report_job_completed", "job_id": "3de99f21-046e-4d23-a292-7deb9381a89e", "repository_id": 902, "snapshot_id": "95751038-f44e-4715-b4bd-932e446f457b", "level": "INFO"}
+{"event": "investigation_job_claimed", "job_id": "d7dd75e4-5701-4df5-92e4-be2b02cf41ac", "repository_id": 902, "level": "INFO"}
+{"event": "investigation_evidence_published", "job_id": "d7dd75e4-5701-4df5-92e4-be2b02cf41ac", "repository_id": 902, "snapshot_id": "95751038-f44e-4715-b4bd-932e446f457b", "level": "INFO"}
+{"event": "investigation_job_finalized", "job_id": "d7dd75e4-5701-4df5-92e4-be2b02cf41ac", "repository_id": 902, "level": "INFO"}
+{"event": "report_job_claimed", "job_id": "105fc1c1-f359-4a4f-93a5-2e246c30fec5", "repository_id": 902, "snapshot_id": "95751038-f44e-4715-b4bd-932e446f457b", "level": "INFO"}
+{"event": "report_job_completed", "job_id": "105fc1c1-f359-4a4f-93a5-2e246c30fec5", "repository_id": 902, "snapshot_id": "95751038-f44e-4715-b4bd-932e446f457b", "level": "INFO"}
+Confirmed empty disposable source database: repopilot_4f_disposable_68ed7b3fd6171439; server=172.17.0.4/32:5432; revision=0013
+Published disposable snapshot 95751038-f44e-4715-b4bd-932e446f457b; commit=30705da4c044192cab4ac207e253ab8e8a1bd100; counts={'files': 104, 'chunks': 889, 'skipped_files': 1}
+Evaluation saved to /Volumes/Samsung SSD/Project/RepoPilot/apps/api/evaluation/4f-issue-report-v1-68ed7b3fd6171439.json and /Volumes/Samsung SSD/Project/RepoPilot/apps/api/evaluation/4f-issue-report-v1-68ed7b3fd6171439.md; snapshot=95751038-f44e-4715-b4bd-932e446f457b
+Container and its new data volume retained: repopilot-4f-disposable-68ed7b3fd6171439
+Script final exit status: 0; run: 68ed7b3fd6171439; log: /Volumes/Samsung SSD/Project/RepoPilot/apps/api/evaluation/4f-fixture-68ed7b3fd6171439.log

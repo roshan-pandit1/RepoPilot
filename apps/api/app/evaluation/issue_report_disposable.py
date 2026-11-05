@@ -80,7 +80,7 @@ def main():
     with engine.connect() as db:
         database, address, port = db.execute(text('select current_database(), inet_server_addr()::text, inet_server_port()')).one()
         revision = db.execute(text('select version_num from alembic_version')).scalar_one()
-        if database != url.database or revision != '0009':
+        if database != url.database or revision != '0013':
             raise SystemExit('Wrong database or migration revision.')
         if db.execute(text('select count(*) from code_snapshots')).scalar_one() != 0:
             raise SystemExit('Database already contains a source snapshot.')

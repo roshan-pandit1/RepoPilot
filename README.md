@@ -1,68 +1,102 @@
 # RepoPilot
 
-A modular monolith for GitHub issue ingestion, commit-pinned source retrieval and durable
-investigations. Sprint 4 checkpoint 4D produces evidence-grounded reports with a deterministic
-mock provider. Real AI inference and GitHub write operations are not enabled.
+RepoPilot helps a developer move from a GitHub issue to inspectable source candidates. It
+ingests signed issue events, indexes authorized public Python repositories at a specific commit,
+and runs durable investigations that return ranked, commit-pinned code citations. Its dashboard
+lets an authenticated user reopen investigations and browse evidence.
 
-**Status: Sprint 3 C3, Sprint 4 checkpoints 4A–4F and Sprint 5A were verified locally**, including
-authorized GitHub reads and the earlier 4D PostgreSQL/Redis/Celery workflow. These checks do not
-establish production readiness or real-model diagnostic quality. See [verification results](docs/verification.md).
+**MOCK REPORT — DEMONSTRATION ONLY.** Reports use a deterministic mock by default. They do
+not establish a root cause or demonstrate measured AI diagnosis quality. The real-provider
+foundation is disabled by default; no paid model or external token-counting call is needed.
 
-**Sprint 1 historical status: verified locally.** The host-reported signed webhook
-smoke test passed through PostgreSQL, Redis/Celery, the authorized API, and the dashboard data
-route; a screenshot showed processed issues in the browser. The PostgreSQL-backed test suite
-passed all 39 tests without warnings, and the clean frontend install, type check, lint, tests,
-and build passed. Nine frontend tests now include server-rendered loading, error, unauthorized,
-empty, and issue-list states; browser fetch transitions and a real GitHub Actions run remain open.
-The dependency lockfiles are tracked. See [verification results](docs/verification.md).
+The local implementation has automated PostgreSQL and frontend coverage. The latest dashboard
+browser acceptance remains outstanding; no public deployment or online demo is claimed.
+See [final status](docs/final-project-status.md) and [verification](docs/verification.md).
 
-## Quick start
+## What it does
 
-Requirements: Docker Engine/Desktop with Compose v2 supporting `up --wait`, Python 3.12+
-(or a recent Python for the small environment helper), Node.js 22 for host frontend checks,
-and `uv` 0.13.6 for dependency locking (matching CI and the API image). Internet access is needed for first-time image/dependency downloads.
+- Authenticates a GitHub App user and enrolls authorized personal-account public repositories.
+- Validates signed webhooks and dispatches durable work through transactional outboxes.
+- Indexes bounded Python source at a pinned commit; `terms-v2` ranks lexical evidence.
+- Shows investigation history, job states, source excerpts and exact GitHub line citations.
+- Presents explicitly requested, evidence-grounded mock reports with uncertainty and limitations.
+- Offers opt-in CIE-v1 static observations on existing evidence, without executing source code.
 
-From this directory:
+## Architecture
+
+```mermaid
+flowchart LR
+  GH[GitHub App and webhooks] -->|signed delivery| API[FastAPI modular monolith]
+  UI[Next.js dashboard] -->|same-origin server proxy| API
+  API -->|authorization and durable outbox| PG[(PostgreSQL and pgvector)]
+  D[Outbox dispatcher] -->|publish| R[(Redis)]
+  D -->|claim outbox| PG
+  R --> W[Celery worker]
+  W -->|authorized GitHub reads| GH
+  W -->|snapshot, jobs, evidence and mock reports| PG
+```
+
+Webhook ingestion verifies the exact received bytes before parsing. Delivery and outbox
+records commit together; the dispatcher publishes asynchronously, and workers use leases and
+idempotent database effects for at-least-once delivery. Investigation jobs pin a published
+snapshot. Citations identify its commit, file and inclusive lines; retrieved candidates are
+not verified causes.
+
+The optional **Code Intelligence — Rule-Based Analysis** action parses existing authorized
+evidence with bounded Python AST analysis and an in-memory relationship graph. It reports
+explicit issue/source matches with uncertainty under **RULE-BASED ANALYSIS — POSSIBLE CAUSES,
+NOT VERIFIED**. It makes no model call and leaves `terms-v2` retrieval unchanged. Disposable
+PostgreSQL regressions passed; browser acceptance remains outstanding. See the
+[CIE-v1 design and results](docs/code-intelligence-engine.md).
+
+**Stack:** Next.js App Router, TypeScript and Tailwind; Python, FastAPI and SQLAlchemy;
+PostgreSQL 16 with pgvector; Redis and Celery; Docker Compose and Alembic. Current investigation
+retrieval is lexical; fake vectors test mechanics only and real semantic quality is unmeasured.
+
+## Local setup
+
+Requirements: Docker Desktop/Engine and Compose v2, Python 3.12+ for the environment helper,
+and internet access for initial image and dependency downloads. Node 22–24 is needed for host
+frontend checks; `uv` 0.13.6 is used for Python lockfile maintenance.
+
+For a **new, isolated local database**, from the repository root:
 
 ```bash
-# Creates a private, ignored .env with random development-only credentials.
-# Refuses to overwrite an existing file. Alternatively copy and edit .env.example.
 test -f .env || python3 infra/init_env.py
-
 make dev
-make migrate
-make seed
-make smoke
 ```
 
-Open **http://localhost:3000**. API docs are at **http://localhost:8000/docs**.
-`make seed` creates only the clearly marked demo identity, installation, and repository.
-`make smoke` submits a signed demo issue and waits for the real worker to process it.
-Both `make seed` and `make smoke` require `APP_ENV=development` and
-`DEMO_AUTH_ENABLED=true` on the running stack; they intentionally fail when the demo is
-disabled for real GitHub sign-in. For smoke testing without changing that stack, use a
-separate Compose project and database. The successful host procedure and its limitations are
-recorded in `docs/verification.md`.
-The dashboard refreshes every five seconds in demo mode and every thirty seconds for real
-accounts. Seed is repeatable and does not re-enable revoked access.
-The smoke test checks unauthenticated reads, invalid signatures, duplicate deliveries, database
-issue uniqueness, and the dashboard data route; it does not inspect a rendered browser UI.
-A fresh `.env` was generated locally during implementation; do not overwrite it or commit it.
+The helper creates a private development-only `.env` and refuses to overwrite one. Consult
+[.env.example](.env.example) and the [environment reference](#environment); never commit
+credentials. Compose exposes web at `http://localhost:3000` and API docs at
+`http://localhost:8000/docs`, both on loopback. PostgreSQL and Redis have no published host ports.
+The generated shared demo identity is for a private local demo only and must not be exposed.
 
-`make dev` builds images, starts PostgreSQL 16 with pgvector, Redis, API, worker, outbox
-dispatcher, and web, and waits for health checks. A one-shot migration service runs first.
-`make migrate` is useful when adding migrations later. API/web bind to loopback only;
-PostgreSQL/Redis do not expose host ports. `make down` preserves database volumes.
+**Migration caution:** `make dev` runs the Compose migration service automatically against
+its configured database. Do not run it, `make migrate`, or `alembic upgrade` against an existing
+application database without separately reviewing and authorizing the migration and a protected
+backup. `make down` preserves volumes. See [local operations](docs/local-operations.md).
 
-```bash
-make test                         # Pytest in the API container (SQLite unit/service suite)
-cd apps/web && npm ci && npm test && cd ../..
-make lint                         # Ruff, frontend type checking, ESLint
-make smoke                        # Actual HTTP/database/broker/worker/web-data integration
-```
+To use an existing real GitHub installation, configure the GitHub App OAuth variables and fixed
+callback described in [GitHub App setup](#github-app-setup-sprint-2a), sign in, and select an
+already enrolled public repository. In its investigation history, open an existing completed
+job to inspect evidence and an existing report. This is read-only; do not click **Investigate
+issue** or **Generate report** unless you intend to create a job. GitHub must be able to reach a
+separately configured webhook ingress for new deliveries; no public ingress is provided here.
 
-Docker and CI use `uv sync --locked` and `npm ci`; both lockfiles were included in the
-previous Git commit. Run `make lock` only when intentionally updating dependency resolution.
+## Testing and evidence
+
+The latest isolated PostgreSQL regression passed **587 tests** and **33/33** adversarial cases;
+frontend checks passed **58 tests**, TypeScript, ESLint and a production build. The paired
+19-case synthetic retrieval evaluation reported `terms-v2` Recall@10 **0.7188** and nDCG@10
+**0.5469**. Labels are incomplete and the candidate was selected on the same data; these values
+are not a claim of production or diagnostic quality. See [evaluation details](docs/sprint-5c1-retrieval.md).
+
+For repeatable checks use the commands in [final status](docs/final-project-status.md). Test
+databases must be disposable: backend fixtures drop tables. Never point `TEST_DATABASE_URL` at
+application data. The [five-minute demo and interview guide](docs/portfolio-guide.md) and
+[browser acceptance checklist](docs/sprint-5c2-dashboard.md#read-only-browser-acceptance-on-the-mac)
+use existing data and do not create jobs.
 
 ## Review and version control
 
@@ -199,6 +233,9 @@ Issue titles are rendered as React text, never HTML. No fake issue rows are embe
 | `GITHUB_APP_ID`, `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET` | GitHub App ID and OAuth client credentials |
 | `GITHUB_TOKEN_ENCRYPTION_KEY` | Fernet key used to encrypt GitHub tokens and one-time PKCE verifiers |
 | `GITHUB_CALLBACK_URL`, `WEB_ORIGIN` | Fixed browser origin and `/api/auth/callback`; HTTPS is required in production |
+| `INVESTIGATION_PROVIDER` | Backend host setting; defaults to `mock`. Real-provider execution remains disabled by default |
+| `INVESTIGATION_QUERY_LIMIT`, `INVESTIGATION_PER_QUERY_LIMIT`, `INVESTIGATION_EVIDENCE_LIMIT` | Bounds for investigation source retrieval |
+| `EMBEDDING_PROVIDER`, `EMBEDDING_ALLOW_PAID` | Embeddings default to disabled and paid access defaults to false |
 
 Never log `.env`, Authorization headers, tokens, or webhook bodies. Application logs use fixed
 JSON event names; SQLAlchemy hides parameters from errors. PostgreSQL holds issue descriptions
@@ -352,8 +389,8 @@ dispatcher, Celery, and Next.js independently using the commands from Compose.
 - Only issue opened/edited events are supported; close/reopen/delete synchronization is deferred.
 - Real AI inference, GitHub writes and private-repository ingestion remain disabled.
 - The dashboard repository picker is capped at 100. Issue pagination is offset-based.
-- Readiness does not prove worker health; the smoke test checks the original webhook processing path end to end.
-- No deployment, HA guarantee, backup/restore drill, or browser-rendered E2E test has been performed.
+- Readiness does not verify the Alembic revision or worker health; the smoke test checks the original webhook processing path end to end.
+- No deployment, HA guarantee, application-backup restore drill, or browser-rendered E2E test has been performed. A synthetic isolated PostgreSQL/pgvector dump and restore was verified; it does not verify application-backup recovery.
 
 The [Sprint 4 plan](docs/sprint-4-investigator-plan.md) records the remaining evaluation,
 security and production-readiness work.
@@ -523,11 +560,20 @@ see `docs/verification.md` for metrics, limitations and execution details.
 
 The issue inbox lets a signed-in user select a synchronized issue or enter an issue number for
 an authorized repository. Load the issue to see bounded GitHub context, then explicitly start
-an investigation or open an existing job by UUID. The dashboard shows actual job states,
+an investigation or reopen one from the repository's paginated history (or by UUID). History
+shows the signed-in user's jobs, supports status filtering, and rechecks repository access.
+The dashboard shows actual job states,
 snapshot, bounded source excerpts and validated commit-pinned citations. A completed job can
 explicitly request its one report; the default mock report shows evidence, uncertainty,
 missing information and diagnostic steps under **MOCK REPORT — DEMONSTRATION ONLY**.
 No investigation or report starts on page load.
+
+`GET /v1/repositories/{repository_id}/investigations` is a read-only, authenticated history
+listing. It accepts `limit` (1–50), `offset` (0–10000) and an optional job `status`, and returns
+only the requesting user's jobs for the authorized repository. Titles appear when a matching
+locally synchronized issue exists. The same-origin history proxy requests pages of 20; no source
+snippets are included. The Sprint 5C2 browser acceptance is tracked in
+`docs/sprint-5c2-dashboard.md`.
 
 Job and report status polling has a fixed limit and stops on terminal states. Displayed evidence
 and reports are reauthorized periodically, cleared on access failure or when the tab is hidden,

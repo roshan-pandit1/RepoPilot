@@ -206,6 +206,28 @@ class CodeSnapshot(Base):
     )
 
 
+class SnapshotPublication(Base):
+    __tablename__ = "snapshot_publications"
+    snapshot_id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    repository_id: Mapped[int] = mapped_column(BigInteger, nullable=False)
+    tenant_id: Mapped[int] = mapped_column(Integer, nullable=False)
+    commit_sha: Mapped[str] = mapped_column(String(40), nullable=False)
+    file_count: Mapped[int] = mapped_column(Integer, nullable=False)
+    chunk_count: Mapped[int] = mapped_column(Integer, nullable=False)
+    skipped_count: Mapped[int] = mapped_column(Integer, nullable=False)
+    published_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=now)
+    revoked_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    revocation_reason: Mapped[str | None] = mapped_column(String(40))
+    __table_args__ = (
+        ForeignKeyConstraint(["snapshot_id", "repository_id", "tenant_id"],
+                             ["code_snapshots.id", "code_snapshots.repository_id", "code_snapshots.tenant_id"],
+                             name="fk_snapshot_publication_owner"),
+        CheckConstraint("(revoked_at IS NULL AND revocation_reason IS NULL) OR "
+                        "(revoked_at IS NOT NULL AND revocation_reason IS NOT NULL AND revocation_reason IN ('security', 'integrity'))",
+                        name="ck_snapshot_publication_revocation"),
+    )
+
+
 class IndexedFile(Base):
     __tablename__ = "indexed_files"
     id: Mapped[str] = mapped_column(String(36), primary_key=True)
@@ -405,6 +427,26 @@ class InvestigationEvidence(Base):
         UniqueConstraint("job_id", "chunk_id", name="uq_evidence_job_chunk"),
         UniqueConstraint("job_id", "rank", name="uq_evidence_job_rank"),
         CheckConstraint("rank > 0 AND query_rank > 0 AND method = 'keyword'", name="ck_evidence_rank_method"),
+    )
+
+
+class InvestigationEvidenceManifest(Base):
+    __tablename__ = "investigation_evidence_manifests"
+    job_id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    snapshot_id: Mapped[str] = mapped_column(String(36), nullable=False)
+    repository_id: Mapped[int] = mapped_column(BigInteger, nullable=False)
+    tenant_id: Mapped[int] = mapped_column(Integer, nullable=False)
+    commit_sha: Mapped[str] = mapped_column(String(40), nullable=False)
+    evidence_count: Mapped[int] = mapped_column(Integer, nullable=False)
+    digest: Mapped[str] = mapped_column(String(64), nullable=False)
+    version: Mapped[str] = mapped_column(String(30), nullable=False)
+    recorded_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=now)
+    __table_args__ = (
+        ForeignKeyConstraint(["job_id", "snapshot_id", "repository_id", "tenant_id"],
+            ["investigation_jobs.id", "investigation_jobs.snapshot_id", "investigation_jobs.repository_id", "investigation_jobs.tenant_id"],
+            name="fk_evidence_manifest_owner"),
+        CheckConstraint("evidence_count BETWEEN 0 AND 30", name="ck_evidence_manifest_count"),
+        CheckConstraint("version = 'evidence-v1'", name="ck_evidence_manifest_version"),
     )
 
 

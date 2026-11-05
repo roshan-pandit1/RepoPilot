@@ -54,6 +54,8 @@ def test_legacy_job_survives_evidence_migration(tmp_path):
         assert db.execute("SELECT status, snapshot_id FROM investigation_jobs WHERE id='v4c'").fetchone() == ('completed', 'snap')
         assert db.execute("SELECT chunk_id FROM investigation_evidence WHERE id='ev'").fetchone() == ('chunk',)
         assert db.execute('select status,attempts from investigation_outbox where job_id=?', ('legacy',)).fetchone() == ('processed', 2)
+        assert db.execute('select count(*) from snapshot_publications').fetchone()[0] == 0
+        assert db.execute('select count(*) from investigation_evidence_manifests').fetchone()[0] == 0
         assert db.execute("SELECT mode,status,max_input_tokens FROM investigation_token_counts WHERE id='sim-count'").fetchone() == ('simulated', 'ready', 16384)
         assert db.execute('SELECT count(*) FROM investigation_provider_token_counts').fetchone()[0] == 0
         sql = db.execute("select sql from sqlite_master where name='investigation_jobs'").fetchone()[0]
@@ -143,6 +145,8 @@ def test_postgres_legacy_job_survives_migration():
             assert tuple(db.execute(text("SELECT status,attempts FROM investigation_outbox WHERE job_id='legacy'")).one()) == ('processed', 2)
             assert tuple(db.execute(text("SELECT mode,status,max_input_tokens FROM investigation_token_counts WHERE id='sim-count'")).one()) == ('simulated', 'ready', 16384)
             assert db.execute(text('SELECT count(*) FROM investigation_provider_token_counts')).scalar_one() == 0
+            assert db.execute(text('SELECT count(*) FROM snapshot_publications')).scalar_one() == 0
+            assert db.execute(text('SELECT count(*) FROM investigation_evidence_manifests')).scalar_one() == 0
     finally:
         scoped.dispose()
         with admin.begin() as db:

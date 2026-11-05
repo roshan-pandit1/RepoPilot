@@ -1,0 +1,36 @@
+New disposable container: repopilot-5c1-checks-9b4a749619a3f267; database: repopilot_5b2b_9b4a749619a3f267; run: 9b4a749619a3f267
+Test source fingerprint before: 6539a40af0a0f77ad839c6666bba6fb571e8eecd33880f392d1948160617887e 143; Git HEAD: 1d26667b64527b41e67013bd00d326ab86ada8de
+Confirmed empty dedicated database: repopilot_5b2b_9b4a749619a3f267; host port=49212
+........................................................................ [ 12%]
+.........F.............................................................. [ 24%]
+........................................................................ [ 36%]
+..........FF............................................................ [ 48%]
+........................................................................ [ 60%]
+........................................................................ [ 72%]
+........................................................................ [ 84%]
+........................................................................ [ 96%]
+.......................                                                  [100%]Disposable verification incomplete: failed, skipped or missing required cases.
+
+=================================== FAILURES ===================================
+__________ test_analysis_process_returns_result_or_stops_on_deadline ___________
+tests/test_code_intelligence.py:102: in test_analysis_process_returns_result_or_stops_on_deadline
+    assert run_bounded('function run fails', '', evidence)['findings']
+app/modules/investigation/code_intelligence.py:58: in run_bounded
+    raise AnalysisTimeout() from None
+E   app.modules.investigation.code_intelligence.AnalysisTimeout
+________ test_code_intelligence_requires_authorized_unchanged_evidence _________
+tests/test_investigation_evidence.py:53: in test_code_intelligence_requires_authorized_unchanged_evidence
+    assert response.status_code == 200
+E   assert 503 == 200
+E    +  where 503 = <Response [503 Service Unavailable]>.status_code
+______________ test_code_intelligence_withholds_sensitive_source _______________
+tests/test_investigation_evidence.py:99: in test_code_intelligence_withholds_sensitive_source
+    assert response.status_code == 200 and response.json()['abstained']
+E   assert (503 == 200)
+E    +  where 503 = <Response [503 Service Unavailable]>.status_code
+=========================== short test summary info ============================
+FAILED tests/test_code_intelligence.py::test_analysis_process_returns_result_or_stops_on_deadline
+FAILED tests/test_investigation_evidence.py::test_code_intelligence_requires_authorized_unchanged_evidence
+FAILED tests/test_investigation_evidence.py::test_code_intelligence_withholds_sensitive_source
+3 failed, 596 passed in 174.74s (0:02:54)
+Script final exit status: 1; run: 9b4a749619a3f267; log: /Volumes/Samsung SSD/Project/RepoPilot/apps/api/evaluation/5c1-checks-9b4a749619a3f267.log

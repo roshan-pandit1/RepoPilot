@@ -4,7 +4,7 @@ from uuid import uuid4
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.domain.models import CodeChunk, CodeSnapshot, IndexedFile, Repository
+from app.domain.models import CodeChunk, CodeSnapshot, IndexedFile, Repository, SnapshotPublication, now
 from app.modules.ingestion.code_collect import Collection
 from app.modules.ingestion.code_snapshot import SnapshotPlan
 
@@ -29,6 +29,10 @@ def publish_snapshot(db: Session, repository: Repository, plan: SnapshotPlan,
                             skipped_count=collection.skipped_files)
     db.add(snapshot)
     db.flush()
+    db.add(SnapshotPublication(snapshot_id=snapshot.id, repository_id=repository.id,
+                               tenant_id=repository.tenant_id, commit_sha=snapshot.commit_sha,
+                               file_count=snapshot.file_count, chunk_count=snapshot.chunk_count,
+                               skipped_count=snapshot.skipped_count))
     for item in collection.files:
         file = IndexedFile(id=str(uuid4()), snapshot_id=snapshot.id, repository_id=repository.id,
                            tenant_id=repository.tenant_id, path=item.path, content_hash=item.content_hash)
@@ -41,3 +45,18 @@ def publish_snapshot(db: Session, repository: Repository, plan: SnapshotPlan,
                              source_text=chunk.text))
     db.flush()
     return snapshot
+
+
+def revoke_snapshot(db: Session, repository: Repository, snapshot_id: str, reason: str) -> None:
+    """Revoke a recorded publication under the caller's repository lock; no public mutation API."""
+    if reason not in {"security", "integrity"}:
+        raise ValueError("invalid_snapshot_revocation_reason")
+    snapshot = db.scalar(select(CodeSnapshot).where(CodeSnapshot.id == snapshot_id,
+        CodeSnapshot.repository_id == repository.id, CodeSnapshot.tenant_id == repository.tenant_id).with_for_update())
+    publication = db.scalar(select(SnapshotPublication).where(
+        SnapshotPublication.snapshot_id == snapshot_id, SnapshotPublication.repository_id == repository.id,
+        SnapshotPublication.tenant_id == repository.tenant_id).with_for_update())
+    if not snapshot or not publication or publication.commit_sha != snapshot.commit_sha:
+        raise ValueError("snapshot_publication_unavailable")
+    if publication.revoked_at is None:
+        publication.revoked_at, publication.revocation_reason = now(), reason

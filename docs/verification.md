@@ -1,5 +1,325 @@
 # Verification record
 
+## Final demo Stage 3 — in progress
+
+**REPOPILOT — FINAL BROWSER ACCEPTANCE INCOMPLETE.**
+
+On 2026-11-05 Docker Desktop was started after the daemon was unavailable; its existing restart
+policies started the isolated services. The read-only preflight confirmed project
+`repopilot-local`, database `repopilot`, revision `0014`, expected published snapshot
+`b11f8c40-2d4b-4ab3-a4d4-d053249f8bc8` and commit
+`1d26667b64527b41e67013bd00d326ab86ada8de`. The snapshot remains partial with one skipped
+file. The API and web returned HTTP 200, Redis and outbox queues were empty, and one Celery
+worker reported zero active, reserved and scheduled tasks. Mock mode and disabled paid
+providers were verified. The user's GitHub sign-in resulted in one active repository-tenant
+session; no credential or cookie was read. Baseline counts were two legacy investigations and
+one report. Chrome automation was unavailable, so further browser actions require the user.
+Two new completed investigations were subsequently observed despite the one-investigation
+limit: `213efc43-176c-478d-ab46-84ec187060f8` and
+`d4a174c6-e74e-4996-9d67-1b8194df1fc1`. Both are pinned to the approved current snapshot,
+have one worker attempt and 20 evidence rows. The user's screenshot shows the second completed
+and displaying the partial-snapshot warning. For the first job, the evidence manifest and
+outbox validated, and **20/20** source ranges and full-file hashes matched the pinned local Git
+commit. The first job was selected for remaining checks. The extra investigation is a departure
+from the authorized count and must remain visible in the record.
+The user's [history screenshot](screenshots/stage3-investigation-history.png) confirms the
+signed-in dashboard, issue #1 and both new completed jobs before report generation. Later
+[evidence](screenshots/stage3-completed-evidence.png) and
+[report](screenshots/stage3-mock-report.png) screenshots show the first job's completed state,
+20 evidence results, partial-snapshot warning and clearly labeled mock report. A read-only
+database check found one new report `55caaefa-0264-42bd-ba76-95fd2c3ca8fa` and its completed
+report job `8157b294-b30a-4700-90d2-70284d20526e`, attached to the first investigation and
+using `mock` / `deterministic-v1`. The application revalidated its one citation against 20
+evidence items. CIE output for this job, opening the GitHub link, reopening from history and
+mobile acceptance remain pending.
+
+## Final demo Stage 2 — isolated migration and service restart
+
+On 2026-11-04, the user explicitly authorized the `repopilot-local` image rebuild, migration
+from `0013` to `0014`, and replacement of the four application containers. Preflight confirmed
+the database, volume, snapshot, empty pending queues and stopped application services. The
+Stage 1 archive hash and isolated restore result were revalidated; current metadata matched
+the pre-migration backup.
+
+API and web images built successfully, including the Next.js production build. The resulting
+API image is `sha256:839d58f92f8cd1fbf52e766934434133ed5c35f2d7adbdffa665ac393597ca9b`
+and web image is `sha256:8c47e0f0104dadd5330952dfd536a47f4e360e338363775e3b28eef5b7dbdde1`.
+The API, worker and dispatcher use the same new API image. Running backend source and `0014`
+migration hashes matched the checkout.
+
+The reviewed one-off API command applied **only `0014`**, with lock and statement timeouts,
+without starting the Compose migration service. Read-only verification confirmed revision
+`0014`, both new tables, and zero rows in both provenance tables. Existing repository,
+snapshot, investigation, evidence and report metadata matched the pre-migration backup.
+The same comparison passed again after restart, including the recorded session count.
+Snapshot `b11f8c40-2d4b-4ab3-a4d4-d053249f8bc8` remains current at commit
+`1d26667b64527b41e67013bd00d326ab86ada8de`, with one skipped file. The database still has
+two investigations and one mock report; the latest indexing job was unchanged.
+
+The four authorized application services were replaced and started. API and web health are
+healthy; `/ready` and web root returned HTTP 200. Worker and dispatcher are running with zero
+restarts, the worker responded to Celery inspection with zero active, reserved and scheduled
+tasks, and their logs showed no traceback or critical/error lines. PostgreSQL and Redis remain
+on their original containers and volumes. Database pending/active job counts and Redis queued
+and unacknowledged counts were zero. OAuth configuration is present, and mock mode, real-model
+disablement, disabled paid embeddings and disabled external token counting were verified.
+
+Investigation and CIE GET routes are present in OpenAPI; unauthenticated backend and proxy
+requests returned HTTP 401. An initial route check that inspected `app.routes` directly failed
+because this FastAPI version exposes included routers as lazy wrapper objects; the OpenAPI
+and HTTP checks passed. Compose's dry-run restart preview also returned a dependency-health
+error while the old API was intentionally stopped; the actual authorized restart succeeded.
+The one-off migration container `repopilot-local-api-run-9cb324c0d05a` was retained and is
+reported as an orphan by Compose; it was not deleted. The stopped Stage 1 dispatcher had exit
+code 137; its cause was not established, and Stage 1 worker and queue checks showed no active
+tasks. The new dispatcher is running with no restarts.
+
+No new investigation, report, OAuth session, reindex, paid request, legacy backfill, volume
+deletion, restore or automatic rollback was performed in Stage 2. The current snapshot
+predates `0014`, so it has no publication record: a new job can use it while current, but
+superseding it will still leave that job ineligible for historical reads. The old demo jobs
+remain fail-closed. Final authenticated browser acceptance and any new demo writes require
+separate approval. **REPOPILOT STAGE 2 — VERIFIED LOCALLY.**
+
+## Final demo Stage 1 — backup and isolated restore
+
+On 2026-11-04, the user explicitly authorized the Stage 1 preflight, Celery inspection,
+quiescence, backup and isolated restore. Read-only checks confirmed Docker context
+`desktop-linux`, project `repopilot-local`, PostgreSQL container `repopilot-local-postgres-1`,
+volume `repopilot-local_postgres-data`, database `repopilot`, revision `0013`, and published
+snapshot `b11f8c40-2d4b-4ab3-a4d4-d053249f8bc8` at commit
+`1d26667b64527b41e67013bd00d326ab86ada8de`. Database pending/active counts, other open
+transactions, Redis queue and unacknowledged counts were zero. Authorized Celery inspection
+found one responding worker and zero active, reserved or scheduled tasks.
+
+The web and API were stopped first, the queues were checked again, then the dispatcher and
+worker were stopped. PostgreSQL and Redis remained running on their existing volumes. The
+backup procedure required a one-line correction: its `pg_restore --list` check now uses
+`docker exec -i`, because Docker otherwise closes standard input. The corrected script passed
+`bash -n` before execution. No service was rebuilt or restarted.
+
+The private custom-format backup was written to
+`/Users/roshan/Library/Application Support/RepoPilot/backups/repopilot-20261104T103046Z.RbmJ8dtx/database.dump`.
+Its independently recomputed SHA-256 is
+`2eba6de1d6fce0554bf646314f5836ecad3c9c80b295c6d32ebd175cabd39b77`;
+the directory is mode 700 and the archive mode 600. The archive catalog and before/after
+metadata checks passed. An actual restore into retained network-isolated container
+`repopilot-final-restore-4212f9efe26c1817` passed the stored JSON verification: revision
+`0013`, target repository/issue, current snapshot and recorded metadata matched. Restored
+totals included 2 investigations, 40 evidence rows and 1 report. The source database was
+subsequently rechecked at `0013` with the same published snapshot. The restore used
+`--no-owner --no-privileges`; role/grant fidelity, external encryption keys and complete
+application-level recovery remain unverified. The archive is not automatically encrypted.
+No migration, reindex, new job/report, paid request, volume deletion or legacy repair was
+performed. Stage 2 requires separate approval.
+
+## Final demo preparation — read-only preflight
+
+Current context `desktop-linux`, project `repopilot-local`, container
+`repopilot-local-postgres-1`, volume `repopilot-local_postgres-data`, database `repopilot`,
+PostgreSQL **16.15**, revision **0013** and 35 public tables were confirmed. The enabled
+repository and issue #1 exist. Current snapshot `b11f8c40-2d4b-4ab3-a4d4-d053249f8bc8`
+pins commit `1d26667b64527b41e67013bd00d326ab86ada8de`, with 135 files, 1,482 chunks and
+one skipped file; latest index status is partial. The database has two investigations,
+40 evidence rows and one report. No pending database work, Redis queued/unacknowledged
+messages or other open database transactions were observed at that instant. In-memory Celery
+active/reserved/scheduled state has not been inspected because its control protocol writes
+temporary Redis messages. OAuth configuration is present; mock provider and paid-disabled
+settings were verified. Running backend images lack `0014` and differ from current source.
+
+The [execution plan](final-demo-execution-plan.md) and backup/restore scripts were reviewed;
+the Compose config, sanitized target guard and read-only metadata queries passed, and the
+scripts passed shell syntax checks. The new configuration guard also passed Ruff. These are
+preparations, not evidence of a successful backup, isolated restore,
+application migration, service restart or browser acceptance. No such action or database
+write was performed. Current snapshot `b11f8c40-...` predates `0014` and cannot gain a
+durable historical publication record merely by migration.
+
+## Historical snapshot correction — disposable verification
+
+Revision `0014` adds new publication and evidence-manifest tables, with no legacy backfill.
+The publication record separates current selection from historical eligibility and records
+security/integrity revocation; the worker atomically records an evidence count and versioned
+digest at finalization. Historical evidence, reports and CIE require publication provenance,
+no revocation, an intact manifest and the existing authorization and source/citation checks.
+Partial snapshots carry an explicit warning; legacy superseded jobs without original records
+remain closed. The normal application databases were not migrated or changed, services were
+not restarted, and existing data was not repaired. The implementation is not deployed.
+
+The final focused run used fresh disposable PostgreSQL container
+`repopilot-historical-check-642ff6d15020631e`: **103 passed, zero skipped**, including the
+legacy migration and concurrent duplicate-worker tests. Alembic reached **0014 (head)**
+and reported no drift. The application databases were not migration targets. The existing
+adversarial fixture passed **33/33**. In a network-isolated container with the web source
+mounted read-only, **61 frontend tests passed**, TypeScript passed and ESLint passed for the
+changed frontend files. Ruff and `git diff --check` passed. The migration and tests do not
+establish browser acceptance or provide a trustworthy backfill for the legacy demo jobs.
+
+## Historical snapshot forensic follow-up
+
+See [the focused assessment](historical-snapshot-assessment.md). Sanitized API logs record an
+authenticated index-request path for job `34d8ea4f-0e45-4e03-a9f2-406bc7aa3d4b`, and the
+dispatcher/worker logs record its publication; the requester or button click cannot be
+determined from these logs. Partial publication is deliberate current behavior. The old
+snapshot retains 135 files and 1,482 chunks; 40 stored evidence fingerprints and the mock
+report citations revalidated in a read-only transaction. The old source collection skipped
+one file. Prior publication/revocation history and an immutable complete-evidence manifest
+are not represented durably enough to loosen historical reads safely under the stated
+constraints. The proposed additive provenance/manifest design and possible separately
+authorized legacy backfill are documented; no source, schema or application data was
+changed. Existing focused tests passed **82** on disposable PostgreSQL; SQLite reported
+**74 passed, 8 skipped**. Ruff and `git diff --check` passed. Historical reopening after
+replacement, citation navigation and mobile acceptance remain blocked or unverified.
+
+## Final local demonstration — preflight, browser pending
+
+On 2026-11-04 a read-only preflight confirmed project `repopilot-local`, PostgreSQL volume
+`repopilot-local_postgres-data`, database `repopilot`, revision `0013`, and the approved
+published snapshot `5d24f965-fb26-431b-80b4-14275467c07d` at commit
+`1d26667b64527b41e67013bd00d326ab86ada8de`. Its tenant-scoped counts matched 135 files
+and 1,482 chunks; repository/installation are active and issue #1 is present. At inspection
+there were zero jobs, report jobs, reports and active sessions, zero pending database work,
+zero Redis queued/unacknowledged messages and zero other open transactions. Counts are
+point-in-time observations, not a lock.
+
+The isolated API and web were already healthy, the compiled CIE proxy was present, and
+hashes of the running CIE module, CIE schema, investigation routes and worker tasks matched
+the checkout. API, worker and dispatcher use the same image and target `postgres/repopilot`;
+the API's `postgres` DNS resolved to the isolated PostgreSQL container. The mock provider is
+selected, real generation and external token counting are disabled, and embeddings are
+disabled. The reviewed Compose override validated. No build, restart, migration, browser
+action, new job or report was performed during this preflight. The running images had been
+updated outside this preflight; their build and restart were not observed. The
+[browser checklist](browser-acceptance.md) records the user's authorization and remains
+unexecuted. API `/ready` and the web root returned HTTP 200; an unauthenticated CIE proxy
+request returned HTTP 401. GitHub access and authenticated browser behavior are not yet
+verified. `git diff --check` passed.
+
+User-provided browser screenshots subsequently showed GitHub connected, repository and issue
+#1, investigation history, and a completed investigation. A read-only database query confirmed
+job `c96bdb12-ef45-4221-beec-4223f60063d3`, one worker attempt and 20 evidence rows against
+the approved snapshot and commit. There was one investigation and zero report jobs or reports.
+The screenshot shows evidence hidden after the tab became inactive; it does not verify source
+rendering, citation navigation, CIE, a mock report, history reopening or mobile layout. Those
+checks and the report ID remain outstanding.
+
+Later user screenshots showed source rendering and a mock report with the required warning.
+Read-only inspection found a second completed investigation
+`7fb9fb0b-f9ec-46d6-9d14-1311de6ffa68`, also with 20 evidence rows on the approved snapshot,
+and one completed mock report `aedcc03e-1dc4-4656-af5e-032253cd6c94` (report job
+`34c6cb7f-2009-401d-b1b6-fc9102094b1a`) attached to that second investigation. The
+database contained two investigations and one report at this later check; only one new
+investigation had been authorized for the controlled demonstration. Actual citation
+navigation, CIE output, history reopening and mobile layout have not yet been evidenced.
+
+Further screenshots showed investigation `7fb9fb0b-f9ec-46d6-9d14-1311de6ffa68` reopened
+by ID, the report warning, and CIE returning an explicit insufficient-evidence abstention with
+limitations. They also showed indexing in progress. A later read-only query found index job
+`34d8ea4f-0e45-4e03-a9f2-406bc7aa3d4b` had completed `partial`, publishing snapshot
+`b11f8c40-2d4b-4ab3-a4d4-d053249f8bc8` at the same commit and unpublishing the original
+snapshot. Existing investigation and report routes require their pinned snapshot to remain
+published, so subsequent access to those jobs is expected to fail. Reindexing was outside the
+controlled-demo scope and was not initiated by the assistant. Citation navigation, reopening
+from history and mobile layout remain unverified; no additional job or report was created by
+the assistant.
+
+## Browser acceptance environment recovery — read-only assessment
+
+On 2026-11-04, the default Docker Compose database had zero public tables and no Alembic
+marker. The separate local database is at `0013` and has the target repository, issue #1 and
+a published snapshot, but no investigations, mock reports or active sessions. Neither requested
+historical job nor the associated mock report was found there. The benchmark fixture is
+separate. The running isolated API and web images lack the CIE code/proxy. No matching
+application backup was found in searched locations; the broader home search had access errors,
+so recoverability is unconfirmed rather than disproved. The
+[recovery assessment and non-executed options](browser-environment-recovery.md) contain
+identities, limits and approval boundaries. No services were started, no database was modified,
+and no jobs, reports, migrations or reindex were performed in this assessment.
+
+## Code Intelligence Engine v1
+
+**Final acceptance follow-up — CIE-v1 remains NOT YET VERIFIED.** On 2026-11-04 the saved
+`b5b1c925a167ec16` log was reviewed: **606 PostgreSQL tests passed with no skips**, **33/33**
+adversarial cases, Ruff and Alembic `0013`/no drift, with exit 0 and matching source
+fingerprints. The current backend source fingerprint also matches that run. No full suite was
+repeated. Fresh read-only paired retrieval run `6f4f95ac2ccd1965` used the already approved
+fixture and snapshot. `terms-v2` remains the production strategy and measured Recall@1/3/5/10
+**0.3750/0.5000/0.5625/0.7188**, MRR **0.5177**, nDCG@10 **0.5469**, direct retrieval
+p50/p95 **83.847/115.989 ms**, and **298/298** source-checked citations; `terms-v1` checked
+**226/226**. Offline CIE replay `b53ff5ae7a3a87d7` used that new `terms-v2` artifact, made no
+database query and produced unchanged metrics and candidate positions, **4/19** findings,
+and **15/19** abstentions. Analysis-only p50/p95 was **13.347/30.143 ms**; one spawned-process
+sample was **282.719 ms**. See [CIE evaluation](code-intelligence-engine.md#evaluation).
+
+The default Compose application database `repopilot` was inspected in a read-only transaction:
+its public schema contained **zero tables** and no `alembic_version` table. Its current revision
+is therefore unavailable and it is **not compatible** with the current application. No migration
+or application startup was performed. Existing data or a compatible database elsewhere was not
+established. The combined [read-only browser checklist](browser-acceptance.md) is prepared but
+has not been performed; it requires a compatible running stack and existing authorized jobs.
+
+**Timeout-fix follow-up:** Disposable PostgreSQL run `9b4a749619a3f267` failed with **596
+passed and 3 failed**. Its runner invoked pytest from a heredoc; a reproduction with the same
+fenced harness showed macOS `spawn` trying to reopen nonexistent `<stdin>` before the child
+could analyze anything. The resulting pipe EOF was incorrectly labeled as a timeout, leading
+to the same safe HTTP 503 in the two API tests. The host log suppresses captured child stderr;
+the explicit spawn traceback was observed in the reproduction. The runner now uses an
+importable guarded module and retains its dedicated-empty-database and network safeguards;
+child crashes and actual deadlines are distinguished without disclosing exception details.
+The reported three tests passed four times under the fenced SQLite harness, and the focused
+suite passed **48 with one PostgreSQL-only skip**. Corrected disposable PostgreSQL run
+`b5b1c925a167ec16` passed **606 tests**, **33/33** adversarial cases, Ruff, Alembic `0013`
+and no drift, with matching source fingerprints and exit 0. See the
+[successful log](../apps/api/evaluation/5c1-checks-b5b1c925a167ec16.log) and
+[CIE record](code-intelligence-engine.md#verification-and-outstanding-work).
+Browser acceptance and a fresh direct retrieval benchmark remain outstanding.
+
+**CODE INTELLIGENCE ENGINE v1 NOT YET VERIFIED.** Opt-in AST analysis, an authenticated
+snapshot-fenced endpoint and a separate rule-based dashboard section are implemented. The
+final local backend suite passed **577 tests with 23 PostgreSQL-dependent skips**; the focused
+suite passed **41 with one PostgreSQL skip**, Ruff passed, the adversarial fixture passed
+**33/33**, and frontend **60 tests**, TypeScript, ESLint and production build passed. The
+database integration and new PostgreSQL security regressions were outstanding at that time
+because Docker's socket was unavailable; the successful follow-up above supersedes that
+blocker. Browser acceptance for this feature and 5C2 is still outstanding.
+
+The saved 5C1 `terms-v2` evidence was replayed offline against the same pinned local Git
+source. Run `17a92df198280e40` produced unchanged labeled retrieval metrics and no changed
+candidate positions; it returned findings for **4/19** cases and abstained for **15/19**.
+Analysis-only p50/p95 was **14.384/35.263 ms**, one spawned-process sample was **292.446 ms**,
+and one in-process traced allocation peak was **2,604,961 bytes**. These are not fresh
+PostgreSQL retrieval, end-to-end latency, child-process RSS or diagnosis-accuracy measurements.
+`terms-v2` remains the production order. No model, paid API, new live job, database migration
+or repository reindex was used. See [CIE-v1 design and reproduction](code-intelligence-engine.md).
+
+## Final local MVP implementation assessment
+
+**REPOPILOT — PLACEMENT-READY MVP IMPLEMENTATION COMPLETE**, with the deferred dashboard
+browser acceptance, current local-stack/schema verification, application-backup restore and
+public deployment review explicitly outstanding. Final disposable PostgreSQL run
+`44627f6c0aa305e1` passed **587 tests**, **33/33** adversarial checks, Ruff, Alembic `0013`
+and no drift, with matching source fingerprints and exit 0. Frontend **58 tests**, typecheck,
+ESLint and production build passed using Node 24.11.1 and existing dependencies. Compose
+configuration validation and a mock configuration with no OpenAI key passed. A synthetic
+two-row PostgreSQL/pgvector dump was independently restored in network-isolated container
+`repopilot-restore-drill-c1acd8ebf541f8b3`; this does not validate any application backup.
+No normal application database migration, live investigation, report, reindex or paid provider
+call occurred in this pass. Details and component classifications are in
+[final project status](final-project-status.md); [local operations](local-operations.md)
+records the migration and recovery limitations.
+
+## Sprint 5C2 — investigation dashboard
+
+**SPRINT 5C2 NOT YET VERIFIED:** browser acceptance with persisted local investigations and
+reports remains outstanding. The read-only history endpoint and workspace changes are described
+in [the Sprint 5C2 report](sprint-5c2-dashboard.md), including the browser checklist and
+limitations. Frontend verification passed: **58 tests**, TypeScript, ESLint and production build
+with Node 24.11.1 and existing dependencies. Disposable PostgreSQL regression
+`09581d0adb29861f` passed **587 tests**, **33/33** adversarial checks, Ruff, Alembic `0013`
+and no drift, with matching fingerprints and exit 0. The committed-source benchmark test was
+excluded; no normal application database was migrated. Server-rendered frontend tests do not
+prove browser interactions. No paid provider calls or new live jobs were made.
+
 ## Sprint 3 Phase C3 — final local verification
 
 **PHASE C3 VERIFIED LOCALLY**, with the limits in the evaluation record below. The matched
@@ -2326,6 +2646,56 @@ independent account and pricing review, a separately approved count disclosure, 
 request-bound provider count and a separate generation approval.
 
 ### Sprint 5C1 — issue-to-code retrieval
+
+**SPRINT 5C1 VERIFIED LOCALLY — 2026-11-02**, for the pinned synthetic benchmark and
+scoped security regressions. Under explicit authorization, new disposable 4F fixture
+`68ed7b3fd6171439` published snapshot `95751038-f44e-4715-b4bd-932e446f457b` for
+commit `30705da4c044192cab4ac207e253ab8e8a1bd100` (104 files, 889 chunks). Paired run
+`3d44ea7dbd159dd9` reproduced `terms-v1` Recall@1/3/5/10 **0.375/0.500/0.5625/0.625**,
+MRR **0.5141**, nDCG@10 **0.5205** and measured production `terms-v2` **0.375/0.500/0.5625/0.7188**,
+**0.5177**, **0.5469** on the same snapshot. Direct retrieval p50/p95 was **39.372/93.896 ms**
+versus **82.396/124.066 ms**. Git-source checks passed for **226/226** and **298/298**
+citations. The fixture's access and snapshot probes passed. Separate disposable PostgreSQL
+regression `c92ea8e6468ed091` passed **586 tests**, **33/33** adversarial cases, Ruff,
+Alembic `0013` and no drift, with matching pre/post fingerprints and exit 0. See the
+[report](sprint-5c1-retrieval.md#authorized-paired-replay--2026-11-02) and
+[regression log](../apps/api/evaluation/5c1-checks-c92ea8e6468ed091.log) for per-case
+regressions, latency and benchmark limitations. No paid provider or normal application
+database was used. The earlier pending statuses below document the preceding attempts.
+
+**Host follow-up; SPRINT 5C1 NOT YET VERIFIED.** The user supplied a screenshot and retained
+log for disposable regression `6da0508fe05c84e5`: **586 passed**, adversarial **33/33**,
+Ruff passed, Alembic **0013 (head)** with no upgrade operations, matching source fingerprints
+and exit 0. This includes the fixture-preparation code but excludes the separately gated
+committed-source test. The paired replay was invoked with the example suffix and stopped
+because its fixture report was missing; no paired metrics were produced. The instructions in
+[the Sprint 5C1 report](sprint-5c1-retrieval.md#missing-fixture-recovery-and-replacement-preparation)
+now prompt for the actual successful 4F fixture suffix after separate authorization.
+
+**Host regression update; SPRINT 5C1 NOT YET VERIFIED.** User-provided output and the
+retained `5c1-checks-5bd90a0e63d784ee.log` report **585 passed**, adversarial **33/33**,
+Ruff passed, Alembic **0013 (head)** with no upgrade operations, matching source fingerprints,
+and script exit 0 on the newly isolated database. This run excludes the separately gated
+committed-source test. The user also reported that the original 4F container was unavailable;
+the image was initially absent but the subsequent successful regression confirms it was
+available at that time. Recovery is unconfirmed and saved reports do not restore a database.
+Rebuild and paired replay preparation, its explicit authorization gate, commands and caveats
+are in [the Sprint 5C1 report](sprint-5c1-retrieval.md#missing-fixture-recovery-and-replacement-preparation).
+The successful run predates those changes; rerun verification against the final files.
+Preparation checks in this environment passed Python syntax parsing, shell syntax and
+`git diff --check`; invoking the fixture script without the approval flag exited before
+Docker with its separate-approval message. The replacement and its added regression tests
+have not been executed here because the project Python interpreter remains unavailable.
+
+**Follow-up: SPRINT 5C1 NOT YET VERIFIED.** The production replay was wired directly to the
+worker's versioned query builder, with a regression test, and the host scripts now diagnose a
+missing interpreter. In this environment both project virtual environments link to an
+unavailable Homebrew Python 3.14; system Python lacks pytest and SQLAlchemy. Python syntax
+parsing, shell syntax and `git diff --check` passed. Docker inspection was denied in the
+sandbox; an escalated production replay stopped before Docker at the missing interpreter.
+No new benchmark, PostgreSQL, adversarial, backend suite or Ruff result is claimed. Exact
+host commands, changed files and remaining gates are in
+[the Sprint 5C1 report](sprint-5c1-retrieval.md#follow-up-verification-attempt).
 
 **SPRINT 5C1 NOT YET VERIFIED.** The pre-change pipeline and historical 4F weaknesses are
 documented in [sprint-5c1-retrieval.md](sprint-5c1-retrieval.md). A local read-only Git check

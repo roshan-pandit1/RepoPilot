@@ -5,8 +5,10 @@ import pytest
 
 from app.evaluation.compare_issue_retrieval import compare, markdown
 from app.evaluation.issue_retrieval_candidates import candidate_queries, protected_symbol_rerank
-from app.evaluation.issue_retrieval_replay import assert_readonly_sql
-from app.modules.investigation.query_builder import build_queries
+from app.evaluation.issue_retrieval_replay import (
+    COMMIT, DATASET_HASH, assert_readonly_sql, fixture_metadata, replay_queries,
+)
+from app.modules.investigation.query_builder import build_queries, build_queries_for_version
 
 
 @pytest.mark.parametrize('statement', [
@@ -79,6 +81,37 @@ def test_comparison_rejects_different_budgets_or_bad_citations(evaluation_report
 def test_candidate_baseline_uses_current_query_builder():
     args = ('GitHub sign-in callback fails', 'State is rejected after the redirect.', [], 3)
     assert candidate_queries('baseline', *args) == build_queries(*args)
+
+
+def test_production_replay_calls_versioned_worker_query_builder(monkeypatch):
+    from app.evaluation import issue_retrieval_replay
+
+    calls = []
+    def builder(*args):
+        calls.append(args)
+        return build_queries_for_version(*args)
+
+    monkeypatch.setattr(issue_retrieval_replay, 'build_queries_for_version', builder)
+    result = replay_queries('production-v2', 'Callback state fails', 'State rejected after redirect.')
+    assert calls == [('terms-v2', 'Callback state fails', 'State rejected after redirect.', [], 3)]
+    assert result == build_queries_for_version(*calls[0])
+
+
+def test_fresh_fixture_metadata_rejects_mismatched_or_unsafe_inputs():
+    suffix = '0123456789abcdef'
+    report = {'database': f'repopilot_4f_disposable_{suffix}', 'dataset_sha256': DATASET_HASH,
+              'source_commit': COMMIT, 'migration': '0013',
+              'snapshot_id': '1a8e0d9e-1cf1-4e0a-9cac-f8ced23f1694',
+              'snapshot_counts': {'files': 104, 'chunks': 889, 'skipped_files': 1}}
+    assert fixture_metadata(suffix, report) == (report['database'], report['snapshot_id'], (104, 889, 1))
+    for key in ('database', 'dataset_sha256', 'source_commit', 'migration', 'snapshot_id'):
+        bad = {**report, key: 'wrong'}
+        with pytest.raises(ValueError):
+            fixture_metadata(suffix, bad)
+    with pytest.raises(ValueError):
+        fixture_metadata('../wrong', report)
+    with pytest.raises(ValueError):
+        fixture_metadata(suffix, {**report, 'snapshot_counts': {'files': -1, 'chunks': 1, 'skipped_files': 0}})
 
 
 def test_candidate_filters_generic_identifier_and_adds_bounded_body():

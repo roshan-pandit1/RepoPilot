@@ -10,7 +10,7 @@ function load(file, deps, fetch) {
   const source = fs.readFileSync(path.join(root, file), "utf8");
   const code = ts.transpileModule(source, { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 }}).outputText;
   const mod = { exports: {} };
-  const ctx = vm.createContext({ module: mod, exports: mod.exports, Response, Request, AbortSignal, URL,
+  const ctx = vm.createContext({ module: mod, exports: mod.exports, Response, Request, AbortSignal, URL, URLSearchParams,
     process: { env: { API_INTERNAL_URL: "http://api.test" } }, fetch,
     require: (name) => { if (!(name in deps)) throw new Error("unexpected import"); return deps[name]; } });
   new vm.Script(code).runInContext(ctx);
@@ -24,6 +24,37 @@ function routes(fetch) {
     status: load("app/api/investigations/[repository]/jobs/[job]/route.ts", deps, fetch),
   };
 }
+
+test("history proxy bounds pagination and forwards only validated parameters", async () => {
+  const calls = [];
+  const fetch = async (url, options) => { calls.push({ url, options }); return Response.json({ items: [], next_offset: null }); };
+  const helper = load("lib/investigation-proxy.ts", { "server-only": {} }, fetch);
+  const route = load("app/api/investigations/[repository]/history/route.ts", { "@/lib/investigation-proxy": helper }, fetch);
+  const context = { params: Promise.resolve({ repository: "902" }) };
+  const ok = await route.GET(new Request("http://web/?limit=20&offset=20&status=completed", { headers: { cookie: "rp_session=fixture" } }), context);
+  assert.equal(ok.status, 200);
+  assert.equal(calls[0].url, "http://api.test/v1/repositories/902/investigations?limit=20&offset=20&status=completed");
+  assert.equal(calls[0].options.headers.cookie, "rp_session=fixture");
+  for (const query of ["limit=51", "offset=-1", "status=other", "limit=1&limit=2", "extra=x"]) {
+    assert.equal((await route.GET(new Request(`http://web/?${query}`), context)).status, 422);
+  }
+  assert.equal(calls.length, 1);
+});
+
+test("code intelligence proxy validates identifiers and forwards a read-only request", async () => {
+  const calls = [];
+  const fetch = async (url, options) => { calls.push({ url, options }); return Response.json({ version: "cie-v1" }); };
+  const helper = load("lib/investigation-proxy.ts", { "server-only": {} }, fetch);
+  const route = load("app/api/investigations/[repository]/jobs/[job]/code-intelligence/route.ts", { "@/lib/investigation-proxy": helper }, fetch);
+  const job = "11111111-1111-4111-8111-111111111111";
+  const ok = await route.GET(new Request("http://web/", { headers: { cookie: "rp_session=fixture" } }),
+    { params: Promise.resolve({ repository: "902", job }) });
+  assert.equal(ok.status, 200);
+  assert.equal(calls[0].url, `http://api.test/v1/repositories/902/investigations/${job}/code-intelligence`);
+  assert.equal(calls[0].options.method, "GET");
+  assert.equal((await route.GET(new Request("http://web/"), { params: Promise.resolve({ repository: "902", job: "../bad" }) })).status, 422);
+  assert.equal(calls.length, 1);
+});
 test("submission and status use fixed backend paths and forward session/CSRF server-side", async () => {
   const calls = [];
   const r = routes(async (url, options) => { calls.push({ url, options }); return Response.json({ status: "queued" }, { status: 202 }); });

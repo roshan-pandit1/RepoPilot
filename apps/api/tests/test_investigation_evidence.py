@@ -40,6 +40,84 @@ def test_v2_stack_trace_identifier_and_vague_input_are_bounded():
     assert build_queries_v2(ATTACK, ATTACK, []) == []
 
 
+def test_code_intelligence_requires_authorized_unchanged_evidence(client, factory, github_auth, monkeypatch):
+    assert client.get('/v1/repositories/902/investigations/' + str(uuid4()) + '/code-intelligence').status_code == 401
+    snapshot_id, chunk_id = context(client, factory, github_auth)
+    original = github_auth.issue
+    github_auth.issue = lambda *args: {**original(*args), 'title': 'function process_sync fails'}
+    stub_retrieval(monkeypatch, factory, chunk_id)
+    job_id = submit(client)
+    process_investigation(job_id, factory, github_auth)
+    url = f'/v1/repositories/902/investigations/{job_id}/code-intelligence'
+    response = client.get(url)
+    assert response.status_code == 200
+    data = response.json()
+    assert data['snapshot_id'] == snapshot_id and data['commit_sha'] == 'a' * 40
+    assert data['findings'][0]['citation']['chunk_id'] == chunk_id
+    assert data['findings'][0]['citation']['url'].endswith('/src/tasks.py#L7-L8')
+    assert 'return None' not in response.text and 'sensitive-github-token' not in response.text
+    github_auth.include_repository = False
+    assert client.get(url).status_code == 404
+    github_auth.include_repository = True
+    with factory.begin() as db:
+        db.get(CodeSnapshot, snapshot_id).commit_sha = 'b' * 40
+    assert client.get(url).status_code == 409
+    with factory.begin() as db:
+        db.get(CodeSnapshot, snapshot_id).commit_sha = 'a' * 40
+        db.get(CodeSnapshot, snapshot_id).published = False
+    assert client.get(url).status_code == 409
+    with factory.begin() as db:
+        db.get(CodeSnapshot, snapshot_id).published = True
+    previous = github_auth.issue
+    github_auth.issue = lambda *args: {**previous(*args), 'updated_at': '2026-02-01T00:00:00Z'}
+    assert client.get(url).status_code == 409
+    github_auth.issue = previous
+    with factory.begin() as db:
+        db.get(CodeChunk, chunk_id).source_text = 'def process_sync():\n    return 1\n'
+    assert client.get(url).status_code == 409
+    with factory.begin() as db:
+        db.get(Installation, 901).active = False
+    assert client.get(url).status_code == 404
+    assert client.get(url.replace('/902/', '/903/')).status_code == 404
+    with factory.begin() as db:
+        db.get(Installation, 901).active = True
+    assert client.post('/v1/auth/logout', headers=csrf(client)).status_code == 200
+    github_auth.user_id = github_auth.account_id = 78
+    sign_in(client)
+    assert client.get(url).status_code == 404
+
+
+def test_code_intelligence_withholds_sensitive_source(client, factory, github_auth, monkeypatch):
+    _snapshot_id, chunk_id = context(client, factory, github_auth)
+    marker = 'ghp_' + 'a' * 36
+    with factory.begin() as db:
+        db.get(CodeChunk, chunk_id).source_text = f'def process_sync():\n    return "{marker}"\n'
+    stub_retrieval(monkeypatch, factory, chunk_id)
+    job_id = submit(client)
+    process_investigation(job_id, factory, github_auth)
+    response = client.get(f'/v1/repositories/902/investigations/{job_id}/code-intelligence')
+    assert response.status_code == 200 and response.json()['abstained']
+    assert marker not in response.text and response.json()['findings'] == []
+
+
+def test_code_intelligence_fails_safely_for_child_error_and_timeout(client, factory, github_auth, monkeypatch):
+    from app.modules.investigation import code_intelligence
+
+    _snapshot_id, chunk_id = context(client, factory, github_auth)
+    stub_retrieval(monkeypatch, factory, chunk_id)
+    job_id = submit(client)
+    process_investigation(job_id, factory, github_auth)
+    url = f'/v1/repositories/902/investigations/{job_id}/code-intelligence'
+    for exception, message in ((code_intelligence.AnalysisProcessError, 'Analysis is unavailable'),
+                               (code_intelligence.AnalysisTimeout, 'Analysis timed out')):
+        def fail(*args, **kwargs):
+            raise exception('private test detail')
+        monkeypatch.setattr(code_intelligence, 'run_bounded', fail)
+        response = client.get(url)
+        assert response.status_code == 503 and response.json()['detail'] == message
+        assert 'private test detail' not in response.text
+
+
 def test_postgres_v2_retrieval_deduplicates_and_fences_source(client, factory, github_auth):
     if factory.kw['bind'].dialect.name != 'postgresql':
         pytest.skip('PostgreSQL full-text search is required')

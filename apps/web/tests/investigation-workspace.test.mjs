@@ -39,6 +39,11 @@ const context = { repository_id: "902", issue_id: "990", number: 5, title: "<img
 const job = { job_id: jobId, issue_id: "990", issue_number: 5, status: "completed", attempts: 1,
   operation: "code_evidence", snapshot_id: snapshot, commit_sha: sha, retrieval_status: "ready", evidence_count: 1,
   error_code: null, snapshot_partial: false };
+test("partial snapshot warning explains the evidence limitation", () => {
+  const html = render(views.InvestigationStatus, { job: { ...job, snapshot_partial: true } });
+  assert.match(html, /PARTIAL REPOSITORY SNAPSHOT — SOME FILES WERE NOT INDEXED/);
+  assert.match(html, /may have missed relevant code/);
+});
 const historicalJob = { ...job, operation: "mock_orchestration", snapshot_id: null, commit_sha: null,
   retrieval_status: "not_applicable", evidence_count: 0, snapshot_partial: null };
 const item = { chunk_id: chunk, rank: 1, query_id: "title_terms", query_rank: 1, method: "keyword",
@@ -89,6 +94,53 @@ test("issue numbers are strictly bounded and invalid inputs never fetch", async 
   const api = backend(); const c = new InvestigationController(repository, api.fetch, new FakeClock());
   await c.loadIssue("0"); assert.match(c.state.error, /valid GitHub issue number/); assert.equal(api.calls.length, 0);
   await c.loadIssue("5"); assert.equal(c.state.context.number, 5); assert.equal(api.calls.length, 1); c.dispose();
+});
+
+test("history reopens a job only after reloading its authorized issue", async () => {
+  const api = backend(); const c = new InvestigationController(repository, api.fetch, new FakeClock());
+  await c.openHistory(5, jobId);
+  assert.equal(c.state.job.job_id, jobId);
+  assert.ok(api.calls[0].url.endsWith("/issues/5/context"));
+  assert.ok(api.calls[1].url.endsWith(`/jobs/${jobId}`));
+  assert.ok(api.calls.every(call => call.method === "GET"));
+  c.dispose();
+});
+
+test("history reopening does not continue after a newer issue selection", async () => {
+  let release;
+  const calls = [];
+  const fetch = async (url) => {
+    calls.push(url);
+    if (url.endsWith("/issues/5/context")) return new Promise(resolve => { release = () => resolve(Response.json(context)); });
+    return Response.json({ ...context, number: 6, url: "https://github.com/alice/public/issues/6" });
+  };
+  const c = new InvestigationController(repository, fetch, new FakeClock());
+  const pending = c.openHistory(5, jobId);
+  await c.loadIssue("6"); release(); await pending;
+  assert.equal(c.state.context.number, 6);
+  assert.equal(calls.some(url => url.includes("/jobs/")), false);
+  c.dispose();
+});
+
+test("history validation rejects unexpected data and accepts a bounded page", () => {
+  const item = { job_id: jobId, issue_number: 5, issue_title: "<script>", status: "completed",
+    created_at: "2026-01-01", updated_at: "2026-01-02", attempts: 1, evidence_count: 1,
+    report_status: null, operation: "code_evidence" };
+  assert.equal(views.parseHistory({ items: [item], next_offset: null }).items[0].issue_title, "<script>");
+  assert.throws(() => views.parseHistory({ items: [{ ...item, job_id: "../bad" }], next_offset: null }));
+  assert.throws(() => views.parseHistory({ items: [item], next_offset: 10001 }));
+});
+
+test("rule-based results accept only citations from the displayed snapshot evidence", () => {
+  const result = { version: "cie-v1", job_id: jobId, repository_id: "902", snapshot_id: snapshot, commit_sha: sha, abstained: false,
+    limitations: ["Static analysis is incomplete."], findings: [{ rule_id: "explicit_source_match",
+      explanation: "A source match.", uncertainty: "high", next_steps: ["Inspect the code."],
+      signals: [{ kind: "identifier", value: "run", origin: "title", line: 1 }], citation: reference }] };
+  assert.equal(views.validateRuleAnalysis(result, job, evidence, repository).findings.length, 1);
+  assert.throws(() => views.validateRuleAnalysis({ ...result, findings: [{ ...result.findings[0],
+    citation: { ...reference, url: "https://attacker.invalid" } }] }, job, evidence, repository));
+  assert.throws(() => views.validateRuleAnalysis({ ...result, snapshot_id: reportJob }, job, evidence, repository));
+  assert.match(render(views.CodeIntelligence, { job, evidence, repository }), /RULE-BASED ANALYSIS/);
 });
 
 test("the default browser fetch uses the global receiver for issue loading", async () => {
@@ -393,6 +445,7 @@ test("views escape untrusted issue and source text and show mock limitations", (
   assert.doesNotMatch(badIssue, /href="javascript:/);
   const evidenceHtml = render(views.EvidenceView, { evidence, repository });
   assert.match(evidenceHtml, /&lt;script&gt;/); assert.match(evidenceHtml, /#L3-L4/);
+  assert.match(evidenceHtml, /Copy path/); assert.match(evidenceHtml, /Copy citation/);
   assert.match(render(views.EvidenceView, { evidence: { ...evidence, items: [] }, repository }), /No code evidence/);
   const reportHtml = render(views.InvestigationReport, { envelope: report, repository });
   assert.match(reportHtml, /MOCK REPORT — DEMONSTRATION ONLY/); assert.match(reportHtml, /speculative/);

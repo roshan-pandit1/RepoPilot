@@ -1,0 +1,28 @@
+# Prepared override for the existing isolated local demo. Do not run migrations.
+services:
+  api:
+    image: repopilot-local-demo-api:cie
+    environment: &offline
+      EMBEDDING_PROVIDER: disabled
+      EMBEDDING_ALLOW_PAID: 'false'
+      INVESTIGATION_PROVIDER: mock
+      INVESTIGATION_REAL_ENABLED: 'false'
+      INVESTIGATION_PAID_BACKGROUND_ENABLED: 'false'
+      INVESTIGATION_COUNT_EXTERNAL_ENABLED: 'false'
+    ports: !override
+      - '127.0.0.1:8001:8000'
+  worker:
+    image: repopilot-local-demo-api:cie
+    environment: *offline
+  dispatcher:
+    image: repopilot-local-demo-api:cie
+    environment: *offline
+  web:
+    image: repopilot-local-demo-web:cie
+volumes:
+  postgres-data:
+    external: true
+    name: repopilot-local_postgres-data
+  redis-data:
+    external: true
+    name: repopilot-local_redis-data

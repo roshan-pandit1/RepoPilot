@@ -1,0 +1,21 @@
+New disposable container: repopilot-5c1-checks-44627f6c0aa305e1; database: repopilot_5b2b_44627f6c0aa305e1; run: 44627f6c0aa305e1
+Test source fingerprint before: e1016ffb8e658a72d11eee95fe1454e6a68491548c742268bfb6b4a4a52fe52e 139; Git HEAD: 1d26667b64527b41e67013bd00d326ab86ada8de
+Confirmed empty dedicated database: repopilot_5b2b_44627f6c0aa305e1; host port=52642
+........................................................................ [ 12%]
+........................................................................ [ 24%]
+........................................................................ [ 36%]
+........................................................................ [ 49%]
+........................................................................ [ 61%]
+........................................................................ [ 73%]
+........................................................................ [ 85%]
+........................................................................ [ 98%]
+...........                                                              [100%]
+587 passed in 181.68s (0:03:01)
+Security fixture: 33/33 passed; SHA-256=b7ba2f58a21d3c349198ccdaf2dfbfed968a7e384618cef7530c86fc44c020e6
+All checks passed!
+0013 (head)
+No new upgrade operations detected.
+Test source fingerprint after: e1016ffb8e658a72d11eee95fe1454e6a68491548c742268bfb6b4a4a52fe52e 139
+Completed disposable PostgreSQL regression: 44627f6c0aa305e1
+Container and volume retained: repopilot-5c1-checks-44627f6c0aa305e1
+Script final exit status: 0; run: 44627f6c0aa305e1; log: /Volumes/Samsung SSD/Project/RepoPilot/apps/api/evaluation/5c1-checks-44627f6c0aa305e1.log

@@ -1,0 +1,2 @@
+Error response from daemon: No such image: pgvector/pgvector:pg16
+Script final exit status: 1; run: 82eef858de47313f; log: /Volumes/Samsung SSD/Project/RepoPilot/apps/api/evaluation/5c1-checks-82eef858de47313f.log

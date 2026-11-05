@@ -523,7 +523,8 @@ def process_investigation(job_id: str, factory=None, github=None, work=None):
     from app.modules.github.issue_context_client import IssueContextClient
     from app.modules.investigation.query_builder import build_queries_for_version
     from app.modules.investigation.retrieval import (InvalidEvidence, SnapshotUnavailable,
-                                                       fingerprint_chunk, retrieve_candidates)
+                                                       fingerprint_chunk, record_evidence_manifest,
+                                                       retrieve_candidates, validate_snapshot)
     from app.modules.github.enrollment import visible_github_repositories
     from app.modules.github.guards import installation_guard, repository_guard
 
@@ -582,6 +583,12 @@ def process_investigation(job_id: str, factory=None, github=None, work=None):
             if (not snapshot or not snapshot.published or snapshot.repository_id != repo_id
                     or snapshot.tenant_id != job.tenant_id or snapshot.commit_sha != commit
                     or job.source_repository_name != repo_name):
+                terminal(db, job, "cancelled", "snapshot_unavailable")
+                return
+            try:
+                validate_snapshot(db, snapshot_id=snapshot_id, repository_id=repo_id,
+                                  tenant_id=job.tenant_id, commit=commit)
+            except SnapshotUnavailable:
                 terminal(db, job, "cancelled", "snapshot_unavailable")
                 return
         job.attempts += 1
@@ -724,6 +731,11 @@ def process_investigation(job_id: str, factory=None, github=None, work=None):
                 terminal(db, job, "failed", "invalid_evidence")
             else:
                 valid = True
+                try:
+                    validate_snapshot(db, snapshot_id=snapshot_id, repository_id=repo_id,
+                                      tenant_id=job.tenant_id, commit=commit, lock=True)
+                except SnapshotUnavailable:
+                    valid = False
                 for item in candidates:
                     row = db.execute(select(CodeChunk, IndexedFile).join(IndexedFile, CodeChunk.file_id == IndexedFile.id)
                         .where(CodeChunk.id == item.chunk_id, CodeChunk.repository_id == repo_id,
@@ -745,6 +757,7 @@ def process_investigation(job_id: str, factory=None, github=None, work=None):
                             query_rank=item.query_rank, chunk_fingerprint=item.chunk_fingerprint, method="keyword"))
                     job.retrieval_warning = warning
                     job.query_input_truncated = query_input_truncated
+                    record_evidence_manifest(db, job, snapshot)
                     terminal(db, job, "completed", None)
                     evidence_published = True
         else:

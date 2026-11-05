@@ -71,6 +71,35 @@ def test_revocation_and_cross_tenant(client, factory, github_auth):
     assert client.post(SUBMIT, headers=csrf(client)).status_code == 404
 
 
+def test_history_is_authorized_bounded_and_scoped(client, factory, github_auth):
+    path = '/v1/repositories/902/investigations'
+    assert client.get(path).status_code == 401
+    setup_issue(client, github_auth, factory)
+    first = submit(client)
+    process_investigation(first, factory, github_auth)
+    second = submit(client)
+    page = client.get(path, params={'limit': 1})
+    assert page.status_code == 200
+    assert page.json()['items'][0]['job_id'] == second
+    assert page.json()['next_offset'] == 1
+    later = client.get(path, params={'limit': 1, 'offset': 1}).json()
+    assert later['items'][0]['job_id'] == first and later['next_offset'] is None
+    assert [item['job_id'] for item in client.get(path, params={'status': 'queued'}).json()['items']] == [second]
+    assert 'session_hash' not in page.text and 'sensitive-github-token' not in page.text
+    for params in ({'limit': 0}, {'limit': 51}, {'offset': -1}, {'offset': 10001}, {'status': 'invalid'}):
+        assert client.get(path, params=params).status_code == 422
+    assert client.get('/v1/repositories/903/investigations').status_code == 404
+    with factory.begin() as db:
+        db.get(Installation, 901).active = False
+    assert client.get(path).status_code == 404
+    with factory.begin() as db:
+        db.get(Installation, 901).active = True
+    assert client.post('/v1/auth/logout', headers=csrf(client)).status_code == 200
+    github_auth.user_id = github_auth.account_id = 78
+    sign_in(client)
+    assert client.get(path).status_code == 404
+
+
 def test_retry_timeout_and_expired_lease(client, factory, github_auth):
     setup_issue(client, github_auth, factory)
     job = submit(client)

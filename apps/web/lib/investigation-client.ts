@@ -250,9 +250,17 @@ export class InvestigationController {
       reportMissing: false, acceptedJobId: id, busy: "job", error: "", notice: "" });
     await this.loadJob(id, epoch);
   }
+  async openHistory(issue: number, id: string) {
+    if (!validId(id) || !number(issue, 1, 2147483647)) return;
+    const pending = this.loadIssue(String(issue));
+    const epoch = this.epoch;
+    await pending;
+    if (epoch === this.epoch && this.state.context?.number === issue) await this.openJob(id);
+  }
   async refreshJob() { if (this.state.job && !this.state.busy) { const id = this.state.job.job_id; this.cancel(); this.jobPolls = 0; this.accessChecks = 0; await this.loadJob(id, this.epoch); } }
   private async loadJob(id: string, epoch: number) {
     const context = this.state.context; if (!context) return;
+    this.update({ busy: "job" });
     try {
       const value = await this.request(`/api/investigations/${this.repo.id}/jobs/${id}`);
       const job = jobResponse(value, id, context);
@@ -283,6 +291,7 @@ export class InvestigationController {
         notice: "Evidence hidden while this tab was inactive. Refresh to recheck access." });
       return;
     }
+    this.update({ busy: "results" });
     try {
       const base = `/api/investigations/${this.repo.id}/jobs/${job.job_id}`;
       const evidence = evidenceResponse(await this.request(`${base}/evidence?include_snippets=true`), job, this.repo);

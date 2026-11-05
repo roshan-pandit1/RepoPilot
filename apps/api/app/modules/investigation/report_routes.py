@@ -8,7 +8,7 @@ from pydantic import BaseModel
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.domain.models import (AuthSession, CodeSnapshot, Installation, InstallationGuard, InvestigationExperiment, InvestigationJob,
+from app.domain.models import (AuthSession, Installation, InstallationGuard, InvestigationExperiment, InvestigationJob,
                                InvestigationProviderSelection, InvestigationRealReport, InvestigationReport, InvestigationReportJob, InvestigationReportOutbox,
                                Membership, Repository, RepositoryGuard, now)
 from app.infra.database import get_db
@@ -17,6 +17,7 @@ from app.modules.github.client import GitHubClient, get_github_client
 from app.modules.github.guards import installation_guard, repository_guard
 from app.modules.github.issue_context import authorize
 from app.modules.investigation.report_model import ModelError
+from app.modules.investigation.retrieval import InvalidEvidence, SnapshotUnavailable, readable_snapshot
 from app.modules.investigation.reporting import evidence_inputs, render_report_payload
 from app.modules.investigation.reporting_config import real_provider_enabled
 from app.modules.investigation.usage_ledger import experiment_is_eligible
@@ -82,7 +83,7 @@ class ReportEnvelope(BaseModel):
     report: ReportView | None
 
 
-def parent_and_snapshot(db, repository_id, job_id, identity, name, *, lock_snapshot=False):
+def parent_and_snapshot(db, repository_id, job_id, identity, name, *, lock_snapshot=False, allow_historical=False):
     parent = db.scalar(select(InvestigationJob).where(InvestigationJob.id == str(job_id),
         InvestigationJob.repository_id == repository_id, InvestigationJob.tenant_id == identity.tenant_id,
         InvestigationJob.user_id == identity.user_id))
@@ -90,10 +91,10 @@ def parent_and_snapshot(db, repository_id, job_id, identity, name, *, lock_snaps
         raise HTTPException(404, 'Investigation not found')
     if parent.operation != 'code_evidence' or parent.status != 'completed':
         raise HTTPException(409, 'Completed evidence investigation required')
-    stmt = select(CodeSnapshot).where(CodeSnapshot.id == parent.snapshot_id,
-        CodeSnapshot.repository_id == repository_id, CodeSnapshot.tenant_id == identity.tenant_id,
-        CodeSnapshot.commit_sha == parent.snapshot_commit_sha, CodeSnapshot.published.is_(True))
-    snapshot = db.scalar(stmt.with_for_update() if lock_snapshot else stmt)
+    try:
+        snapshot = readable_snapshot(db, parent, allow_historical=allow_historical, lock=lock_snapshot)
+    except (SnapshotUnavailable, InvalidEvidence):
+        snapshot = None
     if not snapshot or name != parent.source_repository_name:
         raise HTTPException(409, 'Snapshot is no longer available')
     return parent, snapshot
@@ -187,7 +188,8 @@ def get_report(repository_id: int = Path(gt=0, lt=2**63), job_id: UUID = Path(),
                github: GitHubClient = Depends(get_github_client)):
     name = authorize(repository_id, identity, db, github)
     lock_report_read_access(db, repository_id, identity, name)
-    parent, snapshot = parent_and_snapshot(db, repository_id, job_id, identity, name, lock_snapshot=True)
+    parent, snapshot = parent_and_snapshot(db, repository_id, job_id, identity, name, lock_snapshot=True,
+                                           allow_historical=True)
     task = db.scalar(select(InvestigationReportJob).where(InvestigationReportJob.investigation_id == parent.id,
         InvestigationReportJob.tenant_id == identity.tenant_id, InvestigationReportJob.user_id == identity.user_id,
         InvestigationReportJob.repository_id == repository_id))
