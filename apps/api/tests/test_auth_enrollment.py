@@ -16,6 +16,7 @@ class FakeGitHub:
         self.include_repository = True
         self.account_id = 77
         self.user_id = 77
+        self.permissions = {"contents": "read", "pull_requests": "read"}
 
     def exchange_code(self, code, verifier):
         assert code == "valid-code"
@@ -30,7 +31,8 @@ class FakeGitHub:
         if self.fail:
             raise GitHubFailure("private upstream detail")
         return [{"id": 901, "app_id": 123, "account": {"id": self.account_id,
-                 "type": "User", "login": "alice"}, "suspended_at": None}]
+                 "type": "User", "login": "alice"}, "suspended_at": None,
+                 "permissions": self.permissions}]
 
     def issues(self, token, full_name):
         assert token == "sensitive-github-token"
@@ -358,3 +360,15 @@ def test_sync_discards_fetched_data_if_access_changes_in_flight(client, factory,
     with factory() as db:
         assert db.get(SyncJob, job_id).status == "ignored"
         assert db.get(Issue, 990) is None
+
+
+def test_forged_installation_id_cannot_be_enrolled(client, github_auth):
+    sign_in(client)
+    result = client.post("/v1/installations/999999/enroll", headers=csrf(client))
+    assert result.status_code == 403
+
+
+def test_boolean_github_account_identity_is_not_a_numeric_user_id(client, github_auth):
+    sign_in(client)
+    github_auth.account_id = True
+    assert client.get("/v1/installations/available").json() == []

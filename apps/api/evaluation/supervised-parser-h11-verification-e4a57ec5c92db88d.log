@@ -1,0 +1,19 @@
+RECONSTRUCTED SANITIZED SUMMARY — NOT THE ORIGINAL TEST LOG
+Original private logs and JUnit files disappeared with the disposable run directory.
+This summary records results observed during execution and preserved in the verified manifest.
+Reconstructed UTC: 2026-11-12T09:01:23.444646+00:00
+Manifest SHA-256: dbe9d24d7282dad700f3908b1d593108fbf31ddfe133adb87aa669d1744d3daf
+Run source: current working-tree snapshot; 148 files; not a pinned Git commit.
+Source manifest SHA-256: 07f8a164f7da808f4d88856d64027de3ecca0e3f6244e8497b6645a2a8c13000
+Artifacts: 67 verified wheels, 50,963,767 bytes; total HTTP response bodies 52,767,028 bytes.
+Runtime: macOS 27.2 ARM64; CPython 3.14.10; uv 0.13.6; tree-sitter 0.25.2.
+native supervisor, child and prototype: 119 passed, 0 failed, 0 skipped, 0 deselected; JUnit SHA-256 94e1ee96f491d0c75d4637d9d9be11c95b938f0778143885d034907b025a4d70
+selected PostgreSQL and synthetic regressions: 322 passed, 0 failed, 0 skipped, 1 deselected; JUnit SHA-256 0d858b2626138501dcff5d71f0cf09449188da11be537dfbbeb778849e552ac6
+native PostgreSQL publication and schema drift: 3 passed, 0 failed, 0 skipped, 0 deselected; JUnit SHA-256 a3a81b714ae9d07dc1aae2cef82ea7816820b77b285cec2beb55385f37947ec4
+synthetic harness safety checks: 44 passed, 0 failed, 0 skipped, 0 deselected
+Later interpreter run() checks: 2 passed, 0 failed, 0 skipped, 0 deselected; source SHA-256 08c9fbc3d1482dace9f52dd838daf451be79716dffcbc703da2bd880c0b3f3f0.
+PostgreSQL migration: upgraded fresh disposable schema through Alembic head 0016.
+Separate PostgreSQL schema drift: alembic check passed on that fresh schema.
+Docker cleanup: owned disposable container removed; no existing Docker volume removed.
+Native PostgreSQL phase used a test-only IPC broker; the unproxied worker-plus-database process path was not tested.
+Full backend suite was not run; the earlier native crash cause and Linux isolation remain unresolved.

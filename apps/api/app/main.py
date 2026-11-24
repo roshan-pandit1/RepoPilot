@@ -15,7 +15,10 @@ from app.modules.github.issue_context import router as issue_context_router
 from app.modules.investigation.routes import router as investigation_router
 from app.modules.investigation.report_routes import router as investigation_report_router
 from app.modules.ingestion.code_routes import router as code_router
+from app.modules.patches.routes import router as patch_router
+from app.modules.pr_review.routes import router as pr_review_router
 from app.core.config import get_settings
+from app.core.worker_readiness import worker_readiness
 from app.infra.database import get_engine
 
 logging.basicConfig(level=logging.INFO, format='{"level":"%(levelname)s","event":"%(message)s"}')
@@ -34,6 +37,8 @@ app.include_router(issue_context_router)
 app.include_router(investigation_router)
 app.include_router(investigation_report_router)
 app.include_router(code_router)
+app.include_router(patch_router)
+app.include_router(pr_review_router)
 
 
 @app.middleware("http")
@@ -63,14 +68,33 @@ def health():
 
 @app.get("/ready")
 def ready():
+    def unavailable(dependency: str):
+        # Dispatcher progress has no attributable health signal in the current stack.
+        return JSONResponse({"status": "unavailable", "dependency": dependency,
+                             "dispatcher": "not_checked"}, status_code=503)
+
+    try:
+        settings = get_settings()
+    except Exception:
+        return unavailable("configuration")
     try:
         with get_engine().connect() as connection:
             connection.execute(text("SELECT 1 FROM outbox_events LIMIT 1"))
             connection.execute(text("SELECT 1 FROM sync_jobs LIMIT 1"))
             connection.execute(text("SELECT 1 FROM auth_sessions LIMIT 1"))
-        with Redis.from_url(get_settings().redis_url, socket_connect_timeout=2,
-                            socket_timeout=2) as redis:
-            redis.ping()
     except Exception:
-        return JSONResponse({"status": "unavailable"}, status_code=503)
-    return {"status": "ready"}
+        return unavailable("database")
+    try:
+        with Redis.from_url(settings.redis_url, socket_connect_timeout=0.5,
+                            socket_timeout=0.5) as redis:
+            if not redis.ping():
+                return unavailable("broker")
+    except Exception:
+        return unavailable("broker")
+    try:
+        if not worker_readiness.check(settings.redis_url, settings.worker_readiness_queue,
+                                      settings.patch_proposals_enabled):
+            return unavailable("worker")
+    except Exception:
+        return unavailable("worker")
+    return {"status": "ready", "dispatcher": "not_checked"}

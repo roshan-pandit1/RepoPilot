@@ -4,15 +4,16 @@ from datetime import timedelta
 
 from sqlalchemy import and_, or_, select
 
-from app.domain.models import EmbeddingJob, IndexJob, InvestigationOutbox, InvestigationReportOutbox, Outbox, SyncJob, now
+from app.domain.models import EmbeddingJob, IndexJob, InvestigationOutbox, InvestigationReportOutbox, Outbox, PatchOutbox, PRReviewOutbox, SyncJob, now
+from app.core.config import get_settings
 from app.core.index_logging import index_event
 from app.infra.database import get_session_factory
-from app.workers.tasks import embed_repository, generate_mock_report, index_repository, ingest_issue, investigate_issue, sync_repository
+from app.workers.tasks import embed_repository, generate_mock_report, index_repository, ingest_issue, investigate_issue, process_patch_proposal, process_pr_review_task, sync_repository
 
 logger = logging.getLogger("repopilot.dispatcher")
 
 
-def dispatch_once(factory=None, publish=None, publish_sync=None, publish_index=None, publish_embedding=None, publish_investigation=None, publish_report=None):
+def dispatch_once(factory=None, publish=None, publish_sync=None, publish_index=None, publish_embedding=None, publish_investigation=None, publish_report=None, publish_patch=None, publish_pr=None):
     factory = factory or get_session_factory()
     publish = publish or (lambda event_id: ingest_issue.apply_async(
         args=[event_id], task_id=event_id, retry=False))
@@ -26,6 +27,10 @@ def dispatch_once(factory=None, publish=None, publish_sync=None, publish_index=N
         args=[job_id], task_id=job_id, retry=False))
     publish_report = publish_report or (lambda job_id: generate_mock_report.apply_async(
         args=[job_id], task_id=job_id, retry=False))
+    publish_patch = publish_patch or (lambda job_id: process_patch_proposal.apply_async(
+        args=[job_id], task_id=job_id, retry=False))
+    publish_pr = publish_pr or (lambda review_id: process_pr_review_task.apply_async(
+        args=[review_id], task_id=review_id, retry=False))
     dispatched = []
     dispatched_embeddings = []
     dispatched_investigations = []
@@ -114,6 +119,34 @@ def dispatch_once(factory=None, publish=None, publish_sync=None, publish_index=N
                 dispatched_reports.append((event.job_id, event.repository_id))
             except Exception:
                 logger.warning("report_publish_failed")
+        if get_settings().patch_proposals_enabled:
+            patches = db.scalars(select(PatchOutbox).where(
+                PatchOutbox.status == "pending", PatchOutbox.next_dispatch_at <= now()
+            ).order_by(PatchOutbox.next_dispatch_at).limit(10).with_for_update(skip_locked=True))
+            for event in patches:
+                if event.attempts >= 20:
+                    event.status = "failed"
+                    continue
+                event.attempts += 1
+                event.next_dispatch_at = now() + timedelta(seconds=min(300, 2 ** min(event.attempts, 9)))
+                try:
+                    publish_patch(event.proposal_id)
+                except Exception:
+                    logger.warning("patch_publish_failed")
+        if get_settings().pr_reviews_enabled:
+            reviews = db.scalars(select(PRReviewOutbox).where(
+                PRReviewOutbox.status == "pending", PRReviewOutbox.next_dispatch_at <= now()
+            ).order_by(PRReviewOutbox.next_dispatch_at).limit(10).with_for_update(skip_locked=True))
+            for event in reviews:
+                if event.attempts >= 20:
+                    event.status = "failed"
+                    continue
+                event.attempts += 1
+                event.next_dispatch_at = now() + timedelta(seconds=min(300, 2 ** min(event.attempts, 9)))
+                try:
+                    publish_pr(event.review_id)
+                except Exception:
+                    logger.warning("pr_review_publish_failed")
     for job_id, repo_id in dispatched_reports:
         index_event("report_job_dispatched", job_id=job_id, repository_id=repo_id, task_id=job_id)
     for job_id, repo_id in dispatched_investigations:

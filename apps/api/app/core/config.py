@@ -11,11 +11,14 @@ class Settings(BaseSettings):
     app_env: Literal["development", "test", "production"] = "production"
     database_url: str
     redis_url: str = "redis://redis:6379/0"
+    worker_readiness_queue: str = "celery"
     github_webhook_secret: SecretStr
     demo_auth_enabled: bool = False
     demo_api_token: SecretStr = SecretStr("")
     github_oauth_enabled: bool = False
     github_app_id: int = 0
+    github_installation_auth_enabled: bool = False
+    github_app_private_key: SecretStr = SecretStr("")
     github_client_id: str = ""
     github_client_secret: SecretStr = SecretStr("")
     github_token_encryption_key: SecretStr = SecretStr("")
@@ -23,6 +26,29 @@ class Settings(BaseSettings):
     web_origin: str = "http://localhost:3000"
     demo_user_id: int = 1
     demo_tenant_id: int = 1
+    index_multilingual_enabled: bool = False
+    index_multilingual_supervised_parser_enabled: bool = False
+    pr_reviews_enabled: bool = False
+    pr_typescript_review_enabled: bool = False
+    pr_typescript_node_path: str = ""
+    pr_typescript_node_sha256: str = ""
+    pr_typescript_compiler_path: str = ""
+    pr_typescript_compiler_sha256: str = ""
+    patch_proposals_enabled: bool = False
+    patch_synthetic_execution_enabled: bool = False
+    patch_max_files: int = 5
+    patch_max_changed_lines: int = 300
+    patch_max_bytes: int = 262144
+    patch_provider_max_input_bytes: int = 524288
+    patch_provider_max_output_bytes: int = 307200
+    patch_provider_timeout_seconds: int = 30
+    patch_worker_lease_seconds: int = 120
+    patch_generation_provider: Literal["unavailable", "ollama"] = "unavailable"
+    patch_local_model_enabled: bool = False
+    patch_local_model_name: str = ""
+    patch_local_model_digest: str = ""
+    patch_local_model_endpoint: str = "http://127.0.0.1:11434"
+    patch_local_model_strategy: Literal["direct_diff", "source_edits"] = "source_edits"
     investigation_query_limit: int = 3
     investigation_per_query_limit: int = 10
     investigation_evidence_limit: int = 20
@@ -31,11 +57,17 @@ class Settings(BaseSettings):
     issue_context_comment_chars: int = 2000
     issue_context_total_chars: int = 30000
     issue_context_max_requests: int = 42
-    embedding_provider: Literal["disabled", "fake", "openai"] = "disabled"
+    embedding_provider: Literal["disabled", "fake", "openai", "local"] = "disabled"
     embedding_model: str = "text-embedding-3-small"
     embedding_dimensions: int = 32
     embedding_api_key: SecretStr = SecretStr("")
     embedding_allow_paid: bool = False
+    embedding_local_enabled: bool = False
+    embedding_local_path: str = ""
+    embedding_local_revision: str = ""
+    embedding_local_tokenizer_revision: str = ""
+    embedding_local_model_sha256: str = ""
+    embedding_local_tokenizer_sha256: str = ""
     investigation_provider: Literal["mock", "openai"] = "mock"
     investigation_real_enabled: bool = False
     investigation_paid_background_enabled: bool = False
@@ -47,6 +79,24 @@ class Settings(BaseSettings):
 
     @model_validator(mode="after")
     def secure_defaults(self):
+        if self.pr_typescript_review_enabled and self.app_env == "production":
+            raise ValueError("TypeScript review is not approved for production")
+        if (not 1 <= self.patch_worker_lease_seconds <= 120
+                or (self.app_env != "test" and self.patch_worker_lease_seconds != 120)):
+            raise ValueError("Short patch worker leases require a test environment")
+        if not self.worker_readiness_queue or len(self.worker_readiness_queue) > 128 or any(
+                c not in "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_.-"
+                for c in self.worker_readiness_queue):
+            raise ValueError("Invalid worker readiness queue")
+        if self.patch_synthetic_execution_enabled and self.app_env != "test":
+            raise ValueError("Synthetic patch execution is restricted to test environments")
+        if not (1 <= self.patch_max_files <= 5 and 1 <= self.patch_max_changed_lines <= 300
+                and 1 <= self.patch_max_bytes <= 262144):
+            raise ValueError("Invalid patch safety limits")
+        if not (1 <= self.patch_provider_max_input_bytes <= 524288
+                and 1 <= self.patch_provider_max_output_bytes <= 307200
+                and 1 <= self.patch_provider_timeout_seconds <= 30):
+            raise ValueError("Invalid patch provider limits")
         if not (1 <= self.investigation_query_limit <= 3 and 1 <= self.investigation_per_query_limit <= 20
                 and 1 <= self.investigation_evidence_limit <= 30):
             raise ValueError("Invalid investigation retrieval limits")
@@ -70,6 +120,16 @@ class Settings(BaseSettings):
                 raise ValueError("Demo authentication is forbidden in production")
             if len(self.demo_api_token.get_secret_value()) < 32:
                 raise ValueError("Demo token must contain at least 32 characters")
+        if self.github_installation_auth_enabled:
+            from cryptography.hazmat.primitives.serialization import load_pem_private_key
+            from cryptography.hazmat.primitives.asymmetric.rsa import RSAPrivateKey
+
+            try:
+                key = load_pem_private_key(self.github_app_private_key.get_secret_value().encode(), password=None)
+                if self.github_app_id <= 0 or not isinstance(key, RSAPrivateKey) or key.key_size < 2048:
+                    raise ValueError
+            except (ValueError, TypeError):
+                raise ValueError("GitHub App installation authentication requires a valid RSA signing key") from None
         if self.github_oauth_enabled:
             from cryptography.fernet import Fernet
 

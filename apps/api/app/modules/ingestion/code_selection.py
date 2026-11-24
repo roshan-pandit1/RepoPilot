@@ -25,6 +25,22 @@ def eligible_python_path(path: str) -> bool:
     return PurePosixPath(path).suffix == ".py"
 
 
+def eligible_source_path(path: str, *, multilingual: bool = True, exclude_generated: bool = False) -> bool:
+    """Use the existing path exclusions for each explicitly registered extension."""
+    if not multilingual:
+        return eligible_python_path(path)
+    from app.modules.ingestion.language_analysis import LANGUAGES
+
+    if not path or PurePosixPath(path).suffix.lower() not in LANGUAGES:
+        return False
+    name = PurePosixPath(path).name.lower()
+    if exclude_generated and (".generated." in name or name.endswith((".min.js", ".min.mjs", ".g.cs",
+                                                                       ".designer.cs", ".pb.go", ".pb.gw.go", ".gen.go"))):
+        return False
+    # Reuse every existing path and credential-name restriction unchanged.
+    return eligible_python_path(path + ".py")
+
+
 def decode_source(data: bytes, max_bytes: int) -> str | None:
     """Accept bounded, valid UTF-8 text; leave source line endings unchanged."""
     if max_bytes <= 0 or len(data) > max_bytes or b"\x00" in data:
@@ -33,6 +49,12 @@ def decode_source(data: bytes, max_bytes: int) -> str | None:
         return data.decode("utf-8")
     except UnicodeDecodeError:
         return None
+
+
+def incompatible_line_endings(source: str) -> bool:
+    """Reject separators that differ between Python line slicing and GitHub LF lines."""
+    return (any(c in source for c in ("\v", "\f", "\x1c", "\x1d", "\x1e", "\x85", "\u2028", "\u2029"))
+            or "\r" in source.replace("\r\n", ""))
 
 
 _SENSITIVE = (

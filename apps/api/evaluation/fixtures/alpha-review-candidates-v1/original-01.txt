@@ -1,0 +1,3 @@
+import subprocess
+def inspect(name):
+    return subprocess.run(["file", name], check=True)

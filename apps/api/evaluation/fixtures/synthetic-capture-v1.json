@@ -1,0 +1,98 @@
+{
+  "version": "synthetic-capture-v1",
+  "dataset_id": "capture-fixture-development-v1",
+  "split": "development",
+  "source_identity": "synthetic-only-v1",
+  "repository": "synthetic-fixture/capture",
+  "commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "snapshot_id": "10000000-0000-4000-8000-000000000001",
+  "tenant_id": 81001,
+  "user_id": 81002,
+  "installation_id": 81003,
+  "repository_id": 81004,
+  "config": {
+    "version": "capture-config-v1",
+    "query_version": "terms-v2",
+    "query_limit": 3,
+    "query_body_limit": 4000,
+    "per_query_limit": 10,
+    "evidence_limit": 20,
+    "semantic_candidate_pool": 20,
+    "top_k": 10,
+    "fusion_k": 60,
+    "chunking_policy": "fixture-explicit-inclusive-lines-v1",
+    "semantic_representation": "fixture-controlled-vector-v1",
+    "semantic_query_policy": "fixture-issue-title-v1",
+    "missing_vectors": "reject",
+    "missing_results": "empty"
+  },
+  "annotation": {
+    "instructions": "Mark fixture-derived relevant chunks; unknown items remain unjudged.",
+    "label_provenance": "synthetic-fixture-authored",
+    "adjudication_status": "fixture-derived",
+    "exclusion_criteria": ["non-synthetic source", "unverified source range", "unknown issue context"]
+  },
+  "files": [
+    {
+      "id": "11000000-0000-4000-8000-000000000001",
+      "path": "src/arithmetic.py",
+      "language": "python",
+      "sha256": "7bb4a99e66c2a6951223b3989b7ad69fa24ec360f064e304330d75bcfaaf8b54",
+      "source": "def add_numbers(a, b):\n    return a + b\n\ndef add_number_label(value):\n    return str(value)\n\ndef subtract_numbers(a, b):\n    return a - b\n"
+    },
+    {
+      "id": "11000000-0000-4000-8000-000000000002",
+      "path": "src/ledger.ts",
+      "language": "typescript",
+      "sha256": "8f49e179e908302c3223b4dee7d8ebda633e69109015196123edd9ed46407b05",
+      "source": "export function calculateTotal(items: number[]) {\n  return items.reduce((sum, value) => sum + value, 0);\n}\n\nexport function calculateTax(total: number) {\n  return total * 0.1;\n}\n"
+    },
+    {
+      "id": "11000000-0000-4000-8000-000000000003",
+      "path": "src/status.py",
+      "language": "python",
+      "sha256": "64d789b178a02a9c54830658d40f305a85097ea755e4de5b9adfb641dcab4896",
+      "source": "def render_status(state):\n    return f\"state: {state}\"\n"
+    }
+  ],
+  "chunks": [
+    {"id": "22000000-0000-4000-8000-000000000001", "file_id": "11000000-0000-4000-8000-000000000001", "symbol": "add_numbers", "start_line": 1, "end_line": 2, "vector": [1.0, 0.0, 0.0]},
+    {"id": "22000000-0000-4000-8000-000000000002", "file_id": "11000000-0000-4000-8000-000000000001", "symbol": "add_number_label", "start_line": 3, "end_line": 5, "vector": [0.0, 1.0, 0.0]},
+    {"id": "22000000-0000-4000-8000-000000000003", "file_id": "11000000-0000-4000-8000-000000000001", "symbol": "subtract_numbers", "start_line": 6, "end_line": 8, "vector": [0.0, 0.0, 1.0]},
+    {"id": "22000000-0000-4000-8000-000000000004", "file_id": "11000000-0000-4000-8000-000000000002", "symbol": "calculateTotal", "start_line": 1, "end_line": 3, "vector": [0.8, 0.6, 0.0]},
+    {"id": "22000000-0000-4000-8000-000000000005", "file_id": "11000000-0000-4000-8000-000000000002", "symbol": "calculateTax", "start_line": 4, "end_line": 7, "vector": [0.0, 0.0, -1.0]},
+    {"id": "22000000-0000-4000-8000-000000000006", "file_id": "11000000-0000-4000-8000-000000000003", "symbol": "render_status", "start_line": 1, "end_line": 2, "vector": [-1.0, 0.0, 0.0]}
+  ],
+  "examples": [
+    {
+      "id": "fixture-issue-1",
+      "issue": {
+        "version": "issue-context-v1", "issue_id": 82001, "number": 1, "state": "open",
+        "created_at": "2026-01-01T00:00:00Z", "updated_at": "2026-01-01T00:03:00Z",
+        "title": "Calculate total addition fails",
+        "body": "Traceback:\n  File \"src/arithmetic.py\", line 2, in add_numbers\n  File \"src/ledger.ts\", line 2, in calculateTotal\n",
+        "labels": ["bug", "arithmetic"], "comment_count": 2,
+        "comments": [
+          {"id": 83002, "created_at": "2026-01-01T00:02:00Z", "updated_at": "2026-01-01T00:02:00Z", "body": "The ledger total is also involved."},
+          {"id": 83001, "created_at": "2026-01-01T00:01:00Z", "updated_at": "2026-01-01T00:01:00Z", "body": "The arithmetic path is involved."}
+        ]
+      },
+      "query_vector": [1.0, 0.0, 0.0],
+      "adjudication": "fixture-derived",
+      "relevance": [
+        {"chunk_id": "22000000-0000-4000-8000-000000000001", "path": "src/arithmetic.py", "start_line": 1, "end_line": 2, "grade": 3},
+        {"chunk_id": "22000000-0000-4000-8000-000000000004", "path": "src/ledger.ts", "start_line": 1, "end_line": 3, "grade": 2}
+      ]
+    },
+    {
+      "id": "fixture-issue-2",
+      "issue": {
+        "version": "issue-context-v1", "issue_id": 82002, "number": 2, "state": "open",
+        "created_at": "2026-01-02T00:00:00Z", "updated_at": "2026-01-02T00:00:00Z",
+        "title": "Quasar telemetry signal missing", "body": "No source evidence has been identified.",
+        "labels": [], "comment_count": 0, "comments": []
+      },
+      "query_vector": [-1.0, 0.0, 0.0], "adjudication": "insufficient-evidence", "relevance": []
+    }
+  ]
+}

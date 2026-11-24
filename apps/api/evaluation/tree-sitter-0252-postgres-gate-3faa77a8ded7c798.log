@@ -1,0 +1,5 @@
+Sanitized summary; original private log and JUnit were retained outside the repository.
+Disposable database guard passed; selected pytest: 260 passed, 0 failed, 0 skipped, 1 deselected, 1 warning in 21.99s.
+All seven prior PostgreSQL cases and the PostgreSQL migration case executed and passed.
+Owned disposable container cleanup was independently verified; no Docker volumes were removed.
+Exact pytest argv, source identities and 67 official wheel hashes are in the adjacent JSON.

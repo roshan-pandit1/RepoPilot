@@ -28,14 +28,21 @@ def verified_installations(identity: Principal, github: GitHubClient) -> list[di
             and 0 < entry["id"] < 2**63
             and isinstance(entry.get("account"), dict)
             and entry["account"].get("type") == "User"
+            and type(entry["account"].get("id")) is int
             and entry["account"].get("id") == identity.github_id
             and "suspended_at" in entry and entry["suspended_at"] is None]
 
 
 def visible_github_repositories(identity: Principal, github: GitHubClient,
-                                installation_id: int) -> list[dict]:
-    if not any(item["id"] == installation_id for item in verified_installations(identity, github)):
+                                installation_id: int, *, required_permissions=()) -> list[dict]:
+    installation = next((item for item in verified_installations(identity, github)
+                         if item["id"] == installation_id), None)
+    if not installation:
         raise HTTPException(403, "Installation is not authorized")
+    permissions = installation.get("permissions")
+    if required_permissions and (not isinstance(permissions, dict)
+                                 or any(permissions.get(name) != "read" for name in required_permissions)):
+        raise HTTPException(403, "Installation permission is insufficient")
     try:
         repos = github.repositories(identity.token, installation_id)
     except GitHubFailure:

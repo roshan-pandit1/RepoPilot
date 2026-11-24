@@ -9,6 +9,47 @@ class SourceChunk:
     end_line: int
     symbol: str | None
     text: str
+    symbol_kind: str | None = None
+
+
+def chunk_multilingual(source: str, analysis, max_lines: int = 120) -> list[SourceChunk]:
+    """Cover every original line once, with outer non-overlapping syntax ranges.
+
+    An unavailable, invalid or bounded-out parser produces line windows without
+    symbols. Nested definitions remain in their containing source chunk.
+    """
+    if max_lines < 1:
+        raise ValueError("max_lines must be positive")
+    lines = source.splitlines(keepends=True)
+    candidates = sorted(analysis.symbols if analysis.fallback_reason is None else (),
+                        key=lambda s: (s.start_line, -s.end_line, s.name))
+    blocks = []
+    last = 0
+    for symbol in candidates:
+        if (symbol.start_line > last and symbol.end_line >= symbol.start_line
+                and symbol.end_line <= len(lines)):
+            blocks.append(symbol)
+            last = symbol.end_line
+    result: list[SourceChunk] = []
+
+    def add(first, end, symbol=None):
+        while first <= end:
+            final = min(end, first + max_lines - 1)
+            matches = symbol is not None and first == symbol.start_line
+            result.append(SourceChunk(first, final, symbol.name if matches else None,
+                                      "".join(lines[first - 1:final]),
+                                      symbol.kind if matches else None))
+            first = final + 1
+
+    cursor = 1
+    for block in blocks:
+        if cursor < block.start_line:
+            add(cursor, block.start_line - 1)
+        add(block.start_line, block.end_line, block)
+        cursor = block.end_line + 1
+    if cursor <= len(lines):
+        add(cursor, len(lines))
+    return result
 
 
 def chunk_python(source: str, max_lines: int = 120) -> list[SourceChunk]:

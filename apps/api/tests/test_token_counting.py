@@ -4,7 +4,7 @@ import json
 import socket
 from concurrent.futures import ThreadPoolExecutor
 from copy import deepcopy
-from datetime import timedelta
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from threading import Barrier
 from uuid import uuid4
@@ -39,11 +39,19 @@ from app.evaluation.token_counting import (
 )
 from app.modules.investigation import openai_provider
 from app.modules.investigation.report_model import ModelError
+from app.modules.auth.session import utc
 from test_auth_enrollment import github_auth as github_auth
 from test_experiment_executor import setup_fixture, valid_output
 from test_real_report_foundation import response
 
 ROOT = Path(__file__).resolve().parents[3]
+
+
+def test_utc_normalizes_aware_values_from_non_utc_database_sessions():
+    value = datetime(2026, 1, 1, 12, 0, tzinfo=timezone(timedelta(hours=5, minutes=30)))
+    normalized = utc(value)
+    assert normalized == datetime(2026, 1, 1, 6, 30, tzinfo=timezone.utc)
+    assert normalized.utcoffset() == timedelta(0)
 
 
 @pytest.fixture

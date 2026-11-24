@@ -23,7 +23,9 @@ function load(file, dependencies = {}) {
 }
 const clientModule = load("lib/investigation-client.ts");
 const { InvestigationController, issueNumber, safeCitation } = clientModule;
-const views = load("components/investigation-workspace.tsx", { "@/lib/investigation-client": clientModule });
+const patchModule = load("components/patch-proposals.tsx");
+const views = load("components/investigation-workspace.tsx", { "@/lib/investigation-client": clientModule,
+  "@/components/patch-proposals": patchModule });
 const render = (component, props) => renderToStaticMarkup(React.createElement(component, props));
 const repository = { id: "902", full_name: "alice/public", enabled: true };
 const jobId = "11111111-1111-4111-8111-111111111111";
@@ -471,4 +473,61 @@ test("real-provider reports retain grounding and are labeled for human review", 
   await other.loadIssue("5"); await other.openJob(jobId);
   assert.match(other.state.error, /Invalid report response/);
   other.dispose();
+});
+
+
+const origin = { repository_id: "901", repository: "upstream/project", issue_id: "990", issue_number: 5,
+  url: "https://github.com/upstream/project/issues/5", relationship: "direct_public_parent", verified_at: "2026-01-01T00:00:00Z" };
+const inventory = { classification: "PARTIAL_INVENTORY", manifest_sha256: "c".repeat(64), files: [
+  { path: "src/tasks.py", git_blob_sha1: "d".repeat(40), byte_length: 32, sha256: "e".repeat(64),
+    encoding: "utf-8", normalization: "identity", coverage: "COMPLETE_FILE" },
+  { path: "src/types.ts", git_blob_sha1: "f".repeat(40), byte_length: 20, sha256: "a".repeat(64),
+    encoding: "utf-8", normalization: "identity", coverage: "COMPLETE_FILE" } ] };
+const upstreamContext = { ...context, url: origin.url };
+const upstreamJob = { ...job, issue_origin: origin, snapshot_partial: true, snapshot_inventory: inventory };
+
+test("upstream job presents verified origin and bounded inventory", () => {
+  const html = render(views.InvestigationStatus, { job: upstreamJob, repository });
+  assert.match(html, /Upstream issue:/); assert.match(html, /upstream\/project#5/);
+  assert.match(html, /Investigating fork: alice\/public/); assert.match(html, /Pinned partial snapshot/);
+  assert.match(html, /2 source files included/); assert.match(html, /Complete file identity verified/);
+  assert.match(html, /src\/types\.ts/); assert.match(html, /may have missed relevant code/);
+});
+
+test("history reopens upstream through job-bound context before status", async () => {
+  const calls = [];
+  const fetch = async url => { calls.push(url);
+    if (url.endsWith("/upstream-context")) return Response.json(upstreamContext);
+    if (url.includes("/evidence")) return Response.json(evidence);
+    if (url.endsWith("/report")) return Response.json({}, { status: 404 });
+    return Response.json(upstreamJob);
+  };
+  const c = new InvestigationController(repository, fetch, new FakeClock());
+  await c.openHistory(5, jobId, origin);
+  assert.equal(c.state.context.url, origin.url); assert.equal(c.state.job.issue_origin.repository, "upstream/project");
+  assert.equal(c.state.job.snapshot_inventory.classification, "PARTIAL_INVENTORY");
+  assert.match(calls[0], /upstream-context$/); assert.match(calls[1], new RegExp(`/jobs/${jobId}$`));
+  assert.equal(calls.some(url => url.includes("/issues/5/context")), false); c.dispose();
+});
+
+test("upstream status refuses missing or altered origin and invalid partial inventory", async () => {
+  for (const changed of [
+    { ...upstreamJob, issue_origin: null },
+    { ...upstreamJob, issue_origin: { ...origin, repository_id: "999" } },
+    { ...upstreamJob, issue_origin: { ...origin, url: "https://github.com/attacker/repo/issues/5" } },
+    { ...upstreamJob, snapshot_inventory: { ...inventory, files: [{ ...inventory.files[0], path: "../secret" }] } },
+    { ...upstreamJob, snapshot_partial: false },
+    { ...upstreamJob, snapshot_inventory: { ...inventory, files: [{ ...inventory.files[0], coverage: "UNKNOWN_COVERAGE" }] } }
+  ]) {
+    const fetch = async url => url.endsWith("/upstream-context") ? Response.json(upstreamContext) : Response.json(changed);
+    const c = new InvestigationController(repository, fetch, new FakeClock()); await c.openHistory(5, jobId, origin);
+    assert.equal(c.state.job, null); assert.match(c.state.error, /Invalid investigation status response/); c.dispose();
+  }
+});
+
+test("history rejects forged upstream URLs", () => {
+  const base = { job_id: jobId, issue_number: 5, issue_title: "Synthetic", status: "completed", created_at: "2026-01-01T00:00:00Z",
+    updated_at: "2026-01-01T00:00:00Z", attempts: 1, evidence_count: 1, report_status: null, operation: "code_evidence" };
+  assert.equal(views.parseHistory({ items: [{ ...base, issue_origin: origin }], next_offset: null }).items.length, 1);
+  assert.throws(() => views.parseHistory({ items: [{ ...base, issue_origin: { ...origin, url: "https://evil.test/issue" } }], next_offset: null }));
 });

@@ -1,0 +1,3 @@
+export function lookup<T>(items: Map<string, T>, id: string): T | undefined {
+  return items.get(id);
+}

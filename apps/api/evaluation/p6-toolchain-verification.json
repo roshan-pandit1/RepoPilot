@@ -1,0 +1,605 @@
+{
+  "artifact_inventory_file": "apps/api/evaluation/p6-toolchain-artifacts.json",
+  "artifact_inventory_sha256": "436056d97446e3848579d98a73c242c6bc6e533066a90afa855de8e9f03f0f88",
+  "commands": {
+    "backend_selected": "python -m pytest -q -p no:cacheprovider tests/test_auth_enrollment.py tests/test_investigation_evidence.py tests/test_patch_provider_contract.py tests/test_patch_proposals.py tests/test_patch_validation.py tests/test_patch_synthetic_execution.py -k 'not postgres and not actual'",
+    "browser": "swift apps/web/tests/patch-workflow.browser.swift",
+    "frontend": [
+      "npm run typecheck -- --incremental false",
+      "npm run lint",
+      "npm test",
+      "npm run build"
+    ],
+    "patch_component_proxy_subset": "node --test tests/patch-proposals.test.mjs tests/investigation-proxy.test.mjs",
+    "postgres_runner": "python3.14 -I -B apps/api/evaluation/tree_sitter_pg_harness.py run [explicit verified interpreter, uv, wheelhouse, docker and socket paths]",
+    "ruff": "ruff check . --no-cache",
+    "toolchain_check": "/opt/homebrew/opt/python@3.14/bin/python3.14 -I -B apps/api/evaluation/prepare_p6_toolchain.py check",
+    "toolchain_safety": "/opt/homebrew/opt/python@3.14/bin/python3.14 -I -B apps/api/evaluation/test_prepare_p6_toolchain.py"
+  },
+  "date": "2026-11-13",
+  "docker": {
+    "container_created": false,
+    "context": "desktop-linux",
+    "image_sha256_previously_inspected": "0dd3149a06e4579a0d70d8fef9945636cd514005e7237deb27f9b67886f8dc4f",
+    "socket_available_at_attempt": false
+  },
+  "frontend_lock_sha256": "cd5243c9a26ee45faf6ee487dab4fc30411e8b4038353e7ce6dced32eb8e8538",
+  "limitations": [
+    "Node checksum manifest signature was not verified; GnuPG and a trusted Node release-key ring were unavailable.",
+    "Existing frontend dependencies were checked against lockfile versions, not installed with npm ci or individually rehashed.",
+    "Browser tests used synthetic intercepted responses, not a real provider or PostgreSQL.",
+    "No real patch-execution sandbox passed preflight and no before/after fixture ran.",
+    "PostgreSQL test isolation, P5 regressions, migration 0017 and schema drift were not exercised in P6.",
+    "The default npm artifact cache was absent; restoring a missing frontend dependency installation would need separately approved package access."
+  ],
+  "locked_wheels": [
+    {
+      "filename": "alembic-1.20.1-py3-none-any.whl",
+      "name": "alembic",
+      "sha256": "9970712cfb81ea26c8658d378aaa5b8f6ff9146e5bb111d70497c164016cf598",
+      "size": 270355,
+      "version": "1.20.1"
+    },
+    {
+      "filename": "amqp-5.4.1-py3-none-any.whl",
+      "name": "amqp",
+      "sha256": "ac2b816a14a380ed10c5ebbf85a334fd68111fa476496867a5ccd2fd09926d5e",
+      "size": 51858,
+      "version": "5.4.1"
+    },
+    {
+      "filename": "annotated_doc-0.0.5-py3-none-any.whl",
+      "name": "annotated-doc",
+      "sha256": "117bac03a25ede5df5440e855b32d556049ca169ead221505badf432fed4b101",
+      "size": 5302,
+      "version": "0.0.5"
+    },
+    {
+      "filename": "annotated_types-0.8.0-py3-none-any.whl",
+      "name": "annotated-types",
+      "sha256": "f072f4d804ea359e4eaf198b1af7a8b0943881a87f31bb764f8bf219bb9419e0",
+      "size": 13427,
+      "version": "0.8.0"
+    },
+    {
+      "filename": "anyio-4.15.1-py3-none-any.whl",
+      "name": "anyio",
+      "sha256": "6152fdbbf9a77fdec97731721bebf7c4c44f7c29b424b0065826173efc7ed101",
+      "size": 132079,
+      "version": "4.15.1"
+    },
+    {
+      "filename": "billiard-4.3.1-py3-none-any.whl",
+      "name": "billiard",
+      "sha256": "2c7075283191d9c0add66cf8fca8e06ba599e75fe7319b67186759f8877dfdaf",
+      "size": 90178,
+      "version": "4.3.1"
+    },
+    {
+      "filename": "celery-5.6.3-py3-none-any.whl",
+      "name": "celery",
+      "sha256": "0808f42f80909c4d5833202360ffafb2a4f83f4d8e23e1285d926610e9a7afa6",
+      "size": 451235,
+      "version": "5.6.3"
+    },
+    {
+      "filename": "certifi-2026.10.23-py3-none-any.whl",
+      "name": "certifi",
+      "sha256": "e9b54de76e530bb6cf0ccd036787103acb58fd42ba930ea8bf948ddbaa2f61d1",
+      "size": 135082,
+      "version": "2026.10.23"
+    },
+    {
+      "filename": "cffi-2.1.1-cp314-cp314-macosx_11_0_arm64.whl",
+      "name": "cffi",
+      "sha256": "661c298b4821edebead0c91edd2b00374d67ad7c5a1f7a91d4442633b79d6a72",
+      "size": 184962,
+      "version": "2.1.1"
+    },
+    {
+      "filename": "click-8.5.0-py3-none-any.whl",
+      "name": "click",
+      "sha256": "255bc9599cf7748b4b1a446ccc735421bd08a2ae529a8b88597d3de5664ee360",
+      "size": 125251,
+      "version": "8.5.0"
+    },
+    {
+      "filename": "click_didyoumean-0.3.1-py3-none-any.whl",
+      "name": "click-didyoumean",
+      "sha256": "5c4bb6007cfea5f2fd6583a2fb6701a22a41eb98957e63d0fac41c10e7c3117c",
+      "size": 3631,
+      "version": "0.3.1"
+    },
+    {
+      "filename": "click_plugins-1.1.1.2-py2.py3-none-any.whl",
+      "name": "click-plugins",
+      "sha256": "008d65743833ffc1f5417bf0e78e8d2c23aab04d9745ba817bd3e71b0feb6aa6",
+      "size": 11051,
+      "version": "1.1.1.2"
+    },
+    {
+      "filename": "click_repl-0.4.1-py3-none-any.whl",
+      "name": "click-repl",
+      "sha256": "5cb10881d4c5ebaa8695eceb69911af3062ee78342812b713564b17aad333eb5",
+      "size": 14988,
+      "version": "0.4.1"
+    },
+    {
+      "filename": "cryptography-46.0.7-cp311-abi3-macosx_10_9_universal2.whl",
+      "name": "cryptography",
+      "sha256": "ea42cbe97209df307fdc3b155f1b6fa2577c0defa8f1f7d3be7d31d189108ad4",
+      "size": 7179869,
+      "version": "46.0.7"
+    },
+    {
+      "filename": "fastapi-0.162.0-py3-none-any.whl",
+      "name": "fastapi",
+      "sha256": "3785963de305dd09912426cb81f2d230fce98ab3521cdfe97265c8d14983128c",
+      "size": 148912,
+      "version": "0.162.0"
+    },
+    {
+      "filename": "h11-0.16.0-py3-none-any.whl",
+      "name": "h11",
+      "sha256": "63cf8bbe7522de3bf65932fda1d9c2772064ffb3dae62d55932da54b31cb6c86",
+      "size": 37515,
+      "version": "0.16.0"
+    },
+    {
+      "filename": "httpcore-1.0.9-py3-none-any.whl",
+      "name": "httpcore",
+      "sha256": "2d400746a40668fc9dec9810239072b40b4484b640a8c38fd654a024c7a1bf55",
+      "size": 78784,
+      "version": "1.0.9"
+    },
+    {
+      "filename": "httpcore2-2.16.0-py3-none-any.whl",
+      "name": "httpcore2",
+      "sha256": "5c4358319f2602d984ad93182c9fee5160f22e9da7babdda870a5e7c4e2dc34f",
+      "size": 85070,
+      "version": "2.16.0"
+    },
+    {
+      "filename": "httptools-0.9.0-cp314-cp314-macosx_11_0_arm64.whl",
+      "name": "httptools",
+      "sha256": "1a4050a651e1f2faf05eb028ce9f2168abbcee9e24b209f5c1f2eb96d8c569e4",
+      "size": 118142,
+      "version": "0.9.0"
+    },
+    {
+      "filename": "httpx-0.28.1-py3-none-any.whl",
+      "name": "httpx",
+      "sha256": "d909fcccc110f8c7faf814ca82a9a4d816bc5a6dbfea25d6591d6985b8ba59ad",
+      "size": 73517,
+      "version": "0.28.1"
+    },
+    {
+      "filename": "httpx2-2.16.0-py3-none-any.whl",
+      "name": "httpx2",
+      "sha256": "fd2c5d7909e8d86fe92d53020c310ca0e4e431b838c207c5754b9bbf0308d49a",
+      "size": 97880,
+      "version": "2.16.0"
+    },
+    {
+      "filename": "idna-3.20-py3-none-any.whl",
+      "name": "idna",
+      "sha256": "ab7ae7122974553370f0bdb919e1a960b2cd1bc1ef0276416d896db81c14582c",
+      "size": 69583,
+      "version": "3.20"
+    },
+    {
+      "filename": "iniconfig-2.3.1-py3-none-any.whl",
+      "name": "iniconfig",
+      "sha256": "9121e2c1fdb355232495be3194c8dfe87ccc2d5dee45947b78e68f499790d7a7",
+      "size": 7552,
+      "version": "2.3.1"
+    },
+    {
+      "filename": "kombu-5.6.2-py3-none-any.whl",
+      "name": "kombu",
+      "sha256": "efcfc559da324d41d61ca311b0c64965ea35b4c55cc04ee36e55386145dace93",
+      "size": 214219,
+      "version": "5.6.2"
+    },
+    {
+      "filename": "mako-1.4.3-py3-none-any.whl",
+      "name": "mako",
+      "sha256": "723296007c870bfd6b3f0c3230dba7198096e5269297ebf5e4eff9e7ffa39d4f",
+      "size": 80164,
+      "version": "1.4.3"
+    },
+    {
+      "filename": "markupsafe-3.0.4-cp314-cp314-macosx_11_0_arm64.whl",
+      "name": "markupsafe",
+      "sha256": "52704c5d36eb6dda8866493decd61111fff86244c9b1ad225ca01b9e91e5970f",
+      "size": 12061,
+      "version": "3.0.4"
+    },
+    {
+      "filename": "opentelemetry_api-1.45.1-py3-none-any.whl",
+      "name": "opentelemetry-api",
+      "sha256": "b31553efa588ae44bc306f863c785c5333a9ecc091248c6ee68b4b6c87fdedfb",
+      "size": 60256,
+      "version": "1.45.1"
+    },
+    {
+      "filename": "packaging-26.3-py3-none-any.whl",
+      "name": "packaging",
+      "sha256": "d7193f7c8e4e93f444fde0262bf90af30e16fa0ad0ad44cb553c87339b23cd1c",
+      "size": 129956,
+      "version": "26.3"
+    },
+    {
+      "filename": "pluggy-1.7.0-py3-none-any.whl",
+      "name": "pluggy",
+      "sha256": "7dd7b0d8832ba3cb632c306926ded123429211b83641b35dc5c41ad2d34f9bec",
+      "size": 27082,
+      "version": "1.7.0"
+    },
+    {
+      "filename": "prompt_toolkit-3.0.53-py3-none-any.whl",
+      "name": "prompt-toolkit",
+      "sha256": "01c0891d7f9237d5e339f7d3e42cdae80b7534abb1c7c0e3352efba6231492f2",
+      "size": 392288,
+      "version": "3.0.53"
+    },
+    {
+      "filename": "psycopg-3.3.6-py3-none-any.whl",
+      "name": "psycopg",
+      "sha256": "a1db9f7148b06a28606767efaca51fa6f9398c5c0a3810519be69d7000bdb631",
+      "size": 215490,
+      "version": "3.3.6"
+    },
+    {
+      "filename": "psycopg_binary-3.3.6-cp314-cp314-macosx_11_0_arm64.whl",
+      "name": "psycopg-binary",
+      "sha256": "5927b7ba63153cd8e9862987290a2b783a5c590daf2a4ef981700cc3569166d4",
+      "size": 4782318,
+      "version": "3.3.6"
+    },
+    {
+      "filename": "pycparser-3.12-py3-none-any.whl",
+      "name": "pycparser",
+      "sha256": "a076f3f489b39b43ed13563a1dafe42447445bec2e294154ec5c57fcdda4c85e",
+      "size": 62600,
+      "version": "3.12"
+    },
+    {
+      "filename": "pydantic-2.14.1-py3-none-any.whl",
+      "name": "pydantic",
+      "sha256": "9195d967ec791692a04438115466764fb8b9a27b31f14a760437694f40d6b454",
+      "size": 488106,
+      "version": "2.14.1"
+    },
+    {
+      "filename": "pydantic_core-2.50.1-cp314-cp314-macosx_11_0_arm64.whl",
+      "name": "pydantic-core",
+      "sha256": "4df197990c15b5a37c5a277d131d9f2c67de6133f2e5dafd80d9bba4b99f46f9",
+      "size": 2023740,
+      "version": "2.50.1"
+    },
+    {
+      "filename": "pydantic_settings-2.16.1-py3-none-any.whl",
+      "name": "pydantic-settings",
+      "sha256": "30f5313340da4e8f1b440d1910b92a5bc3ccbb6b4ba70ec2b8395bc921f418f5",
+      "size": 80771,
+      "version": "2.16.1"
+    },
+    {
+      "filename": "pygments-2.21.0-py3-none-any.whl",
+      "name": "pygments",
+      "sha256": "2363c69b61c4a97c838da3b130dcd6468f4848992b21a82f2a63ec34377137d9",
+      "size": 1250147,
+      "version": "2.21.0"
+    },
+    {
+      "filename": "pytest-9.1.1-py3-none-any.whl",
+      "name": "pytest",
+      "sha256": "37a86b45efb9a47a61a36449063e8e18d0cab3161329fc099eb21783169c4f0c",
+      "size": 386536,
+      "version": "9.1.1"
+    },
+    {
+      "filename": "python_dateutil-3.0.0-py2.py3-none-any.whl",
+      "name": "python-dateutil",
+      "sha256": "3c79630202e4152c6add678446984236efe4f57e84d8e892aab0637bab82e9fd",
+      "size": 94659,
+      "version": "3.0.0"
+    },
+    {
+      "filename": "python_dotenv-1.2.4-py3-none-any.whl",
+      "name": "python-dotenv",
+      "sha256": "42269a8a5b3fd54ffa6f3d84b18abed50064717576b4ecf03dc4a55d8aa04fdc",
+      "size": 23266,
+      "version": "1.2.4"
+    },
+    {
+      "filename": "pyyaml-6.0.3-cp314-cp314-macosx_11_0_arm64.whl",
+      "name": "pyyaml",
+      "sha256": "34d5fcd24b8445fadc33f9cf348c1047101756fd760b4dacb5c3e99755703310",
+      "size": 173809,
+      "version": "6.0.3"
+    },
+    {
+      "filename": "redis-6.4.0-py3-none-any.whl",
+      "name": "redis",
+      "sha256": "f0544fa9604264e9464cdf4814e7d4830f74b165d52f2a330a760a88dd248b7f",
+      "size": 279847,
+      "version": "6.4.0"
+    },
+    {
+      "filename": "ruff-0.17.3-py3-none-macosx_11_0_arm64.whl",
+      "name": "ruff",
+      "sha256": "b75cc113b3aca388933d8296b667b1ac401a80317ea3074c9b0a66541199da29",
+      "size": 9440362,
+      "version": "0.17.3"
+    },
+    {
+      "filename": "six-1.17.0-py2.py3-none-any.whl",
+      "name": "six",
+      "sha256": "4721f391ed90541fddacab5acf947aa0d3dc7d27b2e1e8eda2be8970586c3274",
+      "size": 11050,
+      "version": "1.17.0"
+    },
+    {
+      "filename": "sqlalchemy-2.0.55-cp314-cp314-macosx_11_0_arm64.whl",
+      "name": "sqlalchemy",
+      "sha256": "94b206f4e65f00cc5b4c72ddb29dfc864d19a1a1b059a83d8d30253df93768c5",
+      "size": 2193251,
+      "version": "2.0.55"
+    },
+    {
+      "filename": "starlette-1.10.0-py3-none-any.whl",
+      "name": "starlette",
+      "sha256": "478c0ab3b4ced6e82719849c118fa406f0278a3499c1a898cd15cd31bdc38ce4",
+      "size": 80571,
+      "version": "1.10.0"
+    },
+    {
+      "filename": "tree_sitter-0.25.2-cp314-cp314-macosx_11_0_arm64.whl",
+      "name": "tree-sitter",
+      "sha256": "bda059af9d621918efb813b22fb06b3fe00c3e94079c6143fcb2c565eb44cb87",
+      "size": 137732,
+      "version": "0.25.2"
+    },
+    {
+      "filename": "tree_sitter_c-0.24.2-cp310-abi3-macosx_11_0_arm64.whl",
+      "name": "tree-sitter-c",
+      "sha256": "97bc80a224d48215d4e6e6376bf30d114f4c317b8145ff1b02afe785d4ba7bdd",
+      "size": 86213,
+      "version": "0.24.2"
+    },
+    {
+      "filename": "tree_sitter_c_sharp-0.23.5-cp310-abi3-macosx_11_0_arm64.whl",
+      "name": "tree-sitter-c-sharp",
+      "sha256": "a75994a11f6fed3f5b8c36ad6a00e5dc43205bd912c43af3a2a54fdf649664eb",
+      "size": 376296,
+      "version": "0.23.5"
+    },
+    {
+      "filename": "tree_sitter_cpp-0.23.4-cp39-abi3-macosx_11_0_arm64.whl",
+      "name": "tree-sitter-cpp",
+      "sha256": "bc3c404d9f0cbd87951213a85440afbf4c31e718f8d907fa9ee12bea4b8d276f",
+      "size": 315513,
+      "version": "0.23.4"
+    },
+    {
+      "filename": "tree_sitter_go-0.25.0-cp310-abi3-macosx_11_0_arm64.whl",
+      "name": "tree-sitter-go",
+      "sha256": "503b81a2b4c31e302869a1de3a352ad0912ccab3df9ac9950197b0a9ceeabd8f",
+      "size": 48674,
+      "version": "0.25.0"
+    },
+    {
+      "filename": "tree_sitter_java-0.23.5-cp39-abi3-macosx_11_0_arm64.whl",
+      "name": "tree-sitter-java",
+      "sha256": "24acd59c4720dedad80d548fe4237e43ef2b7a4e94c8549b0ca6e4c4d7bf6e69",
+      "size": 62288,
+      "version": "0.23.5"
+    },
+    {
+      "filename": "tree_sitter_javascript-0.25.0-cp310-abi3-macosx_11_0_arm64.whl",
+      "name": "tree-sitter-javascript",
+      "sha256": "8264a996b8845cfce06965152a013b5d9cbb7d199bc3503e12b5682e62bb1de1",
+      "size": 66440,
+      "version": "0.25.0"
+    },
+    {
+      "filename": "tree_sitter_rust-0.24.2-cp39-abi3-macosx_11_0_arm64.whl",
+      "name": "tree-sitter-rust",
+      "sha256": "01a46622735498493f29f3e628a90de95c96a07bfbeb88996243eb986b1cee36",
+      "size": 136812,
+      "version": "0.24.2"
+    },
+    {
+      "filename": "tree_sitter_typescript-0.23.2-cp39-abi3-macosx_11_0_arm64.whl",
+      "name": "tree-sitter-typescript",
+      "sha256": "c7cc1b0ff5d91bac863b0e38b1578d5505e718156c9db577c8baea2557f66de8",
+      "size": 302008,
+      "version": "0.23.2"
+    },
+    {
+      "filename": "truststore-0.10.5-py3-none-any.whl",
+      "name": "truststore",
+      "sha256": "9aaaedaefaf06d8b206278cf8b5012bc897f485a874503501e12d776df78951c",
+      "size": 19017,
+      "version": "0.10.5"
+    },
+    {
+      "filename": "typing_extensions-4.16.0-py3-none-any.whl",
+      "name": "typing-extensions",
+      "sha256": "481caa481374e813c1b176ada14e97f1f67a4539ce9cfeb3f350d78d6370c2e8",
+      "size": 45571,
+      "version": "4.16.0"
+    },
+    {
+      "filename": "typing_inspection-0.4.4-py3-none-any.whl",
+      "name": "typing-inspection",
+      "sha256": "65b8397ba37ccbce054456aaccddfc91e6e3083c92824df348d96ca832f3f147",
+      "size": 14750,
+      "version": "0.4.4"
+    },
+    {
+      "filename": "tzdata-2026.5-py2.py3-none-any.whl",
+      "name": "tzdata",
+      "sha256": "b683bd1b6659ddcd810ff02ad09ba821d4bf1065072805063eb35c49617905ac",
+      "size": 347996,
+      "version": "2026.5"
+    },
+    {
+      "filename": "tzlocal-5.4.5-py3-none-any.whl",
+      "name": "tzlocal",
+      "sha256": "ecab534f6d65d9deb4c4ea52c121ab6dd5958e9b878e71dcb102578269752454",
+      "size": 18215,
+      "version": "5.4.5"
+    },
+    {
+      "filename": "uv-0.13.6-py3-none-macosx_11_0_arm64.whl",
+      "name": "uv",
+      "sha256": "51361029b7cf91185d0092c4b356d110b4ad629e9cb11593f1e006ac72a72ca9",
+      "size": 14344205,
+      "version": "0.13.6"
+    },
+    {
+      "filename": "uvicorn-0.54.0-py3-none-any.whl",
+      "name": "uvicorn",
+      "sha256": "505bdb0f318731d45f1f712071fc781a8981f6847a31c902c9f5e652d4f67faf",
+      "size": 87427,
+      "version": "0.54.0"
+    },
+    {
+      "filename": "uvloop-0.23.0-cp314-cp314-macosx_10_15_universal2.whl",
+      "name": "uvloop",
+      "sha256": "b90397a50ad6332ed3e459c648ac20d182cce24a557354363ad85fc9ea4a17cd",
+      "size": 1421363,
+      "version": "0.23.0"
+    },
+    {
+      "filename": "vine-5.1.0-py3-none-any.whl",
+      "name": "vine",
+      "sha256": "40fdf3c48b2cfe1c38a49e9ae2da6fda88e4794c810050a728bd7413811fb1dc",
+      "size": 9636,
+      "version": "5.1.0"
+    },
+    {
+      "filename": "watchfiles-1.3.0-cp310-abi3-macosx_11_0_arm64.whl",
+      "name": "watchfiles",
+      "sha256": "bbc1198edfdc90fda0600f825aa94150f428dfcbf8138746f55998e0e660d64c",
+      "size": 397647,
+      "version": "1.3.0"
+    },
+    {
+      "filename": "wcwidth-0.9.4-cp310-abi3-macosx_11_0_arm64.whl",
+      "name": "wcwidth",
+      "sha256": "f279f32c8e206a9092fa350e53ca0c2bd8072e45b1c9fd31bb6d476b59b591c4",
+      "size": 618904,
+      "version": "0.9.4"
+    },
+    {
+      "filename": "websockets-17.3-cp314-cp314-macosx_10_15_universal2.whl",
+      "name": "websockets",
+      "sha256": "bc8fd230ef013951900c1fda100eebe4a4b1b407dde2a44186995042dda2c628",
+      "size": 218288,
+      "version": "17.3"
+    }
+  ],
+  "node": {
+    "archive": {
+      "checksum_url": "https://nodejs.org/dist/v24.18.0/SHASUMS256.txt",
+      "filename": "node-v24.18.0-darwin-arm64.tar.gz",
+      "sha256": "e1a97e14c99c803e96c7339403282ea05a499c32f8d83defe9ef5ec66f979ed1",
+      "size": 52087559,
+      "url": "https://nodejs.org/dist/v24.18.0/node-v24.18.0-darwin-arm64.tar.gz",
+      "version": "24.18.0"
+    },
+    "binary_sha256": "ee6fb0e015284d83a91e8ec5213f43a157f8a392b58555301682892ba928c04a",
+    "checksum_manifest_signature_verified": false,
+    "entire_installed_tree_rechecked_against_archive": true,
+    "npm": "11.16.0",
+    "signature_note": "GnuPG and a trusted Node release-key ring were unavailable.",
+    "version": "24.18.0"
+  },
+  "platform": {
+    "architecture": "arm64",
+    "os": "macOS 27.2",
+    "python": "3.14.10",
+    "python_gil_enabled": true
+  },
+  "python_lock_sha256": "40139126d31b521cc5377f1333b22d7c18de733840d1c63d848309ba7ad9c09a",
+  "python_project_sha256": "e0fe0e272583fefecbc09d4c9e0631c41771f370b267a4dd4569fa349ee4e240",
+  "results": {
+    "browser_synthetic": {
+      "api_responses": "intercepted",
+      "failed": 0,
+      "initial_window_focus_failure": "The test window lost visibility; the test-only window activation was corrected.",
+      "passed": 3,
+      "skipped": 0
+    },
+    "frontend_lint": "passed",
+    "frontend_tests": {
+      "failed": 0,
+      "passed": 94,
+      "skipped": 0
+    },
+    "frontend_typecheck": "passed",
+    "git_diff_check": "passed; final check repeated after documentation",
+    "native_synthetic": {
+      "failed": 0,
+      "passed": 120,
+      "skipped": 0
+    },
+    "node_build": {
+      "initial_standalone_trace_warning": "Symlinked node_modules caused omitted standalone files; a full temporary dependency copy produced a clean build and verified standalone files.",
+      "node": "24.18.0",
+      "status": "passed"
+    },
+    "patch_component_proxy_subset": {
+      "failed": 0,
+      "included_in_frontend_tests": true,
+      "passed": 14,
+      "skipped": 0
+    },
+    "postgres_harness_safety": {
+      "failed": 0,
+      "isolation": "mocked; not a real database",
+      "passed": 44,
+      "skipped": 0
+    },
+    "postgres_p5": {
+      "migration_0017": "not run",
+      "normal_database_accessed": false,
+      "real_isolation_checks": "not run",
+      "reason": "The selected Docker daemon socket disappeared before the runner created a container",
+      "schema_drift": "not run",
+      "status": "blocked"
+    },
+    "python_lock_offline": "passed",
+    "ruff": "passed",
+    "selected_backend_synthetic": {
+      "database": "SQLite in-memory where required; not PostgreSQL evidence",
+      "deselected": 6,
+      "failed": 0,
+      "passed": 176,
+      "skipped": 0
+    },
+    "toolchain_safety": {
+      "failed": 0,
+      "initial_launcher_error": "An isolated -m unittest invocation failed to import apps; the direct-script invocation passed all seven tests.",
+      "passed": 7,
+      "skipped": 0
+    }
+  },
+  "source_staging": {
+    "backend_files": 166,
+    "identity": "current_working_tree_copy_not_a_pinned_commit",
+    "inventory_verified_before_and_after": true,
+    "source_manifest_sha256": "7126dabf3132ad31b734cf1e59244361b7632ddcab6578e15a181e993f9d8327"
+  },
+  "uv": {
+    "binary_sha256": "3996850e6d85e60b0142b40af4bd984822d65f736b52209921c47312450685cb",
+    "version": "0.13.6",
+    "wheel_sha256": "51361029b7cf91185d0092c4b356d110b4ad629e9cb11593f1e006ac72a72ca9"
+  },
+  "version": "repopilot-p6-verification-v1",
+  "wheel_bytes": 50963767
+}

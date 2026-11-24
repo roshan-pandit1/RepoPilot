@@ -1,0 +1,1620 @@
+{
+  "artifacts": {
+    "files": [
+      {
+        "filename": "alembic-1.20.1-py3-none-any.whl",
+        "metadata_url": "https://pypi.org/pypi/alembic/1.20.1/json",
+        "name": "alembic",
+        "published_hash_verified": true,
+        "sha256": "9970712cfb81ea26c8658d378aaa5b8f6ff9146e5bb111d70497c164016cf598",
+        "size": 270355,
+        "url": "https://files.pythonhosted.org/packages/11/3c/8740f5b4e1bd57333e4f84265b9b6363da4f7cf70f5622dd1e2fde7a0bd5/alembic-1.20.1-py3-none-any.whl",
+        "version": "1.20.1"
+      },
+      {
+        "filename": "amqp-5.4.1-py3-none-any.whl",
+        "metadata_url": "https://pypi.org/pypi/amqp/5.4.1/json",
+        "name": "amqp",
+        "published_hash_verified": true,
+        "sha256": "ac2b816a14a380ed10c5ebbf85a334fd68111fa476496867a5ccd2fd09926d5e",
+        "size": 51858,
+        "url": "https://files.pythonhosted.org/packages/28/8e/25f762f8cf0da76c7b1a66a9cadc291168537598c533954b0e2c9de3a0a3/amqp-5.4.1-py3-none-any.whl",
+        "version": "5.4.1"
+      },
+      {
+        "filename": "annotated_doc-0.0.5-py3-none-any.whl",
+        "metadata_url": "https://pypi.org/pypi/annotated-doc/0.0.5/json",
+        "name": "annotated-doc",
+        "published_hash_verified": true,
+        "sha256": "117bac03a25ede5df5440e855b32d556049ca169ead221505badf432fed4b101",
+        "size": 5302,
+        "url": "https://files.pythonhosted.org/packages/3e/30/e900b21425a860e195f32e37657aa1f7c7f2b1bfb26f03ca209b90933c06/annotated_doc-0.0.5-py3-none-any.whl",
+        "version": "0.0.5"
+      },
+      {
+        "filename": "annotated_types-0.8.0-py3-none-any.whl",
+        "metadata_url": "https://pypi.org/pypi/annotated-types/0.8.0/json",
+        "name": "annotated-types",
+        "published_hash_verified": true,
+        "sha256": "f072f4d804ea359e4eaf198b1af7a8b0943881a87f31bb764f8bf219bb9419e0",
+        "size": 13427,
+        "url": "https://files.pythonhosted.org/packages/99/91/8acff4f5e50511b911bbccb72b8628a49c68ce14148cd9f6431094859a90/annotated_types-0.8.0-py3-none-any.whl",
+        "version": "0.8.0"
+      },
+      {
+        "filename": "anyio-4.15.1-py3-none-any.whl",
+        "metadata_url": "https://pypi.org/pypi/anyio/4.15.1/json",
+        "name": "anyio",
+        "published_hash_verified": true,
+        "sha256": "6152fdbbf9a77fdec97731721bebf7c4c44f7c29b424b0065826173efc7ed101",
+        "size": 132079,
+        "url": "https://files.pythonhosted.org/packages/12/b8/4bd346e22b28902df4d651910f5242c28d84e4a5c2435ca5c3f797ed7e2e/anyio-4.15.1-py3-none-any.whl",
+        "version": "4.15.1"
+      },
+      {
+        "filename": "billiard-4.3.1-py3-none-any.whl",
+        "metadata_url": "https://pypi.org/pypi/billiard/4.3.1/json",
+        "name": "billiard",
+        "published_hash_verified": true,
+        "sha256": "2c7075283191d9c0add66cf8fca8e06ba599e75fe7319b67186759f8877dfdaf",
+        "size": 90178,
+        "url": "https://files.pythonhosted.org/packages/bb/b1/360936699597063a2d9863aa94ccc3a6951e906ced032a9a1d8e562fc56b/billiard-4.3.1-py3-none-any.whl",
+        "version": "4.3.1"
+      },
+      {
+        "filename": "celery-5.6.3-py3-none-any.whl",
+        "metadata_url": "https://pypi.org/pypi/celery/5.6.3/json",
+        "name": "celery",
+        "published_hash_verified": true,
+        "sha256": "0808f42f80909c4d5833202360ffafb2a4f83f4d8e23e1285d926610e9a7afa6",
+        "size": 451235,
+        "url": "https://files.pythonhosted.org/packages/cf/c9/6eccdda96e098f7ae843162db2d3c149c6931a24fda69fe4ab84d0027eb5/celery-5.6.3-py3-none-any.whl",
+        "version": "5.6.3"
+      },
+      {
+        "filename": "certifi-2026.10.23-py3-none-any.whl",
+        "metadata_url": "https://pypi.org/pypi/certifi/2026.10.23/json",
+        "name": "certifi",
+        "published_hash_verified": true,
+        "sha256": "e9b54de76e530bb6cf0ccd036787103acb58fd42ba930ea8bf948ddbaa2f61d1",
+        "size": 135082,
+        "url": "https://files.pythonhosted.org/packages/32/d1/a3652fe2c19134d0d15922177821d863cbd7e842d53a21bbe7e8e3a1b5ac/certifi-2026.10.23-py3-none-any.whl",
+        "version": "2026.10.23"
+      },
+      {
+        "filename": "cffi-2.1.1-cp314-cp314-macosx_11_0_arm64.whl",
+        "metadata_url": "https://pypi.org/pypi/cffi/2.1.1/json",
+        "name": "cffi",
+        "published_hash_verified": true,
+        "sha256": "661c298b4821edebead0c91edd2b00374d67ad7c5a1f7a91d4442633b79d6a72",
+        "size": 184962,
+        "url": "https://files.pythonhosted.org/packages/b3/a9/9db617d05d7367c1ad0ab00b3aa6e6f9281edd689b4ee9ea0e5a84e89c97/cffi-2.1.1-cp314-cp314-macosx_11_0_arm64.whl",
+        "version": "2.1.1"
+      },
+      {
+        "filename": "click-8.5.0-py3-none-any.whl",
+        "metadata_url": "https://pypi.org/pypi/click/8.5.0/json",
+        "name": "click",
+        "published_hash_verified": true,
+        "sha256": "255bc9599cf7748b4b1a446ccc735421bd08a2ae529a8b88597d3de5664ee360",
+        "size": 125251,
+        "url": "https://files.pythonhosted.org/packages/58/50/6c0d534c5f134586a8e1ba4e330569e32f057e33372ae556463212fb4cd3/click-8.5.0-py3-none-any.whl",
+        "version": "8.5.0"
+      },
+      {
+        "filename": "click_didyoumean-0.3.1-py3-none-any.whl",
+        "metadata_url": "https://pypi.org/pypi/click-didyoumean/0.3.1/json",
+        "name": "click-didyoumean",
+        "published_hash_verified": true,
+        "sha256": "5c4bb6007cfea5f2fd6583a2fb6701a22a41eb98957e63d0fac41c10e7c3117c",
+        "size": 3631,
+        "url": "https://files.pythonhosted.org/packages/1b/5b/974430b5ffdb7a4f1941d13d83c64a0395114503cc357c6b9ae4ce5047ed/click_didyoumean-0.3.1-py3-none-any.whl",
+        "version": "0.3.1"
+      },
+      {
+        "filename": "click_plugins-1.1.1.2-py2.py3-none-any.whl",
+        "metadata_url": "https://pypi.org/pypi/click-plugins/1.1.1.2/json",
+        "name": "click-plugins",
+        "published_hash_verified": true,
+        "sha256": "008d65743833ffc1f5417bf0e78e8d2c23aab04d9745ba817bd3e71b0feb6aa6",
+        "size": 11051,
+        "url": "https://files.pythonhosted.org/packages/3d/9a/2abecb28ae875e39c8cad711eb1186d8d14eab564705325e77e4e6ab9ae5/click_plugins-1.1.1.2-py2.py3-none-any.whl",
+        "version": "1.1.1.2"
+      },
+      {
+        "filename": "click_repl-0.4.1-py3-none-any.whl",
+        "metadata_url": "https://pypi.org/pypi/click-repl/0.4.1/json",
+        "name": "click-repl",
+        "published_hash_verified": true,
+        "sha256": "5cb10881d4c5ebaa8695eceb69911af3062ee78342812b713564b17aad333eb5",
+        "size": 14988,
+        "url": "https://files.pythonhosted.org/packages/a4/f6/12dc0f2e0159c2b416818b7fedcda15b520043773364a81d7389809a5af5/click_repl-0.4.1-py3-none-any.whl",
+        "version": "0.4.1"
+      },
+      {
+        "filename": "cryptography-46.0.7-cp311-abi3-macosx_10_9_universal2.whl",
+        "metadata_url": "https://pypi.org/pypi/cryptography/46.0.7/json",
+        "name": "cryptography",
+        "published_hash_verified": true,
+        "sha256": "ea42cbe97209df307fdc3b155f1b6fa2577c0defa8f1f7d3be7d31d189108ad4",
+        "size": 7179869,
+        "url": "https://files.pythonhosted.org/packages/0b/5d/4a8f770695d73be252331e60e526291e3df0c9b27556a90a6b47bccca4c2/cryptography-46.0.7-cp311-abi3-macosx_10_9_universal2.whl",
+        "version": "46.0.7"
+      },
+      {
+        "filename": "fastapi-0.162.0-py3-none-any.whl",
+        "metadata_url": "https://pypi.org/pypi/fastapi/0.162.0/json",
+        "name": "fastapi",
+        "published_hash_verified": true,
+        "sha256": "3785963de305dd09912426cb81f2d230fce98ab3521cdfe97265c8d14983128c",
+        "size": 148912,
+        "url": "https://files.pythonhosted.org/packages/b4/4f/3f2c25c9b43970b5e9a08beb5e04776247edea684ddc0930f4f02f0bb6cb/fastapi-0.162.0-py3-none-any.whl",
+        "version": "0.162.0"
+      },
+      {
+        "filename": "h11-0.16.0-py3-none-any.whl",
+        "metadata_url": "https://pypi.org/pypi/h11/0.16.0/json",
+        "name": "h11",
+        "published_hash_verified": true,
+        "sha256": "63cf8bbe7522de3bf65932fda1d9c2772064ffb3dae62d55932da54b31cb6c86",
+        "size": 37515,
+        "url": "https://files.pythonhosted.org/packages/04/4b/29cac41a4d98d144bf5f6d33995617b185d14b22401f75ca86f384e87ff1/h11-0.16.0-py3-none-any.whl",
+        "version": "0.16.0"
+      },
+      {
+        "filename": "httpcore-1.0.9-py3-none-any.whl",
+        "metadata_url": "https://pypi.org/pypi/httpcore/1.0.9/json",
+        "name": "httpcore",
+        "published_hash_verified": true,
+        "sha256": "2d400746a40668fc9dec9810239072b40b4484b640a8c38fd654a024c7a1bf55",
+        "size": 78784,
+        "url": "https://files.pythonhosted.org/packages/7e/f5/f66802a942d491edb555dd61e3a9961140fd64c90bce1eafd741609d334d/httpcore-1.0.9-py3-none-any.whl",
+        "version": "1.0.9"
+      },
+      {
+        "filename": "httpcore2-2.16.0-py3-none-any.whl",
+        "metadata_url": "https://pypi.org/pypi/httpcore2/2.16.0/json",
+        "name": "httpcore2",
+        "published_hash_verified": true,
+        "sha256": "5c4358319f2602d984ad93182c9fee5160f22e9da7babdda870a5e7c4e2dc34f",
+        "size": 85070,
+        "url": "https://files.pythonhosted.org/packages/af/c2/ce417c397afa5181f0e3c6ff01a4d01639414e1adef08730d97571297151/httpcore2-2.16.0-py3-none-any.whl",
+        "version": "2.16.0"
+      },
+      {
+        "filename": "httptools-0.9.0-cp314-cp314-macosx_11_0_arm64.whl",
+        "metadata_url": "https://pypi.org/pypi/httptools/0.9.0/json",
+        "name": "httptools",
+        "published_hash_verified": true,
+        "sha256": "1a4050a651e1f2faf05eb028ce9f2168abbcee9e24b209f5c1f2eb96d8c569e4",
+        "size": 118142,
+        "url": "https://files.pythonhosted.org/packages/31/39/0965023968452245ece67b161adbf7c5652f8d0697ac69312f9d21849411/httptools-0.9.0-cp314-cp314-macosx_11_0_arm64.whl",
+        "version": "0.9.0"
+      },
+      {
+        "filename": "httpx-0.28.1-py3-none-any.whl",
+        "metadata_url": "https://pypi.org/pypi/httpx/0.28.1/json",
+        "name": "httpx",
+        "published_hash_verified": true,
+        "sha256": "d909fcccc110f8c7faf814ca82a9a4d816bc5a6dbfea25d6591d6985b8ba59ad",
+        "size": 73517,
+        "url": "https://files.pythonhosted.org/packages/2a/39/e50c7c3a983047577ee07d2a9e53faf5a69493943ec3f6a384bdc792deb2/httpx-0.28.1-py3-none-any.whl",
+        "version": "0.28.1"
+      },
+      {
+        "filename": "httpx2-2.16.0-py3-none-any.whl",
+        "metadata_url": "https://pypi.org/pypi/httpx2/2.16.0/json",
+        "name": "httpx2",
+        "published_hash_verified": true,
+        "sha256": "fd2c5d7909e8d86fe92d53020c310ca0e4e431b838c207c5754b9bbf0308d49a",
+        "size": 97880,
+        "url": "https://files.pythonhosted.org/packages/7b/3d/2e4bc4fd1ef9770871669adb348d612a6e4786b303a23f9935b81c48dd60/httpx2-2.16.0-py3-none-any.whl",
+        "version": "2.16.0"
+      },
+      {
+        "filename": "idna-3.20-py3-none-any.whl",
+        "metadata_url": "https://pypi.org/pypi/idna/3.20/json",
+        "name": "idna",
+        "published_hash_verified": true,
+        "sha256": "ab7ae7122974553370f0bdb919e1a960b2cd1bc1ef0276416d896db81c14582c",
+        "size": 69583,
+        "url": "https://files.pythonhosted.org/packages/58/a2/bb081bab032533a855d44de1d56f8e8426114ff1ba5d1f07a438a0a654f8/idna-3.20-py3-none-any.whl",
+        "version": "3.20"
+      },
+      {
+        "filename": "iniconfig-2.3.1-py3-none-any.whl",
+        "metadata_url": "https://pypi.org/pypi/iniconfig/2.3.1/json",
+        "name": "iniconfig",
+        "published_hash_verified": true,
+        "sha256": "9121e2c1fdb355232495be3194c8dfe87ccc2d5dee45947b78e68f499790d7a7",
+        "size": 7552,
+        "url": "https://files.pythonhosted.org/packages/56/43/4ca9e49d27a1fcf6bece6f6aec0ea46bb9112489b93d4b688fb415457bdb/iniconfig-2.3.1-py3-none-any.whl",
+        "version": "2.3.1"
+      },
+      {
+        "filename": "kombu-5.6.2-py3-none-any.whl",
+        "metadata_url": "https://pypi.org/pypi/kombu/5.6.2/json",
+        "name": "kombu",
+        "published_hash_verified": true,
+        "sha256": "efcfc559da324d41d61ca311b0c64965ea35b4c55cc04ee36e55386145dace93",
+        "size": 214219,
+        "url": "https://files.pythonhosted.org/packages/fb/0f/834427d8c03ff1d7e867d3db3d176470c64871753252b21b4f4897d1fa45/kombu-5.6.2-py3-none-any.whl",
+        "version": "5.6.2"
+      },
+      {
+        "filename": "mako-1.4.3-py3-none-any.whl",
+        "metadata_url": "https://pypi.org/pypi/mako/1.4.3/json",
+        "name": "mako",
+        "published_hash_verified": true,
+        "sha256": "723296007c870bfd6b3f0c3230dba7198096e5269297ebf5e4eff9e7ffa39d4f",
+        "size": 80164,
+        "url": "https://files.pythonhosted.org/packages/6d/a0/053d6af3e8f871e0073b4a36732d9e65be77a72e5434c31b94f6af78a6bb/mako-1.4.3-py3-none-any.whl",
+        "version": "1.4.3"
+      },
+      {
+        "filename": "markupsafe-3.0.4-cp314-cp314-macosx_11_0_arm64.whl",
+        "metadata_url": "https://pypi.org/pypi/markupsafe/3.0.4/json",
+        "name": "markupsafe",
+        "published_hash_verified": true,
+        "sha256": "52704c5d36eb6dda8866493decd61111fff86244c9b1ad225ca01b9e91e5970f",
+        "size": 12061,
+        "url": "https://files.pythonhosted.org/packages/ad/40/e2d117b048d47282ade906fbfd92814cbee5647afc13fda88a3406039372/markupsafe-3.0.4-cp314-cp314-macosx_11_0_arm64.whl",
+        "version": "3.0.4"
+      },
+      {
+        "filename": "opentelemetry_api-1.45.1-py3-none-any.whl",
+        "metadata_url": "https://pypi.org/pypi/opentelemetry-api/1.45.1/json",
+        "name": "opentelemetry-api",
+        "published_hash_verified": true,
+        "sha256": "b31553efa588ae44bc306f863c785c5333a9ecc091248c6ee68b4b6c87fdedfb",
+        "size": 60256,
+        "url": "https://files.pythonhosted.org/packages/1e/41/f7dcf80b81ee8e71c1a2b59f14208bc723edbd89ed027a73b175abf6348e/opentelemetry_api-1.45.1-py3-none-any.whl",
+        "version": "1.45.1"
+      },
+      {
+        "filename": "packaging-26.3-py3-none-any.whl",
+        "metadata_url": "https://pypi.org/pypi/packaging/26.3/json",
+        "name": "packaging",
+        "published_hash_verified": true,
+        "sha256": "d7193f7c8e4e93f444fde0262bf90af30e16fa0ad0ad44cb553c87339b23cd1c",
+        "size": 129956,
+        "url": "https://files.pythonhosted.org/packages/63/34/ba1c580383c9eada3711951fef0795c80b829a078d72188184bcab9dd527/packaging-26.3-py3-none-any.whl",
+        "version": "26.3"
+      },
+      {
+        "filename": "pluggy-1.7.0-py3-none-any.whl",
+        "metadata_url": "https://pypi.org/pypi/pluggy/1.7.0/json",
+        "name": "pluggy",
+        "published_hash_verified": true,
+        "sha256": "7dd7b0d8832ba3cb632c306926ded123429211b83641b35dc5c41ad2d34f9bec",
+        "size": 27082,
+        "url": "https://files.pythonhosted.org/packages/40/9e/2b38731e0fc536806f16490e1a12d7f0dc2a1235aa8cc07bcc75416a7daa/pluggy-1.7.0-py3-none-any.whl",
+        "version": "1.7.0"
+      },
+      {
+        "filename": "prompt_toolkit-3.0.53-py3-none-any.whl",
+        "metadata_url": "https://pypi.org/pypi/prompt-toolkit/3.0.53/json",
+        "name": "prompt-toolkit",
+        "published_hash_verified": true,
+        "sha256": "01c0891d7f9237d5e339f7d3e42cdae80b7534abb1c7c0e3352efba6231492f2",
+        "size": 392288,
+        "url": "https://files.pythonhosted.org/packages/54/6f/84908cad2d6aa5144abcf7b42709fe4fdb459bc640ec7ac5786e7693dabc/prompt_toolkit-3.0.53-py3-none-any.whl",
+        "version": "3.0.53"
+      },
+      {
+        "filename": "psycopg-3.3.6-py3-none-any.whl",
+        "metadata_url": "https://pypi.org/pypi/psycopg/3.3.6/json",
+        "name": "psycopg",
+        "published_hash_verified": true,
+        "sha256": "a1db9f7148b06a28606767efaca51fa6f9398c5c0a3810519be69d7000bdb631",
+        "size": 215490,
+        "url": "https://files.pythonhosted.org/packages/4e/de/748bd7609c71cae5d737f0ba9192f19329f70180ecda8fff3cac02c5abe3/psycopg-3.3.6-py3-none-any.whl",
+        "version": "3.3.6"
+      },
+      {
+        "filename": "psycopg_binary-3.3.6-cp314-cp314-macosx_11_0_arm64.whl",
+        "metadata_url": "https://pypi.org/pypi/psycopg-binary/3.3.6/json",
+        "name": "psycopg-binary",
+        "published_hash_verified": true,
+        "sha256": "5927b7ba63153cd8e9862987290a2b783a5c590daf2a4ef981700cc3569166d4",
+        "size": 4782318,
+        "url": "https://files.pythonhosted.org/packages/63/da/28befc84454cbc6374550de7746f591f8fe1b6165c1fce249652cc8291c4/psycopg_binary-3.3.6-cp314-cp314-macosx_11_0_arm64.whl",
+        "version": "3.3.6"
+      },
+      {
+        "filename": "pycparser-3.12-py3-none-any.whl",
+        "metadata_url": "https://pypi.org/pypi/pycparser/3.12/json",
+        "name": "pycparser",
+        "published_hash_verified": true,
+        "sha256": "a076f3f489b39b43ed13563a1dafe42447445bec2e294154ec5c57fcdda4c85e",
+        "size": 62600,
+        "url": "https://files.pythonhosted.org/packages/b6/ae/315bbeee126a769cbde43cf4908acb4b40408d8bf8bbf334dd7368d8dadf/pycparser-3.12-py3-none-any.whl",
+        "version": "3.12"
+      },
+      {
+        "filename": "pydantic-2.14.1-py3-none-any.whl",
+        "metadata_url": "https://pypi.org/pypi/pydantic/2.14.1/json",
+        "name": "pydantic",
+        "published_hash_verified": true,
+        "sha256": "9195d967ec791692a04438115466764fb8b9a27b31f14a760437694f40d6b454",
+        "size": 488106,
+        "url": "https://files.pythonhosted.org/packages/35/ea/a56b9fe5066f3537b7882f77e9c5dfb26d8c2eefdaed9b5fc73d57b4dc22/pydantic-2.14.1-py3-none-any.whl",
+        "version": "2.14.1"
+      },
+      {
+        "filename": "pydantic_core-2.50.1-cp314-cp314-macosx_11_0_arm64.whl",
+        "metadata_url": "https://pypi.org/pypi/pydantic-core/2.50.1/json",
+        "name": "pydantic-core",
+        "published_hash_verified": true,
+        "sha256": "4df197990c15b5a37c5a277d131d9f2c67de6133f2e5dafd80d9bba4b99f46f9",
+        "size": 2023740,
+        "url": "https://files.pythonhosted.org/packages/94/40/15c06410c9b7b8da5805d27b64e09bd3f900e986728106db2689dbc51513/pydantic_core-2.50.1-cp314-cp314-macosx_11_0_arm64.whl",
+        "version": "2.50.1"
+      },
+      {
+        "filename": "pydantic_settings-2.16.1-py3-none-any.whl",
+        "metadata_url": "https://pypi.org/pypi/pydantic-settings/2.16.1/json",
+        "name": "pydantic-settings",
+        "published_hash_verified": true,
+        "sha256": "30f5313340da4e8f1b440d1910b92a5bc3ccbb6b4ba70ec2b8395bc921f418f5",
+        "size": 80771,
+        "url": "https://files.pythonhosted.org/packages/3c/74/fdf926afe145d8629c4b2ff57f4ea1d64ed7abc4d84d97463b2517a2547e/pydantic_settings-2.16.1-py3-none-any.whl",
+        "version": "2.16.1"
+      },
+      {
+        "filename": "pygments-2.21.0-py3-none-any.whl",
+        "metadata_url": "https://pypi.org/pypi/pygments/2.21.0/json",
+        "name": "pygments",
+        "published_hash_verified": true,
+        "sha256": "2363c69b61c4a97c838da3b130dcd6468f4848992b21a82f2a63ec34377137d9",
+        "size": 1250147,
+        "url": "https://files.pythonhosted.org/packages/71/46/17f022dd3e953bf20a04a028a21ec746d942f8d2af30fa0f124fa0e6a684/pygments-2.21.0-py3-none-any.whl",
+        "version": "2.21.0"
+      },
+      {
+        "filename": "pytest-9.1.1-py3-none-any.whl",
+        "metadata_url": "https://pypi.org/pypi/pytest/9.1.1/json",
+        "name": "pytest",
+        "published_hash_verified": true,
+        "sha256": "37a86b45efb9a47a61a36449063e8e18d0cab3161329fc099eb21783169c4f0c",
+        "size": 386536,
+        "url": "https://files.pythonhosted.org/packages/24/25/1de2678b631f5a49215c6c96fff41ba892b0a34df68d6d80292b1b48aa7f/pytest-9.1.1-py3-none-any.whl",
+        "version": "9.1.1"
+      },
+      {
+        "filename": "python_dateutil-3.0.0-py2.py3-none-any.whl",
+        "metadata_url": "https://pypi.org/pypi/python-dateutil/3.0.0/json",
+        "name": "python-dateutil",
+        "published_hash_verified": true,
+        "sha256": "3c79630202e4152c6add678446984236efe4f57e84d8e892aab0637bab82e9fd",
+        "size": 94659,
+        "url": "https://files.pythonhosted.org/packages/5a/17/cebee01d1c0c1441174cf0456ddc91b280d79acb65340c05e41d77866ee8/python_dateutil-3.0.0-py2.py3-none-any.whl",
+        "version": "3.0.0"
+      },
+      {
+        "filename": "python_dotenv-1.2.4-py3-none-any.whl",
+        "metadata_url": "https://pypi.org/pypi/python-dotenv/1.2.4/json",
+        "name": "python-dotenv",
+        "published_hash_verified": true,
+        "sha256": "42269a8a5b3fd54ffa6f3d84b18abed50064717576b4ecf03dc4a55d8aa04fdc",
+        "size": 23266,
+        "url": "https://files.pythonhosted.org/packages/60/d1/38f3a3405989a89ac18390803e70c6ad7c7760da4f9b83cbeca0c44a0c72/python_dotenv-1.2.4-py3-none-any.whl",
+        "version": "1.2.4"
+      },
+      {
+        "filename": "pyyaml-6.0.3-cp314-cp314-macosx_11_0_arm64.whl",
+        "metadata_url": "https://pypi.org/pypi/pyyaml/6.0.3/json",
+        "name": "pyyaml",
+        "published_hash_verified": true,
+        "sha256": "34d5fcd24b8445fadc33f9cf348c1047101756fd760b4dacb5c3e99755703310",
+        "size": 173809,
+        "url": "https://files.pythonhosted.org/packages/bd/9c/4d95bb87eb2063d20db7b60faa3840c1b18025517ae857371c4dd55a6b3a/pyyaml-6.0.3-cp314-cp314-macosx_11_0_arm64.whl",
+        "version": "6.0.3"
+      },
+      {
+        "filename": "redis-6.4.0-py3-none-any.whl",
+        "metadata_url": "https://pypi.org/pypi/redis/6.4.0/json",
+        "name": "redis",
+        "published_hash_verified": true,
+        "sha256": "f0544fa9604264e9464cdf4814e7d4830f74b165d52f2a330a760a88dd248b7f",
+        "size": 279847,
+        "url": "https://files.pythonhosted.org/packages/e8/02/89e2ed7e85db6c93dfa9e8f691c5087df4e3551ab39081a4d7c6d1f90e05/redis-6.4.0-py3-none-any.whl",
+        "version": "6.4.0"
+      },
+      {
+        "filename": "ruff-0.17.3-py3-none-macosx_11_0_arm64.whl",
+        "metadata_url": "https://pypi.org/pypi/ruff/0.17.3/json",
+        "name": "ruff",
+        "published_hash_verified": true,
+        "sha256": "b75cc113b3aca388933d8296b667b1ac401a80317ea3074c9b0a66541199da29",
+        "size": 9440362,
+        "url": "https://files.pythonhosted.org/packages/a2/7e/537aba4b7f54397a374d2f6a6fc93e9c8015e18553f31a4a7b7dbced48b5/ruff-0.17.3-py3-none-macosx_11_0_arm64.whl",
+        "version": "0.17.3"
+      },
+      {
+        "filename": "six-1.17.0-py2.py3-none-any.whl",
+        "metadata_url": "https://pypi.org/pypi/six/1.17.0/json",
+        "name": "six",
+        "published_hash_verified": true,
+        "sha256": "4721f391ed90541fddacab5acf947aa0d3dc7d27b2e1e8eda2be8970586c3274",
+        "size": 11050,
+        "url": "https://files.pythonhosted.org/packages/b7/ce/149a00dd41f10bc29e5921b496af8b574d8413afcd5e30dfa0ed46c2cc5e/six-1.17.0-py2.py3-none-any.whl",
+        "version": "1.17.0"
+      },
+      {
+        "filename": "sqlalchemy-2.0.55-cp314-cp314-macosx_11_0_arm64.whl",
+        "metadata_url": "https://pypi.org/pypi/sqlalchemy/2.0.55/json",
+        "name": "sqlalchemy",
+        "published_hash_verified": true,
+        "sha256": "94b206f4e65f00cc5b4c72ddb29dfc864d19a1a1b059a83d8d30253df93768c5",
+        "size": 2193251,
+        "url": "https://files.pythonhosted.org/packages/3e/c0/c8e0079078d70e4d8a917e8903d547534f32f5e3d1be01b93ac8202c64b2/sqlalchemy-2.0.55-cp314-cp314-macosx_11_0_arm64.whl",
+        "version": "2.0.55"
+      },
+      {
+        "filename": "starlette-1.10.0-py3-none-any.whl",
+        "metadata_url": "https://pypi.org/pypi/starlette/1.10.0/json",
+        "name": "starlette",
+        "published_hash_verified": true,
+        "sha256": "478c0ab3b4ced6e82719849c118fa406f0278a3499c1a898cd15cd31bdc38ce4",
+        "size": 80571,
+        "url": "https://files.pythonhosted.org/packages/88/2e/947cfe02def9371c07cd5bf5b6b61c829e9aecb9904db02a66cfafbc1eec/starlette-1.10.0-py3-none-any.whl",
+        "version": "1.10.0"
+      },
+      {
+        "filename": "tree_sitter-0.25.2-cp314-cp314-macosx_11_0_arm64.whl",
+        "metadata_url": "https://pypi.org/pypi/tree-sitter/0.25.2/json",
+        "name": "tree-sitter",
+        "published_hash_verified": true,
+        "sha256": "bda059af9d621918efb813b22fb06b3fe00c3e94079c6143fcb2c565eb44cb87",
+        "size": 137732,
+        "url": "https://files.pythonhosted.org/packages/42/97/4bd4ad97f85a23011dd8a535534bb1035c4e0bac1234d58f438e15cff51f/tree_sitter-0.25.2-cp314-cp314-macosx_11_0_arm64.whl",
+        "version": "0.25.2"
+      },
+      {
+        "filename": "tree_sitter_c-0.24.2-cp310-abi3-macosx_11_0_arm64.whl",
+        "metadata_url": "https://pypi.org/pypi/tree-sitter-c/0.24.2/json",
+        "name": "tree-sitter-c",
+        "published_hash_verified": true,
+        "sha256": "97bc80a224d48215d4e6e6376bf30d114f4c317b8145ff1b02afe785d4ba7bdd",
+        "size": 86213,
+        "url": "https://files.pythonhosted.org/packages/c1/1c/1140db75e7e375cda3c68792a33826c4fd40b5b98c3259d93c75f6c8368f/tree_sitter_c-0.24.2-cp310-abi3-macosx_11_0_arm64.whl",
+        "version": "0.24.2"
+      },
+      {
+        "filename": "tree_sitter_c_sharp-0.23.5-cp310-abi3-macosx_11_0_arm64.whl",
+        "metadata_url": "https://pypi.org/pypi/tree-sitter-c-sharp/0.23.5/json",
+        "name": "tree-sitter-c-sharp",
+        "published_hash_verified": true,
+        "sha256": "a75994a11f6fed3f5b8c36ad6a00e5dc43205bd912c43af3a2a54fdf649664eb",
+        "size": 376296,
+        "url": "https://files.pythonhosted.org/packages/c8/13/593c8603f834eaf15082b81e079289fc9f062b4c0ab5b9489134084eec06/tree_sitter_c_sharp-0.23.5-cp310-abi3-macosx_11_0_arm64.whl",
+        "version": "0.23.5"
+      },
+      {
+        "filename": "tree_sitter_cpp-0.23.4-cp39-abi3-macosx_11_0_arm64.whl",
+        "metadata_url": "https://pypi.org/pypi/tree-sitter-cpp/0.23.4/json",
+        "name": "tree-sitter-cpp",
+        "published_hash_verified": true,
+        "sha256": "bc3c404d9f0cbd87951213a85440afbf4c31e718f8d907fa9ee12bea4b8d276f",
+        "size": 315513,
+        "url": "https://files.pythonhosted.org/packages/12/1c/0337c016bdc00a77a3326d12f10ee836401dd28f27db6fd5b7734bfb21ed/tree_sitter_cpp-0.23.4-cp39-abi3-macosx_11_0_arm64.whl",
+        "version": "0.23.4"
+      },
+      {
+        "filename": "tree_sitter_go-0.25.0-cp310-abi3-macosx_11_0_arm64.whl",
+        "metadata_url": "https://pypi.org/pypi/tree-sitter-go/0.25.0/json",
+        "name": "tree-sitter-go",
+        "published_hash_verified": true,
+        "sha256": "503b81a2b4c31e302869a1de3a352ad0912ccab3df9ac9950197b0a9ceeabd8f",
+        "size": 48674,
+        "url": "https://files.pythonhosted.org/packages/32/16/dd4cb124b35e99239ab3624225da07d4cb8da4d8564ed81d03fcb3a6ba9f/tree_sitter_go-0.25.0-cp310-abi3-macosx_11_0_arm64.whl",
+        "version": "0.25.0"
+      },
+      {
+        "filename": "tree_sitter_java-0.23.5-cp39-abi3-macosx_11_0_arm64.whl",
+        "metadata_url": "https://pypi.org/pypi/tree-sitter-java/0.23.5/json",
+        "name": "tree-sitter-java",
+        "published_hash_verified": true,
+        "sha256": "24acd59c4720dedad80d548fe4237e43ef2b7a4e94c8549b0ca6e4c4d7bf6e69",
+        "size": 62288,
+        "url": "https://files.pythonhosted.org/packages/57/ef/6406b444e2a93bc72a04e802f4107e9ecf04b8de4a5528830726d210599c/tree_sitter_java-0.23.5-cp39-abi3-macosx_11_0_arm64.whl",
+        "version": "0.23.5"
+      },
+      {
+        "filename": "tree_sitter_javascript-0.25.0-cp310-abi3-macosx_11_0_arm64.whl",
+        "metadata_url": "https://pypi.org/pypi/tree-sitter-javascript/0.25.0/json",
+        "name": "tree-sitter-javascript",
+        "published_hash_verified": true,
+        "sha256": "8264a996b8845cfce06965152a013b5d9cbb7d199bc3503e12b5682e62bb1de1",
+        "size": 66440,
+        "url": "https://files.pythonhosted.org/packages/b1/8f/6b4b2bc90d8ab3955856ce852cc9d1e82c81d7ab9646385f0e75ffd5b5d3/tree_sitter_javascript-0.25.0-cp310-abi3-macosx_11_0_arm64.whl",
+        "version": "0.25.0"
+      },
+      {
+        "filename": "tree_sitter_rust-0.24.2-cp39-abi3-macosx_11_0_arm64.whl",
+        "metadata_url": "https://pypi.org/pypi/tree-sitter-rust/0.24.2/json",
+        "name": "tree-sitter-rust",
+        "published_hash_verified": true,
+        "sha256": "01a46622735498493f29f3e628a90de95c96a07bfbeb88996243eb986b1cee36",
+        "size": 136812,
+        "url": "https://files.pythonhosted.org/packages/78/2a/cf39f881a545360b5a86bb1accba1f4acc713daab01fb9edd35b6e84f473/tree_sitter_rust-0.24.2-cp39-abi3-macosx_11_0_arm64.whl",
+        "version": "0.24.2"
+      },
+      {
+        "filename": "tree_sitter_typescript-0.23.2-cp39-abi3-macosx_11_0_arm64.whl",
+        "metadata_url": "https://pypi.org/pypi/tree-sitter-typescript/0.23.2/json",
+        "name": "tree-sitter-typescript",
+        "published_hash_verified": true,
+        "sha256": "c7cc1b0ff5d91bac863b0e38b1578d5505e718156c9db577c8baea2557f66de8",
+        "size": 302008,
+        "url": "https://files.pythonhosted.org/packages/8f/2f/1f36fda564518d84593f2740d5905ac127d590baf5c5753cef2a88a89c15/tree_sitter_typescript-0.23.2-cp39-abi3-macosx_11_0_arm64.whl",
+        "version": "0.23.2"
+      },
+      {
+        "filename": "truststore-0.10.5-py3-none-any.whl",
+        "metadata_url": "https://pypi.org/pypi/truststore/0.10.5/json",
+        "name": "truststore",
+        "published_hash_verified": true,
+        "sha256": "9aaaedaefaf06d8b206278cf8b5012bc897f485a874503501e12d776df78951c",
+        "size": 19017,
+        "url": "https://files.pythonhosted.org/packages/51/e9/3a7820be2bb0fe53b6bc9c3be26d3d1158004e4c3ab953aa6840b955b1e9/truststore-0.10.5-py3-none-any.whl",
+        "version": "0.10.5"
+      },
+      {
+        "filename": "typing_extensions-4.16.0-py3-none-any.whl",
+        "metadata_url": "https://pypi.org/pypi/typing-extensions/4.16.0/json",
+        "name": "typing-extensions",
+        "published_hash_verified": true,
+        "sha256": "481caa481374e813c1b176ada14e97f1f67a4539ce9cfeb3f350d78d6370c2e8",
+        "size": 45571,
+        "url": "https://files.pythonhosted.org/packages/49/d3/b8441a820a491ddfc024b0b0cf0393375b75ea13866d9c66727e54c2fc80/typing_extensions-4.16.0-py3-none-any.whl",
+        "version": "4.16.0"
+      },
+      {
+        "filename": "typing_inspection-0.4.4-py3-none-any.whl",
+        "metadata_url": "https://pypi.org/pypi/typing-inspection/0.4.4/json",
+        "name": "typing-inspection",
+        "published_hash_verified": true,
+        "sha256": "65b8397ba37ccbce054456aaccddfc91e6e3083c92824df348d96ca832f3f147",
+        "size": 14750,
+        "url": "https://files.pythonhosted.org/packages/67/81/4add07e5172b7ac40d8ed5ff580409a7801a4fe26d529bdd915401dabfbe/typing_inspection-0.4.4-py3-none-any.whl",
+        "version": "0.4.4"
+      },
+      {
+        "filename": "tzdata-2026.5-py2.py3-none-any.whl",
+        "metadata_url": "https://pypi.org/pypi/tzdata/2026.5/json",
+        "name": "tzdata",
+        "published_hash_verified": true,
+        "sha256": "b683bd1b6659ddcd810ff02ad09ba821d4bf1065072805063eb35c49617905ac",
+        "size": 347996,
+        "url": "https://files.pythonhosted.org/packages/94/21/1e5995a1c920cce14e4bffae20c665ec10e7ed03ab25e006cd741092b718/tzdata-2026.5-py2.py3-none-any.whl",
+        "version": "2026.5"
+      },
+      {
+        "filename": "tzlocal-5.4.5-py3-none-any.whl",
+        "metadata_url": "https://pypi.org/pypi/tzlocal/5.4.5/json",
+        "name": "tzlocal",
+        "published_hash_verified": true,
+        "sha256": "ecab534f6d65d9deb4c4ea52c121ab6dd5958e9b878e71dcb102578269752454",
+        "size": 18215,
+        "url": "https://files.pythonhosted.org/packages/7b/c1/9be4e1a8a30db8729a86628073910e56f85aaf8a659e053f376a2e6ea5a8/tzlocal-5.4.5-py3-none-any.whl",
+        "version": "5.4.5"
+      },
+      {
+        "filename": "uvicorn-0.54.0-py3-none-any.whl",
+        "metadata_url": "https://pypi.org/pypi/uvicorn/0.54.0/json",
+        "name": "uvicorn",
+        "published_hash_verified": true,
+        "sha256": "505bdb0f318731d45f1f712071fc781a8981f6847a31c902c9f5e652d4f67faf",
+        "size": 87427,
+        "url": "https://files.pythonhosted.org/packages/38/0c/b54a4fdd7f90a3af8b02ebc9ce6712c2c208b7926a2f7bad95c33ebbe943/uvicorn-0.54.0-py3-none-any.whl",
+        "version": "0.54.0"
+      },
+      {
+        "filename": "uvloop-0.23.0-cp314-cp314-macosx_10_15_universal2.whl",
+        "metadata_url": "https://pypi.org/pypi/uvloop/0.23.0/json",
+        "name": "uvloop",
+        "published_hash_verified": true,
+        "sha256": "b90397a50ad6332ed3e459c648ac20d182cce24a557354363ad85fc9ea4a17cd",
+        "size": 1421363,
+        "url": "https://files.pythonhosted.org/packages/4e/a4/00e85345871c59c834a23c136c1771205856028ecc8ba940b3951178e59b/uvloop-0.23.0-cp314-cp314-macosx_10_15_universal2.whl",
+        "version": "0.23.0"
+      },
+      {
+        "filename": "vine-5.1.0-py3-none-any.whl",
+        "metadata_url": "https://pypi.org/pypi/vine/5.1.0/json",
+        "name": "vine",
+        "published_hash_verified": true,
+        "sha256": "40fdf3c48b2cfe1c38a49e9ae2da6fda88e4794c810050a728bd7413811fb1dc",
+        "size": 9636,
+        "url": "https://files.pythonhosted.org/packages/03/ff/7c0c86c43b3cbb927e0ccc0255cb4057ceba4799cd44ae95174ce8e8b5b2/vine-5.1.0-py3-none-any.whl",
+        "version": "5.1.0"
+      },
+      {
+        "filename": "watchfiles-1.3.0-cp310-abi3-macosx_11_0_arm64.whl",
+        "metadata_url": "https://pypi.org/pypi/watchfiles/1.3.0/json",
+        "name": "watchfiles",
+        "published_hash_verified": true,
+        "sha256": "bbc1198edfdc90fda0600f825aa94150f428dfcbf8138746f55998e0e660d64c",
+        "size": 397647,
+        "url": "https://files.pythonhosted.org/packages/c7/8a/894799b485fe9473ad10422a0d9668e53fb78e3a2b5cc6061159572844ad/watchfiles-1.3.0-cp310-abi3-macosx_11_0_arm64.whl",
+        "version": "1.3.0"
+      },
+      {
+        "filename": "wcwidth-0.9.4-cp310-abi3-macosx_11_0_arm64.whl",
+        "metadata_url": "https://pypi.org/pypi/wcwidth/0.9.4/json",
+        "name": "wcwidth",
+        "published_hash_verified": true,
+        "sha256": "f279f32c8e206a9092fa350e53ca0c2bd8072e45b1c9fd31bb6d476b59b591c4",
+        "size": 618904,
+        "url": "https://files.pythonhosted.org/packages/04/e9/dfdca30ca36c472de3e260406dee29fc108499ec590c63b3fe279887ee9d/wcwidth-0.9.4-cp310-abi3-macosx_11_0_arm64.whl",
+        "version": "0.9.4"
+      },
+      {
+        "filename": "websockets-17.3-cp314-cp314-macosx_10_15_universal2.whl",
+        "metadata_url": "https://pypi.org/pypi/websockets/17.3/json",
+        "name": "websockets",
+        "published_hash_verified": true,
+        "sha256": "bc8fd230ef013951900c1fda100eebe4a4b1b407dde2a44186995042dda2c628",
+        "size": 218288,
+        "url": "https://files.pythonhosted.org/packages/27/ad/f65e365bbf38d61164b0c2f64776fc7714bfa59ac51e492b038a35f4ab1b/websockets-17.3-cp314-cp314-macosx_10_15_universal2.whl",
+        "version": "17.3"
+      },
+      {
+        "filename": "uv-0.13.6-py3-none-macosx_11_0_arm64.whl",
+        "metadata_url": "https://pypi.org/pypi/uv/0.13.6/json",
+        "name": "uv",
+        "published_hash_verified": true,
+        "sha256": "51361029b7cf91185d0092c4b356d110b4ad629e9cb11593f1e006ac72a72ca9",
+        "size": 14344205,
+        "url": "https://files.pythonhosted.org/packages/f4/14/77230cc4f6a73a31578cb8070a5f67f58a76946ead643ae8a4155620d6da/uv-0.13.6-py3-none-macosx_11_0_arm64.whl",
+        "version": "0.13.6"
+      }
+    ],
+    "metadata_response_bytes": 1775024,
+    "published_metadata_sha256": "fbb706f09c34f39ef93ef8a157dc8dd765d185eee221ac8a66e68902a6ca9f19",
+    "total_download_bytes": 50963767,
+    "verified_wheels_sha256": "ebabaea405835244eba0ea035efba72fb26bcc7237f812dccd3f47afbcd2f8ff"
+  },
+  "created_utc": "2026-11-07T17:12:12.165896+00:00",
+  "docker": {
+    "cleanup": "owned container removed; independent docker ps by full ID returned no rows; no volume-removal option used",
+    "compose_ownership": "direct Docker create with two test labels; source image labels were null",
+    "container_id": "0319ca991517327e34d996cdd1aa16b11dec2c4127080b675671a4fbf211a159",
+    "container_name": "repopilot-ts0252-pg-3faa77a8ded7c798",
+    "context": "desktop-linux",
+    "database": "repopilot_5b1_checks_3faa77a8ded7c798",
+    "host": "127.0.0.1",
+    "image_id": "sha256:0dd3149a06e4579a0d70d8fef9945636cd514005e7237deb27f9b67886f8dc4f",
+    "isolation_checks": "passed before pytest: ownership, image, tmpfs, no mounts, loopback, SCRAM, passwordless rejection, marker, empty schema and URL",
+    "marker": "repopilot-synthetic-capture-v1",
+    "port": 49775,
+    "role": "capture_fixture",
+    "test_database_url": "postgresql+psycopg://capture_fixture@127.0.0.1:49775/repopilot_5b1_checks_3faa77a8ded7c798"
+  },
+  "environment": {
+    "installed_locked_distributions": 66,
+    "network_sandbox": "deny network except verified disposable loopback port during pytest",
+    "offline_lock_check": "passed",
+    "python": "CPython 3.14.10 GIL-enabled macOS ARM64",
+    "tree_sitter": "0.25.2",
+    "uv": "0.13.6"
+  },
+  "limitations": [
+    "No real-Git held-out case; explicitly deselected",
+    "PostgreSQL synthetic-capture suite requiring a different database identity not run",
+    "Earlier exploratory 6 failures and 41 errors are not individually fully accounted for",
+    "No real-model evaluation, normal database migration, reindex or runtime activation",
+    "Native parser-process isolation remains unimplemented"
+  ],
+  "scope": "synthetic selected regression suite; not full backend or runtime activation",
+  "sources": {
+    "manifest_sha256": "9daa543640ea3f0599ce2a8b01f2d031a922e4ccbf10463caaac1b27b2d109f7",
+    "snapshot": {
+      "deselected_real_git_case": "tests/test_retrieval_heldout.py::test_validation_reads_pinned_local_git_objects_without_modifying_repository",
+      "files": {
+        "alembic.ini": {
+          "bytes": 57,
+          "sha256": "d94591c0b82a4f66e08e5417f2d6543c2f68eb5ce68e0eb913a02cd3d2e0777b"
+        },
+        "alembic/env.py": {
+          "bytes": 614,
+          "sha256": "4256581beb6dae9e9898693510d7d85703d1393f42d95123955fd1097fa71c64"
+        },
+        "alembic/versions/0001_foundation.py": {
+          "bytes": 4857,
+          "sha256": "86579fc33dd2e4e767273b422d731961138b1a45707f9095facbc6d5564cb6c2"
+        },
+        "alembic/versions/0002_auth_sessions.py": {
+          "bytes": 3320,
+          "sha256": "1e8ade0abed00a43eba34da5a6a0439f8aba531679c5176a7034cdb961badea1"
+        },
+        "alembic/versions/0003_code_index.py": {
+          "bytes": 4858,
+          "sha256": "e05adfc85f37e07ea88155abcec1a9ae31d4964ced6ef30733bb172c4257d6ed"
+        },
+        "alembic/versions/0004_index_job_lease.py": {
+          "bytes": 521,
+          "sha256": "f4ad8217b1128efe9d66fd412581a9ebb638ee0cc09f73b1638d8736adfd72aa"
+        },
+        "alembic/versions/0005_embedding_storage.py": {
+          "bytes": 3200,
+          "sha256": "40e701b5f45103a09951420213dbed6130c577c59c6b922b425cad72579fec10"
+        },
+        "alembic/versions/0006_embedding_jobs.py": {
+          "bytes": 2248,
+          "sha256": "f55cee6d6e6a38d259f7b4cec730d5648f8845d3133229ffaf0acda240e63f35"
+        },
+        "alembic/versions/0007_investigation_jobs.py": {
+          "bytes": 3016,
+          "sha256": "76d5d879c8816700086067637a2b84b2fb85d87de6de01beb2f5e74c56fe50e2"
+        },
+        "alembic/versions/0008_investigation_evidence.py": {
+          "bytes": 4700,
+          "sha256": "7ba8e5c850061f03d9f97f2eb1db5a88d9c4be311159f0dc107cdad77efbdf51"
+        },
+        "alembic/versions/0009_investigation_reports.py": {
+          "bytes": 4799,
+          "sha256": "5e9739493b5935141ce05487143a21ac2a5895c593762a20fce8ddc4fd52d74d"
+        },
+        "alembic/versions/0010_investigation_budget.py": {
+          "bytes": 7688,
+          "sha256": "7954dedcb9d0e5a6e532dc1ae3f6e25ac0a753dc99432bebf656e30913111580"
+        },
+        "alembic/versions/0011_executor_approvals.py": {
+          "bytes": 1961,
+          "sha256": "2dcfb112af78a6fddd3176117fe7f25b7545e0464101c1d45f1bcb3c8325afa3"
+        },
+        "alembic/versions/0012_simulated_token_counts.py": {
+          "bytes": 3556,
+          "sha256": "43207755c4cdfa6ad2602a15fcf4e763edc8bcf500ea0216456b382299bf9d2e"
+        },
+        "alembic/versions/0013_provider_count_authorizations.py": {
+          "bytes": 5348,
+          "sha256": "330b28cbe1c1cfc41006cc23c717d64caec3e088cb98eaf799fab7965ab30478"
+        },
+        "alembic/versions/0014_historical_evidence_provenance.py": {
+          "bytes": 2648,
+          "sha256": "4f8ffd05b054914b5f8d2a9e72687490c150fd1f78c053102c0087e3a3b78a02"
+        },
+        "alembic/versions/0015_multilingual_index_metadata.py": {
+          "bytes": 1273,
+          "sha256": "b7a414803dd4ed2a6f0134ef33777d2e0a636e41f88caf857bbaf9a8f6b068f0"
+        },
+        "alembic/versions/0016_vector_contracts.py": {
+          "bytes": 878,
+          "sha256": "f03f4bc59ec096f7d2d2ba64af84e4476c87906cd51fba561417fc4ea1059547"
+        },
+        "app/__init__.py": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "app/api/__init__.py": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "app/api/v1/__init__.py": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "app/api/v1/routes.py": {
+          "bytes": 5421,
+          "sha256": "f58fbba4f4b4de956d89a4bf159ea0b8c2ec372af97c4134be6cf423fdfea4bc"
+        },
+        "app/core/__init__.py": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "app/core/config.py": {
+          "bytes": 5373,
+          "sha256": "54d9d2b14c458c1d57468c7ccab592bd66be947609e73000d0bc455ccd0012d9"
+        },
+        "app/core/index_logging.py": {
+          "bytes": 1063,
+          "sha256": "28923b2253c6180c66fa183c8feec68f0d6dd0e2016d69e440d769e4374b0d3a"
+        },
+        "app/domain/__init__.py": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "app/domain/models.py": {
+          "bytes": 47864,
+          "sha256": "8cefdeed894b841fa17e6263936617ccaf040bed3702ae7782e49c246834fefb"
+        },
+        "app/evaluation/__init__.py": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "app/evaluation/adversarial.py": {
+          "bytes": 7810,
+          "sha256": "5e8fcf35dfdf248f1bb8e68365e482b221745d0801d7892b8c26316a3ee93b66"
+        },
+        "app/evaluation/benchmark_provenance.py": {
+          "bytes": 19787,
+          "sha256": "c3090d5c9c000d78bebf4ceb08081517dee8472e081009f30d0b028318eda251"
+        },
+        "app/evaluation/capture_synthetic.py": {
+          "bytes": 28498,
+          "sha256": "c16181a4c3bfdf99638459491b5962b71c413e2ba94f49979a2a9f4687601d13"
+        },
+        "app/evaluation/code_intelligence_replay.py": {
+          "bytes": 7664,
+          "sha256": "971609f5777dbb92a77af53280d648d21cd730e1b12a07024ca2e46c28c2881d"
+        },
+        "app/evaluation/compare_issue_retrieval.py": {
+          "bytes": 5626,
+          "sha256": "5e2ca393919e8b48795e720c1bdd8553c5495afb1791d44e179a9c2f3a0e857e"
+        },
+        "app/evaluation/compare_reports.py": {
+          "bytes": 5285,
+          "sha256": "12987505251ecdcb7e6fb544679a6454e982abbd553fc9b37cc99f06f816bdf2"
+        },
+        "app/evaluation/disclosure_screen.py": {
+          "bytes": 3779,
+          "sha256": "49afd179f73dcb4e165c005fda104c321c8d43e40808d86af3bfc03825dfce2e"
+        },
+        "app/evaluation/disposable_regression.py": {
+          "bytes": 4157,
+          "sha256": "731409c2f1268d4392089c2e8dc7f2316b200bafbee1b6387833a100897321a6"
+        },
+        "app/evaluation/experiment_executor.py": {
+          "bytes": 45787,
+          "sha256": "6677a49ad3aaa28a0f0614bde8f4f80821e81bc1ce4cfc772abf21b7afd4b04f"
+        },
+        "app/evaluation/experiment_preparation.py": {
+          "bytes": 15224,
+          "sha256": "525f49d4147e1db4e0a5ede00072f7af4517645603fa2cc4a625a33c334f85a0"
+        },
+        "app/evaluation/git_source.py": {
+          "bytes": 4308,
+          "sha256": "e055592db184c16815734f19674eddcaa8d8c3da5448376267444ac836e75c98"
+        },
+        "app/evaluation/issue_context_schema.py": {
+          "bytes": 2934,
+          "sha256": "37a7e24d0ba4d8cc19ed1af17b0ce1f585cab7b84401634e41983648c9721cf8"
+        },
+        "app/evaluation/issue_report.py": {
+          "bytes": 16609,
+          "sha256": "4a1a31b3fb4a92534b4c5ebc91b0ec87aa9a168e6a11c6fb2818ccf36b192b3c"
+        },
+        "app/evaluation/issue_report_disposable.py": {
+          "bytes": 20890,
+          "sha256": "7c163640e903170a56b4f95a436634142214f0866f3ba1f2c6f9ea8328893ad0"
+        },
+        "app/evaluation/issue_retrieval_candidates.py": {
+          "bytes": 2711,
+          "sha256": "3f299d18faf96fe75577d539429a55b62a51fa77ee48529de2ba0e210b9d81b3"
+        },
+        "app/evaluation/issue_retrieval_replay.py": {
+          "bytes": 13307,
+          "sha256": "850257c6520341cdd9006a3a4a52e77c326260453b181b0159dcb28dc8cff55e"
+        },
+        "app/evaluation/issue_retrieval_rerank.py": {
+          "bytes": 6069,
+          "sha256": "15e9218755d2c21c337872c05e4719189dc5355cf8ce3156622a461c4f2470e2"
+        },
+        "app/evaluation/lexical_diagnostic.py": {
+          "bytes": 5197,
+          "sha256": "334ae7ba049cc7422fa45c26ff45c2d12461d4c12459b63a4643087fc8a45bd7"
+        },
+        "app/evaluation/postgres_scale.py": {
+          "bytes": 9391,
+          "sha256": "b6bca4912dc4deace3a3e6a19ba18b2a3043e515cd49e067d53f96dfba7e5482"
+        },
+        "app/evaluation/provider_harness.py": {
+          "bytes": 26488,
+          "sha256": "8887487911ab018285bac4bed636fb12fef26123ec91d007fc7824e94ee65cd4"
+        },
+        "app/evaluation/retrieval.py": {
+          "bytes": 10672,
+          "sha256": "26d905d25834f66621576499d1cafe28ec4af89f696a7711220afb90bb6290d1"
+        },
+        "app/evaluation/retrieval_heldout.py": {
+          "bytes": 22517,
+          "sha256": "7ed7dc04a811d46e6ff571463c1520eb25238dabe23d0d783b16e0b55e5ccac4"
+        },
+        "app/evaluation/token_counting.py": {
+          "bytes": 39190,
+          "sha256": "9fca80ab71cd7e9ba9ce0f0c1e70dce164d3befc122ddc670f446fd355f90487"
+        },
+        "app/evaluation/v2_disposable.py": {
+          "bytes": 9320,
+          "sha256": "54b3b5c493d011b0d79a6e83de4639bf7ddaff3cb4addce691cec0aa3fad5bfb"
+        },
+        "app/evaluation/verify_labels.py": {
+          "bytes": 2321,
+          "sha256": "9258e0923914560cab83bb4ba7685147fbf83ab634e7fce0c10d82335abe709f"
+        },
+        "app/infra/__init__.py": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "app/infra/database.py": {
+          "bytes": 571,
+          "sha256": "914e81f67e7cc4e1a3ab8d3d2253e044bfd72bd8d944acc620ef4a3dfbafdff3"
+        },
+        "app/infra/vector_type.py": {
+          "bytes": 1115,
+          "sha256": "846758cee7ac13ef4da15662e1f343a362ea4e43d037fb46f4395956ad81a6cd"
+        },
+        "app/main.py": {
+          "bytes": 2936,
+          "sha256": "3aa6afd07b67f3523f9f6be8d64f2c0b8dd2c2aec15386877999f89f2a9cfee5"
+        },
+        "app/modules/__init__.py": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "app/modules/auth/__init__.py": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "app/modules/auth/routes.py": {
+          "bytes": 6775,
+          "sha256": "713ea90be22b396b21381555da3ff6e392e64820fbfe9ee8d34c0473a834d838"
+        },
+        "app/modules/auth/session.py": {
+          "bytes": 3539,
+          "sha256": "4ef496c8ddda958d27b10ab2ec5ae59b88adce17155e5023fa2732b793312b1b"
+        },
+        "app/modules/github/__init__.py": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "app/modules/github/client.py": {
+          "bytes": 4535,
+          "sha256": "f13ec0811772f7973641f0f0ee973a5d91ec5353946670f3700d25daa43355b8"
+        },
+        "app/modules/github/enrollment.py": {
+          "bytes": 7381,
+          "sha256": "6f59923e7c131eb44dac2bf069a3c4380bf3860dcb238f2772e592cc5528a79f"
+        },
+        "app/modules/github/guards.py": {
+          "bytes": 1311,
+          "sha256": "2b0d7bdad5c25a76912d3ffbedca9390d39dcd6ce2809af6e95d414394a79094"
+        },
+        "app/modules/github/issue_context.py": {
+          "bytes": 8129,
+          "sha256": "3adf1596fa5e60dcb4f70f9a3e2a0a1eaa4694a68d9933ab5d87a34883e74079"
+        },
+        "app/modules/github/issue_context_client.py": {
+          "bytes": 2779,
+          "sha256": "985aa14fe5fb7f52afbf5b86b5bc93f2654903eac7a35944b514d87165b9cb7c"
+        },
+        "app/modules/github/schemas.py": {
+          "bytes": 758,
+          "sha256": "1ce37e8ec67ec85aa7b33b2a0ea94b689b82cb462c881d2c88a3898658f4a635"
+        },
+        "app/modules/github/security.py": {
+          "bytes": 322,
+          "sha256": "b49bb45a35edd38fc5bcbf010a692ba3453cc8ec97824c67b9fc1913095e5fcd"
+        },
+        "app/modules/github/source_client.py": {
+          "bytes": 5617,
+          "sha256": "65d69e89b9b1bbcf056c98c1b65daa31ada2fe980d1e1c878543eb365a7cbb83"
+        },
+        "app/modules/ingestion/__init__.py": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "app/modules/ingestion/citations.py": {
+          "bytes": 882,
+          "sha256": "4d71b5f860af363cfa51bf745a39382beebdb28a4b46b4dc0029083f66d52e7b"
+        },
+        "app/modules/ingestion/code_chunking.py": {
+          "bytes": 3463,
+          "sha256": "0b2f1d894abccf9d77b4ec116aefb2d7ed6be0cc116ccaba6127a630ce736a10"
+        },
+        "app/modules/ingestion/code_collect.py": {
+          "bytes": 3381,
+          "sha256": "9c60a05501179519f071892ad15de41ae7a4242e9ae3f020ce23cbccc71e17d3"
+        },
+        "app/modules/ingestion/code_persistence.py": {
+          "bytes": 3973,
+          "sha256": "2f6fe6e5222eae1c8f6c83566396b2b6ed1efb69ecc8e7a8cd48856730f37f85"
+        },
+        "app/modules/ingestion/code_routes.py": {
+          "bytes": 15687,
+          "sha256": "21d6f58ca93db957d655263f0f6e41b8a3096c7f1bec3ad0e165e90c0817f54e"
+        },
+        "app/modules/ingestion/code_selection.py": {
+          "bytes": 2937,
+          "sha256": "fa4efcf497c0427c936736993c08cf15cef33979e049d1b4bf13954fbe863ce7"
+        },
+        "app/modules/ingestion/code_snapshot.py": {
+          "bytes": 4491,
+          "sha256": "7d0eb6797cbe08efb4ca60e7e749f24d14b997d6ad7a3bc5e2d3bbba27844297"
+        },
+        "app/modules/ingestion/embedding_store.py": {
+          "bytes": 2788,
+          "sha256": "8dbb641ccee0585d2307d12881cdb04a614847bd6e733f706238eed7a4b2d581"
+        },
+        "app/modules/ingestion/embeddings.py": {
+          "bytes": 7102,
+          "sha256": "32e13d8a18240ef897ca437fc731a81642ca240c85005da597ac856fb9cce86c"
+        },
+        "app/modules/ingestion/keyword_search.py": {
+          "bytes": 1744,
+          "sha256": "0e9f4168f3c42ab35a7260d632dc08cc24aec59b465ca7bfe26d587613e76d43"
+        },
+        "app/modules/ingestion/language_analysis.py": {
+          "bytes": 7795,
+          "sha256": "7df11b8ba82071ac1016d05aa1d38d0c10734d74b4091e4a23a50a1f44ad247c"
+        },
+        "app/modules/ingestion/local_embeddings.py": {
+          "bytes": 11920,
+          "sha256": "fa84eb91a0d1b7135770284c90f2b4feeca109fcd11633c5c461a1a4191ad915"
+        },
+        "app/modules/ingestion/rank_fusion.py": {
+          "bytes": 634,
+          "sha256": "0c5af5922625cb9b08834d5f91afa91b3fa67c6c7c80b2c72a775aa4ebd7feee"
+        },
+        "app/modules/ingestion/semantic_search.py": {
+          "bytes": 5257,
+          "sha256": "37a64578ea1d6cd2732341b38cdaa89a588439bb314cc3f519d109f14a2e8a16"
+        },
+        "app/modules/ingestion/service.py": {
+          "bytes": 3500,
+          "sha256": "7e8470592dddfaf4e81c9144b3817762a193304d2281ead9bd4db3c0bc4e2f72"
+        },
+        "app/modules/investigation/code_intelligence.py": {
+          "bytes": 19328,
+          "sha256": "7c7b9f03d0e9ef147cc404a74a703fbbce0699e5f056973abf1c69b593ec7af2"
+        },
+        "app/modules/investigation/code_intelligence_schema.py": {
+          "bytes": 2620,
+          "sha256": "54d4788e8dd460c2deccc7a616f8e3952773f5be13ae960cd7d494b9b88632c3"
+        },
+        "app/modules/investigation/openai_provider.py": {
+          "bytes": 14856,
+          "sha256": "f11315300d811895becfe8001ccf6c2659e33c29c2f8fa5d304986e538272cab"
+        },
+        "app/modules/investigation/query_builder.py": {
+          "bytes": 3937,
+          "sha256": "f6a834af60ff81ea2d7d9f6bf51ba3ae86617a052b43aafbcbbba64dd4c8be53"
+        },
+        "app/modules/investigation/ranking.py": {
+          "bytes": 2158,
+          "sha256": "7c918fc74dd21e2bb44db3b7373be0dae2e50b4c3b1b40722652cc74ae8bc976"
+        },
+        "app/modules/investigation/report_model.py": {
+          "bytes": 15587,
+          "sha256": "94822119f1c9f951e3e1752580d75f747044f7ea54c57e8eb5d57640071d1954"
+        },
+        "app/modules/investigation/report_routes.py": {
+          "bytes": 12714,
+          "sha256": "09f5c8f566cd1549ae5beb78e47f8847440fa030331ebfb6ac116f2e55c0b2bd"
+        },
+        "app/modules/investigation/report_worker.py": {
+          "bytes": 19565,
+          "sha256": "142f3428446a353fe8ead30940589b06481aafe9a20ea6344f0824d8b7bb5579"
+        },
+        "app/modules/investigation/reporting.py": {
+          "bytes": 3103,
+          "sha256": "8082ea7753bf56b32be8e690d28df590036eac1faf71334021f432197f88e6e1"
+        },
+        "app/modules/investigation/reporting_config.py": {
+          "bytes": 914,
+          "sha256": "3c968b023f5ee4eeafdded5bf69e5a895b15059856d278960010332e9c2c6dfa"
+        },
+        "app/modules/investigation/retrieval.py": {
+          "bytes": 11308,
+          "sha256": "b08d254f8e7139c446a3fedc700f5e537982137f5843608df5fd22db9f5b8d16"
+        },
+        "app/modules/investigation/routes.py": {
+          "bytes": 18978,
+          "sha256": "ef04cf9547828bc1b61251b3a9a6fed23e47267835b2457bd1193f53e5ade47d"
+        },
+        "app/modules/investigation/usage_ledger.py": {
+          "bytes": 10734,
+          "sha256": "d974eac17140cb4fa064b0fa2197540012eed34996701dba5e4f3711febfaf1f"
+        },
+        "app/modules/tenancy/__init__.py": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "app/modules/tenancy/auth.py": {
+          "bytes": 1041,
+          "sha256": "6e17eecedf1e498b75d70f98808a358f9586c0054466fafa75f05b99a98465a4"
+        },
+        "app/seed.py": {
+          "bytes": 2154,
+          "sha256": "02fdebef467d4971f018554b91fdd6c1f61240a3d5088b96cdc04748186a5cc3"
+        },
+        "app/smoke.py": {
+          "bytes": 3878,
+          "sha256": "eb5bfe8642b6762f0481795fec7003c5343e17fdba83012af2f2dcdd59ff5745"
+        },
+        "app/workers/__init__.py": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "app/workers/dispatcher.py": {
+          "bytes": 7133,
+          "sha256": "37514d6fa2231740ce1b2a107f8b84a26db88de21d35cc63ad9c740e8384d9c0"
+        },
+        "app/workers/tasks.py": {
+          "bytes": 49648,
+          "sha256": "87265f63cd68b6782f930a84d71cba11c9b5ebd2a060554410b6377488e3c457"
+        },
+        "evaluation/fixtures/synthetic-capture-v1.json": {
+          "bytes": 5202,
+          "sha256": "bc3ce070215cac2353e4a63fae237036dc8318695f8eb105096633fe855de809"
+        },
+        "evaluation/investigation-evidence-v1.json": {
+          "bytes": 2027,
+          "sha256": "4a082e5bb5133f945693ed8f44be940e9f072d4cbc8532e422ee9f8ecd0aa202"
+        },
+        "evaluation/repopilot-6349190.json": {
+          "bytes": 7737,
+          "sha256": "9fc9c5db2259e5ada3ea183fbd8fb3f9852f60192b3ece5fe8dcf066defa1aaa"
+        },
+        "evaluation/repopilot-v2-956a4f9.json": {
+          "bytes": 9617,
+          "sha256": "813414c2eece2fa42f57d75d9cc12b6dd77eb5d75d63999ad8cae14b65bdd2ba"
+        },
+        "evaluation/test_tree_sitter_pg_harness.py": {
+          "bytes": 29361,
+          "sha256": "0759e3b510c50bb6fb854796f7b3b56a5f82aa5b3a73734171d572c0277dc9f2"
+        },
+        "evaluation/tree_sitter_pg_harness.py": {
+          "bytes": 49088,
+          "sha256": "9715d1aaf7e60a191217571e5d296c3b2653e6e734521321970ad15a6e4c99e2"
+        },
+        "pyproject.toml": {
+          "bytes": 1018,
+          "sha256": "e0fe0e272583fefecbc09d4c9e0631c41771f370b267a4dd4569fa349ee4e240"
+        },
+        "tests/conftest.py": {
+          "bytes": 2892,
+          "sha256": "016295ee0740413e38c2071a760a3d6a0905f06e5bcfc19752509d95f60c8e23"
+        },
+        "tests/test_auth_enrollment.py": {
+          "bytes": 16392,
+          "sha256": "6d5698b307d478589d850c84d0f4f007d320bb351d157d45168648e555bc13b3"
+        },
+        "tests/test_benchmark_provenance.py": {
+          "bytes": 18463,
+          "sha256": "90b801b60e8080db46ba477b4a5a2bad5bf7d76e1987702a26bc9f93101e5f84"
+        },
+        "tests/test_code_collect.py": {
+          "bytes": 1360,
+          "sha256": "12f5bcbbe175926774e78c3fc15969a1717871f83f0ac471d235e59ba9d0c9cc"
+        },
+        "tests/test_code_persistence.py": {
+          "bytes": 1380,
+          "sha256": "ae690bf707fab38b90878f1ee945d474aaa2a50cc29508694b347ea58a76ad1a"
+        },
+        "tests/test_code_primitives.py": {
+          "bytes": 1775,
+          "sha256": "78d86d629e682fa6b87bad10bcf3cf18c3e6ec29bc8060b2b469ee0ad5814ea9"
+        },
+        "tests/test_code_snapshot.py": {
+          "bytes": 1955,
+          "sha256": "72f3a5442427010ef27debd31af363f5f4103ab00a00995f40f02a1a769876ce"
+        },
+        "tests/test_code_workflow.py": {
+          "bytes": 13734,
+          "sha256": "5a7f5912aea746c3111fdd82e635f3cdd96d3e65517f808c50b68c563c89abdd"
+        },
+        "tests/test_historical_readability.py": {
+          "bytes": 10404,
+          "sha256": "cfbef7cba5e425e050b1e3144fa105ff32da9d569876a1cd954bee2e4650a0fa"
+        },
+        "tests/test_investigation_evidence.py": {
+          "bytes": 32850,
+          "sha256": "d05d0fff9d9385c0be6bb316074152fe1dc72003268bc16ec8fb91e7224bfb49"
+        },
+        "tests/test_investigation_migration.py": {
+          "bytes": 17209,
+          "sha256": "1bb1f3f75a5f6724f893ec0065a68d42ca8bacf1b57024c95c2a922de05abf74"
+        },
+        "tests/test_investigation_reports.py": {
+          "bytes": 29469,
+          "sha256": "7caaaf96c71a1775c04fa54ac5e0130f08f6eafccd026d464f0405b714f5d998"
+        },
+        "tests/test_issue_context.py": {
+          "bytes": 6420,
+          "sha256": "63f983f5f3b9691ce4a8029e87793cc4fc0992b611bf123d14d900b7835f8006"
+        },
+        "tests/test_issue_retrieval_replay.py": {
+          "bytes": 8392,
+          "sha256": "15fe1bcab9a18cdfff27c251b6b34b89267a40b43bd1ccf79e36bf4583e39bd3"
+        },
+        "tests/test_language_analysis.py": {
+          "bytes": 3189,
+          "sha256": "ae5a8bbc28c5e176b2a19fdff6004a4e3a0d20b9d3dfd0bb8bbac8e68d616710"
+        },
+        "tests/test_multilingual_indexing.py": {
+          "bytes": 12593,
+          "sha256": "9a2ff5b9531be8f89ba4d36aed9828604e752e9dcdf447c82852ab4b2bf286a1"
+        },
+        "tests/test_publication_identity_contract.py": {
+          "bytes": 8650,
+          "sha256": "9e3806505aa15c6279b88850b8033eaf628d417f0ee1d0496b50d3e463045eac"
+        },
+        "tests/test_retrieval_evaluation.py": {
+          "bytes": 6841,
+          "sha256": "4d1e591d51a6a06305c51a27c866e2a5c1a9493f278338a459831786e258c63a"
+        },
+        "tests/test_retrieval_heldout.py": {
+          "bytes": 9879,
+          "sha256": "10198d36ee5a3a7afac604f040a31f677434f3b281d33d0b26d62cfc193c0163"
+        },
+        "tests/test_synthetic_capture.py": {
+          "bytes": 22336,
+          "sha256": "628af6efbe9a2bb05ef3d248f48d9255d1027e7e58653cb9e6d276739e0f1e70"
+        },
+        "tests/test_tree_sitter_go_regression.py": {
+          "bytes": 1722,
+          "sha256": "275eb94b14e2322e3c3620eb115bc5e274be9df5fe9858803a19e5ec6f7567fa"
+        },
+        "uv.lock": {
+          "bytes": 305375,
+          "sha256": "40139126d31b521cc5377f1333b22d7c18de733840d1c63d848309ba7ad9c09a"
+        }
+      },
+      "git_commit": null,
+      "python": "CPython 3.14.10 GIL-enabled macOS ARM64",
+      "runner_sha256": "9715d1aaf7e60a191217571e5d296c3b2653e6e734521321970ad15a6e4c99e2",
+      "source_kind": "current-working-tree-snapshot",
+      "uv_binary_sha256": "3996850e6d85e60b0142b40af4bd984822d65f736b52209921c47312450685cb",
+      "uv_version": "0.13.6",
+      "uv_wheel_sha256": "51361029b7cf91185d0092c4b356d110b4ad629e9cb11593f1e006ac72a72ca9",
+      "wheels": {
+        "alembic": {
+          "filename": "alembic-1.20.1-py3-none-any.whl",
+          "sha256": "9970712cfb81ea26c8658d378aaa5b8f6ff9146e5bb111d70497c164016cf598"
+        },
+        "amqp": {
+          "filename": "amqp-5.4.1-py3-none-any.whl",
+          "sha256": "ac2b816a14a380ed10c5ebbf85a334fd68111fa476496867a5ccd2fd09926d5e"
+        },
+        "annotated-doc": {
+          "filename": "annotated_doc-0.0.5-py3-none-any.whl",
+          "sha256": "117bac03a25ede5df5440e855b32d556049ca169ead221505badf432fed4b101"
+        },
+        "annotated-types": {
+          "filename": "annotated_types-0.8.0-py3-none-any.whl",
+          "sha256": "f072f4d804ea359e4eaf198b1af7a8b0943881a87f31bb764f8bf219bb9419e0"
+        },
+        "anyio": {
+          "filename": "anyio-4.15.1-py3-none-any.whl",
+          "sha256": "6152fdbbf9a77fdec97731721bebf7c4c44f7c29b424b0065826173efc7ed101"
+        },
+        "billiard": {
+          "filename": "billiard-4.3.1-py3-none-any.whl",
+          "sha256": "2c7075283191d9c0add66cf8fca8e06ba599e75fe7319b67186759f8877dfdaf"
+        },
+        "celery": {
+          "filename": "celery-5.6.3-py3-none-any.whl",
+          "sha256": "0808f42f80909c4d5833202360ffafb2a4f83f4d8e23e1285d926610e9a7afa6"
+        },
+        "certifi": {
+          "filename": "certifi-2026.10.23-py3-none-any.whl",
+          "sha256": "e9b54de76e530bb6cf0ccd036787103acb58fd42ba930ea8bf948ddbaa2f61d1"
+        },
+        "cffi": {
+          "filename": "cffi-2.1.1-cp314-cp314-macosx_11_0_arm64.whl",
+          "sha256": "661c298b4821edebead0c91edd2b00374d67ad7c5a1f7a91d4442633b79d6a72"
+        },
+        "click": {
+          "filename": "click-8.5.0-py3-none-any.whl",
+          "sha256": "255bc9599cf7748b4b1a446ccc735421bd08a2ae529a8b88597d3de5664ee360"
+        },
+        "click-didyoumean": {
+          "filename": "click_didyoumean-0.3.1-py3-none-any.whl",
+          "sha256": "5c4bb6007cfea5f2fd6583a2fb6701a22a41eb98957e63d0fac41c10e7c3117c"
+        },
+        "click-plugins": {
+          "filename": "click_plugins-1.1.1.2-py2.py3-none-any.whl",
+          "sha256": "008d65743833ffc1f5417bf0e78e8d2c23aab04d9745ba817bd3e71b0feb6aa6"
+        },
+        "click-repl": {
+          "filename": "click_repl-0.4.1-py3-none-any.whl",
+          "sha256": "5cb10881d4c5ebaa8695eceb69911af3062ee78342812b713564b17aad333eb5"
+        },
+        "cryptography": {
+          "filename": "cryptography-46.0.7-cp311-abi3-macosx_10_9_universal2.whl",
+          "sha256": "ea42cbe97209df307fdc3b155f1b6fa2577c0defa8f1f7d3be7d31d189108ad4"
+        },
+        "fastapi": {
+          "filename": "fastapi-0.162.0-py3-none-any.whl",
+          "sha256": "3785963de305dd09912426cb81f2d230fce98ab3521cdfe97265c8d14983128c"
+        },
+        "h11": {
+          "filename": "h11-0.16.0-py3-none-any.whl",
+          "sha256": "63cf8bbe7522de3bf65932fda1d9c2772064ffb3dae62d55932da54b31cb6c86"
+        },
+        "httpcore": {
+          "filename": "httpcore-1.0.9-py3-none-any.whl",
+          "sha256": "2d400746a40668fc9dec9810239072b40b4484b640a8c38fd654a024c7a1bf55"
+        },
+        "httpcore2": {
+          "filename": "httpcore2-2.16.0-py3-none-any.whl",
+          "sha256": "5c4358319f2602d984ad93182c9fee5160f22e9da7babdda870a5e7c4e2dc34f"
+        },
+        "httptools": {
+          "filename": "httptools-0.9.0-cp314-cp314-macosx_11_0_arm64.whl",
+          "sha256": "1a4050a651e1f2faf05eb028ce9f2168abbcee9e24b209f5c1f2eb96d8c569e4"
+        },
+        "httpx": {
+          "filename": "httpx-0.28.1-py3-none-any.whl",
+          "sha256": "d909fcccc110f8c7faf814ca82a9a4d816bc5a6dbfea25d6591d6985b8ba59ad"
+        },
+        "httpx2": {
+          "filename": "httpx2-2.16.0-py3-none-any.whl",
+          "sha256": "fd2c5d7909e8d86fe92d53020c310ca0e4e431b838c207c5754b9bbf0308d49a"
+        },
+        "idna": {
+          "filename": "idna-3.20-py3-none-any.whl",
+          "sha256": "ab7ae7122974553370f0bdb919e1a960b2cd1bc1ef0276416d896db81c14582c"
+        },
+        "iniconfig": {
+          "filename": "iniconfig-2.3.1-py3-none-any.whl",
+          "sha256": "9121e2c1fdb355232495be3194c8dfe87ccc2d5dee45947b78e68f499790d7a7"
+        },
+        "kombu": {
+          "filename": "kombu-5.6.2-py3-none-any.whl",
+          "sha256": "efcfc559da324d41d61ca311b0c64965ea35b4c55cc04ee36e55386145dace93"
+        },
+        "mako": {
+          "filename": "mako-1.4.3-py3-none-any.whl",
+          "sha256": "723296007c870bfd6b3f0c3230dba7198096e5269297ebf5e4eff9e7ffa39d4f"
+        },
+        "markupsafe": {
+          "filename": "markupsafe-3.0.4-cp314-cp314-macosx_11_0_arm64.whl",
+          "sha256": "52704c5d36eb6dda8866493decd61111fff86244c9b1ad225ca01b9e91e5970f"
+        },
+        "opentelemetry-api": {
+          "filename": "opentelemetry_api-1.45.1-py3-none-any.whl",
+          "sha256": "b31553efa588ae44bc306f863c785c5333a9ecc091248c6ee68b4b6c87fdedfb"
+        },
+        "packaging": {
+          "filename": "packaging-26.3-py3-none-any.whl",
+          "sha256": "d7193f7c8e4e93f444fde0262bf90af30e16fa0ad0ad44cb553c87339b23cd1c"
+        },
+        "pluggy": {
+          "filename": "pluggy-1.7.0-py3-none-any.whl",
+          "sha256": "7dd7b0d8832ba3cb632c306926ded123429211b83641b35dc5c41ad2d34f9bec"
+        },
+        "prompt-toolkit": {
+          "filename": "prompt_toolkit-3.0.53-py3-none-any.whl",
+          "sha256": "01c0891d7f9237d5e339f7d3e42cdae80b7534abb1c7c0e3352efba6231492f2"
+        },
+        "psycopg": {
+          "filename": "psycopg-3.3.6-py3-none-any.whl",
+          "sha256": "a1db9f7148b06a28606767efaca51fa6f9398c5c0a3810519be69d7000bdb631"
+        },
+        "psycopg-binary": {
+          "filename": "psycopg_binary-3.3.6-cp314-cp314-macosx_11_0_arm64.whl",
+          "sha256": "5927b7ba63153cd8e9862987290a2b783a5c590daf2a4ef981700cc3569166d4"
+        },
+        "pycparser": {
+          "filename": "pycparser-3.12-py3-none-any.whl",
+          "sha256": "a076f3f489b39b43ed13563a1dafe42447445bec2e294154ec5c57fcdda4c85e"
+        },
+        "pydantic": {
+          "filename": "pydantic-2.14.1-py3-none-any.whl",
+          "sha256": "9195d967ec791692a04438115466764fb8b9a27b31f14a760437694f40d6b454"
+        },
+        "pydantic-core": {
+          "filename": "pydantic_core-2.50.1-cp314-cp314-macosx_11_0_arm64.whl",
+          "sha256": "4df197990c15b5a37c5a277d131d9f2c67de6133f2e5dafd80d9bba4b99f46f9"
+        },
+        "pydantic-settings": {
+          "filename": "pydantic_settings-2.16.1-py3-none-any.whl",
+          "sha256": "30f5313340da4e8f1b440d1910b92a5bc3ccbb6b4ba70ec2b8395bc921f418f5"
+        },
+        "pygments": {
+          "filename": "pygments-2.21.0-py3-none-any.whl",
+          "sha256": "2363c69b61c4a97c838da3b130dcd6468f4848992b21a82f2a63ec34377137d9"
+        },
+        "pytest": {
+          "filename": "pytest-9.1.1-py3-none-any.whl",
+          "sha256": "37a86b45efb9a47a61a36449063e8e18d0cab3161329fc099eb21783169c4f0c"
+        },
+        "python-dateutil": {
+          "filename": "python_dateutil-3.0.0-py2.py3-none-any.whl",
+          "sha256": "3c79630202e4152c6add678446984236efe4f57e84d8e892aab0637bab82e9fd"
+        },
+        "python-dotenv": {
+          "filename": "python_dotenv-1.2.4-py3-none-any.whl",
+          "sha256": "42269a8a5b3fd54ffa6f3d84b18abed50064717576b4ecf03dc4a55d8aa04fdc"
+        },
+        "pyyaml": {
+          "filename": "pyyaml-6.0.3-cp314-cp314-macosx_11_0_arm64.whl",
+          "sha256": "34d5fcd24b8445fadc33f9cf348c1047101756fd760b4dacb5c3e99755703310"
+        },
+        "redis": {
+          "filename": "redis-6.4.0-py3-none-any.whl",
+          "sha256": "f0544fa9604264e9464cdf4814e7d4830f74b165d52f2a330a760a88dd248b7f"
+        },
+        "ruff": {
+          "filename": "ruff-0.17.3-py3-none-macosx_11_0_arm64.whl",
+          "sha256": "b75cc113b3aca388933d8296b667b1ac401a80317ea3074c9b0a66541199da29"
+        },
+        "six": {
+          "filename": "six-1.17.0-py2.py3-none-any.whl",
+          "sha256": "4721f391ed90541fddacab5acf947aa0d3dc7d27b2e1e8eda2be8970586c3274"
+        },
+        "sqlalchemy": {
+          "filename": "sqlalchemy-2.0.55-cp314-cp314-macosx_11_0_arm64.whl",
+          "sha256": "94b206f4e65f00cc5b4c72ddb29dfc864d19a1a1b059a83d8d30253df93768c5"
+        },
+        "starlette": {
+          "filename": "starlette-1.10.0-py3-none-any.whl",
+          "sha256": "478c0ab3b4ced6e82719849c118fa406f0278a3499c1a898cd15cd31bdc38ce4"
+        },
+        "tree-sitter": {
+          "filename": "tree_sitter-0.25.2-cp314-cp314-macosx_11_0_arm64.whl",
+          "sha256": "bda059af9d621918efb813b22fb06b3fe00c3e94079c6143fcb2c565eb44cb87"
+        },
+        "tree-sitter-c": {
+          "filename": "tree_sitter_c-0.24.2-cp310-abi3-macosx_11_0_arm64.whl",
+          "sha256": "97bc80a224d48215d4e6e6376bf30d114f4c317b8145ff1b02afe785d4ba7bdd"
+        },
+        "tree-sitter-c-sharp": {
+          "filename": "tree_sitter_c_sharp-0.23.5-cp310-abi3-macosx_11_0_arm64.whl",
+          "sha256": "a75994a11f6fed3f5b8c36ad6a00e5dc43205bd912c43af3a2a54fdf649664eb"
+        },
+        "tree-sitter-cpp": {
+          "filename": "tree_sitter_cpp-0.23.4-cp39-abi3-macosx_11_0_arm64.whl",
+          "sha256": "bc3c404d9f0cbd87951213a85440afbf4c31e718f8d907fa9ee12bea4b8d276f"
+        },
+        "tree-sitter-go": {
+          "filename": "tree_sitter_go-0.25.0-cp310-abi3-macosx_11_0_arm64.whl",
+          "sha256": "503b81a2b4c31e302869a1de3a352ad0912ccab3df9ac9950197b0a9ceeabd8f"
+        },
+        "tree-sitter-java": {
+          "filename": "tree_sitter_java-0.23.5-cp39-abi3-macosx_11_0_arm64.whl",
+          "sha256": "24acd59c4720dedad80d548fe4237e43ef2b7a4e94c8549b0ca6e4c4d7bf6e69"
+        },
+        "tree-sitter-javascript": {
+          "filename": "tree_sitter_javascript-0.25.0-cp310-abi3-macosx_11_0_arm64.whl",
+          "sha256": "8264a996b8845cfce06965152a013b5d9cbb7d199bc3503e12b5682e62bb1de1"
+        },
+        "tree-sitter-rust": {
+          "filename": "tree_sitter_rust-0.24.2-cp39-abi3-macosx_11_0_arm64.whl",
+          "sha256": "01a46622735498493f29f3e628a90de95c96a07bfbeb88996243eb986b1cee36"
+        },
+        "tree-sitter-typescript": {
+          "filename": "tree_sitter_typescript-0.23.2-cp39-abi3-macosx_11_0_arm64.whl",
+          "sha256": "c7cc1b0ff5d91bac863b0e38b1578d5505e718156c9db577c8baea2557f66de8"
+        },
+        "truststore": {
+          "filename": "truststore-0.10.5-py3-none-any.whl",
+          "sha256": "9aaaedaefaf06d8b206278cf8b5012bc897f485a874503501e12d776df78951c"
+        },
+        "typing-extensions": {
+          "filename": "typing_extensions-4.16.0-py3-none-any.whl",
+          "sha256": "481caa481374e813c1b176ada14e97f1f67a4539ce9cfeb3f350d78d6370c2e8"
+        },
+        "typing-inspection": {
+          "filename": "typing_inspection-0.4.4-py3-none-any.whl",
+          "sha256": "65b8397ba37ccbce054456aaccddfc91e6e3083c92824df348d96ca832f3f147"
+        },
+        "tzdata": {
+          "filename": "tzdata-2026.5-py2.py3-none-any.whl",
+          "sha256": "b683bd1b6659ddcd810ff02ad09ba821d4bf1065072805063eb35c49617905ac"
+        },
+        "tzlocal": {
+          "filename": "tzlocal-5.4.5-py3-none-any.whl",
+          "sha256": "ecab534f6d65d9deb4c4ea52c121ab6dd5958e9b878e71dcb102578269752454"
+        },
+        "uvicorn": {
+          "filename": "uvicorn-0.54.0-py3-none-any.whl",
+          "sha256": "505bdb0f318731d45f1f712071fc781a8981f6847a31c902c9f5e652d4f67faf"
+        },
+        "uvloop": {
+          "filename": "uvloop-0.23.0-cp314-cp314-macosx_10_15_universal2.whl",
+          "sha256": "b90397a50ad6332ed3e459c648ac20d182cce24a557354363ad85fc9ea4a17cd"
+        },
+        "vine": {
+          "filename": "vine-5.1.0-py3-none-any.whl",
+          "sha256": "40fdf3c48b2cfe1c38a49e9ae2da6fda88e4794c810050a728bd7413811fb1dc"
+        },
+        "watchfiles": {
+          "filename": "watchfiles-1.3.0-cp310-abi3-macosx_11_0_arm64.whl",
+          "sha256": "bbc1198edfdc90fda0600f825aa94150f428dfcbf8138746f55998e0e660d64c"
+        },
+        "wcwidth": {
+          "filename": "wcwidth-0.9.4-cp310-abi3-macosx_11_0_arm64.whl",
+          "sha256": "f279f32c8e206a9092fa350e53ca0c2bd8072e45b1c9fd31bb6d476b59b591c4"
+        },
+        "websockets": {
+          "filename": "websockets-17.3-cp314-cp314-macosx_10_15_universal2.whl",
+          "sha256": "bc8fd230ef013951900c1fda100eebe4a4b1b407dde2a44186995042dda2c628"
+        }
+      }
+    }
+  },
+  "status": "passed_selected_disposable_postgresql_gate",
+  "tests": {
+    "deselected": 1,
+    "deselected_case": "tests/test_retrieval_heldout.py::test_validation_reads_pinned_local_git_objects_without_modifying_repository",
+    "errors": 0,
+    "failed": 0,
+    "harness_safety_passed": 43,
+    "junit_sha256": "039905e83563c97fc08a8189c585d42bc566ea3a6266cc7bc9bf5f580b1eaf13",
+    "migration": "test_postgres_legacy_job_survives_migration passed through Alembic head 0016; a separate PostgreSQL alembic drift check was not run",
+    "passed": 260,
+    "pytest_argv": [
+      "/usr/bin/sandbox-exec",
+      "-p",
+      "(version 1)(allow default)(deny network*)(allow network-outbound (remote ip \"localhost:49775\"))",
+      "/private/tmp/repopilot-ts0252-pg-9brlze1d/venv/bin/python",
+      "-B",
+      "-m",
+      "pytest",
+      "-q",
+      "-p",
+      "no:cacheprovider",
+      "--junitxml",
+      "/private/tmp/repopilot-ts0252-pg-9brlze1d/pytest.xml",
+      "--deselect",
+      "tests/test_retrieval_heldout.py::test_validation_reads_pinned_local_git_objects_without_modifying_repository",
+      "tests/test_language_analysis.py",
+      "tests/test_code_primitives.py",
+      "tests/test_code_snapshot.py",
+      "tests/test_code_collect.py",
+      "tests/test_code_persistence.py",
+      "tests/test_multilingual_indexing.py",
+      "tests/test_code_workflow.py",
+      "tests/test_historical_readability.py",
+      "tests/test_investigation_evidence.py",
+      "tests/test_benchmark_provenance.py",
+      "tests/test_issue_retrieval_replay.py",
+      "tests/test_publication_identity_contract.py",
+      "tests/test_tree_sitter_go_regression.py",
+      "tests/test_investigation_migration.py",
+      "tests/test_retrieval_evaluation.py",
+      "tests/test_retrieval_heldout.py",
+      "tests/test_synthetic_capture.py::test_fixture_preserves_complete_context_and_orders_comments",
+      "tests/test_synthetic_capture.py::test_fixture_inventory_is_multilingual_and_labels_are_explicit",
+      "tests/test_synthetic_capture.py::test_malformed_context_and_incomplete_labels_are_rejected",
+      "tests/test_synthetic_capture.py::test_inventory_and_identity_reject_malformed_data",
+      "tests/test_synthetic_capture.py::test_registered_fixture_and_development_heldout_separation",
+      "tests/test_synthetic_capture.py::test_registered_fixture_hash_rejects_tampering",
+      "tests/test_synthetic_capture.py::test_database_guard_rejects_application_or_ambiguous_targets",
+      "tests/test_synthetic_capture.py::test_environment_guard_runs_before_database_access",
+      "tests/test_synthetic_capture.py::test_database_marker_is_required_before_schema_changes"
+    ],
+    "pytest_command": "/usr/bin/sandbox-exec -p '(version 1)(allow default)(deny network*)(allow network-outbound (remote ip \"localhost:49775\"))' /private/tmp/repopilot-ts0252-pg-9brlze1d/venv/bin/python -B -m pytest -q -p no:cacheprovider --junitxml /private/tmp/repopilot-ts0252-pg-9brlze1d/pytest.xml --deselect tests/test_retrieval_heldout.py::test_validation_reads_pinned_local_git_objects_without_modifying_repository tests/test_language_analysis.py tests/test_code_primitives.py tests/test_code_snapshot.py tests/test_code_collect.py tests/test_code_persistence.py tests/test_multilingual_indexing.py tests/test_code_workflow.py tests/test_historical_readability.py tests/test_investigation_evidence.py tests/test_benchmark_provenance.py tests/test_issue_retrieval_replay.py tests/test_publication_identity_contract.py tests/test_tree_sitter_go_regression.py tests/test_investigation_migration.py tests/test_retrieval_evaluation.py tests/test_retrieval_heldout.py tests/test_synthetic_capture.py::test_fixture_preserves_complete_context_and_orders_comments tests/test_synthetic_capture.py::test_fixture_inventory_is_multilingual_and_labels_are_explicit tests/test_synthetic_capture.py::test_malformed_context_and_incomplete_labels_are_rejected tests/test_synthetic_capture.py::test_inventory_and_identity_reject_malformed_data tests/test_synthetic_capture.py::test_registered_fixture_and_development_heldout_separation tests/test_synthetic_capture.py::test_registered_fixture_hash_rejects_tampering tests/test_synthetic_capture.py::test_database_guard_rejects_application_or_ambiguous_targets tests/test_synthetic_capture.py::test_environment_guard_runs_before_database_access tests/test_synthetic_capture.py::test_database_marker_is_required_before_schema_changes",
+    "pytest_log_sha256": "348cd3324d09b1f409dc8b3b851edffc538e75bd7f83cbf1fcd0de668bc7f951",
+    "required_postgresql_cases": [
+      "test_postgres_concurrent_delivery_commits_one_manifest",
+      "test_postgres_concurrent_requests_share_one_active_job",
+      "test_postgres_keyword_camelcase_and_bounded_results",
+      "test_postgres_keyword_search_handles_natural_language_and_identifiers",
+      "test_postgres_legacy_job_survives_migration",
+      "test_postgres_multilingual_search_and_citations",
+      "test_postgres_search_returns_commit_citation",
+      "test_postgres_v2_retrieval_deduplicates_and_fences_source"
+    ],
+    "skipped": 0,
+    "suite_counts": {
+      "tests.test_benchmark_provenance": 43,
+      "tests.test_code_collect": 2,
+      "tests.test_code_persistence": 1,
+      "tests.test_code_primitives": 13,
+      "tests.test_code_snapshot": 3,
+      "tests.test_code_workflow": 13,
+      "tests.test_historical_readability": 19,
+      "tests.test_investigation_evidence": 33,
+      "tests.test_investigation_migration": 2,
+      "tests.test_issue_retrieval_replay": 24,
+      "tests.test_language_analysis": 14,
+      "tests.test_multilingual_indexing": 42,
+      "tests.test_publication_identity_contract": 3,
+      "tests.test_retrieval_evaluation": 9,
+      "tests.test_retrieval_heldout": 5,
+      "tests.test_synthetic_capture": 33,
+      "tests.test_tree_sitter_go_regression": 1
+    },
+    "warning": "PytestConfigWarning: cache_dir option unknown because cacheprovider was disabled",
+    "warnings": 1
+  },
+  "version": "repopilot-tree-sitter-0252-postgres-gate-v1"
+}

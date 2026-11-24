@@ -1,8 +1,14 @@
 """Bounded, fail-closed snapshot planning over an injectable GitHub source client."""
 from dataclasses import dataclass
+from pathlib import PurePosixPath
 from typing import Protocol
 
-from app.modules.ingestion.code_selection import eligible_python_path
+from app.modules.ingestion.code_selection import eligible_python_path, eligible_source_path
+from app.modules.ingestion.language_analysis import LANGUAGES
+
+# These known source extensions are reported as unsupported, not indexed. Other
+# non-source files (documentation, media and configuration) are not counted.
+_UNSUPPORTED_SOURCE = frozenset({".rb", ".php", ".swift", ".kt", ".kts", ".scala", ".dart", ".vue", ".svelte"})
 
 
 class SnapshotError(Exception):
@@ -27,6 +33,8 @@ class SnapshotPlan:
     commit_sha: str
     files: tuple[Candidate, ...]
     skipped_files: int = 0
+    multilingual: bool = False
+    unsupported_files: int = 0
 
 
 def _sha(value: object) -> bool:
@@ -35,7 +43,7 @@ def _sha(value: object) -> bool:
 
 def plan_snapshot(client: SourceClient, token: str, full_name: str, *,
                   max_entries: int = 10000, max_files: int = 1000,
-                  max_file_bytes: int = 100_000) -> SnapshotPlan:
+                  max_file_bytes: int = 100_000, multilingual: bool = False) -> SnapshotPlan:
     """Resolve a public default-branch commit and reject incomplete or oversized trees.
 
     The client tree method must request a recursive tree. This function does not perform
@@ -62,14 +70,24 @@ def plan_snapshot(client: SourceClient, token: str, full_name: str, *,
         raise SnapshotError("tree_limit_exceeded")
     candidates = []
     seen = set()
-    skipped = 0
+    skipped = unsupported = 0
     for entry in entries:
         if not isinstance(entry, dict):
             raise SnapshotError("invalid_tree_entry")
         if entry.get("type") != "blob" or entry.get("mode") not in {"100644", "100755"}:
             continue
         path, size, blob_sha = entry.get("path"), entry.get("size"), entry.get("sha")
-        if not isinstance(path, str) or not eligible_python_path(path):
+        if not isinstance(path, str):
+            continue
+        if not eligible_source_path(path, multilingual=multilingual, exclude_generated=multilingual):
+            suffix = PurePosixPath(path).suffix.lower()
+            if multilingual and suffix in _UNSUPPORTED_SOURCE and eligible_python_path(path + ".py"):
+                unsupported += 1
+                skipped += 1
+            elif multilingual and suffix in LANGUAGES and eligible_python_path(path + ".py"):
+                # Recognizable generated files with otherwise safe paths are
+                # excluded from source and count towards a partial snapshot.
+                skipped += 1
             continue
         if path in seen or not _sha(blob_sha) or not isinstance(size, int) or isinstance(size, bool) or size < 0:
             raise SnapshotError("invalid_tree_entry")
@@ -80,4 +98,5 @@ def plan_snapshot(client: SourceClient, token: str, full_name: str, *,
                 raise SnapshotError("file_limit_exceeded")
         else:
             skipped += 1
-    return SnapshotPlan(sha, tuple(sorted(candidates, key=lambda item: item.path)), skipped)
+    return SnapshotPlan(sha, tuple(sorted(candidates, key=lambda item: item.path)), skipped,
+                        multilingual, unsupported)

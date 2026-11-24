@@ -70,7 +70,7 @@ class IssueContextResponse(BaseModel):
     url: str
     truncation: ContextTruncation
 
-def authorize(repo_id, identity, db, github):
+def authorize(repo_id, identity, db, github, *, required_permissions=()):
     if identity.demo or not identity.session_hash:
         raise HTTPException(404, "Repository not found")
     db.expire_all()
@@ -85,7 +85,7 @@ def authorize(repo_id, identity, db, github):
         raise HTTPException(404, "Repository not found")
     name, installation = repo.full_name, repo.installation_id
     try:
-        visible = visible_github_repositories(identity, github, installation)
+        visible = visible_github_repositories(identity, github, installation, required_permissions=required_permissions)
     except HTTPException as exc:
         if exc.status_code == 403:
             raise HTTPException(404, "Repository not found") from None
@@ -103,6 +103,11 @@ def authorize(repo_id, identity, db, github):
             or not db.get(Membership, (identity.tenant_id, identity.user_id))):
         raise HTTPException(401, "Authentication required")
     return name
+
+
+def authorize_review(repo_id, identity, db, github):
+    """PR reviews require current read-only App permissions as well as user visibility."""
+    return authorize(repo_id, identity, db, github, required_permissions=("contents", "pull_requests"))
 
 
 def build_context(data, raw_comments, repository_id, name, number, config):

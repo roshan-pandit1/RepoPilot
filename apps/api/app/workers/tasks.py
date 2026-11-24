@@ -211,6 +211,15 @@ def process_index(job_id: str, factory=None, github=None, source=None, task_id=N
             return
         identity = Principal(user.id, job.tenant_id, user.github_user_id, token, session.id_hash)
         repo_id, repo_name, installation_id = repo.id, repo.full_name, installation.id
+        # Legacy pending jobs have no mode and retain Python-only behavior.
+        indexing_mode = job.indexing_mode or "python"
+        if indexing_mode not in {"python", "multilingual", "multi_supervised"}:
+            job.status, job.error_code, job.completed_at = "failed", "invalid_indexing_mode", now()
+            return
+        if indexing_mode == "multi_supervised" and not get_settings().index_multilingual_supervised_parser_enabled:
+            job.status, job.error_code, job.completed_at = "failed", "supervised_parser_disabled", now()
+            index_event("index_job_failed", job_id=job_id, repository_id=repo.id, task_id=task_id)
+            return
         job.status, job.lease_token = "running", lease
         job.lease_expires_at = now() + timedelta(seconds=240)
         job.error_code = None
@@ -239,8 +248,12 @@ def process_index(job_id: str, factory=None, github=None, source=None, task_id=N
         if not any(item["id"] == repo_id and item["full_name"] == repo_name for item in allowed):
             finish("cancelled", "repository_unavailable")
             return
-        plan = plan_snapshot(source, token, repo_name)
-        collection = collect_source(source, token, repo_name, plan)
+        plan = plan_snapshot(source, token, repo_name, multilingual=indexing_mode != "python")
+        # A queued job retains its pinned mode even if admission settings change.
+        # When supervision is requested, never revert that job to native in-process parsing.
+        supervised = (indexing_mode == "multi_supervised" or
+                      (plan.multilingual and get_settings().index_multilingual_supervised_parser_enabled))
+        collection = collect_source(source, token, repo_name, plan, supervised=supervised)
         index_event("index_source_collected", job_id=job_id, repository_id=repo_id, task_id=task_id)
         allowed = visible_github_repositories(identity, github, installation_id)
         if not any(item["id"] == repo_id and item["full_name"] == repo_name for item in allowed):
@@ -353,11 +366,13 @@ def process_embedding(job_id: str, factory=None, github=None, provider=None):
         if not job or (job.status != "pending" and not (job.status == "running" and
                 (not job.lease_expires_at or utc(job.lease_expires_at) <= now()))):
             return
-        if (job.provider, job.model, job.model_version, job.dimensions) != (
-                provider.provider, provider.model, provider.version, provider.dimensions):
+        if (job.provider, job.model, job.model_version, job.dimensions, job.model_revision,
+                job.representation_contract, job.normalization) != (
+                provider.provider, provider.model, provider.version, provider.dimensions,
+                provider.revision, provider.contract, provider.normalization):
             job.status, job.error_code, job.completed_at = "failed", "embedding_configuration_changed", now()
             return
-        if provider.provider != "fake":
+        if provider.provider not in {"fake", "local-onnx"}:
             # Paid generation stays disabled until explicit approval and cost-budget review.
             job.status, job.error_code, job.completed_at = "failed", "paid_generation_not_enabled", now()
             return
@@ -408,15 +423,19 @@ def process_embedding(job_id: str, factory=None, github=None, provider=None):
         if any(len(chunk.source_text) > 20_000 for chunk in chunks):
             finish("failed", "embedding_input_limit")
             return
-        for offset in range(0, len(chunks), 32):
-            batch = chunks[offset:offset + 32]
+        batch_size = 8 if provider.provider == "local-onnx" else 32
+        for offset in range(0, len(chunks), batch_size):
+            batch = chunks[offset:offset + batch_size]
             unique = {cache_key(item.source_text): item.source_text for item in batch}
             with factory() as db:
                 existing = db.scalars(select(EmbeddingCache).where(
                     EmbeddingCache.repository_id == repo_id, EmbeddingCache.tenant_id == identity.tenant_id,
                     EmbeddingCache.content_hash.in_(list(unique)), EmbeddingCache.provider == provider.provider,
                     EmbeddingCache.model == provider.model, EmbeddingCache.model_version == provider.version,
-                    EmbeddingCache.dimensions == provider.dimensions, EmbeddingCache.status == "ready")).all()
+                    EmbeddingCache.dimensions == provider.dimensions, EmbeddingCache.status == "ready",
+                    EmbeddingCache.model_revision == provider.revision,
+                    EmbeddingCache.representation_contract == provider.contract,
+                    EmbeddingCache.normalization == provider.normalization)).all()
                 vectors = {item.content_hash: item.vector for item in existing}
             missing = [key for key in unique if key not in vectors]
             generated = provider.embed([unique[key] for key in missing]) if missing else None
@@ -484,6 +503,12 @@ def process_embedding(job_id: str, factory=None, github=None, provider=None):
         finish("pending", "github_verification_unavailable")
         raise TransientIngestionError("github_verification_unavailable") from None
     except EmbeddingError as exc:
+        if str(exc) == "LOCAL_MODEL_BUSY":
+            finish("pending", "local_model_busy")
+            raise TransientIngestionError("local_model_busy") from None
+        if str(exc) in {"MODEL_NOT_AVAILABLE", "LOCAL_RUNTIME_NOT_AVAILABLE"}:
+            finish("failed", str(exc))
+            return
         if str(exc) == "embedding_provider_failed":
             finish("pending", "embedding_provider_unavailable")
             raise TransientIngestionError("embedding_provider_unavailable") from None
@@ -514,13 +539,14 @@ def process_investigation(job_id: str, factory=None, github=None, work=None):
     from fastapi import HTTPException
     from billiard.exceptions import SoftTimeLimitExceeded
     from pydantic import ValidationError
-    from app.domain.models import (AuthSession, CodeChunk, CodeSnapshot, IndexedFile, InvestigationEvidence,
-                                   InvestigationJob, InvestigationOutbox, Membership, User)
+    from app.domain.models import (AuthSession, CodeChunk, IndexedFile, InvestigationEvidence,
+                                   InvestigationIssueOrigin, InvestigationJob, InvestigationOutbox, Membership, User)
     from app.core.index_logging import index_event
     from app.modules.auth.session import Principal, cipher, utc
     from app.modules.github.client import GitHubFailure, HttpGitHubClient, get_github_client
     from app.modules.github.issue_context import IssueData
     from app.modules.github.issue_context_client import IssueContextClient
+    from app.modules.github.upstream_issue import VerifiedUpstreamIssue, revalidate_direct_parent_issue
     from app.modules.investigation.query_builder import build_queries_for_version
     from app.modules.investigation.retrieval import (InvalidEvidence, SnapshotUnavailable,
                                                        fingerprint_chunk, record_evidence_manifest,
@@ -573,21 +599,35 @@ def process_investigation(job_id: str, factory=None, github=None, work=None):
         repo_id, repo_name, installation_id = repo.id, repo.full_name, installation.id
         operation, snapshot_id, commit = job.operation, job.snapshot_id, job.snapshot_commit_sha
         issue_id, issue_number, issue_updated_at = job.issue_id, job.issue_number, utc(job.issue_updated_at)
+        origin = db.get(InvestigationIssueOrigin, job.id)
+        saved_origin = None
+        if job.issue_origin_repository_id is not None:
+            if (not origin or origin.repository_id != repo_id or origin.tenant_id != job.tenant_id
+                    or origin.origin_repository_id != job.issue_origin_repository_id
+                    or origin.issue_id != issue_id or origin.issue_number != issue_number
+                    or utc(origin.issue_updated_at) != issue_updated_at
+                    or origin.relationship != "direct_public_parent"):
+                terminal(db, job, "cancelled", "upstream_identity_invalid")
+                return
+            saved_origin = VerifiedUpstreamIssue(
+                repo_id, repo_name, origin.origin_repository_id, origin.origin_repository_name,
+                origin.issue_id, origin.issue_number, origin.issue_url, origin.issue_title,
+                origin.issue_body_sha256, utc(origin.issue_updated_at), utc(origin.verified_at), "")
+        elif origin is not None:
+            terminal(db, job, "cancelled", "upstream_identity_invalid")
+            return
         query_limit, per_query_limit, query_version = job.query_limit, job.per_query_limit, job.query_version
         evidence_limit, query_body_limit = job.evidence_limit, job.query_body_limit
         if operation == "code_evidence":
             if query_version not in ("terms-v1", "terms-v2"):
                 terminal(db, job, "failed", "query_version_unavailable")
                 return
-            snapshot = db.get(CodeSnapshot, snapshot_id)
-            if (not snapshot or not snapshot.published or snapshot.repository_id != repo_id
-                    or snapshot.tenant_id != job.tenant_id or snapshot.commit_sha != commit
-                    or job.source_repository_name != repo_name):
+            if job.source_repository_name != repo_name:
                 terminal(db, job, "cancelled", "snapshot_unavailable")
                 return
             try:
                 validate_snapshot(db, snapshot_id=snapshot_id, repository_id=repo_id,
-                                  tenant_id=job.tenant_id, commit=commit)
+                                  tenant_id=job.tenant_id, commit=commit, job_id=job.id)
             except SnapshotUnavailable:
                 terminal(db, job, "cancelled", "snapshot_unavailable")
                 return
@@ -601,7 +641,8 @@ def process_investigation(job_id: str, factory=None, github=None, work=None):
     def finish_failure(status, code):
         with factory.begin() as db:
             job = db.scalar(select(InvestigationJob).where(InvestigationJob.id == job_id).with_for_update())
-            if job and job.status == "running" and job.lease_token == lease:
+            if (job and job.status == "running" and job.lease_token == lease
+                    and job.lease_expires_at and utc(job.lease_expires_at) > now()):
                 if status == "queued" and job.attempts >= 5:
                     status, code = "failed", "attempts_exhausted"
                 terminal(db, job, status, code)
@@ -613,6 +654,17 @@ def process_investigation(job_id: str, factory=None, github=None, work=None):
     auth_client = source if operation == "code_evidence" else github
 
     def checked_issue():
+        if saved_origin is not None:
+            try:
+                verified = revalidate_direct_parent_issue(source, identity.token, saved_origin)
+            except GitHubFailure as exc:
+                if str(exc) in {"upstream_identity_invalid", "upstream_relationship_invalid",
+                                "upstream_issue_invalid", "upstream_issue_changed", "github_not_found"}:
+                    raise InvalidEvidence("issue_changed") from None
+                raise
+            if verified.issue_data is None:
+                raise InvalidEvidence("invalid_issue")
+            return verified.issue_data
         data = source.issue(identity.token, repo_name, issue_number)
         if not isinstance(data, dict) or "pull_request" in data:
             raise InvalidEvidence("issue_unavailable")
@@ -662,7 +714,7 @@ def process_investigation(job_id: str, factory=None, github=None, work=None):
             work()
             candidates = retrieve_candidates(factory, queries=queries, snapshot_id=snapshot_id,
                 repository_id=repo_id, tenant_id=identity.tenant_id, commit=commit, full_name=repo_name,
-                per_query_limit=per_query_limit, evidence_limit=evidence_limit,
+                per_query_limit=per_query_limit, evidence_limit=evidence_limit, job_id=job_id,
                 ranking_context=(issue.title, bounded_body) if query_version == "terms-v2" else None)
             warning = "no_usable_queries" if not queries else "no_matches" if not candidates else None
         else:
@@ -721,10 +773,28 @@ def process_investigation(job_id: str, factory=None, github=None, work=None):
                 or repo.full_name != repo_name or repo.installation_id != installation_id):
             terminal(db, job, "cancelled", "repository_unavailable")
         elif operation == "code_evidence":
-            snapshot = db.scalar(select(CodeSnapshot).where(CodeSnapshot.id == snapshot_id,
-                CodeSnapshot.repository_id == repo_id, CodeSnapshot.tenant_id == identity.tenant_id,
-                CodeSnapshot.commit_sha == commit, CodeSnapshot.published.is_(True)).with_for_update())
-            if (not snapshot or job.snapshot_id != snapshot_id or job.snapshot_commit_sha != commit
+            origin = db.get(InvestigationIssueOrigin, job.id)
+            if saved_origin is not None:
+                origin_intact = bool(origin and job.issue_origin_repository_id == saved_origin.origin_repository_id
+                    and origin.repository_id == repo_id and origin.tenant_id == identity.tenant_id
+                    and origin.origin_repository_id == saved_origin.origin_repository_id
+                    and origin.origin_repository_name == saved_origin.origin_repository_name
+                    and origin.issue_id == saved_origin.issue_id and origin.issue_number == saved_origin.issue_number
+                    and origin.issue_url == saved_origin.issue_url and origin.issue_title == saved_origin.issue_title
+                    and origin.issue_body_sha256 == saved_origin.issue_body_sha256
+                    and utc(origin.issue_updated_at) == saved_origin.issue_updated_at
+                    and utc(origin.verified_at) == saved_origin.verified_at
+                    and origin.relationship == saved_origin.relationship)
+            else:
+                origin_intact = job.issue_origin_repository_id is None and origin is None
+            try:
+                snapshot = validate_snapshot(db, snapshot_id=snapshot_id, repository_id=repo_id,
+                    tenant_id=identity.tenant_id, commit=commit, job_id=job.id, lock=True)
+            except SnapshotUnavailable:
+                snapshot = None
+            if not origin_intact:
+                terminal(db, job, "cancelled", "issue_changed")
+            elif (not snapshot or job.snapshot_id != snapshot_id or job.snapshot_commit_sha != commit
                     or job.source_repository_name != repo_name):
                 terminal(db, job, "cancelled", "snapshot_unavailable")
             elif db.scalar(select(InvestigationEvidence.id).where(InvestigationEvidence.job_id == job.id).limit(1)):
@@ -733,7 +803,7 @@ def process_investigation(job_id: str, factory=None, github=None, work=None):
                 valid = True
                 try:
                     validate_snapshot(db, snapshot_id=snapshot_id, repository_id=repo_id,
-                                      tenant_id=job.tenant_id, commit=commit, lock=True)
+                                      tenant_id=job.tenant_id, commit=commit, job_id=job.id, lock=True)
                 except SnapshotUnavailable:
                     valid = False
                 for item in candidates:
@@ -793,5 +863,31 @@ def generate_mock_report(job_id: str):
         index_event("report_task_finished", job_id=job_id, task_id=generate_mock_report.request.id)
     except (ReportTransientError, OperationalError):
         raise TransientIngestionError("report_temporarily_unavailable") from None
+    except SQLAlchemyError:
+        raise IngestionError("database_operation_failed") from None
+
+
+@celery.task(name="process_patch_proposal", autoretry_for=(TransientIngestionError,), retry_backoff=True,
+             retry_jitter=True, retry_backoff_max=60, max_retries=3, soft_time_limit=90, time_limit=110)
+def process_patch_proposal(proposal_id: str):
+    from app.core.index_logging import index_event
+    from app.modules.patches.worker import process_patch
+    index_event("patch_task_received", job_id=proposal_id, task_id=process_patch_proposal.request.id)
+    try:
+        process_patch(proposal_id)
+    except OperationalError:
+        raise TransientIngestionError("patch_database_unavailable") from None
+    except SQLAlchemyError:
+        raise IngestionError("database_operation_failed") from None
+
+
+@celery.task(name="process_pr_review", autoretry_for=(TransientIngestionError,), retry_backoff=True,
+             retry_jitter=True, retry_backoff_max=60, max_retries=3, soft_time_limit=180, time_limit=200)
+def process_pr_review_task(review_id: str):
+    from app.modules.pr_review.worker import process_pr_review
+    try:
+        process_pr_review(review_id)
+    except OperationalError:
+        raise TransientIngestionError("review_database_unavailable") from None
     except SQLAlchemyError:
         raise IngestionError("database_operation_failed") from None

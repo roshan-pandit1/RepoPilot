@@ -1,0 +1,3 @@
+export function makeUrl(path: string): string {
+  return new URL(path, "https://example.invalid").toString();
+}

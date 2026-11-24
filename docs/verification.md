@@ -1,5 +1,16 @@
 # Verification record
 
+## Orbital background frontend check
+
+The decorative canvas uses deterministic orbital strands and respects reduced motion and
+tab visibility. On 2026-11-05 the frontend suite passed **65 tests**, TypeScript and ESLint
+passed, and a production build passed using the lockfile in an isolated Node 22 container.
+The Mac shell did not have Node on its PATH; an initial container build using the Mac
+`node_modules` failed because Linux native bindings were absent. A clean temporary container
+install with development dependencies resolved that environment issue. Desktop/mobile visual
+review and performance measurement remain outstanding; the reference page was inaccessible
+and no comparison screenshot of the orbital artwork was available in this session.
+
 ## Final demo Stage 3 — in progress
 
 **REPOPILOT — FINAL BROWSER ACCEPTANCE INCOMPLETE.**
@@ -2749,3 +2760,3415 @@ An offline parity check confirmed that the production `terms-v2` query builder a
 reranker reproduce the recorded exploratory candidate order and query hashes for all 19 cases.
 The local frontend regression suite reported **54 passed**, and TypeScript and ESLint passed
 using Node 24.22.0. No frontend or proxy code changed for this checkpoint.
+
+# RepoPilot 2.0 parser foundation — 2026-11-05
+
+An isolated, non-integrated language analysis module was added; see
+[the assessment](repopilot-2-assessment.md) for its fixture scope and the
+remaining implementation and security gates. Local Tree-sitter grammar
+packages were installed only in a temporary directory. No live repository,
+application database, model weights, or job was changed. Focused tests with
+those temporary parsers passed; the complete multilingual indexing workflow,
+real embeddings, reproducible diagnosis, and automated repair remain unverified
+and unavailable. Existing verification records above are preserved.
+
+With temporary grammars present, the focused parser, Python chunking, collection
+and retrieval-evaluation checks passed (38 tests). Ruff, the frontend's 72 tests,
+TypeScript, ESLint, production build, and `git diff --check` passed. The broader
+disposable PostgreSQL run did not pass: 627 tests passed, 10 optional-parser
+cases skipped, and `test_fixture_workflow_with_fake_sqlite_retrieval` failed
+because the existing provider harness accepts revisions only through 0013.
+That run stopped before its migration checks. Separately, an initially empty
+database in the same disposable container upgraded to 0014 and `alembic check`
+reported no pending operations. The adversarial report fixture passed 33/33.
+These results do not validate RepoPilot 2.0 end to end.
+
+## RepoPilot 2.0 Step 1 — multilingual indexing, 2026-11-05
+
+The production index path now supports explicitly opted-in multilingual jobs;
+Python-only remains the default. See [the assessment](repopilot-2-assessment.md)
+for scope, grammar versions, migration 0015 and language limitations. The prior
+provider-harness failure was caused by its revision allowlist ending at 0013;
+the guard now also accepts the verified additive revisions 0014 and 0015, and
+the formerly failing test passed.
+
+With uv 0.13.6, a fresh temporary environment installed the updated lock with
+`uv sync --locked`. A copy of `run-5c1-checks.sh` using that environment's
+Python, Ruff and Alembic created disposable PostgreSQL container
+`repopilot-5c1-checks-00e91fea4ef1d5ff` and database
+`repopilot_5b2b_00e91fea4ef1d5ff`. The final run passed **681 tests with no skips**,
+including mixed-language PostgreSQL search/citations, job retry, authorization,
+evidence/report and historical migration checks; the adversarial fixture passed
+**33/33**. Alembic upgraded the fresh disposable database to **0015** and
+reported **no schema drift**. The script's source fingerprints matched.
+
+The standalone runner excludes `test_investigation_evaluation_pg.py`. That test
+was run separately and **passed 1/1** against a verified empty disposable
+database (`repopilot_5b2b_37e7b31fd6e44f09`) in an earlier disposable container.
+It read a pinned local Git commit into a newly seeded fake `alice/public`
+repository and used fake GitHub access; it did not reindex any enrolled
+application repository. The final focused SQLite/locked-environment run passed
+92 tests with 5 PostgreSQL-only skips; those PostgreSQL tests ran in the disposable
+regression. Frontend tests passed 72/72, TypeScript and ESLint passed, and Ruff
+and `git diff --check` passed. No local application database or enrolled
+repository was modified.
+
+## RepoPilot 2.0 Step 2A — local vector infrastructure, 2026-11-05
+
+The opt-in ONNX adapter, vector identity checks and offline held-out evaluator
+are described in [vector-search-foundation.md](vector-search-foundation.md).
+No real model weights were downloaded or evaluated. A small synthetic ONNX
+graph and deterministic vectors were used for mechanics only.
+
+The focused local suite passed **44 tests**, with **5 PostgreSQL-only skips**.
+The final network-fenced PostgreSQL run used disposable container
+`repopilot-5c1-checks-abc0f9804c104d74` and dedicated database
+`repopilot_5b2b_abc0f9804c104d74`. It passed **254 tests with no skips**,
+including controlled local-provider jobs, pgvector ordering and integrity,
+concurrent active-job uniqueness, tenant/revocation, migration preservation,
+existing retrieval/evidence/report regressions and adversarial workflow tests.
+The separate adversarial report fixture passed **33/33**. Alembic upgraded the
+empty disposable database to **0016** and reported **no schema drift**; test
+source fingerprints matched (`c95aad99fbf2e0f4a37309085e707d4820ba16d0d24d747781ae829574735fff`).
+The held-out evaluator checked forged citation paths, ranges and snippets against
+pinned local Git source, and its offline JSON command refused an existing output.
+The run log is [5c1-checks-abc0f9804c104d74.log](../apps/api/evaluation/5c1-checks-abc0f9804c104d74.log).
+Ruff and `git diff --check` passed. The optional
+runtime libraries were installed in a temporary environment from the lockfile;
+frontend files were not changed in this step, so frontend tests were not rerun.
+
+No real semantic relevance, real-model latency, Apple Silicon model inference,
+HNSW recall, or browser acceptance is claimed. No normal application database,
+source snapshot, repository, investigation or report was modified.
+
+## RepoPilot 2.0 Step 2B — CodeRankEmbed preparation, 2026-11-05
+
+At this preparation checkpoint, public metadata was read for the selected export
+and upstream model; no model weights, tokenizer files, remote model code or
+evaluation datasets had been downloaded. At that time the export's model LFS
+SHA-256 was published, but its tokenizer SHA-256 and the precise upstream
+revision used by the exporter had not been verified.
+The export and observed upstream tokenizer Git blob IDs differ. See the
+[artifact review](vector-search-foundation.md#step-2b--coderankembed-artifact-review)
+for exact metadata, the proposed destination, and evaluation blockers.
+
+The local focused run passed **37 tests**, with **5 PostgreSQL-only skips**. A
+subsequent network-fenced run against fresh disposable container
+`repopilot-5c1-checks-20dee3b60f67687f` and database
+`repopilot_5b2b_20dee3b60f67687f` passed **257 tests with no skips**. These
+included a 768-dimensional synthetic ONNX graph, CLS and normalization checks,
+prefix and tokenizer validation, deterministic repeated synthetic inference,
+cache identity, exact vector and hybrid search, tenant/revocation and citation
+regressions. The adversarial report fixture passed **33/33**. Alembic upgraded
+the disposable database to **0016** with no detected schema drift; the test
+source fingerprints matched. Ruff and `git diff --check` passed. The
+[run log](../apps/api/evaluation/5c1-checks-20dee3b60f67687f.log) records the
+results; the disposable container and volume were retained.
+
+These are engineering tests with synthetic vectors and a synthetic graph, not
+real CodeRankEmbed inference or retrieval-quality evaluation. The standalone
+search endpoint does not provide the complete `terms-v2` investigation ranking;
+a reviewed paired-capture procedure and independently labeled held-out data
+are still needed. No application database, enrolled repository or normal
+application service was modified or restarted during this step.
+
+## RepoPilot 2.0 Step 2B — tokenizer-only verification, 2026-11-05
+
+With separate tokenizer-only approval, `tokenizer.json` was downloaded from
+`https://huggingface.co/zuliaio/coderankembed-onnx/resolve/72d8b338380c0b83d02b1e38b40b7b778c1c8703/tokenizer.json`
+to the private artifact directory recorded in the
+[artifact review](vector-search-foundation.md#step-2b--coderankembed-artifact-review).
+The final file is 711,650 bytes with mode `0600`. `git hash-object --no-filters`
+returned the expected Git blob ID `a8472b8cccbf1668d306ec32780fd096b4a00bfb`;
+`shasum -a 256` returned
+`ea725c60b9022a7a491ffc348b5622a199853c806d625f673d0e2ebf1c3b5312`.
+JSON structure checks passed for the WordPiece vocabulary, token metadata and
+expected special-token IDs. The calculated SHA-256 fingerprints the downloaded
+bytes; it was not an independently published tokenizer checksum.
+
+At that checkpoint, no model weights had been downloaded and no real-model
+inference or embeddings had been run. The export's precise upstream model revision
+and parity remain unverified, so the full artifact manifest is still incomplete.
+
+## RepoPilot 2.0 Step 2B — ONNX download verification, 2026-11-05
+
+With separate download-only approval, `model.onnx` was downloaded from
+`https://huggingface.co/zuliaio/coderankembed-onnx/resolve/72d8b338380c0b83d02b1e38b40b7b778c1c8703/model.onnx`
+to the private artifact directory at revision
+`72d8b338380c0b83d02b1e38b40b7b778c1c8703`. The temporary file was exactly
+547,637,263 bytes, and `shasum -a 256` matched the approved SHA-256
+`12ba359756210927940f8a9ec569cc7d6d6f091e7fcfae6cbe09bba6aab8830d`.
+An exclusive atomic rename placed it at
+`/Users/roshan/Library/Application Support/RepoPilot/models/coderankembed/72d8b338380c0b83d02b1e38b40b7b778c1c8703/model.onnx`;
+size, SHA-256 and mode `0600` were verified again at the final path. The existing
+tokenizer was not modified, and its SHA-256 again matched
+`ea725c60b9022a7a491ffc348b5622a199853c806d625f673d0e2ebf1c3b5312`.
+
+At the download checkpoint, the graph had not been inspected or loaded, and no
+inference or embeddings had been run. The precise upstream revision used for this
+export and the publisher's numerical parity claim remain unverified.
+
+## RepoPilot 2.0 Step 2B — offline static graph inspection, 2026-11-05
+
+Model SHA-256 `12ba359756210927940f8a9ec569cc7d6d6f091e7fcfae6cbe09bba6aab8830d`,
+tokenizer SHA-256 `ea725c60b9022a7a491ffc348b5622a199853c806d625f673d0e2ebf1c3b5312`
+and model size 547,637,263 bytes matched. A custom bounded protobuf-wire scanner
+ran in a macOS sandbox denying network access and file writes; no graph was
+passed to ONNX Runtime and no inference session was created. Its synthetic
+self-check passed. It observed ONNX IR 8, default opset 17, 3,593 nodes, 112
+initializers and the expected three `int64[batch, sequence]` inputs and one
+`float32[batch, sequence, 768]` output. All 26 observed default-domain operator
+types were recognized by the installed runtime's static schema registry; no
+external tensor references were found in the fields examined. See the
+[static inspection](vector-search-foundation.md#offline-static-graph-inspection--incomplete)
+for scope, bounds and limitations.
+
+The installed environments had no ONNX parser/checker package. The wire scan is
+not a full protobuf parse or `onnx.checker` validation, so static acceptance is
+**incomplete**. A graph-independent attempt to enumerate the runtime kernel
+registry exited with status 139; kernel support was not established. The symbolic
+sequence dimension does not prove that 512-token input works. Tokenizer
+compatibility, real inference, numerical parity, the export's upstream revision
+and semantic quality remain unverified. No model or tokenizer inference,
+additional package installation, database action or service restart occurred.
+
+## RepoPilot 2.0 Step 2B — official checker blocked, 2026-11-05
+
+The approved procedure specified an already installed macOS ARM64 CPython 3.12
+interpreter and required stopping if it was unavailable. `uv python find
+--offline 3.12`, installed-interpreter listing, shell lookup and common-location
+searches found no Python 3.12; the discovered interpreters were CPython 3.14.10
+and 3.9.6. The specified ONNX 1.23.0 universal2 wheel and its SHA-256 were
+confirmed against PyPI metadata only. No wheel or dependencies were downloaded,
+no environment was created, and the official parser and checker were not run.
+
+The model and tokenizer SHA-256 values still matched the approved values, and
+the model size was 547,637,263 bytes. The preceding bounded wire scan remains the
+only graph inspection at that checkpoint; full parsing and structural validation
+had not yet run. No model inference, database operation or service restart
+occurred. The later official checker result is recorded below.
+
+## RepoPilot 2.0 Step 2B — official ONNX static validation, 2026-11-05
+
+After separate approval to use the installed GIL-enabled CPython 3.14.10 ARM64
+on macOS 27.2, a new temporary environment was created at
+`/private/tmp/repopilot-onnx-check.EAOtHoEC/venv`. The approved official
+`onnx-1.23.0-cp312-abi3-macosx_13_0_universal2.whl` matched SHA-256
+`6cc93aa89502acbf453a16d79b465d47d9c454f3a3cb3fc5507a8cb59ab53208` before
+installation. Its four necessary dependencies were pinned and their official
+PyPI wheel hashes verified before offline installation; versions, wheel names
+and hashes are recorded in the [static validation](vector-search-foundation.md#official-onnx-1230-static-validation)
+section. No production dependency file or environment was modified.
+
+Both stored artifact SHA-256 values matched before and after inspection. Official
+ONNX 1.23.0 fully parsed the model protobuf with external-data loading disabled,
+then `onnx.checker.check_model` passed in a separate process using the file path,
+without optional shape inference. The official parser confirmed ONNX IR 8, opset
+17, 3,593 nodes, 112 initializers, the three expected `int64[batch, sequence]`
+inputs and `float32[batch, sequence, 768]` output. No external tensor references,
+custom domains or unknown operator schemas were found. The declared I/O matches
+the adapter's structural CLS-pooling contract.
+
+Both phases ran under a network- and write-denying macOS sandbox with unrelated
+home/repository reads blocked, a 90-second CPU limit, 120-second wall timeout
+and sampled 2 GiB RSS watchdog. Peak RSS was 1,155,350,528 bytes for parsing and
+1,157,316,608 bytes for checking. The watchdog is not a hard kernel memory limit.
+An initial deny-default sandbox probe exited 134 during Python startup even
+without ONNX or the model; the adjusted sandbox passed network, write and
+unrelated-read denial probes before model inspection.
+
+No ONNX Runtime module or inference session was used in either model phase. The
+earlier graph-independent `get_all_opkernel_def()` probe's status-139 exit was
+not repeated; runtime compatibility remains unverified. The source model's
+exact upstream revision, numerical parity, tokenizer behavior, successful
+512-token inference and semantic retrieval quality remain unverified. No
+inference, embeddings, database action, service restart or deployment occurred.
+
+## RepoPilot 2.0 Step 2B.1 — runtime diagnostic, 2026-11-06
+
+The macOS 27.2 ARM64 host has approximately 16 GiB physical memory. Homebrew
+CPython 3.14.10 is ARM64, GIL-enabled and uses ABI `cpython-314-darwin`.
+The earlier temporary ONNX Runtime environment and the separate official ONNX
+static-checker environment no longer exist. ONNX Runtime was not installed in
+the checked project, API, Homebrew or Apple Command Line Tools interpreters.
+The project pins version 1.31.1, but the prior installed version and its native
+dependencies could not be independently rechecked from the missing binary.
+A later broad filename and Spotlight search found no runtime binary in the
+accessible locations searched; it excluded the model directory and encountered
+some inaccessible paths, so it cannot rule out every possible installation.
+
+Two existing macOS crash reports show separate Python 3.14.10 ARM64 processes
+faulting with `SIGSEGV` / `EXC_BAD_ACCESS` at a null address in the ARM64
+`onnxruntime_pybind11_state.so` Python binding while returning `KernelDef`
+objects. The previously recorded `get_all_opkernel_def()` call was independent
+of the CodeRankEmbed model. The traces identify the failing component but do not
+establish the underlying cause; they do not establish a CPU-architecture
+mismatch. Both reports identify the same binding Mach-O UUID,
+`c230574f-20c3-3c2c-a746-acfbd3af12ef`; report filenames are recorded in the
+[runtime checkpoint](vector-search-foundation.md#runtime-diagnostic-checkpoint--2026-11-06).
+The reports were reviewed without rerunning the failing probe.
+
+Plain Python startup succeeded in a new sandbox with network, file writes,
+home and repository reads denied, no inherited application credentials, a
+20-second CPU limit, 64-descriptor limit, 25-second wall timeout and a sampled
+512 MiB RSS watchdog. The denial canaries passed and Python reported peak RSS
+16,269,312 bytes. This is a sampled watchdog rather than a hard memory limit.
+Since no suitable runtime installation was found, no new ONNX Runtime import,
+provider discovery, kernel-registry probe or synthetic inference was run.
+Runtime readiness for real-model execution is **not established**. Installing
+or identifying a runtime requires separate authorization or a supplied existing
+environment. The source model's upstream revision, numerical parity and semantic
+quality remain unverified. No real model or tokenizer was accessed, and no
+package, database, repository job or application service was changed.
+
+## RepoPilot 2.0 Step 2B.1 — disposable runtime and synthetic graph, 2026-11-06
+
+After separate authorization, official PyPI ONNX Runtime 1.31.1 and its four
+necessary dependencies were hash-verified and installed offline into the new
+disposable `/private/tmp/repopilot-ort-runtime-fjkjao5k/venv`. The CPython
+3.14.10 ARM64 runtime wheel SHA-256 matched
+`8536ac43682caa7492c46d6cfd4c3c8db288dcf0619508431a22170b670ee1d0`.
+The installed dependencies were FlatBuffers 25.12.19, NumPy 2.5.4, Packaging
+26.3 and Protobuf 7.36.2; their wheel names, hashes and source details are in
+the [runtime diagnostic](vector-search-foundation.md#disposable-onnx-runtime-diagnostics--2026-11-06).
+No project dependency file or production environment was modified.
+
+In separate macOS-sandboxed subprocesses, Python startup, NumPy import and
+ONNX Runtime import/provider discovery passed. The available providers were
+CoreML, Azure and CPU. A tiny synthetic graph initialized with **CPU only** and
+returned the exact expected output; session initialization plus inference took
+0.003649 seconds, with process-reported peak RSS of 58,310,656 bytes. These
+figures are a single diagnostic, not a benchmark. Network, home and repository
+reads, file writes, fork and spawn were denied and tested. The phases had
+20-second CPU and 30-second wall limits and a sampled 768 MiB RSS watchdog;
+the watchdog was not a hard memory limit.
+
+One subsequent, separate `get_all_opkernel_def()` attempt reproduced the
+previous native fault: `SIGSEGV` (signal 11, shell-equivalent status 139),
+null address, with `KernelDef` frames in the same ARM64 binding Mach-O UUID
+as the earlier crash reports. No further runtime probe was run. The exact
+cause remains unknown, so overall runtime compatibility is **blocked**, even
+though the synthetic CPU inference passed. A first Python launcher attempt was
+blocked by the sandbox's no-spawn rule; the direct trusted framework executable
+ran with the isolation rules retained. The outer sandbox also caused the
+offline `uv` installer to panic; installation succeeded outside that outer
+sandbox before the restricted runtime probes.
+
+No CodeRankEmbed model or tokenizer was read or executed. Its export's exact
+upstream revision, numerical parity, real inference and semantic retrieval
+quality remain unverified. No application database, job or service was changed.
+
+## RepoPilot 2.0 Step 2B.2 — real-model preflight blocked, 2026-11-06
+
+The prescribed disposable environment reported CPython 3.14.10 ARM64,
+ONNX Runtime 1.31.1 and NumPy 2.5.4, but no installed or importable
+`tokenizers`. The RepoPilot adapter requires `tokenizers==0.23.3`; this task
+explicitly prohibited installing additional model dependencies and required
+stopping if the environment was incompatible. The smoke test therefore stopped
+before opening or rehashing either pinned artifact, checking the current CPU
+provider or initializing a model session. No real inference or embeddings ran.
+
+The application-source audit found no direct use of the crashing
+`get_all_opkernel_def` function or private ONNX Runtime pybind APIs; this does
+not prove their absence from runtime internals. The previously reproduced
+registry crash remains unresolved. Separately approved tokenizer provisioning
+or a compatible approved environment is needed before another smoke-test
+preflight. Upstream export revision, numerical parity and semantic relevance
+remain unverified, and application embeddings were not enabled.
+
+## RepoPilot 2.0 Step 2B.2 — real-model smoke-test retry, 2026-11-06
+
+After separate approval, `tokenizers==0.23.3` and its required dependencies were
+installed into the existing disposable runtime environment from verified
+official binary wheels. The tokenizer wheel was
+`tokenizers-0.23.3-cp310-abi3-macosx_11_0_arm64.whl`, SHA-256
+`68649e97d5b43c44c031d8d848874a6eecae8f8fe40ea989aa777a5a83aca716`.
+All installed dependency versions, wheel names and hashes are recorded in the
+[smoke-test details](vector-search-foundation.md#real-coderankembed-smoke-test-retry--2026-11-06).
+The model SHA-256 matched
+`12ba359756210927940f8a9ec569cc7d6d6f091e7fcfae6cbe09bba6aab8830d`;
+the tokenizer SHA-256 matched
+`ea725c60b9022a7a491ffc348b5622a199853c806d625f673d0e2ebf1c3b5312`.
+
+In an offline macOS sandbox, the tokenizer and isolation canaries passed. One
+CPU-only ONNX Runtime 1.31.1 session processed only the approved fixed query,
+code and repeated query. Token counts were 18 and 14, float32 hidden outputs
+had shapes `(1, 18, 768)` and `(1, 14, 768)`, and the finite nonzero CLS
+vectors normalized to length 768 with norm 1.0. The query repeat matched with
+maximum absolute difference 0.0 at `rtol=1e-5`, `atol=1e-6`. Session
+initialization was 0.632447 seconds; the three inference times were 0.010723,
+0.006546 and 0.006737 seconds. Worker peak RSS was 1,473,921,024 bytes.
+These measurements are not performance or relevance benchmarks.
+
+The sandbox denied network, unrelated home and repository access, fork and
+spawn, allowed read-only pinned artifacts and restricted temporary writes.
+The 3 GiB RSS watchdog was sampled, not a hard memory limit; the attempted
+address-space limit was unavailable. The prior kernel-registry crash was not
+reproduced or invoked and remains unresolved. The precise upstream source
+revision, numerical parity and semantic quality remain unverified. No
+application embeddings, database operation or service changes occurred.
+
+## RepoPilot 2.0 Step 2B.3A — synthetic capture runner, 2026-11-06
+
+The focused capture, context-aware held-out scoring, retrieval evaluation and
+existing issue-retrieval replay tests passed: **89 passed** using a separately
+marked disposable PostgreSQL database in a new loopback-only pgvector container
+with a temporary data filesystem and no Docker volume (the final run took
+2.17 seconds). The suite exercised
+actual `terms-v2` construction and retrieval, controlled-vector exact search,
+fusion, shared inventory and citation checks, tenant and access rejection,
+context ordering and truncation, malformed input, split leakage, and the
+`heldout-v2` consistency checks. These are synthetic engineering tests, not a
+measurement of semantic relevance. The targeted Ruff check and
+`git diff --check` passed.
+
+The completed CLI also ran successfully on a second fresh, marked disposable
+database in that container, emitting two synthetic examples and six captures
+covering keyword, semantic and hybrid modes. Each used the same six-chunk
+universe and was marked `MECHANICAL_TEST_ONLY`. The development fixture's
+SHA-256 is
+`bc3ce070215cac2353e4a63fae237036dc8318695f8eb105096633fe855de809`.
+The output directory was `/private/tmp/repopilot-capture-final-e3c4b62aaf1685d9`;
+its mode was `0700` and its three output files were `0600`. Timings are
+single synthetic observations, excluded from the deterministic mechanical
+report and unsuitable as performance benchmarks.
+
+The complete context and dataset contract, executable command, metric caveats,
+and future independent-labeling protocol are documented in
+[retrieval-capture-dataset-v1.md](retrieval-capture-dataset-v1.md). The
+runner used no real model, real repository, external service, normal
+application database, migration, app job or service restart. The output's
+synthetic commit and citations are fixture identities, not Git provenance.
+The disposable test container was stopped after testing; its temporary
+filesystem data is no longer retained. No Docker volume was removed.
+Real-data capture, independent labels, semantic relevance, upstream numerical
+parity and the earlier kernel-registry crash remain unresolved.
+
+## RepoPilot 2.0 Step 2B.3B — synthetic Git provenance, 2026-11-06
+
+With a clean environment and no `TEST_DATABASE_URL`, focused backend tests
+covering the new synthetic Git provenance validator, synthetic capture tests,
+held-out scorer, retrieval evaluation and issue-retrieval replay reported
+**115 passed, 17 skipped**. The 17 skips require disposable PostgreSQL; SQLite
+is not presented as PostgreSQL evidence. The tests exercised actual locally
+created synthetic Git commit/blob objects, changed working-tree content,
+fingerprints, citations, metadata mismatches, comments, duplicate identities,
+conflicting labels, split leakage, insufficient evidence and deterministic
+report generation, disabled Git replacement refs and the Git-output cap.
+Backend-wide Ruff, `git diff --check` and a shell syntax check of the disposable
+PostgreSQL command below passed.
+
+A request to start a new synthetic-only pgvector test container with
+`--pull=never`, loopback binding and a temporary data filesystem failed before
+creating the container: Docker reported it could not connect to the daemon at
+the local Docker socket. No benchmark environment was started. The application
+services were not restarted; current PostgreSQL regression verification
+remains **blocked**, even though Step 2B.3A's separate earlier run passed.
+
+The corpus selection, independent-labeling and offline resource plans are in
+[retrieval-capture-dataset-v1.md](retrieval-capture-dataset-v1.md). The host
+reported 16 GiB physical memory, 12 logical CPUs and approximately 76.2 GB free
+at `/private/tmp` at the time of inspection. No public source/issue collection,
+real embeddings, model inference, application database access or migration was
+performed. Real corpus counts remain zero; the ONNX kernel-registry crash,
+upstream export revision and numerical parity remain unresolved.
+
+To rerun the missing synthetic-only PostgreSQL checks from `apps/api` when a
+Docker daemon is already available, the following creates a new marked test
+database in its own loopback-only container with temporary storage. It never
+uses `repopilot-local` or pulls an image. This procedure now generates a fresh
+test-only password and requires SCRAM for TCP connections, in addition to its
+existing loopback, database-marker, empty-schema and temporary-storage guards.
+The application test fixtures create and drop their own tables. The trap stops
+only this new container and its temporary data disappears; no Docker volume is
+deleted. The container is for synthetic data only.
+
+```sh
+bash <<'SH'
+set -eu
+test_id=$(.venv/bin/python -c 'import secrets; print(secrets.token_hex(8))')
+test_password=$(.venv/bin/python -c 'import secrets; print(secrets.token_hex(32))')
+test_name="repopilot-provenance-test-${test_id}"
+test_db="repopilot_capture_disposable_${test_id}"
+docker run -d --pull=never --name "$test_name" \
+  --tmpfs /var/lib/postgresql/data:rw \
+  -e POSTGRES_USER=capture_fixture -e POSTGRES_DB="$test_db" \
+  -e POSTGRES_PASSWORD="$test_password" -e PGPASSWORD="$test_password" \
+  -e POSTGRES_INITDB_ARGS='--auth-host=scram-sha-256 --auth-local=scram-sha-256' \
+  -e POSTGRES_HOST_AUTH_METHOD=scram-sha-256 \
+  -p 127.0.0.1::5432 pgvector/pgvector:pg16
+trap 'docker stop "$test_name" >/dev/null 2>&1 || true' EXIT
+ready=0
+for attempt in $(seq 1 30); do
+  if docker exec "$test_name" pg_isready -U capture_fixture -d "$test_db"; then
+    ready=1
+    break
+  fi
+  sleep 1
+done
+test "$ready" = 1
+test "$(docker inspect --format '{{json .Mounts}}' "$test_name")" = '[]'
+test "$(docker inspect --format '{{json .HostConfig.Tmpfs}}' "$test_name")" = '{"/var/lib/postgresql/data":"rw"}'
+docker exec "$test_name" psql -X -v ON_ERROR_STOP=1 -U capture_fixture \
+  -d "$test_db" -c "COMMENT ON DATABASE ${test_db} IS 'repopilot-synthetic-capture-v1'"
+test_port=$(docker inspect --format '{{(index (index .NetworkSettings.Ports "5432/tcp") 0).HostPort}}' "$test_name")
+test -n "$test_port"
+test_host=$(docker inspect --format '{{(index (index .NetworkSettings.Ports "5432/tcp") 0).HostIp}}' "$test_name")
+printf 'disposable_container=%s\ndisposable_database=%s\nloopback_port=%s\npublished_host=%s\n' \
+  "$test_name" "$test_db" "$test_port" "$test_host"
+test "$test_host" = 127.0.0.1
+test_auth=$(docker exec "$test_name" psql -X -v ON_ERROR_STOP=1 -U capture_fixture -d "$test_db" -Atqc \
+  "SELECT CASE WHEN count(*) FILTER (WHERE type='host' AND auth_method='scram-sha-256') > 0 AND count(*) FILTER (WHERE type IN ('host','local') AND (auth_method IS DISTINCT FROM 'scram-sha-256' OR error IS NOT NULL)) = 0 THEN 'scram-sha-256' ELSE 'unsafe' END FROM pg_hba_file_rules")
+printf 'authentication_guard=%s\n' "$test_auth"
+test "$test_auth" = scram-sha-256
+test_target=$(docker exec "$test_name" psql -X -v ON_ERROR_STOP=1 -U capture_fixture -d "$test_db" -Atqc \
+  "SELECT current_database() || '|' || current_user || '|' || shobj_description(oid, 'pg_database') FROM pg_database WHERE datname=current_database()")
+test "$test_target" = "$test_db|capture_fixture|repopilot-synthetic-capture-v1"
+test_url="postgresql+psycopg://capture_fixture@127.0.0.1:${test_port}/${test_db}"
+printf 'database_marker=verified\n'
+env -i PATH=/usr/bin:/bin HOME=/nonexistent TEST_DATABASE_URL="$test_url" \
+  .venv/bin/python -B -c 'import os; from sqlalchemy import create_engine; from sqlalchemy.exc import OperationalError
+try:
+    with create_engine(os.environ["TEST_DATABASE_URL"]).connect():
+        raise SystemExit("Passwordless connection unexpectedly succeeded")
+except OperationalError as exc:
+    if not any(s in str(exc).lower() for s in ("no password supplied", "password authentication failed")):
+        raise SystemExit("Could not verify authentication refusal") from None
+    print("Passwordless TCP connection rejected")'
+env -i PATH=/usr/bin:/bin HOME=/nonexistent PGPASSWORD="$test_password" TEST_DATABASE_URL="$test_url" \
+  .venv/bin/python -B -m pytest -q \
+  tests/test_benchmark_provenance.py tests/test_synthetic_capture.py \
+  tests/test_retrieval_heldout.py tests/test_retrieval_evaluation.py \
+  tests/test_issue_retrieval_replay.py
+SH
+```
+
+## Step 2B.3B — disposable PostgreSQL recovery, 2026-11-07
+
+The earlier run recorded that Docker's daemon was unreachable; the underlying
+cause of that earlier interruption was not established. During this recovery,
+Docker Desktop's `desktop-linux` context was available at its local Unix
+socket, with client and server version 29.8.2. Some ordinary sandboxed Docker
+commands initially received a socket permission error; read-only commands and
+the isolated test procedure succeeded with the approved Docker access. No
+Docker context was switched and no application service was started, stopped or
+restarted by this verification.
+
+The originally documented test procedure used a passwordless `trust` role. To
+meet the requested test-only-credential requirement, the same procedure above
+was amended to generate a fresh disposable password and require SCRAM for host
+and local connections. An initial amended run stopped after marking its new
+database but before pytest; the exact failed guard was not printed. Its
+PostgreSQL initialization log showed the default local trust warning. The
+runner stopped that new temporary container. The initialization options were
+then made explicitly SCRAM-only and the guard results made visible; no test or
+application source was changed and no security assertion was disabled.
+
+The documented procedure above was then executed successfully using:
+
+- Container `repopilot-provenance-test-852c8eebf3cda4d5`, image
+  `pgvector/pgvector:pg16`, image ID
+  `sha256:0dd3149a06e4579a0d70d8fef9945636cd514005e7237deb27f9b67886f8dc4f`.
+- Database `repopilot_capture_disposable_852c8eebf3cda4d5`, role
+  `capture_fixture`, published only at `127.0.0.1:49269` for this run. The
+  database name, role, test marker, no Docker mounts and temporary filesystem
+  at `/var/lib/postgresql/data` were checked before tests.
+- A newly generated test-only password. Both host and local PostgreSQL
+  authentication rules passed the SCRAM guard; an attempted passwordless TCP
+  connection was rejected. The existing URL, marker and empty-schema fixture
+  guards remained in force.
+
+The exact shell runner and pytest invocation are the block immediately above.
+It reported **132 passed in 7.04 seconds, 0 failed, 0 skipped**; the 17 cases
+previously skipped for lack of PostgreSQL therefore executed successfully.
+Backend-wide Ruff and `git diff --check` passed. The two new test containers
+from this recovery were stopped, their data was temporary, and no Docker
+volume was removed. The existing `repopilot` project's API was observed as
+unhealthy during the read-only container listing; it was not investigated or
+modified by this task.
+
+Only this verification record and `docs/repopilot-2-assessment.md` were edited
+in this recovery; no application source or test file was changed. These
+synthetic tests do not authenticate a real capture producer, establish
+independent relevance labels, or measure CodeRankEmbed search quality. No real
+data collection, model inference, app migration, reindex or benchmark ran.
+
+## Step 2B.3C — metadata-only source selection, 2026-11-07
+
+GitHub's public repository and commit-list metadata, issue-list titles and
+dates, and license files at the proposed commits were inspected for
+`encode/httpx`, `expressjs/express` and `go-chi/chi`. The resulting request
+contains ten unapproved pilot leads in
+[benchmark-source-approval-v1.md](benchmark-source-approval-v1.md) and its
+machine-readable companion. Commit/issue applicability, pre-fix status,
+complete issue context and independently reviewed relevance remain unknown.
+The source-code licenses do not settle issue-text retention rights.
+
+The offline manifest schema and synthetic negative tests passed: **18 passed**.
+They check source identifiers, license and SHA fields, issue uniqueness,
+pre-declared pilot-only split, denied permissions, conservative limits,
+known-pattern secret screening and canonical serialization. Pattern screening
+is not proof that arbitrary data contains no secrets. Backend-wide Ruff and
+`git diff --check` passed. No repository source/tree, issue body or comment,
+patch, PR diff, model inference, embeddings or benchmark execution was used.
+No Docker service or application database was accessed for this step.
+
+## Step 2B.3D — controlled HTTPX issue-context triage, 2026-11-07
+
+Under explicit approval for `encode/httpx` issues #3712, #3713, #3728 and
+#3734, anonymous, bounded GitHub REST requests retrieved the four issue
+contexts and seven public text comments. A re-read of each issue's metadata
+matched its initial projection; this does not make comment edits an atomic
+snapshot or establish historical context at issue creation. No linked
+attachments, source tree or code file, PR patch, or diff was fetched.
+
+The private capture is under the previously proposed benchmark destination in
+`httpx-issue-triage-20261107T022457Z-cd8f4a83`; its directories are mode `0700`
+and files `0600`. The exact issue-request HTTP JSON response-body count was
+**157,816 bytes**, including issue metadata fetched twice and comment pages,
+but excluding headers and TLS overhead. Selected UTF-8 text totaled **66,956
+bytes**. No issue exceeded 1 MiB and the aggregate stayed below 4 MiB.
+Identity, comment order and count, per-file and canonical context SHA-256,
+expected filenames and modes were checked. Requests were anonymous and no
+authentication headers were recorded. Recognized credential-pattern scans
+were negative; this is not proof that arbitrary text contains no secret.
+
+The complete #3713 and #3734 contexts validate against `issue-context-v1` and
+have standalone records. The complete #3712 context does not validate because
+one comment has 2,244 characters (limit 2,000); #3728 does not validate because
+its body has 45,564 characters (limit 10,000). Both originals are retained
+without truncation and explicitly marked incompatible, not represented as
+complete valid v1 records. A private triage report records #3734 as eligible
+for conditional future source-labeling review, #3713 as insufficient evidence,
+and #3712/#3728 as unresolved. The pinned commit's applicability remains
+unverified for all four. Nine offline synthetic capture tests and the local
+integrity verification passed; `git diff --check` passed. No source-code or
+database change, search, model inference, embedding or benchmark occurred.
+
+## Step 2B.3E — pinned HTTPX #3734 source review, 2026-11-07
+
+The existing private #3734 envelope and standalone context matched the triage
+manifest, repository and issue identities, schema and canonical SHA-256 before
+source collection. Seven anonymous GitHub Git API requests fetched the approved
+commit metadata, root tree, two necessary subtrees and exactly three selected
+Python blobs. GitHub returned commit
+`def4778d622e8bf49a9fea4dda78cca4cf666d8a`, root tree
+`706b304f7f46b07fa19e000148be76c059890b26`, parent
+`435e1dac899adeb0c156c00721ecbb1124d75842` and committer time
+`2025-10-16T09:04:38Z`. The response-body count was **133,052 bytes** and
+retained decoded source was **88,244 bytes**. The detailed paths, Git blob
+IDs, SHA-256 fingerprints, tree IDs and limits are in the
+[source review](benchmark-httpx-3734-source-review.md).
+
+Reconstructed Git tree and blob IDs were recomputed in the collector and
+independently with local `git hash-object`; replacement refs were disabled.
+The private directory and files passed ownership, `0700`/`0600`, expected-file,
+source byte and canonical manifest checks. The raw commit object was not
+retrieved, so its SHA was matched against GitHub's metadata and the approved
+value, not independently recomputed from raw commit bytes. Neither that check
+nor SHA-256 authenticates the capture producer. Known credential-pattern
+screening is not exhaustive. The original #3712, #3728 and #3734 envelopes
+still matched their triage file hashes.
+
+The named SSL helper, transport calls and stream wrappers exist in the pinned
+source. The report's actual HTTPX version and runtime behavior are not
+established, so the outcome is **SOURCE_APPLICABILITY_UNRESOLVED**, not an
+independent relevance label or root-cause verification. In-memory Python
+chunking, citations and fingerprint calculations were exercised with the
+three reviewed files and synthetic identifiers; no database snapshot or
+capture inventory was created. A complete Git object repository and complete
+eligible source universe are not present for the stricter preflight.
+
+From `apps/api`, the focused offline command was:
+
+```sh
+PYTHONDONTWRITEBYTECODE=1 .venv/bin/python -m pytest -q -p no:cacheprovider \
+  --basetemp=tests/.httpx-source-review-pytest-20261107 \
+  tests/test_httpx_pinned_source_review.py \
+  tests/test_benchmark_source_approval_manifest.py tests/test_benchmark_provenance.py
+```
+
+It reported **81 passed, 0 failed, 0 skipped**. Pytest emitted one
+`PytestConfigWarning` about the configured cache directory because the cache
+plugin was intentionally disabled. The checks used synthetic local Git
+fixtures and controlled data; no PostgreSQL was needed. Ruff on the changed
+Python test and `git diff --check` passed. No other issue was fetched; no
+source or issue text was executed; no model, embedding, benchmark, normal
+database, migration, reindex, application service or GitHub write was used.
+
+## Step 2B.3F — HTTPX historical applicability gate, 2026-11-07
+
+The retained #3734 issue envelope and standalone `issue-context-v1` record
+were revalidated against their recorded file hashes and canonical context
+SHA-256. The three retained source blobs and three tree-object hashes were
+recomputed against the existing source manifest; the original private data
+was not modified or copied.
+
+Six anonymous read-only GitHub metadata requests returned **38,561 HTTP
+response-body bytes**, below the approved 1,048,576-byte aggregate limit.
+They covered one issue-events page, the first tags page, a `0.28.1` tag commit,
+the issue-referenced commit, and two bounded commit-history queries. No
+additional issue or comment body, Python source, PR content, patch or
+attachment was fetched. The issue-events endpoint returned four subscription
+events and a reference to commit `6eb7ac2f0618025fc2e284f8863716acfb18d8bc`;
+it is not the complete issue timeline. GitHub's history responses identify
+the `0.28.1` tag commit as an ancestor of the pinned commit and the pinned
+commit as an ancestor of the referenced commit. The referenced commit's
+message describes a fix; its patch and effectiveness were not examined.
+
+The reporter's HTTPX revision and dependency versions remain unknown, and the
+reported memory behavior was not reproduced. Therefore the decision remains
+**SOURCE_APPLICABILITY_UNRESOLVED**, with #3734 excluded from positive
+held-out labels. The [human review packet](benchmark-httpx-3734-source-review.md)
+contains the timeline, gate, candidate ranges, three existing replacement
+leads and the remaining evidence needed. No source labels were created.
+
+From `apps/api`, the same focused synthetic source-review, manifest and Git
+provenance suite documented in Step 2B.3E was run with the new disposable
+`--basetemp=tests/.httpx-history-pytest-20261107`. It reported **81 passed,
+0 failed, 0 skipped**. One `PytestConfigWarning` about `cache_dir` was emitted
+because the cache plugin was disabled. The synthetic temporary test directory
+was removed after the run. No Python source changed; Ruff was not required.
+`git diff --check` passed. No application database, repository indexing,
+CodeRankEmbed inference, embedding, retrieval benchmark, service restart or
+GitHub write occurred.
+
+## Step 2B.3G — replacement issue triage, 2026-11-07
+
+The explicitly approved Express #7506, chi #1188 and Express #7532 issue
+contexts were captured using eight anonymous, allowlisted GitHub issue/comment
+requests. Each issue's initial and final metadata matched; comment edits are
+not an atomic snapshot. The response-body count was **33,231 bytes**, including
+metadata rereads; selected UTF-8 text was **7,823 bytes** and the retained
+private JSON files and summary occupied **17,364 bytes**. HTTP headers and TLS
+overhead are excluded. All totals were within the separately approved limits.
+
+All three complete original contexts passed `issue-context-v1`, canonical
+fingerprint, issue/comment identity and ordering checks. The existing
+production `terms-v2` builder accepted each context without using comments;
+no search was run. Private files were checked as owner-only `0600`, directories
+as `0700`. Known credential-pattern scans were negative, but are not
+comprehensive. The [triage record](benchmark-replacement-issue-triage-v1.md)
+contains exact identities, hashes, comparison and future approval scope; raw
+issue text remains only in the private capture.
+
+Chi #1188 is recommended for a separately approved pinned-source review. Its
+reporter names chi `v5.3.2` and short master commit `3d1777a`, matching the
+proposed commit prefix. That association, the reported reproduction and source
+relevance are not independently verified. Both Express cases remain
+applicability-unresolved. No gold labels were created.
+
+Ten synthetic tests of the temporary scoped collector passed. The first
+unittest invocation used an absolute pathname as a module name and failed
+before running tests; rerunning by module name passed. A further **40 focused
+manifest, held-out schema, synthetic capture-context and production query
+builder tests passed**, with one `PytestConfigWarning` because the cache plugin
+was disabled. Ruff passed for the temporary capture, test and independent
+verification helpers; `git diff --check` passed. No source or Git object was
+downloaded, no additional issue was retrieved, and no normal database, model,
+embedding, real benchmark, service restart or GitHub write was used.
+
+## Step 2B.3H — chi #1188 pinned-source review, 2026-11-07
+
+The retained chi #1188 envelope and `issue-context-v1` record were rechecked
+against their recorded file and canonical context hashes before collection.
+GitHub returned the approved commit
+`3d1777a1ef8881f7d1da0b02c76ca8f0a29cd2bc`, expected root tree
+`7c01dddb05b4c19847a3d6259a3f4d519e3b27fb`, parent
+`b1c9ab47626cc46b34393ad4d35779c4363c4e1e` and committer time
+`2026-09-18T11:51:53Z`. Its commit-list metadata resolved short SHA
+`3d1777a` to that full commit. Tag `v5.3.2` targets
+`38939062c5df4d3e8814aad1a488983112627ced`; the pinned commit is 13
+single-parent steps later according to GitHub's commit metadata. This was a
+metadata-only version comparison, not a comparison of source at the two
+revisions. The raw commit object was not obtained or independently hashed.
+
+The root tree and five selected Go blob identities were independently
+recomputed with `git hash-object`; file SHA-256, private paths and `0700`/`0600`
+permissions also passed. Twenty-three anonymous requests read **162,617 HTTP
+response-body bytes**, of which **53,845** were metadata and **108,772** blob
+responses. Decoded source retained was **77,909 bytes**. The narrower prior
+limits of 10 files, 100,000 bytes per file, 1,000,000 source bytes and 4 MiB
+response bodies were enforced. The [chi review packet](benchmark-chi-1188-source-review.md)
+records paths, hashes, license attribution, observations and limitations.
+
+The reporter's short commit and the APIs present in the pinned source support
+`APPLICABILITY_SUPPORTED` for independent human review. No behavior or root
+cause was verified and no authoritative label was created. The five files are
+a partial source selection, not a complete Git or benchmark inventory.
+
+In-memory Go language identification, fallback coverage, synthetic chunk
+fingerprints and citations passed for all five files. Both local Python
+environments lacked `tree_sitter` and `tree_sitter_go`; each source analysis
+returned `parser_unavailable`, so syntax-aware Go parsing remains unverified.
+The targeted synthetic Go parser test reported **1 skipped** for this missing
+dependency. The Step 2B.3H source-applicability review is complete, but the
+requested syntax-aware compatibility verification remains **incomplete**.
+No packages or Go modules were installed.
+
+Twelve synthetic collector tests and **98 focused existing provenance,
+manifest, path, citation and fallback tests passed**. Pytest emitted one
+`PytestConfigWarning` about `cache_dir` because its cache plugin was disabled.
+Ruff passed for the temporary helpers; `git diff --check` passed. No Go source
+or test was executed; no other issue, source revision, PR patch, normal
+database, model, embedding, real benchmark, service restart or GitHub write
+was used.
+
+## Step 2B.3H.1 — Go parser recovery and native crash, 2026-11-07
+
+The previously skipped test had used the application's existing Python test
+tooling, CPython `3.14.10` on macOS `27.2` ARM64, GIL-enabled ABI
+`cpython-314-darwin`. A new temporary environment was created at
+`/private/tmp/repopilot-go-parser.wvnGBw94/venv` with no pip installed in it;
+the existing pip tool installed only these two approved binary wheels into
+that environment. Their official PyPI JSON metadata, project lockfile, actual
+download and an independent `shasum -a 256` agreed:
+
+| Wheel | SHA-256 |
+| --- | --- |
+| `tree_sitter-0.26.0-cp314-cp314-macosx_11_0_arm64.whl` | `5fc2f41bf246ff2f70a9cc3690be35ec7580a4923151873d898c8bcb1a4503d3` |
+| `tree_sitter_go-0.25.0-cp310-abi3-macosx_11_0_arm64.whl` | `503b81a2b4c31e302869a1de3a352ad0912ccab3df9ac9950197b0a9ceeabd8f` |
+
+Both wheel tags were compatible with this interpreter and both imports and
+installed versions were verified from the disposable environment. The wheel
+metadata had no active runtime dependencies on this interpreter; neither
+wheel contained `.pth` or wheel script entries. The environment's installed
+distribution inventory contained exactly `tree-sitter==0.26.0` and
+`tree-sitter-go==0.25.0`. No application or global Python environment,
+dependency lockfile or Go module was modified. Install and tests used a macOS
+`sandbox-exec` policy denying network; a loopback connection probe returned
+`EPERM`. The application's existing test interpreter was given the isolated
+wheel site-packages path explicitly, with a sanitized environment.
+
+The isolated harness first passed its synthetic Go check with the actual Go
+grammar and no fallback: 48 syntax nodes, a recognized function and type
+declaration, validated UTF-8 byte positions and two syntax-aware chunks. Its
+subsequent five-file check terminated with **SIGSEGV / exit 139** before
+reporting any completed file. After that crash, the exact formerly skipped
+small Go case completed separately: **1 passed, 13 deselected**. Pytest emitted
+one `PytestConfigWarning` because the cache plugin was disabled.
+
+A macOS crash report showed `EXC_BAD_ACCESS` in the Python/Tree-sitter native
+call stack, including `node_get_text` and `PySlice_Unpack`. A single controlled
+synthetic diagnostic with 700 Go functions also exited 139; its Python stack
+pointed into `analyze_source`'s parser input callback and symbol text access.
+An attempted narrow source-buffer slicing correction was tested once and
+also crashed on the larger synthetic input; it and its temporary regression
+test were reverted. The underlying native cause is not established. No further
+real-source parser attempts were made, and no individual real-file parse can
+be claimed as passed. This is distinct from the earlier unresolved ONNX Runtime
+kernel-registry crash.
+
+An offline hash-only pass, without importing or invoking a parser, reverified
+all five retained Go files against their recorded SHA-256, Git blob hashes,
+sizes and snapshot metadata. The earlier fallback coverage remains valid; it
+is not evidence that syntax-aware parsing passed. Ruff passed on the restored
+parser and temporary helpers, and `git diff --check` passed. No Go code or
+test, source download, model inference, embedding, database, indexing,
+benchmark, service restart or GitHub write was used. The source-applicability
+decision remains `APPLICABILITY_SUPPORTED` for independent human review, while
+this parser verification remains **blocked** pending a separately reviewed
+synthetic crash investigation.
+
+## Step 2B.3H.2 — synthetic-only Tree-sitter crash investigation, 2026-11-07
+
+**Finding: `NODE_ACCESS_CRASH`; native cause unresolved.** This describes
+the observed failure stage, not a proven reference-count, ownership or
+grammar-ABI defect. No production parser, lockfile, indexing behavior or
+application configuration was changed.
+
+### Earlier crash evidence
+
+| Earlier process | Last supported stage | Saved evidence and limits |
+| --- | --- | --- |
+| Five-file check, 13:32 | The process reported its preceding small synthetic check passed, then crashed before any individual file result. Its precise source file and completed parse/traversal stage are **unknown**. | macOS report `Python-2026-11-07-133250.ips`: SIGSEGV / `EXC_BAD_ACCESS`, with `node_get_text`, `bytes_subscript` and `PySlice_Unpack` in the faulting stack. |
+| 700-function synthetic diagnostic, 13:34 | `Parser.parse()` had returned and `analyze_source` was traversing nodes; the traceback reached symbol `node.text` and its source callback. | SIGSEGV / exit 139; `Python-2026-11-07-133459.ips` also includes `node_get_text`, `bytes_subscript` and `PySlice_Unpack`. |
+| Previously attempted and reverted byte-slicing change, 13:36 | Parsing had returned; the traceback reached symbol byte slicing during traversal. | SIGSEGV / exit 139; `Python-2026-11-07-133627.ips` includes Python slice frames. The attempted change and its temporary test were reverted. |
+
+The stacks do not show which earlier operation first corrupted memory, if any.
+They do not establish a shutdown crash. The current code creates a fresh
+parser for each `analyze_source` call; source bytes, parser and tree remain
+referenced during traversal. A language object is passed into the parser
+constructor rather than retained as a separate local. The code reads point
+rows/columns and `node.text`, uses `named_children`, and provides a callback
+that slices the source byte buffer by the requested offset. It does not use
+`TreeCursor`, `Parser.reset()`, or node byte offsets. The audit did not
+establish an application ownership error. The syntax-aware parser is shared by
+non-Python languages; only the Go failures above were observed locally.
+
+### Installed environment and public reports
+
+The existing disposable environment
+`/private/tmp/repopilot-go-parser.wvnGBw94/venv` was reused: macOS 27.2
+ARM64, GIL-enabled CPython 3.14.10, ABI `cpython-314-darwin`,
+`tree-sitter==0.26.0` and `tree-sitter-go==0.25.0`. Both retained wheel
+SHA-256 values still matched the Step 2B.3H.1 table. Installed files matched
+all 8 and 11 applicable wheel payload files respectively; installed RECORD
+hashes checked 11 and 14 files respectively. Native bindings were ARM64
+Mach-O bundles:
+
+| Binding | Installed SHA-256 |
+| --- | --- |
+| `tree_sitter/_binding.cpython-314-darwin.so` | `d8bfcceadd69d12f7f55c663deabfb5984f1787d8de658f59f6de2a7ed952359` |
+| `tree_sitter_go/_binding.abi3.so` | `e7be46029b8773f5559c1dd561e4982fa65ddc131427d2e43ae9fee35bf4c917` |
+
+The runtime reported supported grammar ABI 13–15 and the installed Go grammar
+reported ABI 15. ABI acceptance is not evidence of runtime stability.
+[Trailmark #61](https://github.com/trailofbits/trailmark/issues/61) reports
+larger-Go-file node-access crashes in 0.26.0; its
+[merged #64](https://github.com/trailofbits/trailmark/pull/64) pins the 0.25
+series. [py-tree-sitter #500](https://github.com/tree-sitter/py-tree-sitter/issues/500)
+discusses a `Point` reference-count fix, and
+[#505](https://github.com/tree-sitter/py-tree-sitter/issues/505) reports
+different behavior between 0.26.0 and 0.25.2 for `Point.row`. These reports
+are diagnostic leads, not proof that RepoPilot has the same cause. No
+reproduction repositories were downloaded or executed.
+
+### Safe synthetic checks
+
+The runner and byte-identical temporary copies of the current analyzer,
+selection, chunker and small test were placed under
+`/private/tmp/repopilot-go-crash.Eo6lNFJX`; their copy hashes were checked.
+The diagnostic used the existing disposable parser packages and, for pytest
+only, read the existing application virtual environment's test packages. It
+did not alter either environment. The sandbox denied network, reads of the
+home directory and repository, writes, and process forks. The pytest profile
+allowed read-only access to the existing test packages; it still denied the
+repository root and home. A loopback-network canary returned `EPERM`, both
+read canaries returned `EPERM`, and `sandbox_check` confirmed fork denial.
+Environment variables were sanitized; no database or credential access was
+needed.
+
+The initial attempt to apply a nested macOS sandbox from the enclosing tool
+sandbox was denied; the same preflight ran successfully after operating-system
+authorization. Core dumps were disabled, CPU time was limited to 8 seconds,
+and an in-process alarm was set to 15 seconds. The operating system rejected
+`RLIMIT_AS`, so an external watchdog sampled RSS against 256 MiB and enforced
+a 20-second wall timeout. This is a **sampled** limit, not a hard memory
+limit. For the four-scenario diagnostic, peak sampled RSS was 28,400 KiB;
+the process reported peak RSS 29,081,600 bytes and exited 0. For the focused
+pytest run, peak sampled RSS was 44,576 KiB and the process exited 0. No
+watchdog or timeout event occurred.
+
+Four deterministic Go cases—35, 84, 102 and 88 UTF-8 bytes—passed, with
+**4 passed, 0 failed, 0 skipped**. They cover one function, multiple
+declarations, nested route-like calls and regexp-like strings, UTF-8, and
+bounded repeated declarations. Each passed parsing, root and shallow/deep
+node traversal, byte bounds, point rows/columns, node text, and actual
+RepoPilot analysis and syntax-aware chunking with `fallback_reason=None`.
+Tree, parser, language, node and source references were retained through each
+direct inspection. The process printed its normal-cleanup and `atexit`
+markers and exited successfully.
+
+The copied exact small Go test ran under the same isolation as
+`pytest -q -s -p no:cacheprovider -p no:logging
+project/tests/test_language_analysis.py -k x.go`: **1 passed, 0 failed,
+0 skipped, 13 deselected**. Two earlier attempts stopped during pytest startup
+before collecting tests: default output capture needed a writable temporary
+file, and then the logging plugin tried to open `/dev/null` for writing.
+Disabling those features preserved the no-write sandbox; neither attempt
+crashed or ran a native parser test. Ruff passed for the temporary diagnostic
+scripts. `git diff --check` passed.
+
+The earlier synthetic traceback already locates node access after parsing, so
+the optional larger crash-prone reproduction was **not run**. No retained chi
+source file was read or parsed; no Go code, model, database, embedding or
+benchmark was run. The prior five-file syntax-aware verification remains
+blocked. The source-applicability decision stays
+`APPLICABILITY_SUPPORTED` for independent human review; it is not a
+reproduced bug or a relevance label. The
+[review packet](benchmark-chi-1188-source-review.md#synthetic-only-native-crash-investigation)
+compares the unimplemented remediation options. Testing another official
+runtime in disposable environments and any subsequent production change each
+require separate approval. Existing exception fallback cannot catch SIGSEGV.
+
+## Step 2B.3H.3 — Tree-sitter 0.25.2 synthetic Go compatibility, 2026-11-07
+
+**Result: synthetic compatibility passed for the cases below.** This is a
+Go-only experiment, not proof of universal stability or approval to change
+production dependencies. The earlier 0.26.0 node-access crash and its
+underlying cause remain unresolved.
+
+### Isolated environment and wheel verification
+
+The new disposable environment is
+`/private/tmp/repopilot-tree-sitter-0252.BpTXH2o2/venv`. It uses GIL-enabled
+CPython 3.14.10, `cpython-314-darwin`, on macOS 27.2 ARM64. The exact
+[official PyPI release metadata](https://pypi.org/project/tree-sitter/0.25.2/)
+matched the approved runtime filename and SHA-256. The Go wheel was reused
+from the previously verified disposable wheelhouse. Both installed wheel
+payloads were compared with their verified archives, and both native
+extensions are ARM64 Mach-O bundles.
+
+| Wheel | Bytes | SHA-256 |
+| --- | ---: | --- |
+| `tree_sitter-0.25.2-cp314-cp314-macosx_11_0_arm64.whl` | 137,732 | `bda059af9d621918efb813b22fb06b3fe00c3e94079c6143fcb2c565eb44cb87` |
+| `tree_sitter_go-0.25.0-cp310-abi3-macosx_11_0_arm64.whl` | 48,674 | `503b81a2b4c31e302869a1de3a352ad0912ccab3df9ac9950197b0a9ceeabd8f` |
+
+The runtime wheel was downloaded only from the official PyPI file host after
+checking metadata and platform tags; a first request from the restricted tool
+sandbox failed DNS resolution, then the authorized download succeeded.
+Installation was offline, binary-wheel-only and `--no-deps`, in the new
+environment alone. No other package was installed. The Go native binding
+matched the previously used 0.25.0 grammar binary. Grammar ABI 15 falls within
+the runtime-reported supported range of 13–15. Parser construction, basic
+parsing and RepoPilot's callback-based `Parser.parse` invocation succeeded.
+
+### Synthetic results
+
+The four prior small fixtures and the medium and larger fixtures were
+synthetic Go text; no Go program was run. Each medium or larger run used a
+fresh process. The larger workload has 700 generated function declarations,
+the same reported structure as the previous 0.26.0 diagnostic. That prior
+diagnostic did not retain an input fingerprint, so byte-for-byte identity
+across the two historical runs cannot be independently established.
+
+| Workload | Input bytes | Input SHA-256 | Result |
+| --- | ---: | --- | --- |
+| Small: previously passing | 35 | `9677317627f1fa65818f5821bbd0b5e95fef8f7086e2a2ac3dadc2c9c2e43e18` | Passed. |
+| Small: declarations | 84 | `16dcafc3327253ca130de1db7a038bd8a7f76c37f476c0db5d86e2fb90ba6507` | Passed. |
+| Small: nested/UTF-8 | 102 | `1ff5f8eb8ca054b74cf5a5bb7a9a44ab7d9e986d957b570f57f29770ff4a3f5e` | Passed. |
+| Small: repetition | 88 | `cdd525cac0210b8b588620e38231bcae03dda14ebb819d435b8a3bd99cac817f` | Passed. |
+| 200 functions | 2,900 | `ee7346d7793977ecefb62f3e8f51bc4fd9ebd565111543ddf069eeea337f0f67` | Passed: 1,804 nodes, 200 symbols, 201 chunks. |
+| 700 functions | 10,400 | `e2837fa61e44807608bb5ccdffa3d587208e69b5d6bcbd63793472132d7089db` | Passed once, then passed three independent fresh-process repetitions: 6,304 nodes, 700 symbols, 701 chunks each time. |
+
+Each case exercised parser initialization, tree and child traversal, node
+text, UTF-8 byte offsets and point rows/columns, and unchanged RepoPilot
+analysis and syntax-aware chunking without fallback. The small cases covered
+imports and declarations; malformed syntax and a node limit produced the
+expected explicit fallbacks. Every chunk's line coverage and citation
+boundaries were checked. The pure `fingerprint_chunk` function was extracted
+unchanged from a hash-verified copy of the application module to avoid
+importing database infrastructure. The 700-function chunk/citation/fingerprint
+manifest had SHA-256
+`1c01abb7af426c7480fe05ac2d680468b0fda2016273a0fd97dd85845c610538`
+in all four independent processes. This checks determinism on the synthetic
+fixture, not authenticated real-source provenance.
+
+All **six diagnostic processes passed**, covering **nine case executions**
+(four small, one medium, four large); no case failed, skipped, crashed or hit
+a watchdog. The first attempt to launch the supervisor failed before starting
+any probe because system Python 3.9 evaluated a newer type annotation. A
+temporary supervisor-only correction resolved startup; no application file
+was changed.
+
+### Containment and outstanding verification
+
+Each diagnostic used the macOS sandbox with network, home and repository
+reads, writes and process forks denied; network/read/fork canaries passed.
+The worker used `faulthandler`, disabled core dumps, a 10-second CPU limit
+and an 18-second alarm. An external supervisor enforced a 24-second wall
+limit and sampled RSS against 256 MiB. macOS rejected `RLIMIT_AS`, so the RSS
+guard was **sampled, not a hard memory limit**. The largest sampled RSS was
+38,864 KiB; no limit event occurred. Private diagnostic logs and the exact
+temporary harness are under the disposable directory above. Ruff passed for
+the temporary helpers and `git diff --check` passed.
+
+Tree-sitter 0.25.2 is a candidate for a separately approved cross-language
+compatibility matrix, not a production recommendation based on Go alone.
+That matrix should cover Python's existing AST path; JavaScript/JSX;
+TypeScript/TSX; Java; Go; Rust; C and C++; and C#, including their existing
+grammars, Unicode/CRLF, symbol and import ranges, malformed input, limits,
+chunk and citation integrity, and synthetic indexing/retry regressions.
+No additional grammars were installed or tested here. A supervised parser
+worker remains a useful separately reviewed containment option because an
+in-process SIGSEGV cannot be caught by ordinary fallback, even if a runtime
+change reduces this particular risk.
+
+No 0.26.0 crash reproduction was rerun, and no retained chi file was read or
+parsed. The chi applicability decision remains `APPLICABILITY_SUPPORTED`
+for independent human review; its five-file syntax-aware verification remains
+outstanding. Model provenance, numerical parity, semantic retrieval quality
+and the separate ONNX Runtime kernel-registry issue remain unresolved.
+Production dependency changes, further real-source parsing and real-model
+benchmarking each require separate approval.
+
+## Step 2B.3H.4 — synthetic cross-language matrix, 2026-11-07
+
+The separately authorized experiment reused the disposable Tree-sitter
+0.25.2 environment and installed only the seven missing, lockfile-pinned
+grammar wheels. All eight grammar wheels matched their locked and official
+PyPI SHA-256 identities; the existing Go wheel was reused. GIL-enabled
+CPython 3.14.10 and macOS ARM64 were verified. The eight grammars reported
+ABI 14 or 15, within runtime range 13–15. The
+[matrix report](tree-sitter-0252-synthetic-matrix.md) records every wheel,
+fixture SHA-256, extension, grammar and observed ABI. The original synthetic
+fixture generator is retained under
+`apps/api/evaluation/fixtures/tree_sitter_0252_matrix_fixtures.py`; it does
+not execute or parse the generated text.
+
+Fifteen registered extensions each passed an initial and independently
+repeated small synthetic test; ten larger synthetic workloads covered Python
+AST and every distinct Tree-sitter grammar entry point. **40 processes passed,
+0 failed, 0 blocked**, with no native crash or unexpected nondeterminism.
+The copied existing adapter tests also reported **14 passed, 0 failed,
+0 skipped**. The tests used the unchanged analyzer, chunker and in-memory
+collector with a synthetic client, and checked syntax-aware symbols, imports,
+UTF-8/CRLF ranges, source coverage, 120-line chunk bounds, malformed and
+node-limit fallbacks, citations and fixed-identity fingerprints. No live
+database, authentication path or publication transaction was tested.
+
+The requested deterministic production chunk-ID property is **not met**:
+`publish_snapshot` assigns new snapshot, file and chunk IDs with `uuid4`.
+A separate no-database identity audit confirmed that the existing
+`fingerprint_chunk` changes when a chunk ID changes and remains stable for
+the same IDs and contents. The matrix's repeated IDs were deterministic
+synthetic fixture IDs; they do not prove deterministic production ID
+generation across publications. This is a pre-existing contract limitation,
+not a demonstrated Tree-sitter 0.25.2 regression. The task-level verdict is
+therefore **TREE-SITTER CROSS-LANGUAGE COMPATIBILITY INCOMPLETE**, despite the
+passing synthetic language matrix.
+
+The parsing workers denied network, home and application-repository reads,
+writes and process forks, with core dumps disabled. Their 256 MiB RSS guard
+was sampled rather than a hard kernel limit; the maximum sampled RSS was
+36,368 KiB for the matrix and 46,512 KiB for the small pytest suite. Ruff and
+`git diff --check` passed. No 0.26.0 crash was rerun, no chi source was read,
+and no production dependency, database, snapshot, model or service was
+changed. The [report](tree-sitter-0252-synthetic-matrix.md#production-impact-and-remaining-work)
+documents the 0015/0016 considerations, needed disposable PostgreSQL
+regressions, rollback planning and separately authorized next steps.
+
+## Step 2B.3H.5 — staged Tree-sitter 0.25.2 update, 2026-11-07
+
+**Verdict: TREE-SITTER STAGED UPDATE INCOMPLETE.** The local pin and lock are
+staged and the synthetic/SQLite checks below passed, but the required
+disposable PostgreSQL checks did not execute. Do not activate this pin in
+normal services on the basis of this result.
+
+### Dependency change and environment
+
+Only `tree-sitter==0.26.0` changed to `tree-sitter==0.25.2` in
+`apps/api/pyproject.toml`. The project-required uv 0.13.6 resolved a copied
+lockfile in a disposable directory before it was applied. A structural
+comparison of all 80 locked packages found changes only to the project
+requirement metadata and the Tree-sitter package/artifact record; all eight
+grammar package records and all unrelated package records remained identical.
+The Tree-sitter wheel list changed from 24 to 21 artifacts. The verified macOS
+ARM64 CPython 3.14 wheel has SHA-256
+`bda059af9d621918efb813b22fb06b3fe00c3e94079c6143fcb2c565eb44cb87`.
+The [prior matrix](tree-sitter-0252-synthetic-matrix.md#runtime-and-grammar-wheels)
+records all eight locked grammar wheel identities.
+
+The 0.25.2 lock has CPython 3.12, 3.13 and 3.14 wheels for macOS x86-64 and
+ARM64 and manylinux x86-64 and ARM64. Unlike the 0.26.0 lock, it has no
+Linux RISC-V prebuilt wheel; a binary-only installation on that platform is
+therefore not covered. Only macOS ARM64 was actually installed and tested.
+The staged lock passed `uv lock --check --offline`.
+
+The project-required [uv 0.13.6 wheel](https://pypi.org/project/uv/0.13.6/)
+was downloaded to a temporary tool environment and verified with SHA-256
+`51361029b7cf91185d0092c4b356d110b4ad629e9cb11593f1e006ac72a72ca9`.
+A separate CPython 3.14.10 ARM64 test environment was provisioned with
+`uv sync --locked --no-build --no-install-project` from the staged lock.
+It installed 66 packages; the runtime and all eight installed grammar
+payloads were independently compared to the previously verified wheels.
+No normal application Python environment was modified.
+
+### Identity contract and synthetic results
+
+The clarified contract intentionally generates opaque UUIDv4 snapshot, file
+and chunk IDs per publication. For identical source and fixed parser
+configuration, path, source content hash, parser metadata, symbols, imports,
+chunk boundaries and source text should agree. Each publication retains its
+own IDs, ownership and commit-pinned citations. The existing evidence
+fingerprint includes chunk ID, file ID, snapshot ID, path, content hash,
+symbol, line range and source text: it is repeatable for the same stored
+identity and content, and can differ across independent publications. No ID
+or fingerprint format was changed.
+
+The source client's Git blob SHA-1 is calculated from Git's blob header and
+raw bytes; identical bytes have the same blob identity independently of the
+publication. Indexed files persist a SHA-256 content hash, path and owning
+snapshot rather than a separate blob-SHA field. Citations use repository,
+commit, path and inclusive line range. The existing `languages-v1` parser
+metadata includes runtime and grammar versions, while the chunker has a
+120-line default but no separate persisted chunking-version field. Exact
+future regeneration therefore also depends on the chunker implementation;
+this milestone does not add a schema field or rewrite historical records.
+
+- The newly added publication-identity and supervised 700-function Go tests
+  initially reported **4 passed, 0 failed, 0 skipped** on disposable in-memory
+  SQLite. After the identity fixture was made robust to configured demo IDs,
+  its **3 tests passed** again; the Go test was unchanged. They exercise
+  UUIDv4 ownership, stable source processing, pinned citations,
+  tenant/repository foreign-key rejection and cross-snapshot evidence rejection.
+- The staged environment reran the synthetic cross-language matrix:
+  **40 isolated processes passed, 0 failed, 0 blocked**, covering every
+  registered extension twice plus one larger workload per grammar. No native
+  crash or nondeterminism was observed.
+- The final offline synthetic ingestion, publication, citation, retrieval,
+  historical-evidence and provenance suite reported **200 passed, 7 skipped,
+  0 failed**. The seven skips require PostgreSQL full-text search or row
+  locking. The copied existing adapter suite is included in that count.
+- The existing legacy migration regression passed **1 test** against a
+  temporary SQLite database, including its upgrade-to-head and drift check.
+  This does not verify PostgreSQL migration behavior.
+- Ruff passed on `apps/api`; `git diff --check` passed. Pytest emitted one
+  configuration warning because the cache plugin was disabled.
+
+An earlier exploratory broad run reported **218 passed, 7 skipped, 6 failed
+and 41 errors**. Its disposable copy omitted synthetic evaluation fixture
+files, and its temporary pytest launcher lacked a multiprocessing main guard;
+the latter made three synthetic code-intelligence cases return 503. The
+launcher was corrected and those cases passed in the final suite. The
+held-out Git-object case stopped on its missing fixture before reading Git
+source; it and the unrelated retrieval-benchmark fixture cases were not rerun
+under this synthetic-only authorization. These initial failures were not
+production parser fixes.
+
+The independent matrix denied network, home and repository reads, writes and
+forks; its 256 MiB RSS guard was sampled, not a hard memory limit. The offline
+pytest suite used a byte-verified disposable copy of application and test
+Python files, in-memory SQLite, no `TEST_DATABASE_URL`, and a network-denied
+sandbox. Its RSS watchdog sampled the pytest parent only. The large-Go
+regression ran its parser in a child with a 20-second parent timeout, a
+10-second CPU limit and core dumps disabled.
+
+### Disposable PostgreSQL blocker and next run
+
+`docker ps` failed both inside and outside the workspace sandbox with an
+unreachable `desktop-linux` daemon. No process named `Docker` was found;
+the exact cause of daemon unavailability was not established. No application
+container was started or restarted, and no PostgreSQL connection or container
+creation was attempted.
+
+The documented SCRAM-only, loopback, marker-checked temporary-storage
+procedure was adapted for the disposable test environment and syntax-checked
+at `/private/tmp/repopilot-ts0252-stage.sJz6LqCp/run_disposable_postgres.sh`.
+It has **not** been executed. Once Docker is safely available without
+restarting normal services, review and run:
+
+```sh
+bash /private/tmp/repopilot-ts0252-stage.sJz6LqCp/run_disposable_postgres.sh
+```
+
+**Step 2B.3H.6 update:** the temporary directory containing this runner and
+its test environment no longer exists. The command above is historical and
+cannot currently run. See the recovery record below before attempting a new
+disposable PostgreSQL run.
+
+It checks a unique test container and database, no mounts, PostgreSQL tmpfs,
+loopback binding, SCRAM and passwordless rejection, a disposable marker, an
+empty schema, current test-copy hashes and the staged lock before running
+synthetic tests. It uses `--pull=never` and stops only its own test container.
+The temporary runner and backups can disappear; if they do, rebuild and
+review them using the documented Step 2B.3B procedure rather than targeting
+an ambiguous database.
+
+The [parser-process follow-up design and guarded rollback](tree-sitter-0252-synthetic-matrix.md#parser-process-follow-up-design)
+preserve the current UUID contract and the exact pre-stage local dependency
+files. Normal activation, real-source parsing and real-model evaluation need
+separate authorization; no existing snapshot or normal database was changed.
+
+## Step 2B.3H.6 — staged PostgreSQL recovery attempt, 2026-11-07
+
+**Verdict: TREE-SITTER 0.25.2 POSTGRESQL VERIFICATION BLOCKED.** Docker's
+`desktop-linux` context points at
+`unix:///Users/roshan/.docker/run/docker.sock`; the socket exists. Sandboxed
+read-only queries reported a socket permission error, while read-only Docker
+queries outside the workspace sandbox reported that the daemon could not be
+reached. `pgrep -xl Docker` found no matching process. This does not establish
+why the daemon is unavailable or prove whether the current context is the
+intended one. Existing containers, Compose projects and volumes could not be
+inspected while the daemon was unreachable. Docker Desktop was not started,
+the context was not switched, and no application service was changed.
+The read-only diagnosis used `docker context ls`,
+`docker ps --all --format 'table {{.Names}}\t{{.Status}}\t{{.Ports}}'`,
+`docker compose ls -a`, `docker volume ls` and `pgrep -xl Docker`.
+
+The previous temporary runner, disposable test environment, uv 0.13.6 tool
+and pre-stage dependency backups are no longer present. The staged
+`pyproject.toml` and `uv.lock` still have the exact SHA-256 values recorded
+in the [rollback section](tree-sitter-0252-synthetic-matrix.md#guarded-rollback-of-this-staged-pin).
+An independent standard-library TOML check confirmed the 0.25.2 runtime, all
+eight pinned grammar versions and 80 lock records. This is a static check,
+not a dependency resolution.
+
+A candidate runner was reconstructed from the documented Step 2B.3B
+SCRAM-only procedure at
+`/private/tmp/repopilot-ts0252-pg-review-u0c_wl__/run_disposable_postgres.sh`
+(SHA-256 `174490f20b18962450800856091f301a162c19ec0ecae6930c5c4513a11e834f`).
+Static review found explicit checks for the source copy and staged file
+hashes, the parser wheels and installed payloads, a unique container and
+database, the previously recorded image ID, temporary PostgreSQL storage,
+no mounts, loopback binding, SCRAM and passwordless rejection, the database
+marker and an empty schema. Cleanup targets the created container ID only
+after checking its run label and name. It includes the seven previously
+skipped test names and the PostgreSQL migration test, and checks their JUnit
+outcomes. No image pull, application
+volume operation or normal Compose command is included. **These Docker and
+database guards have not been exercised and must be reviewed again when the
+missing prerequisites are available.**
+
+`bash -n` passed. A clean-environment preflight using
+
+```sh
+env -i PATH=/usr/bin:/bin HOME=/nonexistent /bin/bash \
+  /private/tmp/repopilot-ts0252-pg-review-u0c_wl__/run_disposable_postgres.sh
+```
+
+exited 1 before any Docker operation with `verified disposable environment
+and source copy are missing`. No test container or database was created, so
+there is no container identity, database marker or PostgreSQL authentication
+result to report. The runner itself is retained in the private temporary
+directory; four temporary copies of tools and dependency files created for
+this check were removed. No existing Docker container or volume was removed.
+
+This attempt executed **0 PostgreSQL tests**: the earlier seven skips were not
+collected, and no pass, failure or skip count is claimed for this attempt.
+No focused pytest suite could be rerun under the staged runtime because the
+verified disposable parser environment and wheels have disappeared. The
+previous exploratory run's **6 failures and 41 errors** remain documented
+above: three launcher-related failures were covered by the corrected focused
+suite, while the fixture-dependent held-out and benchmark cases were not
+rerun. The retained summary does not identify every affected test; this is not
+a full-suite pass.
+
+Ruff 0.17.3, copied without installation to private temporary storage, passed
+on `apps/api` using `ruff check --no-cache apps/api`; `git diff --check`
+passed. The available copied uv is 0.9.5. The attempted offline check used
+
+```sh
+env -i PATH=/usr/bin:/bin HOME=/private/tmp/repopilot-ts0252-pg-review-u0c_wl__ \
+  UV_CACHE_DIR=/private/tmp/repopilot-ts0252-pg-review-u0c_wl__/uv-cache \
+  /private/tmp/repopilot-ts0252-pg-review-u0c_wl__/uv lock \
+  --project /private/tmp/repopilot-ts0252-pg-review-u0c_wl__ --check --offline \
+  --no-cache --python /opt/homebrew/opt/python@3.14/bin/python3.14
+```
+
+It refused to run because the project requires uv 0.13.6. The copied tool was
+subsequently removed. The successful uv 0.13.6 offline check recorded for
+Step 2B.3H.5 remains prior evidence, not a new check in this attempt.
+
+To resume, first restore Docker daemon access without starting or restarting
+the normal RepoPilot services. Restore a verified disposable Python
+environment, byte-identical test copy and the previously verified parser
+wheels without changing the application environment; this attempt does not
+authorize downloading dependencies. Review the reconstructed runner and
+verify its isolation checks against the new disposable instance before
+pytest. If the local pgvector image or wheels are unavailable, a separate
+approval is needed before downloading them. Runtime activation and normal
+database migration remain separately unauthorized.
+
+## Step 2B.3H.7 — durable disposable PostgreSQL harness, 2026-11-07
+
+**Verdict: DISPOSABLE POSTGRESQL VERIFICATION HARNESS PREPARED.** This
+preparation did not run the PostgreSQL gate. The repository-local test-only
+[runner](../apps/api/evaluation/tree_sitter_pg_harness.py) and its
+[synthetic guard tests](../apps/api/evaluation/test_tree_sitter_pg_harness.py)
+replace reliance on the vanished temporary draft. The detailed
+[procedure](tree-sitter-disposable-postgres.md) records prerequisites, the
+exact future commands, test scope, cleanup and limitations.
+
+The previous draft was inspected as untrusted material and not executed. Its
+fixed temporary paths could disappear, it did not stage all required fixture
+files, its JUnit gate did not reject every selected skip, and its `--rm`
+container option could also remove associated anonymous volumes. The durable
+runner uses a fresh private source copy and manifest, explicit fixture list,
+verified local wheelhouse, separate clean environment and owned-container
+cleanup without a Docker volume-removal option. Its HBA check covers all
+`host%` rule types and parse errors as well as local rules. These are static
+and mocked checks; the new runner has not been tested against a real daemon
+or database.
+
+The current working-tree selection contained **133 files** and four explicit
+fixtures. The locked base/development graph selected **66 packages**, with no
+optional ONNX, NumPy or tokenizer package. The read-only `check` action found
+that verified uv 0.13.6, its official wheel and a verified offline wheelhouse
+were unavailable at the supplied defaults. It exited before contacting Docker,
+installing packages or creating a database. This is not a real offline uv sync.
+The earlier staged pyproject and lock hashes remain unchanged.
+
+The standard-library command
+
+```sh
+/opt/homebrew/opt/python@3.14/bin/python3.14 -I -B \
+  apps/api/evaluation/test_tree_sitter_pg_harness.py
+```
+
+reported **38 passed, 0 failed, 0 skipped**. The suite uses fake external
+adapters for daemon failure, container ownership, mounts, ports, marker,
+SCRAM, authentication and cleanup; it also checks missing environment,
+wrong uv, missing or tampered wheels and fixtures, URL validation and JUnit
+gates. Ruff 0.17.3 passed on both new Python files, Python syntax checks passed,
+and `git diff --check` passed. There is no new shell runner to syntax-check.
+
+The release command explicitly includes the seven previously skipped
+PostgreSQL cases, the PostgreSQL migration case, and the listed synthetic
+publication, provenance and citation regressions. It includes fixture-only
+capture and retrieval metadata cases that need the formerly missing fixture
+files. The real-Git held-out case is explicitly deselected, and the capture
+suite's separately guarded PostgreSQL cases require another disposable
+database contract. The earlier exploratory **6 failures and 41 errors**
+remain historical evidence, not a full-suite pass; the remaining affected
+cases have not all been individually identified or rerun.
+
+Docker Desktop, normal services and PostgreSQL were not started or contacted;
+no image or package was downloaded, no dependency was installed, and no
+model, retained chi source or benchmark was executed. The seven PostgreSQL
+cases and migration verification remain **unexecuted**, and normal activation
+remains unauthorized. The H.6 rollback backups are still unavailable.
+
+## Step 2B.3H.8 — disposable PostgreSQL gate, 2026-11-07
+
+**Verdict: TREE-SITTER 0.25.2 DISPOSABLE POSTGRESQL GATE PASSED.** Docker CLI
+29.8.2 used the `desktop-linux` context. The workspace sandbox could not
+access its Unix socket; the approved read-only Docker query outside that
+sandbox succeeded. Existing RepoPilot containers were observed and left
+untouched. The previously recorded local pgvector image was present; no image
+was pulled, Docker context switched, or normal service restarted.
+
+Official PyPI metadata matched all **67** artifact identities: uv 0.13.6 and
+the 66 locked base/development wheels. The wheel transfer was **50,963,767
+bytes**, plus **1,775,024 bytes** of PyPI metadata. Every wheel's filename,
+size and SHA-256 was checked again after download. The full public artifact
+inventory and hashes are in the [sanitized gate manifest](../apps/api/evaluation/tree-sitter-0252-postgres-gate-3faa77a8ded7c798.json)
+(SHA-256 `f2daecdb1823053f9654dcf96c9964de54d464021a33b45536e64fdda6c61adb`);
+the [sanitized summary](../apps/api/evaluation/tree-sitter-0252-postgres-gate-3faa77a8ded7c798.log)
+contains no test credentials. The official uv wheel hash was
+`51361029b7cf91185d0092c4b356d110b4ad629e9cb11593f1e006ac72a72ca9`.
+No model weights, optional ONNX package or paid provider were used.
+
+The first offline harness attempt stopped before Docker creation because
+`uv sync --locked --no-index` tried to resolve the unrequested ONNX extra.
+An offline frozen-lock diagnostic also could not use registry-locked wheel
+URLs from the local wheelhouse. No unexpected dependency was downloaded.
+The test-only harness was corrected to generate exact, SHA-256-pinned
+requirements from the verified lock closure and use `uv pip sync
+--require-hashes --offline --no-index --no-build`; it separately ran
+`uv lock --check --offline` successfully. All **66** installed distributions
+matched the lock, including Tree-sitter 0.25.2 and all eight grammar pins.
+The normal Python environments, `pyproject.toml` and `uv.lock` were unchanged.
+
+The macOS network sandbox was independently probed with two self-owned
+loopback listeners: no-network mode denied both, and the test profile allowed
+only its selected port while retaining local IPC. The harness enforces
+no-network installation and permits pytest to contact only its disposable
+database port. Its synthetic safety suite reported **43 passed** both before
+the run and from the staged disposable environment before container creation.
+
+Container `0319ca991517327e34d996cdd1aa16b11dec2c4127080b675671a4fbf211a159`
+(`repopilot-ts0252-pg-3faa77a8ded7c798`) used image
+`sha256:0dd3149a06e4579a0d70d8fef9945636cd514005e7237deb27f9b67886f8dc4f`,
+database `repopilot_5b1_checks_3faa77a8ded7c798`, test-only role
+`capture_fixture` and `127.0.0.1:49775`. Before pytest, the harness checked
+the unique identity and labels, unprivileged bridge configuration, empty
+mount list, temporary PostgreSQL data filesystem, loopback-only port, SCRAM
+rules, passwordless rejection, empty schema, disposable marker and strict
+database URL. It created the container directly with test labels; the source
+image's labels were independently inspected and were `null`, so no
+application Compose ownership label was inherited. No application database
+or volume was used.
+
+The runner reported **260 passed, 0 failed, 0 skipped, 1 deselected**, with
+one `PytestConfigWarning` because the cache plugin was disabled. All seven
+previously skipped PostgreSQL cases and
+`test_postgres_legacy_job_survives_migration` executed. The latter exercised
+the legacy migration path through Alembic head **0016** and verified legacy
+records; a separate PostgreSQL `alembic check` was not run. The exact pytest
+argv is preserved in the sanitized manifest; the runner supplied its
+test-only password through transient process and container environments and
+did not store it in the verification artifacts. The scope was the listed
+selected suite, not the entire backend.
+
+The original working tree and the staged copy matched the **135-file**
+source manifest after testing; all **66** staged wheel hashes and generated
+hash-pinned requirements were independently rechecked. The snapshot is
+explicitly a current working-tree copy, not a pinned Git commit. The private
+pytest log, JUnit XML and source manifest were retained under
+`/private/tmp/repopilot-ts0252-pg-9brlze1d` at the time; that temporary
+directory was no longer present on 2026-11-08. Their hashes are recorded in the
+sanitized manifest. An independent read-only Docker query by the complete
+container ID returned no rows after cleanup. No Docker volume was removed.
+
+The selected fixture cases included **33** synthetic-capture cases, **9**
+retrieval-evaluation cases and **5** held-out synthetic cases. The actual
+real-Git held-out case was explicitly deselected, and the synthetic-capture
+PostgreSQL cases requiring a different database identity were not run. The
+earlier exploratory **6 failures and 41 errors** are not individually fully
+accounted for, so this is not a full-suite claim. Backend-wide Ruff and
+`git diff --check` passed. The 0.26.0 native-crash cause, parser-process
+isolation design, normal-service activation, real source processing and real
+retrieval quality remain outside this gate.
+
+## Step 2B.3H.9 — supervised parser prototype, 2026-11-07
+
+**Verdict: SUPERVISED PARSER PROTOTYPE VERIFIED** for the specified synthetic
+tests only. The [test-only design](supervised-parser-prototype.md) documents
+the protocol, temporary source staging, OS controls, fallback distinctions,
+production integration requirements and rollback proposal. No production
+dispatch, database schema, dependency pin or normal service changed.
+
+The existing disposable environment was CPython 3.14.10 on macOS ARM64 with
+Tree-sitter 0.25.2 and all eight previously locked grammar packages. No package
+was installed. Each parser and direct-comparison process ran in its own macOS
+sandbox with a clean environment. The session canary confirmed denial of an
+external temporary-file read and write, a loopback connection and an unrelated
+executable; `sandbox_check` reported fork denial. The sandbox also denies Mach
+lookup and home/project reads. It permits system/runtime reads and temporary
+path metadata, and is not a complete hostile-input sandbox. CPU, descriptor,
+file-size and core-dump limits were set inside the child. A 768 MiB RSS
+watchdog samples the verified worker PID; this is not a hard memory limit.
+
+The final command, run from `apps/api`, was:
+
+```sh
+/usr/bin/env -i PATH=/usr/bin:/bin PYTHONDONTWRITEBYTECODE=1 \
+  /private/tmp/repopilot-ts0252-pg-9brlze1d/venv/bin/python -B -m pytest \
+  -q -x --tb=short -p no:cacheprovider evaluation/test_supervised_parser.py
+```
+
+It reported **64 passed, 0 failed, 0 skipped, 0 deselected**. This includes
+all 15 registered extensions, 11 malformed-syntax cases, 20 controlled failure
+scenarios, monitor-limit and cleanup/setup scenarios, and input/protocol checks. Direct
+comparisons used separate restricted children. Failure cases returned no
+chunks, reaped the owned child and allowed a subsequent synthetic request.
+The reported SIGTERM was deliberately generated by the synthetic simulator;
+no native crash was deliberately triggered. The test's cache-plugin setting
+caused one `PytestConfigWarning`, not a test failure.
+
+The following separate command ran the existing small-source regressions with
+networking denied and no database URL:
+
+```sh
+/usr/bin/sandbox-exec -p '(version 1)(allow default)(deny network*)' \
+  /usr/bin/env -i PATH=/usr/bin:/bin PYTHONDONTWRITEBYTECODE=1 \
+  /private/tmp/repopilot-ts0252-pg-9brlze1d/venv/bin/python -B -m pytest \
+  -q --tb=short -p no:cacheprovider tests/test_language_analysis.py \
+  tests/test_multilingual_indexing.py \
+  --deselect tests/test_multilingual_indexing.py::test_opt_in_job_publication_is_partial_pinned_and_idempotent \
+  --deselect tests/test_multilingual_indexing.py::test_postgres_multilingual_search_and_citations \
+  --deselect tests/test_multilingual_indexing.py::test_typescript_evidence_and_mock_report_keep_verified_citations
+```
+
+It reported **53 passed, 0 failed, 0 skipped, 3 deselected**, with the same
+cache-plugin warning. Backend-wide Ruff and `git diff --check` passed. The
+disposable test environment later disappeared from `/private/tmp`; on
+2026-11-08, the final backend lint was rechecked with the already installed
+`apps/api/.venv/bin/ruff` 0.17.3 using `check --no-cache .`. This read-only
+lint invocation did not install packages or modify that environment. The
+commands above record the actual tests; rerunning them requires a separately
+prepared disposable environment with the same dependencies.
+
+Development attempts are retained as evidence: the first nested-sandbox suite
+reported **51 setup errors** because its `ps` monitor could not start; after a
+direct macOS process-information monitor was substituted, a nested sandbox
+attempt stopped at **1 setup error** because macOS denied nesting. One later
+run reported **33 passed and 1 failed** when an oversized-response cleanup
+race raised a permission error. A stricter executable policy then caused **1
+setup error** by blocking Python's macOS launcher. The monitor, owned-child
+cleanup and launcher allowlist were corrected before the final passing run;
+the tests were not weakened to hide those failures.
+
+The known Tree-sitter 0.26.0 crash remains unexplained; no claim of universal
+0.25.2 stability is made. The existing 260-test disposable PostgreSQL result
+remains a selected suite, not a full backend run or separate schema-drift
+check. The five retained chi files, real CodeRankEmbed, real repository source,
+databases and Docker were not accessed in this milestone. No real retrieval
+quality, upstream ONNX parity or production sandbox assurance was established.
+Production integration, operational activation and any real-source work require
+separate authorization.
+
+## Step 2B.3H.10 — feature-flagged supervisor, 2026-11-08
+
+**Verdict: FEATURE-FLAGGED SUPERVISED PARSER INTEGRATION INCOMPLETE.** The
+application collector now has an opt-in supervised path, but the actual
+supervised Tree-sitter cross-language suite and a new disposable PostgreSQL
+integration gate could not run. The previously recorded 64 prototype tests
+and 260 selected PostgreSQL tests predate these changes and are not evidence
+that this integration passed those gates.
+
+`INDEX_MULTILINGUAL_SUPERVISED_PARSER_ENABLED` and
+`INDEX_MULTILINGUAL_ENABLED` both default to false. Newly admitted supervised
+jobs use `multi_supervised` in the existing 20-character job mode field;
+snapshots still use `multilingual`. A queued supervised job fails with
+`supervised_parser_disabled` if its worker's flag is off, rather than
+silently using the legacy parser. Existing queued multilingual jobs use the
+supervisor when the worker flag is on. No schema, dependency lock or normal
+service configuration changed. The worker still applies its existing
+authorization, pinned snapshot and lease checks before atomic publication.
+
+The supervised collector binds its per-request ID to the repository, commit,
+blob, path, source hash and nonce, and validates the returned contract before
+building chunks. Failures become sanitized `supervised_parser_<outcome>` job
+errors and do not publish a partial collection. Explicit syntax fallback and
+missing-grammar fallback retain their existing file status. The application
+copy retains the prototype's macOS profile, clean environment, fixed child,
+timeouts, sampled RSS guard and no-retry policy; an AST comparison checks
+the copied profile and core supervisor functions against the original
+prototype, along with the fixed child. It fails closed on Linux and on macOS outside the reviewed
+disposable-venv prerequisites. See the [design](supervised-parser-prototype.md#step-2b3h10--disabled-by-default-integration)
+for the duplicated-code, isolation and resource limitations.
+
+Using the pre-existing application test interpreter, with a clean environment,
+network denial and only in-memory SQLite fixtures, this command ran the new
+integration suite from `/private/tmp`:
+
+```sh
+/usr/bin/sandbox-exec -p '(version 1)(allow default)(deny network*)' \
+  /usr/bin/env -i PATH=/usr/bin:/bin PYTHONDONTWRITEBYTECODE=1 \
+  '/Volumes/Samsung SSD/Project/RepoPilot/apps/api/.venv/bin/python' -B -m pytest \
+  -q -x --tb=short -p no:cacheprovider \
+  -c '/Volumes/Samsung SSD/Project/RepoPilot/apps/api/pyproject.toml' \
+  '/Volumes/Samsung SSD/Project/RepoPilot/apps/api/tests/test_supervised_parser_integration.py'
+```
+
+It reported **62 passed, 0 failed, 0 skipped, 0 deselected**. These tests
+use controlled child responses, including synthetic parser-version strings;
+they exercise real parent validation, flag dispatch, sanitized failures,
+SQLite publication/rollback and tenant/citation identities, but do not run
+the installed Tree-sitter grammars. All 15 extension mappings were checked
+mechanically. No dependency was installed and the normal venv was not changed.
+
+The following command, also from `/private/tmp`, ran the integrated child and
+transport directly under its restricted macOS profile using the already
+installed resolved base interpreter:
+
+```sh
+/usr/bin/env -i PATH=/usr/bin:/bin PYTHONDONTWRITEBYTECODE=1 \
+  '/Volumes/Samsung SSD/Project/RepoPilot/apps/api/.venv/bin/python' -B -m pytest \
+  -q -x --tb=short -p no:cacheprovider \
+  -c '/Volumes/Samsung SSD/Project/RepoPilot/apps/api/pyproject.toml' \
+  '/Volumes/Samsung SSD/Project/RepoPilot/apps/api/evaluation/test_supervised_parser_native_smoke.py'
+```
+
+It reported **25 passed, 0 failed, 0 skipped, 0 deselected**: normal,
+malformed and long synthetic Python, the missing-Go-grammar fallback, 20
+controlled child failures and one isolation canary. Each failure was followed
+by a successful synthetic request, and owned children were reaped. The
+deliberate signal was SIGTERM, not a native segmentation fault. It did not
+call the production `run()` availability gate and did not load a Go grammar.
+The existing selected parser, collector, workflow, evidence and
+tenant regressions reported **71 passed, 0 failed, 16 skipped, 17 deselected**
+under the same clean, network-denied SQLite setup. Ten skips were missing
+Tree-sitter grammar packages and six required PostgreSQL; the 17 deselections
+were grammar-dependent multilingual cases. Each pytest command emitted one
+cache-plugin configuration warning.
+
+The prior disposable Python environment, uv 0.13.6 and verified wheelhouse
+were unavailable. The existing application venv has no Tree-sitter runtime or
+grammar packages. No package download, installation, new environment, Docker or
+PostgreSQL operation was performed. Restoring a disposable environment and
+any missing artifacts requires separate authorization; then rerun actual
+supervised parsing for every extension and the reviewed disposable PostgreSQL
+publication, isolation and schema-drift tests. The macOS sandbox and sampled
+watchdog are not established as a production hostile-source boundary, and no
+Linux equivalent is implemented. Full backend verification, native-crash
+explanation, real semantic quality and ONNX export parity remain open.
+
+Backend-wide Ruff 0.17.3 (`check --no-cache`) and `git diff --check` passed.
+The staged `pyproject.toml` and `uv.lock` hashes remain respectively
+`e0fe0e272583fefecbc09d4c9e0631c41771f370b267a4dd4569fa349ee4e240`
+and `40139126d31b521cc5377f1333b22d7c18de733840d1c63d848309ba7ad9c09a`;
+no dependency pins were changed in this step. No normal service was started or
+restarted, and no real source, private chi file or CodeRankEmbed artifact was
+processed.
+
+## Step 2B.3H.11 — supervised parser verification (2026-11-08)
+
+This later synthetic verification supersedes the missing-environment and
+missing-PostgreSQL test limitations recorded for H.10; it does not authorize
+activation. On macOS 27.2 ARM64 with GIL-enabled CPython 3.14.10, Docker's
+`desktop-linux` daemon was reachable, and the pinned local
+`pgvector/pgvector:pg16` image was available. The existing application
+containers were not stopped, started or restarted. The unrelated pre-existing
+unhealthy application API container was left alone. No normal database,
+private chi source, model or real repository source was accessed.
+
+The disposable environment used verified official `uv==0.13.6`,
+`tree-sitter==0.25.2`, and the eight unchanged locked grammar versions. It
+installed 66 locked wheels offline with hashes enforced, from a private
+wheelhouse; the uv distribution is the 67th verified wheel. PyPI's published
+filenames, versions, sizes, platform tags and SHA-256 values were checked
+against the downloaded bytes and the lock. The wheel total was **50,963,767
+bytes**, and metadata plus wheel response bodies totaled **52,767,028 bytes**,
+below the authorized 200 MiB cap. No ONNX or model dependency was downloaded.
+The exact 67-wheel inventory, official URLs and hashes are in the sanitized
+[verification manifest](../apps/api/evaluation/supervised-parser-h11-verification-e4a57ec5c92db88d.json)
+(SHA-256 `dbe9d24d7282dad700f3908b1d593108fbf31ddfe133adb87aa669d1744d3daf`).
+The source staging manifest covered 148 selected working-tree files, SHA-256
+`07f8a164f7da808f4d88856d64027de3ecca0e3f6244e8497b6645a2a8c13000`;
+this was an uncommitted working-tree snapshot, not a pinned Git commit.
+`uv 0.13.6 lock --check --offline` passed without modifying the lock.
+
+The reviewed test-only harness was run with the verified uv, Python,
+wheelhouse, Docker CLI and socket:
+
+```sh
+/opt/homebrew/opt/python@3.14/bin/python3.14 -I -B apps/api/evaluation/tree_sitter_pg_harness.py run \
+  --python /opt/homebrew/opt/python@3.14/bin/python3.14 \
+  --uv /private/tmp/repopilot-h11-artifacts-yyrn4s74/uv \
+  --uv-wheel /private/tmp/repopilot-h11-artifacts-yyrn4s74/uv-0.13.6-py3-none-macosx_11_0_arm64.whl \
+  --wheelhouse /private/tmp/repopilot-h11-artifacts-yyrn4s74/wheels \
+  --docker /Users/roshan/.docker/bin/docker \
+  --socket /Users/roshan/.docker/run/docker.sock
+```
+
+These private paths identify this run and may not survive cleanup or reboot;
+the repository-local harness and its [preparation guide](tree-sitter-disposable-postgres.md)
+are the durable procedure. It verified a uniquely owned container
+`repopilot-ts0252-pg-e4a57ec5c92db88d` and database
+`repopilot_5b1_checks_e4a57ec5c92db88d`, temporary data, no application mounts,
+loopback-only binding, SCRAM, rejected passwordless TCP, the disposable
+database marker and an exact test URL before pytest. It removed only that
+container; a subsequent read-only Docker query found no matching container.
+No Docker volumes were removed. Logs and JUnit results were initially retained
+in `/private/tmp/repopilot-ts0252-pg-tu1ffots`, but that temporary directory
+was no longer present on 2026-11-12. The sanitized manifest preserves their
+recorded hashes and result counts; it is not a replacement for the raw logs.
+The original 148-file source manifest was also in that directory and is no
+longer available, so its individual file hashes cannot now be independently
+rechecked from the retained summary.
+A [reconstructed sanitized summary](../apps/api/evaluation/supervised-parser-h11-verification-e4a57ec5c92db88d.log)
+is retained alongside it and is explicitly marked as reconstructed, not as
+the original test output.
+
+Results, with no failures or skips in these suites:
+
+| Suite | Passed | Failed | Skipped | Deselected |
+| --- | ---: | ---: | ---: | ---: |
+| Synthetic native supervisor, child and prototype | 119 | 0 | 0 | 0 |
+| Selected PostgreSQL and synthetic regressions | 322 | 0 | 0 | 1 |
+| Native-child PostgreSQL publication and migration/drift | 3 | 0 | 0 | 0 |
+| Disposable harness synthetic safety checks | 44 | 0 | 0 | 0 |
+| Later missing-interpreter `run()` checks | 2 | 0 | 0 | 0 |
+
+The pytest runs emitted a configuration warning about `cache_dir` because the
+cache provider was deliberately disabled; the 44-case harness run also
+reported 14 passing subtests. After the staged run, a test-only change made
+the unreviewed-interpreter check enter through `run()` and added an actual
+missing-interpreter launch check. Both targeted checks passed against the
+final test file, whose SHA-256 is recorded in the manifest. This later file
+is not represented as part of the earlier source-copy manifest.
+
+The native suite called the actual application `run()` availability gate and
+supervised collector with pinned grammar packages and original synthetic
+inputs for all **15** registered extensions. It verified a real Go grammar,
+parser identities, source hashes, syntax fallback, source ranges, fingerprints
+and citations; missing isolation and an unreviewed interpreter failed closed.
+Children used the reviewed macOS no-network sandbox. The trusted native test
+coordinator used a Python-level IP socket guard, not an OS network sandbox.
+No known native crash was intentionally reproduced, and no native crash was
+observed in these tests.
+
+The 322 selected cases include the H.10 integration tests, the formerly
+skipped PostgreSQL cases and the previously deselected grammar-dependent
+cases: 14 chunking variants, 11 language extraction variants, and the three
+other selected cases now executed. The previous 16 skips and 17 deselections
+are therefore covered by the new selections. The single current deselection
+is the separate held-out test that reads real repository Git objects, which
+was not authorized here. The separate three-case PostgreSQL phase exercised
+supervised job admission, claim and publication using real sandboxed native
+children on synthetic Go, TypeScript and Python, citation and source identity,
+and explicit syntax fallback. Its Alembic test independently upgraded a fresh
+disposable schema through **0016** and ran **`alembic check`**, which reported
+no new upgrade operations. A successful upgrade alone is not treated as a
+drift check.
+
+Because macOS will not nest the parser's sandbox inside the PostgreSQL test
+sandbox, the native PostgreSQL phase uses a **test-only local socketpair
+broker**: the database pytest process stays restricted to its verified
+loopback port, and proxies the worker's `_execute` call to a clean-environment
+broker that invokes the real, unmodified `run()` and launches the actual
+no-network parser child. The broker receives no database URL, test password
+or GitHub credentials, and uses a Python-level IP socket guard. The broker
+coordinator itself is not OS-network-sandboxed. Direct collector-to-`run()`
+and real child execution were also tested independently in the native suite.
+The exact unproxied same-process worker-plus-PostgreSQL path was not exercised;
+these results must not be described as that test.
+
+The original exploratory **6 failures and 41 errors** involved incomplete
+fixtures and a multiprocessing launcher. Relevant staged fixture and corrected
+launcher cases ran in the selected gates, but the original case list is not
+fully recoverable and the full backend suite was not run. The current
+staged 148-file test copy is selected rather than a complete backend fixture
+set. The Linux isolation mechanism remains unavailable, the 768 MiB RSS
+watchdog is sampled rather than a hard memory limit, and the 10-second wall and
+five-second soft CPU limits have not been validated as production limits.
+The earlier 0.26.0 native crash remains unexplained. Both multilingual flags
+still default to false. Real-source processing, normal-service activation,
+Linux isolation and an operational rollout require separate approval.
+
+On the later 2026-11-12 documentation pass, the disposable environment and
+wheelhouse were also no longer present. Backend-wide Ruff 0.17.3
+(`check --no-cache apps/api`), `git diff --check`, a whitespace check of the
+new test and evidence files, and manifest/hash validation all passed. Ruff was
+run read-only from the pre-existing application environment; no package was
+installed into it. The offline `uv 0.13.6 lock --check` had passed earlier in
+the disposable staged copy. The original native and PostgreSQL tests were not
+repeated after their temporary environment disappeared.
+
+## Step 2B.3I — chi human review preparation (2026-11-12)
+
+The existing `go-chi/chi` issue 1188 envelope matched SHA-256
+`800cc6dbb868a166bc033224b44b195850ac3269b35a5a7ce4b2606340270ba6`;
+its complete ordered `issue-context-v1` matched
+`61d54f284c13e89445d1b5ff0c4761a67d32190157b4dcc49b716ef67e4469e7`.
+The previously retained metadata, source manifest and five source files were
+rechecked. Their exact sizes, Git blob SHA-1s, SHA-256s and all previously
+recorded ranges matched the [source review](benchmark-chi-1188-source-review.md).
+The 22-entry root tree was rehashed as
+`7c01dddb05b4c19847a3d6259a3f4d519e3b27fb`. The raw commit object was not
+available for an independent commit hash; its binding to the tree remains a
+retained metadata assertion. The five files total **77,909 bytes** and are not
+a complete repository.
+
+The two blind copies are under
+`/Users/roshan/Library/Application Support/RepoPilot/benchmarks/source-selection-v1/chi-1188-human-review-20261112T101323Z-19f88e6b`.
+All packet directories were checked as `0700`, all files as `0600`; each copy
+contains ten files and both matched. The initial per-copy canonical
+filename/SHA-256 manifest digest was
+`f898c90504e3f44e2bd73bd13479304acf272f8f4fc03a1a1cff886a27f934dd`.
+The `human-review-inventory-v1` digest was
+`23e84c9f7661db61d37e16cb0db95536bd3bbac7f22f81935eba89268ae0e25a`.
+An independent read-only packet check confirmed full line coverage, unchanged
+display of this issue's title/body and source, a withheld comment, blank
+judgment templates and absence of prior audit ranges from packet instructions
+and metadata. The copies alone do not enforce reviewer separation on a shared
+OS account. The retained issue and source contents were not copied into Git.
+
+The separate [human-review protocol](chi-1188-human-labeling.md) preserves the
+existing 0–3 rubric, defines explicit unjudged and abstention outcomes, and
+requires human self-attestation, pseudonyms, provenance and partial-source
+warnings. Its validator checks identities and ranges but cannot authenticate
+reviewers or prove independence. An adjudicated status requires two distinct
+self-declared blind reviewers and a separate adjudicator; a single reviewer
+remains exploratory. Initial comments and prior audit findings are withheld;
+any later disclosure must be recorded. **Human label count: 0.**
+
+From `apps/api`, the synthetic-only annotation and packet tests were run as:
+
+```sh
+/usr/bin/env -i PATH=/usr/bin:/bin PYTHONDONTWRITEBYTECODE=1 \
+  PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 \
+  '/Volumes/Samsung SSD/Project/RepoPilot/apps/api/.venv/bin/python' -B -m pytest -q \
+  -p no:cacheprovider \
+  --basetemp /private/tmp/repopilot-human-review-tests.4nBwNfEg/pytest5 \
+  tests/test_human_relevance.py
+```
+
+They reported **46 passed, 0 failed, 0 skipped**, with one pytest configuration
+warning because the cache provider was disabled. A nested macOS `sandbox-exec`
+attempt was rejected by the workspace sandbox before tests started; the
+successful synthetic tests used the existing restricted execution environment
+and a clean environment, and the packet test explicitly rejected network and
+subprocess use. Ruff passed for the changed Python files and `git diff --check`
+passed. No source download, native Go parsing, Go execution, model, embedding,
+retrieval benchmark, database or normal service was used.
+
+The source is MIT according to the existing attribution record, but the full
+copyright and permission notice was not retained. Resolve notice requirements
+before distributing source copies; retrieving the pinned license text, a full
+repository capture, model inference and benchmarking each need separate
+authorization. The original applicability assessment is unchanged, and no
+claim is made about a reproduced bug, root cause or full-repository quality.
+
+## Step 2B.3J — chi review packet license (2026-11-12)
+
+Before the update, both owner-only reviewer copies matched their recorded
+canonical per-copy filename/SHA-256 manifest
+`f898c90504e3f44e2bd73bd13479304acf272f8f4fc03a1a1cff886a27f934dd`.
+The complete retained issue context and five source blobs were reverified;
+their context and source-inventory SHA-256 values remain respectively
+`61d54f284c13e89445d1b5ff0c4761a67d32190157b4dcc49b716ef67e4469e7`
+and `23e84c9f7661db61d37e16cb0db95536bd3bbac7f22f81935eba89268ae0e25a`.
+The retained source-review records contained license attribution but no full
+license file. The rehashed root tree
+`7c01dddb05b4c19847a3d6259a3f4d519e3b27fb` identifies its `LICENSE` entry
+as a regular `100644` blob of 1,123 bytes with Git SHA-1
+`d99f02ffac5185e2550770d33333a67e2cf2092b`. The pinned commit-to-tree
+association remains based on retained metadata; the raw commit object was not
+available for independent rehashing.
+
+One anonymous official GitHub request retrieved only that
+[Git blob](https://api.github.com/repos/go-chi/chi/git/blobs/d99f02ffac5185e2550770d33333a67e2cf2092b),
+bound by the retained tree to the
+[commit-pinned LICENSE path](https://github.com/go-chi/chi/blob/3d1777a1ef8881f7d1da0b02c76ca8f0a29cd2bc/LICENSE).
+It read **1,833 HTTP response-body bytes** and returned **1,123 decoded
+bytes**. The complete UTF-8 MIT copyright, permission and disclaimer notice
+matched the expected Git blob and SHA-256
+`a2d51b7515acfaff2f7a88688650f2fc4fd99561383e72bba2305e3db59a1647`.
+`git hash-object --no-filters` and `shasum -a 256` independently confirmed
+the identities of both packet copies and the retained original. No redirects,
+additional GitHub content or credentials were used.
+
+The original notice and provenance are retained under the private directory
+`/Users/roshan/Library/Application Support/RepoPilot/benchmarks/source-selection-v1/chi-1188-license-20261112T102846Z-992fa356`.
+Each reviewer copy now contains `source/LICENSE` and
+`source/LICENSE.provenance.json`; its README's license paragraph was updated.
+All other original packet files were checked unchanged by reconstructing their
+pre-update per-copy manifest. Both updated copies have twelve files and match
+canonical manifest SHA-256
+`3286432f96f0b36a0a3035c45bff9f408ae95ea9c53da8ea69312f077e57fc1f`.
+The packet and archive directories are `0700`, their files are `0600`, and
+the original issue and source text remain outside Git. The comment is still
+withheld from initial blind review; templates remain blank and no reviewer IDs
+or relevance grades were created. **Human label count: 0.**
+
+The existing synthetic annotation suite reported **46 passed, 0 failed,
+0 skipped**, with one pytest cache-configuration warning. `git diff --check`
+passed; no repository Python code changed in this step. No Go parser or Go
+code, model, embedding, retrieval benchmark, database or normal service was
+used. The [review protocol](chi-1188-human-labeling.md) describes how a
+coordinator must provide separate access and keep the independent submissions
+apart; two owner-only directories under one account do not enforce that
+separation. The five-file source remains a partial pilot, and the reported
+behavior and root cause are unverified. Full-corpus capture, model inference
+and benchmarking still require separate authorization.
+
+## Local dashboard service recovery (2026-11-12)
+
+The local web server on port 3000 was pointing to the separate API on port
+8000 while Docker Desktop was stopped. Docker Desktop was started to restore
+the existing services; their restart policies resumed the existing containers.
+The `repopilot-local` API, PostgreSQL and Redis became healthy. Its API image
+matched the previously documented `0014`-compatible image, and a read-only
+database query confirmed revision `0014`. The `repopilot-local` migration
+container remained exited; no migration or image rebuild was run. The other
+pre-existing `repopilot-api-1` remained unhealthy and was not changed.
+
+A new owner-only, Git-ignored `apps/web/.env.local` points host-run Next.js
+to `http://127.0.0.1:8001`, the existing `repopilot-local` API. The web
+server was restarted on loopback port 3000. The home page returned HTTP 200,
+`/api/health` returned `{"ready":true}`, and an unauthenticated
+`/api/auth/me` request returned HTTP 401 rather than a service error. This
+does not verify a real GitHub sign-in or browser interaction. The available
+Node 26 runtime is outside the project's declared Node 22–24 range.
+
+## chi #1188 reviewer coordination and corpus request
+
+The existing two private blind packets were left unchanged. Reviewer identities
+and a handoff method have not been provided, and no invitations were sent. The
+[coordinator drafts](chi-1188-reviewer-coordination.md) describe separate
+handoffs and human adjudication; they do not contain issue text, source or
+suggested ranges. No submissions were found in the packet directories during
+the preceding audit; submissions stored elsewhere remain unknown.
+
+The [full eligible-corpus proposal](chi-1188-full-corpus-approval-v1.md) and
+its machine-readable request specify the exact chi commit/tree, private
+storage, existing source-selection policy, collection caps and fail-closed
+verification. They are explicitly **NOT APPROVED**. The raw Git commit object,
+complete recursive source inventory and real-corpus capture path remain
+unavailable. Source collection, real-source parsing, CodeRankEmbed inference,
+embeddings and a retrieval benchmark were not performed. The existing capture
+runner remains restricted to its synthetic fixture; no held-out example or
+human judgment was invented.
+
+A local disposable synthetic Git-object check exposed an additional preflight
+limitation: with an excluded non-source blob absent, `git ls-tree -l` returned
+a nonnumeric `BAD` size for that entry, which the existing `GitSource` cannot
+parse. The same synthetic tree was listed successfully without `-l`. The
+proposed source-only approval therefore requires a reviewed metadata-only
+enumeration fix before using that preflight, or a separately approved expanded
+blob scope. No real repository was fetched or parsed during this check.
+
+## Automated patch workflow — staged synthetic verification
+
+The local implementation adds a disabled-by-default, evidence-bound proposal API, strict
+in-memory unified-diff validator, transactional outbox, lease-fenced worker, private
+non-executing workspace preparation and an investigation-page panel. The test-only provider
+is a synthetic fixture; there is no configured live provider. The test execution adapter
+reports `VALIDATION_UNAVAILABLE`: no untrusted repository command or before/after test was
+executed. Human approval records a decision and does not apply or publish a patch.
+
+On 2026-11-12, the reviewed repository-local disposable harness was extended only to include
+the new tests and their required case names. Its read-only preflight passed with CPython
+3.14.10, uv 0.13.6 and 66 wheels checked against the unchanged lockfile. The 67 previously
+approved official wheels (including uv) were fetched into a private temporary wheelhouse,
+verified against official published hashes and the recorded inventory; aggregate response
+bytes including metadata were 52,738,791. No model artifacts were downloaded.
+
+The final harness run created only container
+`repopilot-ts0252-pg-159d4127c2093db0` and database `repopilot_5b1_checks_159d4127c2093db0`.
+It verified the pinned local image, unique ownership, temporary database storage, no
+application mounts, loopback-only access, SCRAM, passwordless rejection and its disposable
+marker before testing. Cleanup of that container was confirmed; no existing volume or
+service was changed. The exact invocation was:
+
+```sh
+/opt/homebrew/opt/python@3.14/bin/python3.14 -I -B apps/api/evaluation/tree_sitter_pg_harness.py run \
+  --python /opt/homebrew/opt/python@3.14/bin/python3.14 \
+  --uv /private/tmp/repopilot-patch-artifacts.E9ohAs60/uv \
+  --uv-wheel /private/tmp/repopilot-patch-artifacts.E9ohAs60/wheels/uv-0.13.6-py3-none-macosx_11_0_arm64.whl \
+  --wheelhouse /private/tmp/repopilot-patch-artifacts.E9ohAs60/wheels \
+  --docker /Users/roshan/.docker/bin/docker --socket /Users/roshan/.docker/run/docker.sock
+```
+
+Results: **372 passed, 0 failed, 0 skipped, 1 deselected** for the selected PostgreSQL
+suite; **3 passed, 0 failed, 0 skipped** for native PostgreSQL integration, including
+upgrade to revision 0017 and a separate Alembic schema-drift check; **120 passed** synthetic
+native parser tests; and **44 passed** harness safety tests. The deselected test reads pinned
+local Git objects for a separate retrieval evaluation. Private sanitized logs, JUnit reports
+and a source hash manifest were retained under `/private/tmp/repopilot-ts0252-pg-k4yc0pes`;
+that temporary directory was no longer present on 2026-11-13. No normal database migration
+or service restart occurred.
+
+The initial broad run using the normal host `.venv` reported **908 passed, 20 failed,
+60 skipped and 3 errors**. Eighteen parser failures and three fixture errors were caused by
+missing Tree-sitter/grammar packages, and one failure by missing NumPy. One failure was an
+existing synthetic provider harness hard-coded to stop at revision 0016; it was updated for
+the additive 0017 migration, and its targeted test then passed. These earlier results are
+preserved here rather than represented as passing. A later verified disposable environment
+provided the locked parser wheels. The exact locked NumPy 2.5.4 wheel was also independently
+verified against PyPI and `uv.lock` (SHA-256
+`ffa6ce09a1c6a08e9667dd9c97aa0b14184e8d18f2a14b78b2a2328c9147f076`) and installed only
+into a separate offline temporary target for the synthetic backend regression. No ONNX
+runtime or model execution was needed for that check.
+
+The frontend tests, type checking, lint and production build were run using the existing
+Node 26.13.0 installation. The package declares Node `>=22 <25`, so this build is not proof
+of a supported-Node release build. The build used a private copy of the web source and
+dependencies, with no application service restart. The new code remains staged; see
+[patch workflow verification](patch-workflow-verification.md) for release blockers.
+
+The broad backend rerun used the verified disposable Python 3.14.10 environment, the separate
+locked NumPy target, no `TEST_DATABASE_URL`, and a macOS network-denial sandbox. It completed
+with **947 passed, 0 failed, 51 skipped and 1 deselected**. The skips include PostgreSQL-only
+and unavailable optional-provider cases; the selected PostgreSQL run above is the database
+evidence for this milestone. The single deselection is the separate real Git-object retrieval
+fixture noted above. The earlier incomplete-environment failures remain recorded above.
+
+The frontend suite completed **77 passed, 0 failed, 0 skipped**, including the patch proxy
+and rendering tests. TypeScript, ESLint and Ruff passed; a copied-source production build
+completed on the unsupported Node 26 host as noted above. These tests do not establish browser
+fetch-transition coverage or release readiness.
+
+## P4 — trusted synthetic patch-execution gate
+
+On 2026-11-13, a test-only adapter and two immutable synthetic specifications were added.
+The exact fixed command is `/usr/local/bin/python -I -B /fixture/test_add.py`; the fixture,
+test, patch, image and specification identities are bound by SHA-256 or a pinned image ID.
+The adapter accepts no user- or model-supplied command and rejects nonfixture repository,
+snapshot, source or patch identities before contacting Docker. The flag
+`PATCH_SYNTHETIC_EXECUTION_ENABLED` defaults to false and is rejected outside `APP_ENV=test`.
+
+The Docker daemon 29.8.2 reported Linux ARM64, cgroup v2 and the built-in seccomp profile. The
+local image ID `sha256:839d58f92f8cd1fbf52e766934434133ed5c35f2d7adbdffa665ac393597ca9b`
+was inspected without pulling an image. The adapter creates only uniquely named, labeled
+containers and checks non-root execution, read-only filesystems, capability dropping,
+no-new-privileges, memory, CPU, process, mount and network settings before starting its fixed
+trusted preflight probe. The in-container checks also cover seccomp, cgroup limits, scratch,
+credentials-related mounts and network interfaces.
+
+The real probe did **not** pass: Docker reported `network=none`, while its probe reported 11
+sysfs interfaces, 10 proc/socket interfaces and zero IPv4 routes. The loopback-only guard
+blocked execution. The result does not prove external connectivity; the inconsistent network
+view remains unresolved. One initial one-case actual-test attempt failed at preflight and five
+subsequent one-case trusted-preflight diagnostic attempts also failed; **no baseline or
+patched fixture test ran**. No comparison such as `BASELINE_FAILED_PATCH_PASSED` is claimed.
+The adapter did not weaken its checks. A read-only label query found no remaining P4 probe
+containers after cleanup.
+
+The initial mixed focused test runs used the in-memory SQLite fixture for database-backed
+worker cases despite the P4 instruction to use disposable PostgreSQL for such tests. No
+application database was touched. That was a departure from the requested test constraint;
+those results are not PostgreSQL evidence. The first run also found a transcribed fixture hash
+error (**51 passed, 11 failed, 3 skipped**); the hash was corrected. A later mixed local run
+reported **70 passed, 4 skipped**, but is retained only as local diagnostic evidence.
+
+The reviewed PostgreSQL harness was then extended to stage the P4 tests and explicitly
+deselect the three actual execution/preflight cases. Its source inventory and unchanged lock
+were rechecked; 67 previously approved official wheels including uv were reverified into a
+private temporary wheelhouse, with 52,738,791 response bytes including metadata. An initial
+database run returned **394 passed, 0 failed, 0 skipped, 4 deselected**. After adding
+cleanup-ownership and monitoring checks, the final run used the reviewed runner:
+
+```sh
+/opt/homebrew/opt/python@3.14/bin/python3.14 -I -B apps/api/evaluation/tree_sitter_pg_harness.py run \
+  --python /opt/homebrew/opt/python@3.14/bin/python3.14 \
+  --uv /private/tmp/repopilot-p4-artifacts.LrIb9mEr/uv \
+  --uv-wheel /private/tmp/repopilot-p4-artifacts.LrIb9mEr/wheels/uv-0.13.6-py3-none-macosx_11_0_arm64.whl \
+  --wheelhouse /private/tmp/repopilot-p4-artifacts.LrIb9mEr/wheels \
+  --docker /Users/roshan/.docker/bin/docker --socket /Users/roshan/.docker/run/docker.sock
+```
+
+It created only container `repopilot-ts0252-pg-6c7bb7d70e671bcb` and database
+`repopilot_5b1_checks_6c7bb7d70e671bcb`, checked the image, temporary storage, ownership,
+SCRAM, marker, loopback and mounts, and confirmed cleanup. Its exact pytest command and
+sanitized JUnit logs are in `/private/tmp/repopilot-ts0252-pg-swvmg48w` while it exists.
+The selected suite reported **398 passed, 0 failed, 0 skipped, 4 deselected**, including
+26 P4 synthetic/mock cases. Three deselections were the blocked P4 actual cases and one
+was the separate Git-object retrieval case. Pytest emitted one `cache_dir` configuration
+warning because its cache provider was disabled. The native PostgreSQL/migration suite
+reported **3 passed**, the separate parser suite **120 passed**, and harness safety checks
+**44 passed**. These are not evidence that the P4 Docker execution sandbox passed.
+
+The current non-database selection reported **49 passed, 0 failed, 0 skipped, 8 deselected**;
+it includes a mocked check that an exception in the cancellation monitor kills and reaps
+the owned CLI process. Frontend tests reported **78 passed**, and TypeScript,
+ESLint, Ruff and `git diff --check` passed. No normal database migration, model inference,
+repository test execution, image pull, GitHub write or service restart was performed by this
+work. The separately requested local web development server was started on localhost:3000;
+its page and the existing backend health endpoints returned HTTP 200 when checked.
+
+## Dashboard visual and accessibility pass
+
+On 2026-11-13, the existing Next.js dashboard received a dark token system, locally
+bundled Geist fonts, a responsive navigation and repository combobox, clearer signed-out
+and error states, issue-row and code-search presentation, a higher-contrast preference,
+and a footer with additional clearance. The existing dashboard, health, authentication and code-search endpoints and
+the normal 30-second dashboard refresh were retained; demo polling remains five seconds.
+The one-second update-age clock changes presentation only. The current issue-list API does
+not supply issue labels; the UI shows labels only when they are present in its input.
+
+Frontend verification on the existing Node 26.13.0 environment: **91 passed, 0 failed,
+0 skipped**; TypeScript, ESLint and `git diff --check` passed. An optimized Next.js
+production build also completed in a private copied-source directory using the existing
+dependencies. Node 26 is outside the project's declared `>=22 <25` range, so this is
+not a supported-Node release build.
+
+A nonpersistent local WebKit preview checked a populated synthetic fixture at widths 375,
+768 and 1440 pixels, plus signed-out and error states at 375 pixels. It found no horizontal
+overflow at those widths. The synthetic preview exercised repository search and keyboard selection,
+the `/` search shortcut, and mobile-menu Escape/focus behavior; a separate simulated
+503 showed the error state with its details collapsed. The visible enabled controls in
+the checked states met the 40px target measurement. Axe-core 4.14 reported no definite
+violations in those states, but marked color contrast incomplete because the decorative
+canvas makes the background indeterminate to the tool. Independent token tests checked
+the text and semantic colors against the solid surface tokens and the primary-button
+gradient endpoints. Those tests do not establish contrast for every composited state.
+Lighthouse and a complete manual WCAG audit were not available, so the requested
+Lighthouse scores, overall WCAG conformance and layout-shift target remain unverified.
+The local frontend was restored on port 3000 after the tool-session restart and returned
+HTTP 200. At the latest infrastructure check the API on port 8000 and Docker daemon were
+unavailable; no normal backend service or container was restarted.
+
+## Local dashboard service recovery (2026-11-13)
+
+At the user's request, Docker Desktop was started after its socket was unavailable.
+Existing container restart policies resumed the previously configured local services;
+the `repopilot-local` API, PostgreSQL and Redis reported healthy. The existing
+migration container remained exited. The host-run frontend preview was restarted on
+loopback port 3000 with `API_INTERNAL_URL=http://127.0.0.1:8001`, targeting the
+existing local API instead of the separate service on port 8000. The home page
+returned HTTP 200, `/api/health` returned `{"ready":true}`, and an unauthenticated
+`/api/auth/me` request returned HTTP 401. No migration, image build, reindex or
+GitHub operation was initiated. These checks do not verify a real GitHub sign-in.
+
+## Section-aware dashboard navigation
+
+The top navigation now follows the visible inbox, repository and code-search sections,
+including when scrolling upward or reaching the end of the page. It observes layout changes
+and uses the sticky-header position; existing hash links and the mobile menu remain in use.
+When account controls are hidden, the Repositories link scrolls to the visible repository panel.
+
+On 2026-11-13, the frontend suite reported **94 passed, 0 failed, 0 skipped**; TypeScript,
+ESLint and `git diff --check` passed. A local WebKit check using synthetic signed-in and
+signed-out data exercised scrolling in both directions and navigation-link clicks at 1440px
+and 375px. An initial desktop check using a fixed two-second startup delay did not update
+the highlight; readiness was not captured in that attempt. Subsequent checks after the
+dashboard rendered passed at both widths. The live dashboard health endpoint remained ready.
+
+## P4.1 — network and mount isolation diagnosis
+
+**Result: trusted synthetic patch execution remains blocked.** Docker CLI and Engine were
+29.8.2 on `desktop-linux`, using Docker Desktop's Linux ARM64 VM; the installed Docker
+Desktop CLI plugin reported 4.95.0, while the application bundle version was not verified.
+The previously approved local image was present as
+`sha256:839d58f92f8cd1fbf52e766934434133ed5c35f2d7adbdffa665ac393597ca9b`.
+No image or package was downloaded.
+
+Uniquely named containers were created with the existing test adapter's `--network none`,
+non-root UID/GID 65534, read-only root and fixture, all capabilities dropped,
+no-new-privileges, 128 MiB memory, eight processes, one CPU, bounded tmpfs and ten-second
+timeout. Docker inspection found only the approved declared read-only fixture bind and a
+`none` network attachment with no assigned addresses. The in-container probe independently
+reported seccomp mode 2 and the existing resource and privilege checks passed. This was a
+non-executing diagnostic of container state; it did not run fixture source.
+
+`/proc/net` linked to `self/net`. `/proc/self/net/dev` and `socket.if_nameindex()` both
+listed `lo` and `erspan0`, `gre0`, `gretap0`, `ip6_vti0`, `ip6gre0`, `ip6tnl0`, `ip_vti0`,
+`sit0` and `tunl0`. Socket `SIOCGIFFLAGS` and sysfs showed those nine as down virtual
+interfaces; `SIOCGIFADDR` found only loopback's primary IPv4 address. `/proc/self/net/if_inet6`
+showed only loopback's IPv6 address. The IPv4 route table was empty; IPv6 showed the local
+loopback route and rejected defaults. This is not a complete IPv4-address dump or proof of
+network isolation. `/sys/class/net` had those ten interfaces plus the non-interface control
+file `bonding_masters`, explaining the original 11-versus-10 count. The kernel reason for the
+nine devices is not established.
+
+Two overlapping diagnostic containers had distinct network namespace IDs and each reported
+the same device names. Their individual `/proc/1/ns/net` and `/proc/self/ns/net` agreed. A
+first attempt at the concurrent diagnostic had a wrapper return-value unpacking error; both
+owned containers were cleaned up, and the corrected attempt succeeded. No host network or
+external endpoint was probed. Read-only `/sys` exposes kernel metadata, including the control
+file; the evidence does not establish that the nine interfaces are macOS-host interfaces.
+
+`/proc/self/mountinfo` also showed read-only `/etc/hostname`, `/etc/hosts` and
+`/etc/resolv.conf` mounts on the VM filesystem, absent from Docker's declared `Mounts` list.
+Their exact backing-file provenance and any information exposure remain unverified; their
+contents were not read. Runtime `/proc` and `/sys` mounts are separate from the sole declared
+fixture bind. The policy now rejects unapproved runtime mounts and unexpected sysfs entries,
+and checks IPv6 address/routes, network attachments and required inspection fields. It remains
+conservative across unrecognized filesystems, route flags and kernel formats. The final real
+preflight returned `preflight_network_runtime_mounts`; the independent IPv6 loopback check
+passed for the observed records, but the overall preflight did not. **No baseline or patched
+fixture test ran**, and no genuine worker/API/UI execution-result propagation was tested.
+
+Synthetic tests, with network denied, ran from `apps/api`:
+
+```sh
+python -m pytest -q -p no:cacheprovider tests/test_patch_synthetic_execution.py \
+  tests/test_patch_validation.py -k 'not worker and not mocked_validation and not actual'
+python -m pytest -q -p no:cacheprovider evaluation/test_tree_sitter_pg_harness.py \
+  tests/test_patch_proposals.py::test_before_after_comparison_only
+```
+
+The first selection reported **66 passed, 0 failed, 0 skipped, 8 deselected**. The second
+reported **52 passed, 0 failed, 0 skipped, 0 deselected**, plus 14 passed subtests. These
+cover mocked guard failures and comparisons, not actual fixture execution. Both emitted a
+pytest `cache_dir` warning because the cache provider was disabled. Ruff passed for the two
+changed Python files and `git diff --check` passed. The first attempt to invoke macOS
+`sandbox-exec` inside the workspace sandbox was denied; the listed tests were subsequently
+run with an operating-system network-denial profile outside it.
+
+The reviewed disposable PostgreSQL harness's read-only prerequisite check stopped because
+the verified uv 0.13.6 executable, official uv wheel and offline wheelhouse from the prior run
+were missing. It did not contact Docker or PostgreSQL. The earlier 398-test PostgreSQL run
+predates these changes and is not current integration evidence. No application database,
+normal service, Docker context or volume was changed. Each diagnostic container was cleaned
+up by ownership checks; a subsequent read-only label query found none remaining.
+
+Before any synthetic execution, the network interfaces and runtime mounts must satisfy a
+reviewed isolation policy, complete IPv4 address and metadata exposure checks must be
+established, and the real preflight must pass. Before real-repository execution, a separate
+reviewed untrusted-code sandbox and explicit authorization for the repository, source,
+test specifications and execution are required. Production patch execution remains disabled.
+
+## P5 — patch provider boundary and synthetic browser workflow
+
+The patch provider registry remains unavailable. A versioned provider-neutral request now
+separates fixed instructions from issue/source data and checks repository, tenant,
+investigation, snapshot, source hashes, evidence IDs, citation paths and ranges before a
+provider is called. Configurable request, response and timeout caps cannot exceed the stated
+defaults. The worker rejects mismatched repository or tenant identities, and incomplete
+provider/model/credential configuration produces sanitized failures. Recognized credential
+patterns are screened, but this is not complete secret detection. The timeout is supplied to
+the adapter; a future transport must enforce its own deadline and streaming bounds. No real
+provider was configured or contacted and no real patch was generated.
+
+From `apps/api`, with `TEST_DATABASE_URL` absent, a clean environment and macOS network
+denial, the selected tests ran:
+
+```sh
+python -m pytest -q -p no:cacheprovider tests/test_auth_enrollment.py \
+  tests/test_investigation_evidence.py tests/test_patch_provider_contract.py \
+  tests/test_patch_proposals.py tests/test_patch_validation.py \
+  tests/test_patch_synthetic_execution.py -k 'not postgres and not actual'
+```
+
+They reported **176 passed, 0 failed, 0 skipped, 6 deselected**. This includes the
+**30-case** provider-contract suite, which also passed separately. The selected API and
+worker tests used an in-memory SQLite fixture; they do not prove PostgreSQL row locking or
+concurrency. The deselections were three PostgreSQL cases and three actual P4
+fixture/preflight cases. Pytest emitted a `cache_dir` configuration warning because the
+cache provider was disabled. Ruff passed for the changed Python files.
+
+The existing frontend tests reported **94 passed, 0 failed, 0 skipped**; TypeScript and
+ESLint passed, with network denied. The only located Node runtime was macOS ARM64
+**26.13.0**, outside `>=22 <25`; no supported-Node production build was run. No runtime or
+package was installed.
+
+An existing system WebKit-based test approach was extended in
+`apps/web/tests/patch-workflow.browser.swift`. A private copied-source Next.js preview ran
+on loopback port 3159 using the existing Node 26 installation, with the backend URL set to
+the unreachable `127.0.0.1:1`. Browser-side application fetches were intercepted by
+synthetic fixtures. Three final scenarios passed: opening an investigation and evidence,
+generation/queued state, diff and static check, unavailable isolated tests, approval for
+review; a provider-unavailable state; and a denied proposal request. No real database or
+provider was involved. Two earlier browser attempts failed on the test harness selecting an
+evidence snippet instead of the proposal diff; after the selector was corrected the three
+scenarios passed. This is browser UI verification with intercepted APIs, not an end-to-end
+PostgreSQL or authenticated GitHub run. The preview process and its private copy were removed.
+
+The prior 398 selected disposable PostgreSQL tests and migration 0017/drift checks predate
+P5. The previously verified uv executable and offline wheelhouse were absent, so no P5
+PostgreSQL or migration test ran. The P4.1 Docker isolation decision and execution preflight
+were not changed or rerun; **no baseline or patched fixture was executed**. No normal
+service, database, feature flag or dependency lockfile was changed. The
+[release matrix](patch-workflow-verification.md#release-matrix) records the remaining
+provider, Node, execution, retention and deployment blockers.
+
+## Step P6 — verified toolchains and blocked PostgreSQL gate (2026-11-13)
+
+The macOS ARM64 GIL-enabled CPython 3.14.10 test host used a privately retained official
+Node **24.18.0**, npm **11.16.0**, and uv **0.13.6**. The Node archive
+`node-v24.18.0-darwin-arm64.tar.gz` was 52,087,559 bytes and its SHA-256 was
+`e1a97e14c99c803e96c7339403282ea05a499c32f8d83defe9ef5ec66f979ed1`, matching the
+official Node release checksum over HTTPS. The checksum manifest's signature was **not**
+verified because GnuPG and a trusted release-key ring were unavailable. The verified uv
+wheel SHA-256 was `51361029b7cf91185d0092c4b356d110b4ad629e9cb11593f1e006ac72a72ca9`.
+The private cache contains 66 compatible locked wheels plus that uv wheel, 50,963,767
+bytes total. Their filenames, exact versions, official artifact URLs, sizes and SHA-256
+hashes are in `apps/api/evaluation/p6-toolchain-artifacts.json`; the sanitized actual
+verification record is `apps/api/evaluation/p6-toolchain-verification.json`. The API
+lockfile SHA-256 remained `40139126d31b521cc5377f1333b22d7c18de733840d1c63d848309ba7ad9c09a`.
+Tree-sitter remained 0.25.2 and its eight locked grammar versions were not changed.
+
+The offline toolchain check verified the entire installed Node tree against its verified
+archive, the uv executable and the wheel hashes. Seven synthetic artifact-guard tests
+passed. A separate first attempt to invoke those tests via `python -I -m unittest` failed
+with one loader error because isolated mode omitted the repository from the import path;
+the supported direct-script invocation passed all seven. The cache resides in
+`~/Library/Application Support/RepoPilot/toolchains/p6` under owner-only directories;
+the downloaded archives and wheels are mode 0600, while extracted Node files retain their
+archive modes behind those directories. It contains no credentials, private repository-source
+corpus or model weights.
+See [the durable preparation and harness commands](tree-sitter-disposable-postgres.md#p6-persistent-test-toolchain).
+
+In a copied frontend workspace, Node 24 passed TypeScript, ESLint, **94 tests** and the
+production build. The 14 patch component/proxy tests were also rerun separately and passed;
+they are included in the 94-test total. Existing installed dependencies matched 359 lockfile package versions;
+this was not a clean `npm ci` or independent integrity verification of every installed
+file. The default `~/.npm/_cacache` directory was absent, so the persistent Node toolchain
+alone cannot restore a missing frontend dependency installation. An initial build with symlinked `node_modules` warned that 27 standalone trace files
+were omitted. Repeating the build with a private full dependency copy passed without that
+warning and the standalone server and Next.js server files were present. Against that
+production build, **three synthetic WebKit scenarios passed**, with application API calls
+intercepted and the backend set to an unreachable loopback address. The first browser
+attempt exposed a test-window visibility problem; the test-only window activation was
+corrected. The owned preview was stopped after testing.
+
+An offline disposable Python environment passed `uv lock --check --offline`, **44 mocked
+harness safety tests**, **120 synthetic native parser tests**, and the selected suite below
+with **176 passed, 0 failed, 0 skipped and 6 deselected**. The six deselections comprise
+three PostgreSQL cases and three real patch-sandbox fixture/preflight cases. The selected
+database-backed cases used in-memory SQLite; they do not establish PostgreSQL locking.
+The native and selected runs each emitted one `cache_dir` pytest configuration warning
+because the cache provider was disabled. Ruff passed. Source staging hashed and rechecked
+166 current working-tree files and fixtures; the copy is not represented as a Git commit.
+
+```sh
+python -m pytest -q -p no:cacheprovider tests/test_auth_enrollment.py \
+  tests/test_investigation_evidence.py tests/test_patch_provider_contract.py \
+  tests/test_patch_proposals.py tests/test_patch_validation.py \
+  tests/test_patch_synthetic_execution.py -k 'not postgres and not actual'
+```
+
+The active Docker context was `desktop-linux`. The daemon and the approved local pgvector
+image were initially inspectable, but the configured Unix socket disappeared before the
+reviewed runner could create a container; its actual output was `BLOCKED: explicit local
+Docker Unix socket is unavailable`. No disposable container, database, real isolation
+checks, P5 PostgreSQL tests, Alembic 0017 upgrade or separate PostgreSQL schema-drift check
+ran in P6. Earlier disposable PostgreSQL results predate the P5 provider changes. The
+runner was extended to require the P5 provider and tenant cases, including selected
+parameterized identities, rather than silently treating their absence as success. No normal
+service was restarted, no application database was contacted, and no production migration
+was applied. The private staged source and logs remain available for inspection; the
+persistent cache deliberately excludes them.
+
+The live patch provider remains unconfigured. The patch execution sandbox remains blocked
+by the earlier isolation preflight; no before/after fixture executed. Real provider use,
+real-repository execution, normal database migration, GitHub publication and deployment
+require their respective separate approvals and security review. RepoPilot is not production ready.
+
+## Step P7 — local Ollama patch adapter (2026-11-14)
+
+The inspected host reported macOS **27.2.1**, Apple **M6**, **16 GiB unified memory**,
+and about **30 GiB available** on the default home/model volume; the project volume reported
+about **774 GiB available**. The base Python was GIL-enabled CPython **3.14.10** on ARM64.
+No Ollama executable was found on the checked PATH or standard application locations, no
+default Ollama model manifest/blob directories were present, and the read-only local
+`/api/tags` request could not connect to `127.0.0.1:11434`. `OLLAMA_MODELS` was unset.
+No MLX or llama.cpp Python package was found in the checked base interpreter, and no
+`llama-cli` or `llama-server` executable was found on the checked PATH. These observations
+are not an exhaustive search of all environments or custom locations.
+
+For a later separately approved experiment, `qwen2.5-coder:7b` is the conservative initial
+candidate: [Ollama's listing](https://ollama.com/library/qwen2.5-coder) gives approximately
+**4.7 GB**. The 14B variant is listed at **9.0 GB**, and the
+[qwen3-coder:30b listing](https://ollama.com/library/qwen3-coder) gives **19 GB**. Model
+files, context buffers, the OS and
+other applications share the Mac's memory; artifact size alone does not guarantee that a
+model will fit or perform well. No model or runtime was installed or downloaded, and no
+inference or real-source transmission was performed.
+
+The new local adapter is disabled by default and uses strict numeric IPv4 loopback,
+proxy/redirect rejection, a bounded async transport and an explicit model digest. Its
+metadata preflight requires cloud-disabled status and local GGUF completion metadata before
+sending bounded evidence snippets. The Ollama status response is self-reported and its
+`/api/status` endpoint is experimental; this does not authenticate the daemon, eliminate
+the model-tag race, or enforce operating-system egress restrictions. The shared source,
+evidence, diff and publication checks remain authoritative. Cancellation closes the HTTP
+request and fences publication, but does not guarantee server-side generation stops.
+
+With all network access denied, the selected synthetic backend suite reported **234 passed,
+0 failed, 0 skipped, 6 deselected**; the 58-case Ollama suite is included. Three deselected
+cases require PostgreSQL and three require the actual blocked patch sandbox. The run emitted
+one pytest `cache_dir` configuration warning because its cache provider was disabled.
+Fourteen existing frontend patch/proxy tests passed on Node 24.18.0. The first Ollama test
+attempt reported **26 passed, 26 failed and 2 setup errors**: mock HTTPX responses had been
+eagerly consumed and the test file lacked its authentication fixture. After the test-only
+stream and fixture were corrected, the selected suite passed. Ruff and `git diff --check`
+were run separately. The normal application database was not contacted; SQLite-backed test
+fixtures do not establish PostgreSQL locking or concurrency.
+
+Docker's configured socket was absent, so no P7 PostgreSQL tests, migration or schema-drift
+check ran. No normal service or feature flag was changed. Runtime/model installation,
+local inference, any real-source transmission, normal migrations, real test execution and
+deployment each remain subject to their respective separate approvals and required security
+review. Patch execution remains blocked by the existing sandbox isolation gate.
+
+## Step P7.1 — official Ollama and model artifact verification (2026-11-14)
+
+The host was macOS 27.2.1 on Apple M6 with 16 GiB unified memory. Before installation,
+the home volume had approximately 29.8 GiB available; the post-pull checks reported
+approximately 24.5–25.1 GiB available as APFS free space changed. No existing Ollama app,
+executable, default `~/.ollama` configuration,
+model store, process or listener on port 11434 was found in the checked locations. The
+existing default home configuration remained untouched.
+
+The official [Ollama 0.40.16 release](https://github.com/ollama/ollama/releases/tag/v0.40.16)
+disk image was **229,996,388 bytes**, SHA-256
+`b48d74a2d8c6a0592c816a4f85643d8d8608ad592abafbe95c04128a73c398c6`, matching both the
+release metadata and the official checksum file. The checksum file itself had SHA-256
+`99d2505da1bfa40d582e295825d232763823667b495bd73e2145e94671c28eb9`; no separate
+checksum-file signature was verified. The app and its CLI passed deep/strict macOS code
+signature checks. The signer was **Developer ID Application: Infra Technologies, Inc
+(3MU9H2V9Y9)**, with a stapled notarization ticket; Gatekeeper accepted the app as
+**Notarized Developer ID** both before and after copying. Inside the managed execution
+sandbox, the initial signature check reported an invalid signature with the authority
+unavailable, and Gatekeeper reported a signing-subsystem error. The same checks passed
+when macOS signing services were accessible, without bypassing Gatekeeper. The owner-only installation and
+retained disk image are under `~/Library/Application Support/RepoPilot/toolchains/ollama-p71`;
+the installed app used 709,908 KiB according to `du -sk`.
+
+The single approved model, `qwen2.5-coder:7b`, was pulled using `/api/pull`. Its official
+registry manifest was independently retrieved and hashed to
+`dae161e27b0e90dd1856c8bb3209201fd6736d8eb66298e75ed87571486f4364`; the local model
+listing reported the same full digest and **4,683,087,561 bytes**, GGUF, Q4_K_M and 7.6B
+parameters. Every referenced object was independently rehashed:
+
+| Object | Bytes | SHA-256 |
+| --- | ---: | --- |
+| Model weights | 4,683,074,048 | `60e05f2100071479f596b964f89f510f057ce397ea22f2833a0cfe029bfc2463` |
+| Config | 487 | `d9bb33f2786931fea42f50936a2424818aa2f14500638af2f01861eb2c8fb446` |
+| System text | 68 | `66b9ea09bd5b7099cbb4fc820f31b575c0366fa439b08245566692c6784e281e` |
+| Template | 1,615 | `1e65450c30670713aa47fe23e8b9662bdf4065e81cc8e3cbfaa98924fcc0d320` |
+| License | 11,343 | `832dd9e00a68dd83b3c3fb9f5588dad7dcf337a0db50f7d9483f310cd292e92e` |
+
+Ollama 0.40 stored the 858-byte registry manifest as a blob and a versioned alias pointing
+to it. The 1,021-byte legacy manifest is a wrapper with an extra reference to that same
+registry manifest; its own SHA-256 is
+`4aaba1ee422af93aad53ecbdfc8a159770cf254a9950b7a4304cf9ee3555ef31`. The first
+filesystem check assumed the legacy file was the raw registry manifest and stopped; a
+separate check verified the wrapper, alias target and raw manifest bytes. This was a storage
+layout difference, not a discrepancy between the registry digest and the locally reported
+model digest. The model store contains **4,683,093,640 regular-file bytes**; its allocated
+space was **4,683,116,544 bytes** when measured. A private sanitized inventory and official
+registry manifest are retained in the installation directory. Registry SHA-256 establishes
+object identity but is not an independent publisher signature for the model.
+
+To enforce the **7 GiB** transfer cap, the new daemon ran in a verified macOS sandbox that
+allowed outbound connections only to a byte-metered loopback HTTPS tunnel. The tunnel
+allowed the official registry and its independently confirmed exact CDN hostname only;
+TLS was not intercepted. The first pull attempt stopped after **11,613** metered bytes
+because the CDN was not initially allowlisted. A direct registry response confirmed that
+exact CDN redirect before the pull resumed. Across both attempts the tunnel measured
+**4,689,552,585 bytes**, including TLS/protocol overhead and any retries. The installer body
+was **229,996,388 bytes** and three recorded metadata bodies totaled **38,778 bytes**: the
+measured subtotal was **4,919,587,751 bytes**, below the **7,516,192,768-byte** cap. Some
+small direct-request headers and IP-level overhead were not measured; 16 MiB was reserved
+for unmetered overhead rather than presenting the subtotal as an exact NIC byte count.
+
+The daemon used a separate private home and model directory, `OLLAMA_HOST=127.0.0.1:11434`,
+`OLLAMA_NO_CLOUD=1`, and a private `server.json` with `disable_ollama_cloud: true`. Server
+logs and `/api/status` reported cloud disabled. The owned daemon ran as UID 501 (`roshan`);
+`lsof` showed only `127.0.0.1:11434` as its listener. For a later metadata-only check it
+was restarted with **all daemon egress denied**; RepoPilot's actual `check_readiness()`
+passed without changing feature flags. The status response is self-reported and does not
+authenticate a future process listening on the same port. The daemon automatically generated
+a private local key in its isolated home with mode 0600; no account sign-in occurred.
+
+Only `/api/status`, `/api/version`, `/api/tags`, `/api/ps`, `/api/show` and the approved
+`/api/pull` were called. The server logs contained no chat, generate or embedding API routes,
+and `/api/ps` reported no loaded model after the pull and metadata checks. This is evidence
+for the performed operations, not proof about unrelated processes. Both owned Ollama servers
+and the metering proxy were stopped; no port 11434 listener or Ollama login item was found
+afterward. No RepoPilot service, normal database or feature flag was changed. No inference,
+issue/source transmission, patch job or repository test ran. A separately approved synthetic
+inference test and an independently reviewed daemon/egress boundary are required before
+any model-generated patch or real-source use.
+
+## Step P7.2 — local synthetic inference (2026-11-14)
+
+**Result: incomplete.** The verified Ollama 0.40.16 and `qwen2.5-coder:7b` model
+performed two local inference requests, but both returned `insufficient_evidence` and neither
+produced a candidate diff. The actual RepoPilot adapter rejected the second result with
+`local_model_insufficient_evidence`. No generated candidate passed the complete static
+validation contract; patch execution and correctness remain unverified.
+
+Before inference, the installed app's deep/strict signature and Gatekeeper assessment
+passed. Its recorded app CDHash remained `baff23feb8d1ad84c951e7e21f16d51f59f943e7`,
+and the retained installation image matched the P7.1 SHA-256. The local model manifest
+matched `dae161e27b0e90dd1856c8bb3209201fd6736d8eb66298e75ed87571486f4364`;
+all five referenced model blobs were rehashed successfully. No artifact was downloaded.
+The port was initially unoccupied. macOS reported 16 GiB physical memory, a 79% system
+memory-free pressure metric, zero swap used and approximately 25.1 GiB free disk space.
+The pressure metric is not a precise measurement of unused RAM.
+
+The test started the recorded private executable with a private home and model directory,
+`OLLAMA_HOST=127.0.0.1:11434` and `OLLAMA_NO_CLOUD=1`. Its private `server.json` also
+disabled cloud. The daemon reported cloud disabled, and the independently inspected listener
+belonged to the owned daemon PID and UID 501 at numeric loopback only. Read-only process
+inspection matched the signed executable path. A macOS sandbox denied non-loopback network
+connections for the test supervisor and daemon; a canary confirmed loopback connectivity and
+denial of a reserved non-loopback connection. The client used direct loopback without proxy
+variables; the actual provider also uses `trust_env=False` and disables redirects. The
+daemon's local-only metadata is not by itself process authentication, and this temporary
+boundary is not a production security review or a guarantee against a malicious local peer.
+
+Two initial daemon starts ended before inference because the temporary harness could not
+complete process inspection: macOS would not execute the setuid `/bin/ps` inside the
+sandbox. Both were stopped and reaped, with zero model requests. The test-only supervisor
+then used read-only `libproc` APIs for process identity and sampled RSS while preserving the
+same network and listener checks. The successful preflight confirmed the exact model digest,
+GGUF completion capability, cloud-disabled status and no model loaded before inference.
+
+The first request was intended to supply this original synthetic source and issue. Its exact
+outgoing request body was not retained, so the historical bytes received by the server or
+model cannot be independently established:
+
+```python
+def add(a: int, b: int) -> int:
+    return a - b
+```
+
+> The add function incorrectly subtracts the second argument. It should return the sum.
+
+Its source SHA-256 was
+`9445c47952abb8a7fc5d4a905d55b5be05771df1d69362ec597f9a50f7ede40d`. The direct
+non-streaming `/api/chat` call used the existing JSON schema, temperature zero, an 8,192-token
+context and a 1,024-token generation limit. It completed in **12.356 seconds**, with 620
+prompt tokens and 241 generated tokens. The response was schema-valid but abstained,
+claiming the implementation was missing. Replaying that unchanged response through the
+existing provider validation logic returned `local_model_insufficient_evidence`; no diff was
+available for validation. The replay was local validation only, not another inference call.
+
+The second request used the actual RepoPilot Ollama provider and a separate original fixture:
+
+```python
+def subtract(a: int, b: int) -> int:
+    return a + b
+```
+
+> The subtract function incorrectly adds the second argument. It should return the first argument minus the second.
+
+Its source SHA-256 was
+`d95d69ddc17091cc1064e45765706616a84f7558bba4b57dc1b968d3b3bc8b73`. The test used the
+existing adapter, intended to send the synthetic repository, snapshot, file, evidence and
+citation identities and bounded source snippet, with its unchanged 2,048-token generation limit and 30-second
+deadline. It completed in **9.409 seconds**, with 627 prompt tokens and 256 generated tokens.
+The response was schema-valid but again claimed the implementation was absent and abstained;
+the provider returned `local_model_insufficient_evidence` before any candidate diff could be
+validated. The retained response and stated test setup are observable, but the original
+request bodies and the model's internal input are not retained. The reason for its abstention
+is not established. No response was repaired or retried.
+
+The model loaded successfully, and both requests completed while the daemon remained alive.
+Sampled peak combined daemon/runner RSS was **5,284,970,496 bytes** for the first request and
+**5,331,992,576 bytes** for the second. The lowest sampled system memory-free pressure metric
+was 43%, and observed swap use remained zero. RSS is sampled, can double-count shared pages
+and may omit some GPU/unified-memory use; it is not a hard memory limit. The monitor did not
+trigger. The server had one loaded model before shutdown, then exited normally with status
+zero; the owned daemon and observed runner were reaped, and port 11434 had no listener after
+cleanup. No model remained loaded by that stopped server. The private, owner-only record is
+`~/Library/Application Support/RepoPilot/toolchains/ollama-p71/p72-20261114T034624Z-3ce02867`;
+its response files contain only the synthetic test material.
+
+With all network access denied, the focused Ollama-provider, provider-contract,
+patch-validation and proposal suite reported **143 passed, 0 failed, 0 skipped and 1
+deselected**. The deselected case requires PostgreSQL concurrency. A pytest `cache_dir`
+warning resulted from disabling the cache provider. Tests using an in-memory SQLite fixture
+do not establish PostgreSQL behavior. From `apps/api`, the selected test command was:
+
+```sh
+env -i PATH=/usr/bin:/bin HOME=/nonexistent PYTHONDONTWRITEBYTECODE=1 \
+  PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 sandbox-exec -p '(version 1)(allow default)(deny network*)' \
+  ./.venv/bin/python -I -B -m pytest -q -p no:cacheprovider \
+  tests/test_ollama_patch_provider.py tests/test_patch_provider_contract.py \
+  tests/test_patch_validation.py tests/test_patch_proposals.py -k 'not postgres'
+```
+
+Ruff and `git diff --check` passed. No normal database,
+application service or feature flag was changed. No real repository or issue was supplied,
+and no generated code, patch fixture or external test was executed. Patch execution remains
+blocked by the existing sandbox gate; further local inference and any real-source use need
+separate authorization.
+
+## Step P7.3A — offline abstention investigation (2026-11-14)
+
+**Result: cause unresolved.** The P7.2 private directory retains both synthetic response
+envelopes, a summary and the daemon log, but no outgoing HTTP request body. The log reports
+`OLLAMA_DEBUG_LOG_REQUESTS:false`, so it cannot independently establish the exact bytes
+received by the daemon or the prompt ultimately presented to the model. The historical
+synthetic fixture hashes and response identities are recorded; other per-request UUIDs were
+not preserved in the response, so a byte-for-byte historical request cannot be reconstructed.
+The previous P7.2 statements above have been qualified accordingly.
+Read-only SHA-256 checks during this investigation identified `first-response.json` as
+`670168d35652e32378fb866a38ad9f90009d090e23ddabde73611835461e667c`,
+`second-response.json` as `3efee668c244a9f87e4c13a2094d4dd27bc6e310fc21f809b033e63ca1ea8065`,
+`summary.json` as `17902f829572be0ffe882038a3f9bf1e1a135163dedd41562e3d215fd5fa187a`,
+and `server.log` as `481b972f01045b9cc6b028c51ffe00b21b3283298e3e9173b19ebb3884e1320b`.
+These hashes record this read; they do not retroactively authenticate the original request.
+
+Both retained responses decode as the existing `_LocalDraft` schema, have `done: true` and
+`done_reason: stop`, and contain `status: insufficient_evidence` with an empty `diff`. The
+first reports 620 prompt and 241 generated tokens; the second reports 627 prompt and 256
+generated tokens. The daemon log reports `truncated = 0` for both. There is no retained
+provider error in either response; RepoPilot subsequently maps the second abstention to
+`local_model_insufficient_evidence`. The model's explanations claim that the function
+implementations were missing, but that claim does not establish what it actually received.
+The token and truncation observations likewise do not prove that every intended input field
+survived daemon-side processing.
+
+An offline mocked-transport reconstruction traced the current path from synthetic
+`PatchContext`, through `build_candidate_request` and the Ollama adapter, to the final JSON
+HTTP request. For both P7.2 fixture texts and source hashes, the intercepted user message
+contains the issue description, pinned synthetic identity, allowed path, file hash, evidence
+and citation, line range and exact function implementation in `snippets[*].text`. Its
+system message asks for a minimal diff for supplied evidence-backed files, treats source and
+issue content as untrusted data, describes the narrow unified-diff headers, and permits
+abstention. It does not explicitly identify `snippets[*].text` as the source-code field;
+whether that presentation contributed to the model's answers is unverified. The system and
+user messages are ordered correctly. The request sets `truncate` and `shift` to false;
+current adapter limits include an 8,192-token context and 2,048 generated tokens. The first
+P7.2 direct request was recorded as having used a 1,024-token generation limit. Source is
+rejected by sensitive-input checks rather than silently redacted, and snippets outside the
+evidence window are excluded. The exact historical serialized messages were not recovered.
+
+At P7.3A the generated JSON schema was a flat strict object: all six fields (`status`, `diff`,
+`rationale`, `uncertainty`, `evidence_ids`, `source_files`) are required, extra fields are
+forbidden, and the status enum permits `candidate` or `insufficient_evidence`. It has no
+discriminated union or default branch. Its shape rules permit an empty diff even when status
+is `candidate`; a focused test confirms that the existing deterministic diff validator still
+rejects such a candidate. Valid mocked candidate and abstention branches both remain
+supported. No evidence establishes that this permissive shape, field ordering, JSON
+presentation, instructions, schema processing or model behavior caused the abstentions.
+No production prompt, schema, parser, endpoint or validation logic was changed speculatively.
+
+The added synthetic regressions check both fixture payloads, evidence and source identities,
+the UTF-8 request-byte limit, a mocked valid diff, missing-source fail-closed behavior, an
+ambiguous-issue abstention, schema-valid empty-candidate rejection and worker recording of
+an abstention without a patch. Existing tests cover wrong hashes, paths, evidence references,
+proxy and redirect rejection, cancellation, and omission of unrelated source and credentials.
+Missing source is rejected before the provider call; it is not converted into a fabricated
+model response. A model abstention is stored by the worker as a sanitized failed outcome, not
+as a successful fix. Static validation alone cannot establish semantic correctness.
+
+With all networking denied, the selected suite reported **151 passed, 0 failed, 0 skipped,
+1 deselected**. The deselected test requires PostgreSQL; some selected worker tests use an
+in-memory SQLite fixture and do not establish PostgreSQL locking behavior. Pytest emitted one
+`cache_dir` warning because the cache provider was disabled. Ruff and `git diff --check`
+passed. No Ollama server, inference, Docker, PostgreSQL, real source, generated code or
+external patch fixture was run. No normal service, feature flag, database or retained P7.2
+evidence was changed.
+
+For the next separately approved experiment, make one bounded synthetic request through the
+actual local provider in the reviewed loopback-only environment, capturing the exact outbound
+synthetic request bytes and response privately before checking the existing validators. This
+would establish what the adapter sent in that new run, not what the model internally attended
+to or what happened in P7.2. Further model inference, real-source use and patch execution
+require their own approvals and security gates.
+
+## Step P7.3B — one instrumented synthetic inference (2026-11-14)
+
+**Result: incomplete.** Exactly one local inference request was sent through the actual
+RepoPilot Ollama provider. The model returned `insufficient_evidence` and no candidate diff,
+so model-generated patch validation and execution remain unverified. The previous P7.2
+abstentions remain separate historical observations.
+
+Before the request, the installed Ollama app and CLI passed macOS signature verification;
+Gatekeeper accepted the app as a notarized Developer ID application signed by Infra
+Technologies, Inc (3MU9H2V9Y9). The app's CDHash matched the P7.1/P7.2 record,
+`baff23feb8d1ad84c951e7e21f16d51f59f943e7`. The runtime reported version 0.40.16. The
+registry-manifest bytes and local model manifest matched
+`dae161e27b0e90dd1856c8bb3209201fd6736d8eb66298e75ed87571486f4364`, and all five referenced
+blobs were rehashed successfully. The model was `qwen2.5-coder:7b`, GGUF Q4_K_M. Port 11434
+was unoccupied before startup; the private cloud-disabled configuration was unchanged.
+
+The owned daemon ran as UID 501 from the verified private CLI, with its only 11434 listener
+at `127.0.0.1:11434`. Its logs and status reported cloud disabled. A macOS sandbox restricted
+the test supervisor and daemon to loopback networking; a canary confirmed loopback access and
+denial of a reserved non-loopback connection. The client had no proxy environment and used
+the existing provider's no-redirect, `trust_env=False` HTTP configuration. These measures
+are evidence for this synthetic run, not a general guarantee that a local daemon or peer is
+trustworthy for real source.
+
+A test-only transport wrapped the real HTTP transport, without changing the prepared request,
+and wrote the exact synthetic JSON body before delegation. It captured **3,161 bytes** at
+`2026-11-14T16:48:18.181498+00:00`, SHA-256
+`21b4da153461a540f4c5fd250ae5498e312cee27e1ea00ee7d1824be999dc32f`.
+The controller verified the body contained the complete synthetic function, issue, file and
+evidence identities, source SHA-256, existing patch instructions and current JSON schema.
+It used the provider's unchanged system/user message order, temperature zero, 8,192-token
+context, 2,048-token output limit, non-streaming response and 30-second provider deadline.
+The wrapper allowed one chat request with HTTP retries disabled; the daemon log recorded one
+`POST /api/chat`. A prior mock-only recorder check ran with all networking denied and did not
+invoke a model.
+
+The captured complete HTTP response had status **200**, contained **1,017 bytes**, and has
+SHA-256 `7b6e4d7ba6153dd64c4e036941bd886526fd181a26f23154fd93326ddb9874f7`. Its response
+envelope reported the expected model, `done: true`, `done_reason: stop`, 622 prompt tokens
+and 251 generated tokens; the daemon log reported `truncated = 0`. The structured object was
+schema-valid with `status: insufficient_evidence` and an empty diff. The existing provider
+returned `local_model_insufficient_evidence`, an abstention rather than a transport failure.
+The provider validated the input context, but no candidate existed for changed-file identity,
+evidence or diff validation; no result was repaired, applied to a workspace or executed.
+
+The model's unchanged response says it saw a function signature and one code line but lacked
+the full implementation. The captured request contained the whole two-line synthetic file,
+yet its file metadata supplied only path, file ID and hash, while its snippet metadata gave
+start and end lines without a file-total or end-of-file marker. The instructions did not
+explicitly declare the snippet complete. This is a concrete representational gap and a
+plausible reason for caution by the model, but the model's explanation does not prove its
+internal cause. No contradictory instruction or other causal defect was established.
+
+The provider call took **10.741 seconds**. Peak sampled combined daemon/runner RSS was
+**5,389,811,712 bytes** (about 5.02 GiB); the lowest sampled system memory-free pressure
+metric was 53%, with zero observed swap. RSS sampling is not a hard limit and may double-count
+shared pages or omit GPU/unified-memory use. The daemon had one loaded model before shutdown,
+then exited with status zero; its owned runner was gone and port 11434 was closed. The
+installed model was retained. The owner-only private record directory is
+`~/Library/Application Support/RepoPilot/toolchains/ollama-p71/p73b-20261114T164816Z-6e02a9e5`;
+its directory is mode 0700 and files are mode 0600. Full synthetic request and response bodies
+are retained there, not in repository documentation.
+
+The network-denied offline provider, generation-contract and static-validation selection
+reported **124 passed, 0 failed, 0 skipped and 0 deselected**. Pytest emitted one `cache_dir`
+warning because the cache provider was disabled. Ruff and `git diff --check` passed. No
+normal application service, feature flag or database was changed. No real source, generated
+code, PostgreSQL, Docker patch fixture or external test ran.
+
+A possible next separately authorized experiment is to add and test trustworthy snippet
+completeness metadata derived from the verified source, then perform one bounded synthetic
+inference to evaluate it. This would not prove the P7.3B model's reasoning. Further model
+calls, real-source transmission, patch execution and normal-service activation each require
+their own authorization and security review.
+
+## Step P7.4 — source coverage and one synthetic retest (2026-11-15)
+
+**Result: incomplete.** A versioned source-coverage contract was added and tested, and
+exactly one local synthetic request was sent through the existing Ollama provider. The
+model returned `insufficient_evidence` with no diff. No model-generated candidate passed
+static validation, and no generated code or patch was executed.
+
+Each emitted snippet now includes `source-coverage-v1` metadata. `COMPLETE_FILE` requires
+an internal pinned-file identity record that matches the source path, file and snapshot
+IDs, commit, repository and tenant, SHA-256 and independently recorded full byte length;
+the emitted snippet must cover all verified bytes. `BOUNDED_EXCERPT` requires the same
+verified file record but covers only a proper subset. Without such a complete record the
+classification is `UNKNOWN_COVERAGE`, with no claimed full-file hash, byte count, line count
+or absolute byte offsets. Provided line ranges continue to derive from the existing evidence
+and LF-based reconstruction. Verified byte ranges are zero-based and end-exclusive.
+Coverage notices are separate from the source-text field. The prompt still permits
+abstention and treats issue and source contents as untrusted data.
+
+The pinned-file record is an internal trust input, not proof that arbitrary caller-supplied
+metadata is authentic. It must originate from an authenticated pinned inventory. The
+current `IndexedFile` schema retains a content hash but not an independently persisted
+original byte length; therefore ordinary database-backed contexts do not construct such a
+record and remain `UNKNOWN_COVERAGE`. This change does not claim a complete repository
+inventory and makes no database or migration change. The synthetic fixture used a fixed,
+separate record with the expected 49-byte length and SHA-256
+`9445c47952abb8a7fc5d4a905d55b5be05771df1d69362ec597f9a50f7ede40d`.
+
+Offline mocked-transport tests covered the complete fixture, a UTF-8 middle excerpt,
+missing and incomplete identities, a final visible line without proof, mismatched snapshot,
+file, path, hash and size, invalid line and byte ranges, unchanged evidence references,
+revalidation inside the provider and the existing strict diff validator. A synthetic worker
+case confirms the current database-backed path remains unknown. A mocked valid candidate
+passed existing validation; this was not model inference. The final network-denied selected
+suite reported **176 passed, 0 failed, 0 skipped and 1 deselected**. The deselected case
+requires PostgreSQL; selected worker cases use an in-memory SQLite fixture and are not
+PostgreSQL evidence. Pytest emitted one `cache_dir` warning because the cache provider was
+disabled. Ruff and `git diff --check` passed. An initial standalone mock-request fingerprint
+command failed because it omitted the synthetic test settings; after loading the test-only
+configuration, it succeeded without contacting Ollama.
+
+The final mocked request was **4,001 bytes**, SHA-256
+`423ad6fde4f09064c7c1f5a3822d32a0b3bce7d0155fe54bdc211da9b0a5f88e`. Before the real call,
+Ollama 0.40.16's app and CLI signatures, recorded app code hash and pinned model manifest
+and all five referenced blobs were verified. The model digest was
+`dae161e27b0e90dd1856c8bb3209201fd6736d8eb66298e75ed87571486f4364`. The private daemon
+ran as the expected local user on `127.0.0.1:11434`, with cloud disabled and the reviewed
+macOS sandbox denying non-loopback connections. The client disabled proxy routing and
+redirects. A sandbox canary confirmed the network boundary. These checks do not establish
+production isolation for real source or protection against every local threat.
+
+A test-only recording transport captured the exact real request before passing the same
+prepared request to the normal HTTP transport. Its bytes and SHA-256 matched the offline
+mocked request; the body contained the synthetic issue, source, evidence identities and
+verified `COMPLETE_FILE` notice. The request had the existing structured-output schema,
+8,192-token context, 2,048-token output limit, temperature zero, non-streaming response and
+30-second provider deadline. One chat request was allowed, with retries disabled. The server
+log recorded one `/api/chat` call. A separate mocked recorder self-test made no model call.
+
+The actual response was HTTP **200**, **928 bytes**, SHA-256
+`88523fb2651fa10307ebb285e88434e3d7c8dc38eba8f3ac0e785de8cd545b58`. The response was
+schema-valid, with `done: true`, `done_reason: stop`, 856 prompt tokens, 244 generated tokens
+and `status: insufficient_evidence`; the server log reported `truncated = 0`. The provider
+returned `local_model_insufficient_evidence`. Its input identity and evidence checks ran,
+but there was no candidate on which to run changed-file, output-evidence or diff validation.
+The model again claimed the code was absent, although the captured outgoing body contained
+the complete synthetic file and explicit complete-file notice. This result does not prove
+what the model internally attended to or establish the cause of this or earlier abstentions.
+No response was repaired or retried.
+
+The provider call took **10.135 seconds**. Peak sampled combined daemon/runner RSS was
+**5,393,154,048 bytes** (about 5.02 GiB); the lowest sampled system memory-free pressure
+metric was 43%, and observed swap remained zero. Sampling is not a hard memory limit and
+may double-count shared pages or omit GPU/unified-memory use. The owned daemon exited with
+status zero, its runner exited and port 11434 closed. The model was retained. The private
+record directory is mode 0700 and its files mode 0600:
+`~/Library/Application Support/RepoPilot/toolchains/ollama-p71/p74-20261115T034529Z-b773699e`.
+Full synthetic request and response bodies are retained there, not in this documentation.
+
+No real repository or issue was sent to the model. No normal database, Docker, PostgreSQL,
+production service or feature flag was changed. Real-source use, a durable independently
+verified size-provenance design for indexed files, further inference, patch execution and
+normal-service activation require their own review and authorization.
+
+## Step P7.5 — offline patch contract comparison (2026-11-15)
+
+**Result: abstention cause unresolved.** The retained P7.2 responses and the P7.3B and
+P7.4 synthetic request/response records were reviewed without modification. All four
+actual calls returned `insufficient_evidence`; the P7.2 outgoing bodies were not retained.
+The P7.3B and P7.4 request bodies contained the synthetic source, and P7.4 included the
+verified complete-file notice. The model's explanations are observations, not proof of
+its internal reasoning. No model server or inference was run in P7.5.
+
+The current system instructions request a minimal evidence-backed candidate, treat issue
+and source contents as untrusted data rather than commands, specify the supported unified
+diff format, and permit abstention. They state that a proposal does not establish a fix;
+they do not require a proven root cause or a tested fix before a proposal. No contradiction
+was established. Missing source, ambiguous behavior, insufficient context, prompt presentation,
+model behavior and structured-output grammar remain distinct possibilities; no offline
+comparison establishes which, if any, caused the prior abstentions.
+
+The model-facing schema is a flat strict object requiring `status`, `diff`, `rationale`,
+`uncertainty`, `evidence_ids` and `source_files` for both statuses. It has no default branch
+or discriminated union. It permits an empty candidate diff at the JSON-schema shape level;
+the existing deterministic diff validator rejected it before publication. It also requires
+empty or otherwise supplied diff, evidence and file-inventory fields for abstentions even
+though the provider returns an abstention before validating a candidate. These are schema
+limitations, not evidence that the model preferred abstention.
+
+The production `_LocalDraft` structured parser now rejects a `candidate` with an empty diff
+before calling the diff validator. Such a response already failed with the same sanitized
+`local_provider_invalid_response` outcome. An `insufficient_evidence` response may still
+carry an empty diff. The model-facing JSON schema and prompt are intentionally unchanged:
+its candidate-empty shape gap remains visible, and no unverified conditional or union grammar
+was introduced into the live request. Existing snapshot, source-hash, path, evidence, patch
+size and unified-diff validators remain unchanged. No persisted or public API format changed.
+
+A test-only alternative uses shorter task instructions and a discriminated candidate or
+abstention schema. Candidates retain the nonempty diff, evidence IDs and exact source-file
+identities; abstentions instead include a missing-evidence description. The alternative
+abstention shape is incompatible with the current production parser, and existing six-field
+abstentions are not accepted by the alternative schema. It is not registered or enabled;
+a compatibility adapter and reviewed Ollama schema support would be required before using it.
+
+Both complete requests were captured through HTTPX mocked transports with networking denied,
+using the same original synthetic file, issue, file and evidence identities, coverage metadata,
+roles, model tag and generation settings. The production request remained **4,001 bytes**,
+SHA-256 `423ad6fde4f09064c7c1f5a3822d32a0b3bce7d0155fe54bdc211da9b0a5f88e`, exactly matching
+P7.4. Its system message was 867 characters and its compact schema 1,061 bytes. The test-only
+prompt-plus-schema alternative was **4,557 bytes**, SHA-256
+`83580ba6cb2059dfac5736e506654f8dd1d32f461df1ba1007072375ecf989cb`; its system message was
+614 characters and its compact schema 1,874 bytes. A shorter instruction therefore did not
+make the whole serialized alternative smaller. A separate prompt-only mock variant retained
+the current schema and user payload; it was **3,744 bytes**, SHA-256
+`2617f22820604e2ebc093167d11693a98640cdf9fa5d64dde55e7e70d0b41e39`. These are byte counts,
+not model token counts or evidence that any variant will improve actual generation.
+
+Synthetic mocked tests exercised a valid minimal candidate through the actual existing
+provider and static validators, explicit abstention, missing or mismatched source and snapshot,
+unknown-coverage context, ambiguous and unrelated issues, unsupported operations, invalid
+paths and evidence references, empty or oversized diffs, and alternative-schema compatibility.
+The network-denied selected suite reported **192 passed, 0 failed, 0 skipped and 1 deselected**.
+The deselected case requires PostgreSQL; selected worker cases use an in-memory SQLite fixture
+and do not establish PostgreSQL behavior. Pytest emitted one `cache_dir` warning because the
+cache provider was disabled. Ruff and `git diff --check` passed. No Docker, PostgreSQL, Ollama
+inference, generated code, real repository data or normal application service was used.
+
+A possible next experiment, subject to separate explicit approval, is one bounded synthetic
+call using the prompt-only test variant with the same file, user data, model and schema as the
+retained P7.4 request. Capturing its exact request and response would change the system prompt
+only relative to that baseline; a single trial would still not establish general effectiveness
+or prove the model's reasoning. Real-source handling, independently persisted file-size
+provenance, patch execution isolation and production activation remain separate blocked gates.
+
+## P8 — Local structured-edit generation (2026-11-15)
+
+### Implementation and offline checks
+
+P8 adds `app.modules.patches.source_edits`: it verifies a `CandidateRequest` by rebuilding
+its `PatchContext`, binds each exact whole-line edit to an authorized file, verified source
+hash, and cited evidence range, rejects ambiguity and overlaps, constructs a canonical
+unified diff in memory, and invokes the existing `validate_patch`. It never opens a source
+path or applies the generated change. The Ollama adapter accepts strict `candidate` /
+`insufficient_evidence` output; the direct-diff strategy remains selectable with
+`PATCH_LOCAL_MODEL_STRATEGY=direct_diff`.
+
+The strategy default is `source_edits`, but generation stays off: defaults remain
+`PATCH_GENERATION_PROVIDER=unavailable`, `PATCH_LOCAL_MODEL_ENABLED=false`, and
+`PATCH_PROPOSALS_ENABLED=false`. No normal-service configuration was changed. Source edits
+are converted into the pre-existing proposal `Candidate` and worker result contracts; no
+database model or migration changed. The frontend files were not modified in P8.
+
+Network-denied focused selection: **284 passed, 0 failed, 0 skipped, 3 deselected**. The
+deselected PostgreSQL-specific tests were not run. Pytest emitted one warning because the
+project's `cache_dir` option is unknown to the installed pytest configuration. Ruff passed
+for the touched Python modules and tests. `git diff --check` passed. No PostgreSQL, Docker,
+frontend, migration, normal service, or real-source test was run.
+
+### One actual local synthetic inference
+
+Exactly **one** request was sent to pinned local model `qwen2.5-coder:7b`, digest
+`dae161e27b0e90dd1856c8bb3209201fd6736d8eb66298e75ed87571486f4364`, through the RepoPilot
+Ollama adapter. Runtime Ollama 0.40.16 was signature-verified; model blobs and manifest
+were checked against retained artifact records. The private daemon bound only to
+`127.0.0.1:11434`, with cloud disabled, HTTP proxies disabled, redirects disabled, and a
+macOS sandbox canary that allowed loopback while denying a non-loopback address. This is
+bounded local-process evidence, not a production-grade execution sandbox.
+
+The original synthetic file `src/arithmetic.py` was 49 bytes, SHA-256
+`9445c47952abb8a7fc5d4a905d55b5be05771df1d69362ec597f9a50f7ede40d`, with complete-file
+coverage verified by the synthetic fixture record. The request also contained the synthetic
+addition issue and evidence reference E1. The exact pre-transmission JSON was 2,305 bytes,
+SHA-256 `e8ebd29f3436bc65b14135b7993a8788a167e6d48bc4a9a40f900d30a1ab3a22`. The complete
+actual response was retained unchanged (900 bytes; SHA-256
+`729667e013ecdf6a1aec75b9eb7c9319f0cbe6d9a142411ba95605a5c439b052`). Owner-only records:
+`/Users/roshan/Library/Application Support/RepoPilot/toolchains/ollama-p71/p8-20261115T060900Z-fe2ea1f6`.
+
+The model returned one source edit replacing `    return a - b` with `    return a + b`
+in the authorized file, citing E1. RepoPilot checked the source and evidence identities,
+generated the deterministic one-line diff, and the existing static validator accepted it.
+The accepted synthetic diff SHA-256 is
+`8d74d6e35955c7e3c7068fc709b09b4d59b2b4efcd6f17076d9b032e159150e7`. Inference took 8.792
+seconds; Ollama reported 306 prompt and 142 generated tokens. Peak sampled process-tree RSS
+was 4,737,597,440 bytes (about 4.41 GiB); maximum observed swap was zero. RSS was sampled,
+not a hard limit, and may not account for all GPU/unified-memory use. Memory pressure rose
+after inference; no swapping or runtime instability was observed.
+
+The private daemon exited successfully and its loopback listener and owned child processes
+were confirmed absent. No patch was applied, executed, or tested. No GitHub source, issue,
+database, hosted model, or normal service was contacted. Earlier abstentions remain
+unexplained; this success establishes the new structured-edit path for this synthetic
+example, not a general behavioral cause.
+
+### Remaining gates
+
+No PostgreSQL regression or migration was run in P8, and no claim is made about PostgreSQL
+compatibility from SQLite-backed tests. Migration 0017 still requires reviewed disposable
+PostgreSQL verification; the normal database was untouched. The sandboxed patch-test
+executor remains blocked, so execution outcomes remain `VALIDATION_UNAVAILABLE`. Production
+use still requires security review of model data handling, robust file-completeness
+provenance, resource enforcement, service deployment, PostgreSQL verification, and explicit
+approval to enable provider/proposal flags. Real repositories and generated-code execution
+remain outside this verification.
+
+## P9 — Trusted synthetic execution
+
+The existing P4 registry binds two synthetic fixtures to repository
+`repopilot-fixtures/patch-p4`, its fixed synthetic commit and snapshot, exact source and
+patch hashes, and an immutable test script. The P8 candidate is a different fixture:
+`src/arithmetic.py` with the accepted diff SHA-256
+`8d74d6e35955c7e3c7068fc709b09b4d59b2b4efcd6f17076d9b032e159150e7`. Its private original
+diff was rehashed and confirmed to be 133 bytes, with owner-only file and directory modes.
+The P4 allowlist does not implicitly authorize this different source or diff.
+
+Inert macOS `sandbox-exec` canaries denied a network socket connection, `os.fork`,
+`os.posix_spawn`, and reading canonical `/private/etc/hosts` with `EPERM`. A first canary
+denying literal `/etc/hosts` still allowed the read because the path resolves elsewhere;
+the canonical path was then tested. These canaries used simple test profiles and do not
+verify an adapter's complete policy. The managed tool sandbox rejected a nested
+`sandbox-exec` call (exit 71); explicitly permitted tool execution was needed for canaries.
+The native facility is macOS-specific and is not claimed to isolate hostile repository
+code. The Docker adapter and its failed isolation gate remain unchanged.
+
+The final restricted filesystem allowlist prevented the installed system Python from
+starting (exit 134), including with `mach-lookup` denial removed. A broader denylist
+started Python and denied network, spawn and a canonical host-file canary, but permits
+other filesystem reads and does not establish that application secrets are inaccessible.
+The exact disposable-workspace policy was not verified. Therefore no native executor was
+enabled, no baseline or patched fixture ran, and no before/after result was produced. The
+macOS canaries are not a sandbox for external code. No Docker containers, PostgreSQL,
+normal services, or frontend files were touched.
+
+`native_specs.py` provides a separate immutable P8 fixture registry and strict native
+result validator for future work; it is not wired to the worker and launches nothing. Its
+nine tests use synthetic or fabricated reports and do not prove execution. The combined
+offline selection reported **123 passed, 0 failed, 0 skipped, 5 deselected**, with one
+pytest `cache_dir` configuration warning. Deselected cases include actual Docker and
+PostgreSQL paths. SQLite-based application contract tests do not establish PostgreSQL
+locking or persistence. Ruff and `git diff --check` passed. P9 actual fixture executions:
+**zero**. The normal Docker adapter and its fail-closed checks remain unchanged.
+
+Future verification requires a reviewed native runtime and effective filesystem policy
+that allow the fixed interpreter to start while denying secrets, network and child
+creation; then run preflight on the exact policy, enforce or monitor resource limits,
+validate cleanup, and integrate a separately validated native report with the worker.
+Real-repository execution additionally requires a separately reviewed isolation boundary
+and explicit authorization. PostgreSQL persistence and production activation remain
+unverified.
+
+## P9.1 — VM execution prerequisites
+
+Read-only inventory found macOS 27.2.1, Apple M6 arm64, 16 GiB physical memory and roughly
+23 GiB free disk space. Apple's Virtualization framework and Swift 6.4.2 are installed;
+hardware hypervisor support was reported by the inventory. No `container`, Lima, QEMU,
+Tart or Multipass launcher was found on PATH. No verified ARM64 guest image, kernel or
+initramfs was found in the repository, RepoPilot's private toolchain directory, or the
+bounded `/Users/Shared` inspection. These searches do not prove that no image exists
+elsewhere. A read-only Swift query reported `VZVirtualMachine.isSupported=false` in the
+managed tool environment; sandbox and entitlement effects were not isolated, so that is
+not a host-wide availability claim.
+
+No guest was started. Guest network, mounts, resource limits, serial channel, cleanup and
+host credential isolation were therefore not empirically verified. No baseline or patched
+fixture ran and no before/after comparison was produced. The intended trusted-fixture
+policy calls for no host shares, credentials, network devices or host sockets, private
+disposable storage, at most 2 GiB RAM, bounded CPU, time and output, and request-bound,
+size-limited fixture and result transfer. Effective configuration inspection and guest
+canaries are required; a requested configuration alone is insufficient.
+
+The current non-executing VM contract cannot start or attest a VM. It requires an
+independently provisioned, hash-verified ARM64 guest and a reviewed launcher with the
+necessary Apple virtualization entitlement. Provisioning downloads or installation were
+outside P9.1 authorization. The existing Docker and macOS isolation gates, worker behavior,
+normal services, frontend and normal database were unchanged. PostgreSQL persistence,
+real-repository execution and production activation remain unverified.
+
+The VM contract pins the existing two synthetic fixture identities, constructs bounded
+nonce-bound input containing the verified baseline, patched bytes and fixed test, and
+checks size, duplicate JSON keys, nonce and request digest on an untrusted response.
+This parser returns untrusted statuses only: it cannot attest a guest or create a
+completed proposal result. Requested policy rejects nonempty networks, host shares and
+sockets and fixes two CPUs, 2 GiB RAM, a ten-second timeout and 4 KiB output. None of
+these requested controls has been enforced in a guest. No VM driver, guest image,
+preflight, worker integration or resource cleanup implementation is present.
+
+The focused offline selection reported **138 passed, 0 failed, 0 skipped, 5 deselected**
+and one pytest `cache_dir` warning. This includes 15 VM contract cases and 9 native
+registry cases; tests exercise locally prepared data and fabricated responses, not a VM.
+The remaining selection exercises existing patch and authorization contracts, including
+SQLite-backed cases. Actual Docker execution and PostgreSQL cases were deselected. Ruff
+and `git diff --check` passed. Actual guest tests executed: **zero**. No temporary VM
+resources were created, so no VM cleanup was required.
+
+## P9 final — trusted host arithmetic demonstration
+
+Under explicit narrow authorization, `evaluation/trusted_host_arithmetic.py` ran only the
+fixed synthetic arithmetic source and `assert add(2, 3) == 5` in fresh temporary workspaces.
+This is direct host execution, not a sandbox or an application worker provider. The runner
+verifies exact bytes and hashes, uses the retained P8 patch, validates the diff, stages a
+separate patched copy, and invokes the existing Python interpreter with `-I -S -B`, a
+minimal environment, no shell, bounded output and a ten-second timeout. It verifies
+workspace contents and cleanup. It does not accept real repositories or model commands.
+
+Four actual child processes ran. The original source produced assertion failure, exit 1,
+in 24 ms; the P8 patched source passed, exit 0, in 12 ms. Existing `compare` returned
+`BASELINE_FAILED_PATCH_PASSED`. A separate unchanged-good control ran the exact same
+assertion twice, passed with exit 0 in 11 and 10 ms, and returned `BOTH_PASSED`; that
+control does not establish a repair. Both workspace pairs were removed. The test source
+had no imports or file, process or network operations.
+
+Original SHA-256: `9445c47952abb8a7fc5d4a905d55b5be05771df1d69362ec597f9a50f7ede40d`.
+Patched SHA-256: `b414e3e8a1cc84d091471727544c353f60db59fc2bea10ee562ece77410915be`.
+P8 diff SHA-256: `8d74d6e35955c7e3c7068fc709b09b4d59b2b4efcd6f17076d9b032e159150e7`.
+Assertion SHA-256: `a6494aeead1e3538048fb31199d96215cf5d03ec0dd9a6462973f73d2c81aaff`.
+The sanitized, owner-only execution record is retained at
+`/Users/roshan/Library/Application Support/RepoPilot/toolchains/p9-final-39f65ce2a574/results.json`.
+
+The genuine result has `sandbox_used=false`. The existing comparison and JSON serialization
+represent it, but the application `verify_saved` completed-result path requires the Docker
+sandbox-specific report. A test with this actual report confirmed rejection and a proposal
+API 409. The unchanged frontend likewise requires `sandbox_used=true` for completed test
+results. Consequently existing production service and frontend contracts do not accept this
+host report; the full P9 final acceptance condition is incomplete. The runner is not wired
+to application requests and does not weaken those checks.
+
+Selected offline regression: **149 passed, 0 failed, 0 skipped, 6 deselected**, plus the
+actual-report API contract test: **1 passed, 0 failed, 0 skipped**. The six deselections
+include Docker and PostgreSQL cases and the separately run actual-report test. Both runs
+issued one pytest `cache_dir` warning. Ruff and `git diff --check` passed. These tests
+did not rerun fixture code. No PostgreSQL, Docker, model inference, real source, service
+restart, application flag change, normal database or frontend modification occurred.
+Host settings do not enforce filesystem or network isolation. Real repositories require a
+separately reviewed execution boundary, authorization, and PostgreSQL verification.
+
+## P10 — application integration and source provenance (2026-11-15)
+
+### Changes
+
+P10 preserves the existing dirty working tree and adds forward source provenance. New
+complete-file metadata is created only by `collect_source` after the source tree size equals
+the fetched raw blob size, UTF-8 decoding succeeds without normalization, and SHA-256 is
+computed over those bytes. `publish_snapshot` reconstructs exact bytes from chunks and
+rejects a claimed complete-file record if metadata, byte length or digest disagrees. This
+preflight occurs before the old published snapshot is modified. Patch context checks the
+persisted identity again before exposing a `PinnedFileIdentity`. Legacy indexed files remain
+`UNKNOWN_COVERAGE`.
+
+Forward migration `0018_source_provenance.py` adds nullable length/encoding/normalization
+and a non-null coverage field with server default `UNKNOWN_COVERAGE`; no historical file is
+upgraded based on chunks. `alembic heads` reports `0018` as head. The existing legacy
+migration test applied the chain through `0018` to a temporary SQLite database and passed;
+this does not verify PostgreSQL behavior or schema drift.
+
+### Backend and API verification
+
+Focused command covered source collection and persistence, source coverage, structured
+edits, local provider contracts, static diff validation, proposal lifecycle, authenticated
+API behavior, investigation evidence/jobs, tenant/auth checks and trusted-demo/report
+contracts plus the SQLite legacy migration test and current migration-head guard. Result:
+**295 passed, 0 failed, 5 skipped, 0 deselected**. Four skips require PostgreSQL row
+locks/full-text search/locking; one requires disposable PostgreSQL. Application DB fixtures
+used in-memory SQLite; this is not evidence for PostgreSQL locking, migrations, constraints,
+transactions or concurrency. The retained P9 host report was read and validated by its
+contract test; no fixture ran again.
+
+A broader backend run, excluding `test_trusted_host_arithmetic.py` to avoid repeating the
+P9 execution, reported **1,171 passed, 20 failed, 64 skipped, 3 errors** before the final
+evaluation-harness revision allowlist fix. Failures were in optional multilingual parser
+fixtures, the synthetic supervised-Go parser, a vector test lacking NumPy, and the evaluation
+harness's stale `0017` revision allowlist (fixed afterward and covered by the focused
+migration-head guard). Three publication-identity setup errors also require the optional
+parser runtime. This broad result is not green; parser/vector dependencies were not installed
+during P10, and the full suite was not rerun after the final harness-only fix.
+
+Ruff passed on the changed Python implementation/test files. `git diff --check` passed.
+The source migration graph has a single head at `0018`.
+
+### Frontend verification
+
+The previously verified private Node runtime was used: Node `24.18.0`, npm `11.16.0`,
+within the declared Node range. Production build passed. TypeScript passed, ESLint passed,
+and the frontend suite reported **94 passed, 0 failed, 0 skipped**. No frontend source was
+changed for P10. A live browser run against the application was not performed, and no web,
+API, worker, PostgreSQL, Redis or Docker service was restarted.
+
+### PostgreSQL gate and service safety
+
+The Docker client could not reach its configured Docker Desktop daemon; the selected socket
+was absent. Read-only inspection also found no local `postgres`, `initdb`, `pg_ctl` or `psql`
+binary. Therefore no disposable PostgreSQL instance/container could be safely created or
+verified. Existing normal Compose container identities could not be enumerated while the
+daemon was unavailable. No migration was applied, and no normal database or service was
+connected to or changed. P10 PostgreSQL tests, migration 0018 upgrade, schema drift, row-lock
+behavior, outbox transactionality and concurrency remain blocked.
+
+### Product/security status
+
+The authenticated investigation-to-proposal path and worker contracts are covered by
+synthetic/offline tests with a deterministic or unavailable provider; P10 made no model
+call. Proposal and local-model provider defaults remain disabled, multilingual flags remain
+disabled, and production test completion still rejects any result with `sandbox_used=false`.
+The P9 trusted host arithmetic record remains separate and is not a production validation.
+Actual repository execution remains disabled pending the separate Linux KVM/Firecracker
+architecture described in [patch validation](patch-validation.md#p10-execution-architecture-decision)
+and its provisioning/security review.
+
+P10 verdict: **application integration partially verified; PostgreSQL and production
+execution gates remain open**. The immediate next operational action is to restore an
+already approved disposable PostgreSQL runtime, then run migration 0018, schema-drift and
+focused transaction/worker tests. Do not enable production patch proposals or execution
+based on this report.
+
+## P11 — disposable PostgreSQL integration (2026-11-15)
+
+P11 supersedes the P10 PostgreSQL-blocked status for disposable integration coverage. A
+private PostgreSQL 16.16 ARM64 runtime and pgvector 0.8.7 were provisioned without Docker,
+sudo, service registration, or an automatic cluster. The server ran unprivileged against a
+private P11 data directory and Unix socket, with TCP bound to numeric loopback and SCRAM
+required. Passwordless TCP was rejected. All migration and test targets were checked against
+the dedicated synthetic database marker; no normal database was accessed. See the concise
+[P11 record](p11-postgresql-verification.md) for artifact identities and limitations.
+
+The full chain reached Alembic `0018 (head)` on an empty disposable database; a fresh
+`alembic check` showed no drift. The legacy migration path through 0018, schema-local
+migration bookkeeping, source provenance schema, patch persistence and PostgreSQL worker
+contracts passed. Final focused migration/drift/proposal selection: **31 passed**. Additional
+actual PostgreSQL selections: pipeline **309 passed**, synthetic capture **50 passed**,
+token counting **81 passed**, provider-count integration **54 passed**. The broad PostgreSQL
+selection reported **1,200 passed, 1 failed, 6 skipped, 2 deselected**. Its one failure is
+the vector foundation case requiring optional NumPy, unavailable in the verified offline
+wheel cache; it was not skipped or hidden. A separate broad offline/SQLite selection had
+**1,203 passed, 1 failed, 53 skipped, 2 deselected**, with the same NumPy limitation. These
+selections are distinct and their counts are not additive.
+
+P11 corrected UTC normalization for aware datetimes used in token-count binding hashes
+and isolated Alembic version tables for migration tests. Ruff, offline lock consistency and
+`git diff --check` passed. P11 executed no repository source, generated patch or model
+inference. It did not rerun P8/P9 demonstrations. PostgreSQL-backed synthetic application
+integration is verified; the product is not production ready. Real-repository execution,
+live provider activation, production migration/release approval and the optional NumPy vector
+check remain outstanding. The frontend and normal services were preserved.
+
+## P12 — NumPy regression and backend completion (2026-11-16)
+
+### NumPy root cause and correction
+
+`test_coderank_cls_pooling_and_documented_graph_signature` failed with
+`ModuleNotFoundError: numpy`. NumPy was not undeclared or incompatible: `pyproject.toml`
+already lists it in the optional `local-embeddings` extra (`numpy>=2.3,<3`), and `uv.lock`
+pins the compatible Python 3.14 ARM64 wheel to **2.5.4**. The P11 test venv contained only
+the base/dev wheel set, not the optional inference extra; this unit test imported NumPy
+directly while adjacent ONNX-runtime tests correctly skip when their optional runtimes are
+absent.
+
+P12 downloaded only the locked `numpy-2.5.4-cp314-cp314-macosx_14_0_arm64.whl` from the
+configured Python package registry: **5,455,617 bytes**, SHA-256
+`956555e0603a4d38019ae6925711cb9dc43195c076a928accf7ea5d50bddfe53`, matching `uv.lock`.
+It was installed in the private disposable P12 Python 3.14.10 venv; `import numpy` reported
+2.5.4 and package checks found no dependency conflict. No project dependency declaration
+or lock pin changed. Vector-foundation tests on PostgreSQL: **13 passed, 2 skipped**; both
+skips require the uninstalled optional ONNX Runtime/tokenizers stack.
+
+### PostgreSQL and regression results
+
+P12 created a new private PostgreSQL 16.16 cluster and a unique synthetic database, using
+the retained P11 runtime and pgvector 0.8.7. The server was unprivileged, SCRAM-only for
+TCP, bound to `127.0.0.1` and a private Unix socket; an unauthenticated TCP attempt failed.
+The P12 target marker, database, role, port and data directory were checked before
+migrations/tests. Existing test harnesses enforce different database/role name patterns, so
+the same P12 database was renamed between the `5b2b`/`repopilot_fixture`, `5b1`/
+`capture_fixture`, and fixed synthetic-capture identities. These were labels for one
+disposable database in one cluster, not additional databases. No normal application
+database was connected.
+
+The empty database upgraded through Alembic **0018 (head)** and `alembic check` reported no
+new upgrade operations. The identity-guarded legacy upgrade and schema-drift selection
+reported **3 passed**; PostgreSQL synthetic capture reported **50 passed**. The final broad
+PostgreSQL backend selection reported **1,201 passed, 0 failed, 0 errors, 5 skipped,
+3 deselected**. It included auth/tenant, source provenance, indexing/retrieval, vector,
+investigation, patch provider/edit/diff validation, proposal, outbox/worker and API tests.
+The two ONNX/tokenizer integration cases skipped because those optional runtimes were not
+installed; two supervised-parser broker cases skipped because the reviewed disposable
+parser broker is not provisioned; one trusted-host-report presentation case skipped because
+the prior P9 report was deliberately not loaded into this suite. The three deselections were
+the two parameterized actual-fixture execution cases and the sandbox preflight case. The
+separately completed P9 host fixture was not rerun.
+
+An initial broad attempt used the migration harness's `5b1_checks` / `capture_fixture`
+identity. Existing fake-provider PostgreSQL tests explicitly require the separate
+`5b2b` / `repopilot_fixture` identity and failed closed with `approval_invalid`; the broad
+run was repeated against that required disposable identity and completed with the passing
+counts above. Dedicated migration/drift and capture suites then ran under their respective
+marker-checked database identities on the same isolated P12 cluster. No test failures were
+converted into skips.
+
+The disposable cluster/data/socket/credentials were removed after verification. The
+verified PostgreSQL runtime, private P12 venv and hash-verified NumPy wheel/manifest were
+retained. `uv lock --check --offline`, Ruff, `uv pip check` and `git diff --check` passed. P12
+made **zero model calls and zero source executions**. No frontend files or normal services
+were modified. Production execution remains disabled; the Firecracker host and independent
+security review are still required. See [P12 execution-host specification](p12-execution-host-prerequisite.md).
+
+
+## P13 — disposable running application (2026-11-16)
+
+Synthetic API, PostgreSQL, outbox/worker functions and review persistence were exercised with a fixture provider. The WebKit desktop display check passed after the temporary standalone assets were copied; mobile was not verified. Redis/Celery delivery was unavailable and the readiness check was false, so full running-stack integration remains incomplete. PostgreSQL selection: 78 passed; frontend: 94 passed; no model inference or patch execution. See the [P13 verification record](p13-application-workflow-verification.md) for boundaries, cleanup and results.
+
+
+## P14 — real Redis/Celery application workflow (2026-11-16)
+
+A disposable Redis broker and actual Celery solo worker processed the synthetic application workflow via the real PostgreSQL outbox and dispatcher. The statically validated proposal and authenticated review persisted. Broker outage recovery, duplicate delivery, and late delivery after queued cancellation were observed. Three measured browser viewports passed; active-worker crash recovery and several live negative scenarios remain unverified. Focused PostgreSQL tests: 231 passed; frontend tests: 94 passed. See the [P14 verification record](p14-redis-celery-integration.md) for exact boundaries and results.
+
+
+## P15 — local reliability (2026-11-16)
+
+An actual synthetic in-flight cancellation and killed-worker recovery after test-induced lease expiry passed. Expired worker errors now require a live lease; worker-aware readiness and a proposal-detail error-race fix were added. PostgreSQL selection: 243 passed; frontend: 95 passed. A live superseded-owner race and several live HTTP/browser failure cases remain unverified. See the [P15 reliability record](p15-reliability-verification.md) for exact evidence and limitations.
+
+
+## P16 — local reliability and security (2026-11-16)
+
+Two actual Celery workers exercised natural test-configured lease expiry and fenced late success and error; live synthetic tenant, source and provider checks also passed. The readiness response now explicitly identifies dispatcher health as unchecked. PostgreSQL selection: 246 passed; frontend: 96 passed. The live two-worker harness was temporary, browser network failure used interception, and production execution remains blocked. See [P16 local reliability closure](p16-local-reliability-closure.md).
+
+
+## P17 — local closure and execution-host handoff (2026-11-16)
+
+Live synthetic pre-acceptance tampering was rejected before provider invocation; contradictory COMPLETE_FILE provenance now fails closed and stale snapshot/evidence classification was corrected. The retained guarded opt-in test exercised two real Celery workers and passed. Dispatcher progress remains not_checked; readiness returns sanitized dependency reasons. PostgreSQL selection: 259 passed. See [P17 local closure and handoff](p17-local-closure-and-execution-handoff.md) for exact evidence, CI prerequisites and the Linux KVM/Firecracker decision.
+
+### P18 — proposal-only product verification
+
+A disposable PostgreSQL/Redis/Celery-backed application, with a deterministic synthetic
+provider and synthetic GitHub responses, generated a statically validated proposal. The
+authenticated API exported the exact 133 UTF-8 bytes with SHA-256
+`8d74d6e35955c7e3c7068fc709b09b4d59b2b4efcd6f17076d9b032e159150e7`; an
+`approved_for_review` decision persisted and the same patch remained exportable. Live
+requests rejected anonymous and cross-tenant access, wrong digest, source and snapshot
+tampering, unknown full-file identity, an altered stored patch digest, unvalidated and
+rejected proposals, invalid review input, missing proposals and invalid sessions. These
+checks do not establish new inference or real GitHub behavior.
+
+The final in-process backend selection passed 309 tests, with 3 skipped and no failures;
+it included 15 export tests. The frontend suite passed 99 tests, with no failures or skips.
+TypeScript, ESLint, the Node 24 production build, Ruff, offline lock verification and
+`git diff --check` passed. The private frontend build warned about tracing symlinked
+dependencies outside the copy; no packages were downloaded. The same focused contracts ran against the disposable PostgreSQL instance: 259 passed
+in the main selection and 15 export tests passed separately, with no failures or skips.
+WebKit rendered the live proposal and an intercepted browser download produced a Blob
+with the canonical SHA-256; the OS save dialog and OS clipboard were not exercised. The
+clipboard gesture and exact-byte handling were covered by a unit test. The three in-process
+skips required PostgreSQL row locking or full-text search, and were covered in the
+PostgreSQL selection. Pytest warned because its cache plugin was disabled.
+
+Export requires current verified complete-file identity and the digest-bound canonical
+diff. Legacy proposals can be inspected, but require a static recheck if the patch digest is
+missing and verified reindexing if complete source identity is unavailable. Approval is
+only for further human review; patch application, execution and testing remain manual.
+No new inference or generated source execution occurred, no production flags or normal
+services were changed, and production sandbox enforcement remains intact. See
+[P18 proposal-only product](p18-proposal-only-product.md).
+
+### P18.1 — native download and clipboard verification
+
+An isolated WebKit test used a native mouse event on the actual proposal Download button
+(`isTrusted=true`). `WKDownloadDelegate` saved the browser-initiated file to a private
+temporary directory. Its safe `.patch` filename, 133-byte size, exact equality to the
+independent synthetic fixture and SHA-256
+`8d74d6e35955c7e3c7068fc709b09b4d59b2b4efcd6f17076d9b032e159150e7` passed. The
+proposal and export responses in this browser test were synthetic mocks; the existing
+application authorization and exact-byte API checks were tested separately. This result
+supersedes P18's earlier limitation that only an intercepted browser Blob was verified.
+
+No isolated native system clipboard was established. The system clipboard was not read,
+replaced, cleared or restored. Mocked tests cover clipboard gesture-time initiation,
+verified bytes and permission denial; download failures and Blob URL cleanup are also
+covered. The WebKit harness also removed its private files after a forced digest mismatch
+and after a bounded timeout from an invalid download destination. These tests do not
+establish a native clipboard write. If the user later chooses to replace their clipboard, an optional manual acceptance check is to click Copy on a
+synthetic proposal, paste into a new UTF-8 text file without editing it, and compare that
+file's bytes and SHA-256 with the downloaded patch.
+
+The frontend selection passed 102 tests with no failures or skips; TypeScript, ESLint and
+the Node 24 production build passed. The private-copy build warned that 27 traced files were outside the build root
+because existing dependencies were symlinked. The focused in-process backend
+security selection passed 126 tests with three PostgreSQL-only skips and no failures; it
+covered authorization, stale source, hashes and rejected proposals. These are not new
+PostgreSQL, model-inference or execution results. Temporary downloads and test processes
+were removed. Automated real-repository execution remains disabled, and real-source use
+and production release require separate authorization and security review.
+
+P18.1 changed `apps/web/tests/patch-download.browser.swift`,
+`apps/web/tests/patch-proposals.test.mjs`, and the three documentation records
+`docs/p18-proposal-only-product.md`, `docs/verification.md`, and
+`docs/repopilot-2-assessment.md`. No production application code changed. The opt-in
+WebKit harness can be run with `swift apps/web/tests/patch-download.browser.swift` after
+starting an isolated, test-only Next.js preview on `127.0.0.1:3817`; it supplies synthetic
+application API responses and requires a macOS GUI session. It does not access the
+clipboard or establish real API authorization.
+
+## P19.1 — upstream issue and partial snapshot
+
+A disposable application investigation bound the verified upstream issue to the
+pinned fork and persisted job-scoped partial-snapshot evidence in PostgreSQL. A
+private mock-transport capture was prepared with no inference. Scoped patch and report
+generation are fail-closed: durable exact-hash single-use approval and restoration of
+the investigation identities remain unverified. The separate migration, regression
+and real-data boundaries are recorded in [P19.1](p19-1-upstream-issue-and-partial-snapshot.md).
+
+## P19.2 — durable approval work
+
+The P19.2 internal ledger, guarded transport and checkpoint validation/restoration helper
+were added without enabling scoped model calls. They are not an approval-ready invocation
+path: shared authority binding, authenticated human approval, real worker integration,
+independent daemon/egress checks and end-to-end restoration/replay verification remain
+open. The prior request is unapproved; no inference or source execution occurred. See
+[P19.2 durable inference approval](p19-2-durable-inference-approval.md).
+
+
+### Commercial PR review development
+
+See [commercial-mvp-development.md](commercial-mvp-development.md) for the limited
+deterministic review scope, source identity checks, synthetic rule evaluation and release
+gates. The reviewer is disabled by default. In this run the focused backend selection
+passed 369 tests with one PostgreSQL-only row-lock test skipped; frontend unit/contract
+tests passed 114. These are not evidence of AI review quality or production readiness.
+
+
+### Public Python PR follow-up
+
+The read-only analyzer verified four Python files of encode/httpx#3690 at pinned base and
+head commits; its single narrow rule found nothing. A separate disposable PostgreSQL
+application attempt failed after GitHub returned anonymous rate-limit responses. No live
+end-to-end success is claimed. Per-client immutable-tree caching was added; 61 focused
+source/PR tests passed. Details are in [commercial-mvp-development.md](commercial-mvp-development.md).
+
+
+### Commercial PR workflow follow-up
+
+The opt-in synthetic PR test passed through real disposable PostgreSQL, Redis, a
+dispatcher and Celery, including duplicate delivery and database-backed feedback
+reads. GitHub fetch failures now fail the review rather than becoming completed
+partial results. The real browser journey and authenticated GitHub access remain
+unverified; see [commercial-pr-review-live-workflow.md](commercial-pr-review-live-workflow.md).
+
+
+### Offline PR browser follow-up
+
+The previously open browser gap has a scoped offline regression: real HTTPX data
+replayed through the disposable application and appeared in WebKit; an original
+synthetic finding and feedback survived reload. This does not establish authenticated
+live GitHub access, durable retry or production readiness. See
+[commercial-pr-review-browser-e2e.md](commercial-pr-review-browser-e2e.md).
+
+
+### GitHub and review-quality follow-up
+
+PR requests now persist verified same-repository base/head identities before enqueue,
+and workers reject changed or unpinned identities. Bounded retries cover server and
+network failures only. Live installation-token authentication, fork heads, rate-limit
+retry, safe TypeScript analysis and independent quality evaluation remain open. See
+[commercial-github-and-review-quality.md](commercial-github-and-review-quality.md).
+
+
+## Commercial beta foundation follow-up
+
+An opt-in installation-token path and migration 0021 rate-limit scheduling were
+verified with mocked GitHub, disposable PostgreSQL and real Redis/Celery. A
+fixture-backed desktop browser regression passed. Live GitHub installation access,
+fork-head review, TypeScript safety and independent quality labels remain open. A
+separate inference-evaluation harness test has a conflicting pre-existing 0020
+allowlist expectation; it was not suppressed. Exact counts and limitations are in
+[commercial-beta-foundation.md](commercial-beta-foundation.md).
+
+
+## Commercial beta gate-closure follow-up
+
+The synthetic evaluation harness now tests its reviewed 0020 schema rather than
+assuming 0021 is allowed. PR workers reauthorize before logical GitHub source reads.
+Disposable PostgreSQL/Redis/Celery and synthetic WebKit regressions passed; live
+installation access and other gates remain open. Exact results and limitations:
+[commercial-beta-gate-closure.md](commercial-beta-gate-closure.md).
+
+
+## Commercial alpha follow-up
+
+Migration 0022 and a synthetic public-fork review were verified with disposable
+PostgreSQL, Redis/Celery and WebKit. No live GitHub installation, TypeScript
+scanner or independent accuracy result is claimed. Details and exact counts are in
+[commercial-alpha-product-milestone.md](commercial-alpha-product-milestone.md).
+
+
+## TypeScript and real-fork follow-up
+
+An opt-in macOS TypeScript review passed synthetic parser, database, broker and
+desktop WebKit checks. The requested public fork metadata was retrieved read-only,
+but no authenticated application review was performed. Exact results and safety
+limits: [commercial-alpha-typescript-and-live-fork.md](commercial-alpha-typescript-and-live-fork.md).
+
+
+## First developer pilot follow-up
+
+[MOCKED-GITHUB] Public PR authorization now checks current read-only installation
+permissions and GitHub clients ignore inherited proxy settings. Local negative tests
+passed; no live installation was configured.
+
+[REAL-BROWSER] A synthetic TypeScript review and feedback survived refresh, and
+simulated revocation cleared displayed evidence. Exact evidence classes, counts,
+remaining risks and setup guidance are in
+[commercial-first-developer-pilot.md](commercial-first-developer-pilot.md).

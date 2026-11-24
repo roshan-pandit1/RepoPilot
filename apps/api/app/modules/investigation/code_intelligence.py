@@ -7,7 +7,7 @@ import re
 import time
 from collections import Counter
 
-from app.modules.ingestion.code_selection import eligible_python_path
+from app.modules.ingestion.code_selection import eligible_python_path, eligible_source_path
 from app.modules.investigation.query_builder import _STOP, _TOKEN, _UNTRUSTED_INSTRUCTION
 
 MAX_CHUNKS = 20
@@ -142,7 +142,8 @@ def analyze(title: str, body: str, evidence: list[dict]) -> dict:
             limits.append('time_budget')
             break
         if len(item['path']) > 512 or not eligible_python_path(item['path']):
-            limits.append('invalid_source_path')
+            limits.append('unsupported_non_python_evidence' if len(item['path']) <= 512
+                          and eligible_source_path(item['path']) else 'invalid_source_path')
             continue
         source = item['source']
         size = len(source.encode('utf-8'))
@@ -344,7 +345,8 @@ def analyze(title: str, body: str, evidence: list[dict]) -> dict:
     return {'version': 'cie-v1', 'label': 'RULE-BASED ANALYSIS — POSSIBLE CAUSES, NOT VERIFIED',
             'signals': signals, 'nodes': nodes, 'edges': edges, 'candidate_ranking': ranked,
             'findings': findings[:10], 'abstained': not findings,
-            'limitations': ['Only existing evidence chunks are analyzed; partial Python chunks may not parse.',
+            'limitations': ['Only Python evidence is analyzed; other languages are not analyzed.',
+                            'Only existing evidence chunks are analyzed; partial Python chunks may not parse.',
                             'Static and potential relationships do not prove runtime behavior.',
                             'Analysis is bounded and does not reproduce the issue.', *sorted(set(limits))],
             'bytes_parsed': used}

@@ -5,10 +5,17 @@ export type IssueContext = { repository_id: string; issue_id: string; number: nu
   comments: { id: string; body: string; created_at: string; updated_at: string; truncated: boolean }[];
   created_at: string; updated_at: string; retrieved_at: string; url: string;
   truncation: Record<"title" | "body" | "labels" | "comments" | "total", boolean> };
+export type IssueOrigin = { repository_id: string; repository: string; issue_id: string; issue_number: number;
+  url: string; relationship: "direct_public_parent"; verified_at: string };
+export type InventoryFile = { path: string; git_blob_sha1: string; byte_length: number; sha256: string;
+  encoding: "utf-8"; normalization: "identity"; coverage: "COMPLETE_FILE" };
+export type SnapshotInventory = { classification: "PARTIAL_INVENTORY" | "COMPLETE_INVENTORY" | "UNKNOWN_INVENTORY";
+  manifest_sha256: string | null; files: InventoryFile[] };
 export type JobState = "queued" | "running" | "completed" | "failed" | "cancelled";
 export type Job = { job_id: string; issue_id: string; issue_number: number; status: JobState; attempts: number;
   operation: "code_evidence" | "mock_orchestration"; snapshot_id: string | null; commit_sha: string | null; retrieval_status: string;
-  evidence_count: number; error_code: string | null; snapshot_partial: boolean | null };
+  evidence_count: number; error_code: string | null; snapshot_partial: boolean | null;
+  issue_origin?: IssueOrigin | null; snapshot_inventory?: SnapshotInventory | null };
 export type EvidenceItem = { chunk_id: string; rank: number; query_id: string; query_rank: number; method: string;
   path: string; symbol: string | null; start_line: number; end_line: number; commit_sha: string; url: string;
   snippet: string | null; snippet_truncated: boolean; snippet_unavailable: boolean };
@@ -62,7 +69,36 @@ export function safeIssueUrl(url: string, repository: Repository, issue: number)
   return url === `https://github.com/${parts.map(encodeURIComponent).join("/")}/issues/${issue}` ? url : null;
 }
 
-function issueContext(value: unknown, repo: Repository, expected: number): IssueContext {
+export function validIssueOrigin(value: unknown, issue?: number): value is IssueOrigin {
+  if (!object(value) || !text(value.repository_id, 20) || !/^[1-9][0-9]*$/.test(value.repository_id) ||
+      !text(value.issue_id, 20) || !/^[1-9][0-9]*$/.test(value.issue_id) ||
+      !number(value.issue_number, 1, 2147483647) || (issue !== undefined && value.issue_number !== issue) ||
+      !text(value.repository, 250) || !/^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/.test(value.repository) ||
+      value.repository.split("/").some(part => part === "." || part === "..") ||
+      !text(value.url, 2048) || value.relationship !== "direct_public_parent" || !text(value.verified_at, 64)) return false;
+  return safeIssueUrl(value.url, { id: value.repository_id, full_name: value.repository, enabled: true }, value.issue_number) !== null;
+}
+
+function validInventory(value: unknown, partial: unknown): value is SnapshotInventory {
+  if (!object(value) || !["PARTIAL_INVENTORY", "COMPLETE_INVENTORY", "UNKNOWN_INVENTORY"].includes(String(value.classification)) ||
+      !Array.isArray(value.files) || value.files.length > 5 ||
+      !(value.manifest_sha256 === null || (typeof value.manifest_sha256 === "string" && /^[0-9a-f]{64}$/.test(value.manifest_sha256)))) return false;
+  if (value.classification === "UNKNOWN_INVENTORY") return value.manifest_sha256 === null && value.files.length === 0;
+  if (!value.manifest_sha256 || !value.files.length || (value.classification === "PARTIAL_INVENTORY" && partial !== true)) return false;
+  const paths = new Set<string>();
+  for (const file of value.files) {
+    if (!object(file) || !text(file.path, 512) || !file.path || file.path.startsWith("/") || file.path.includes("\\") ||
+        file.path.includes("\0") || file.path.split("/").some(part => !part || part === "." || part === "..") || paths.has(file.path) ||
+        typeof file.git_blob_sha1 !== "string" || !/^[0-9a-f]{40}$/.test(file.git_blob_sha1) ||
+        typeof file.sha256 !== "string" || !/^[0-9a-f]{64}$/.test(file.sha256) ||
+        !number(file.byte_length, 1, 100000) || file.encoding !== "utf-8" || file.normalization !== "identity" ||
+        file.coverage !== "COMPLETE_FILE") return false;
+    paths.add(file.path);
+  }
+  return true;
+}
+
+function issueContext(value: unknown, repo: Repository, expected: number, origin?: IssueOrigin): IssueContext {
   if (!object(value) || value.repository_id !== repo.id || !text(value.issue_id, 20) || !/^[0-9]+$/.test(value.issue_id) ||
       value.number !== expected || !text(value.title, 1024) || !text(value.body, 50000) ||
       (value.state !== "open" && value.state !== "closed") || !strings(value.labels, 30) ||
@@ -73,11 +109,13 @@ function issueContext(value: unknown, repo: Repository, expected: number): Issue
       !["title", "body", "labels", "comments", "total"].every(k => typeof (value.truncation as Record<string, unknown>)[k] === "boolean")) {
     throw new Error("Invalid issue context response.");
   }
-  if (!safeIssueUrl(value.url, repo, expected)) throw new Error("Invalid issue context response.");
+  const issueRepo = origin ? { id: origin.repository_id, full_name: origin.repository, enabled: true } : repo;
+  if (!safeIssueUrl(value.url, issueRepo, expected) || (origin && (value.issue_id !== origin.issue_id || value.url !== origin.url)))
+    throw new Error("Invalid issue context response.");
   return value as IssueContext;
 }
 
-function jobResponse(value: unknown, id: string, context: IssueContext): Job {
+function jobResponse(value: unknown, id: string, context: IssueContext, expectedOrigin: IssueOrigin | null): Job {
   if (!object(value) || value.job_id !== id || value.issue_number !== context.number || value.issue_id !== context.issue_id ||
       !text(value.status, 20) || !states.has(value.status) || !number(value.attempts, 0, 100) ||
       !text(value.retrieval_status, 40) || !number(value.evidence_count, 0, 30) ||
@@ -88,6 +126,19 @@ function jobResponse(value: unknown, id: string, context: IssueContext): Job {
         value.evidence_count !== 0 || value.snapshot_partial !== null) throw new Error("Invalid investigation status response.");
   } else if (value.operation !== "code_evidence" || !validId(value.snapshot_id) ||
       !text(value.commit_sha, 40) || !commit.test(value.commit_sha)) throw new Error("Invalid investigation status response.");
+  if (expectedOrigin) {
+    if (!validIssueOrigin(value.issue_origin, context.number) || value.issue_origin.issue_id !== context.issue_id ||
+        value.issue_origin.url !== context.url || value.issue_origin.repository_id !== expectedOrigin.repository_id ||
+        value.issue_origin.repository !== expectedOrigin.repository || value.issue_origin.url !== expectedOrigin.url ||
+        value.issue_origin.issue_id !== expectedOrigin.issue_id || value.issue_origin.relationship !== expectedOrigin.relationship ||
+        value.issue_origin.verified_at !== expectedOrigin.verified_at)
+      throw new Error("Invalid investigation status response.");
+  } else if (value.issue_origin !== undefined && value.issue_origin !== null) {
+    throw new Error("Invalid investigation status response.");
+  }
+  if (value.snapshot_inventory !== undefined && value.snapshot_inventory !== null &&
+      (!validInventory(value.snapshot_inventory, value.snapshot_partial) || value.operation !== "code_evidence"))
+    throw new Error("Invalid investigation status response.");
   return value as Job;
 }
 
@@ -169,6 +220,7 @@ export class InvestigationController {
   private jobPolls = 0;
   private reportPolls = 0;
   private accessChecks = 0;
+  private origin: IssueOrigin | null = null;
   constructor(private repo: Repository, private fetcher: Fetcher = (url, options) => globalThis.fetch(url, options),
     private timer: Clock = clock) {}
   subscribe(listener: (value: InvestigationView) => void) { this.listeners.add(listener); return () => { this.listeners.delete(listener); }; }
@@ -176,7 +228,7 @@ export class InvestigationController {
   private cancel() { this.epoch++; this.controllers.forEach(c => c.abort()); this.controllers.clear();
     this.timers.forEach(t => this.timer.clearTimeout(t)); this.timers.clear(); this.scheduled = null; this.submitting = false; }
   dispose() { this.cancel(); this.disposed = true; this.listeners.clear(); }
-  clear() { this.cancel(); this.update(initial()); }
+  clear() { this.cancel(); this.origin = null; this.update(initial()); }
   hideResults() {
     this.hidden = true;
     // Do not abort an accepted-or-pending POST: its outcome may already be durable.
@@ -219,7 +271,7 @@ export class InvestigationController {
     this.cancel(); this.update({ ...initial(), acceptedJobId, error: message });
   }
   async loadIssue(raw: string) {
-    this.cancel(); const epoch = this.epoch; this.update({ ...initial(), busy: "issue" });
+    this.origin = null; this.cancel(); const epoch = this.epoch; this.update({ ...initial(), busy: "issue" });
     const n = issueNumber(raw);
     if (!n) { this.update({ busy: "", error: "Enter a valid GitHub issue number (1–2147483647)." }); return; }
     try {
@@ -250,8 +302,18 @@ export class InvestigationController {
       reportMissing: false, acceptedJobId: id, busy: "job", error: "", notice: "" });
     await this.loadJob(id, epoch);
   }
-  async openHistory(issue: number, id: string) {
+  async openHistory(issue: number, id: string, origin?: IssueOrigin | null) {
     if (!validId(id) || !number(issue, 1, 2147483647)) return;
+    if (origin) {
+      if (!validIssueOrigin(origin, issue)) { this.update({ error: "Invalid issue context response." }); return; }
+      this.cancel(); this.origin = origin; const epoch = this.epoch; this.update({ ...initial(), busy: "issue" });
+      try {
+        const value = await this.request(`/api/investigations/${this.repo.id}/jobs/${id}/upstream-context`);
+        const context = issueContext(value, this.repo, issue, origin);
+        if (epoch === this.epoch) { this.update({ context, busy: "", error: "" }); await this.openJob(id); }
+      } catch (error) { this.failed(error, epoch); }
+      return;
+    }
     const pending = this.loadIssue(String(issue));
     const epoch = this.epoch;
     await pending;
@@ -263,7 +325,7 @@ export class InvestigationController {
     this.update({ busy: "job" });
     try {
       const value = await this.request(`/api/investigations/${this.repo.id}/jobs/${id}`);
-      const job = jobResponse(value, id, context);
+      const job = jobResponse(value, id, context, this.origin);
       if (epoch !== this.epoch) return;
       this.update({ job, busy: "", error: "", notice: "" });
       if (this.hidden) {

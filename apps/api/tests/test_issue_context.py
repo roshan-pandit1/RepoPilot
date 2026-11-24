@@ -105,7 +105,7 @@ def test_bounded_http_requests_and_failures():
         return httpx.Response(200, json={})
     client = IssueContextClient(5, transport=httpx.MockTransport(handler))
     for path, expected in [('/missing', 'github_not_found'), ('/rate', 'github_rate_limited'),
-                           ('/large', 'github_response_limit'), ('/timeout', 'github_request_failed')]:
+                           ('/large', 'github_response_limit'), ('/timeout', 'github_temporarily_unavailable')]:
         with pytest.raises(GitHubFailure, match=expected):
             client._get(path, 'test-token')
     assert client._get('/ok', 'test-token') == {}

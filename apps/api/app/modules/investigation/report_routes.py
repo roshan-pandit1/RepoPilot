@@ -154,6 +154,8 @@ def request_report(request: Request, repository_id: int = Path(gt=0, lt=2**63), 
             or repo.installation_id != installation_id or repo.full_name != name):
         raise HTTPException(404, 'Repository not found')
     parent, snapshot = parent_and_snapshot(db, repository_id, job_id, identity, name, lock_snapshot=True)
+    if parent.issue_origin_repository_id is not None or snapshot.inventory_coverage == 'PARTIAL_INVENTORY':
+        raise HTTPException(409, 'Scoped inference approval is not available')
     try:
         evidence_inputs(db, parent, snapshot)
     except ModelError:

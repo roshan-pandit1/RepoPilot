@@ -503,6 +503,33 @@ def test_stale_worker_cannot_publish_even_when_search_completes(client, factory,
         assert db.scalar(select(InvestigationEvidence)) is None
 
 
+
+def test_expired_worker_failure_cannot_cancel_or_consume_outbox(client, factory, github_auth, monkeypatch):
+    from datetime import timedelta
+    from app.modules.investigation.retrieval import InvalidEvidence
+
+    _, chunk = context(client, factory, github_auth)
+    stub_retrieval(monkeypatch, factory, chunk)
+    job_id = submit(client)
+
+    def expire_then_fail():
+        with factory.begin() as db:
+            job = db.get(InvestigationJob, job_id)
+            job.lease_expires_at = now() - timedelta(seconds=1)
+        raise InvalidEvidence("issue_changed")
+
+    process_investigation(job_id, factory, github_auth, expire_then_fail)
+    with factory() as db:
+        job = db.get(InvestigationJob, job_id)
+        assert job.status == "running" and job.error_code is None
+        assert db.get(InvestigationOutbox, job_id).status == "pending"
+        assert db.scalar(select(InvestigationEvidence)) is None
+    process_investigation(job_id, factory, github_auth)
+    with factory() as db:
+        assert db.get(InvestigationJob, job_id).status == "completed"
+        assert db.get(InvestigationOutbox, job_id).status == "processed"
+
+
 def test_issue_text_and_tokens_absent_from_job_and_lifecycle_logs(client, factory, github_auth, monkeypatch, caplog):
     _, chunk = context(client, factory, github_auth)
     stub_retrieval(monkeypatch, factory, chunk)

@@ -25,6 +25,9 @@ class EmbeddingProvider(Protocol):
     model: str
     version: str
     dimensions: int
+    revision: str
+    contract: str
+    normalization: str
     def embed(self, inputs: list[str]) -> EmbeddingBatch: ...
 
 
@@ -45,7 +48,8 @@ def validate_vectors(vectors: list, count: int, dimensions: int) -> list[list[fl
 
 
 class FakeEmbeddingProvider:
-    provider, model, version = "fake", "deterministic-hash", "1"
+    provider, model, version = "fake", "deterministic-hash", "2"
+    revision, contract, normalization = "1", hashlib.sha256(b"fake-hash-document-query-v1").hexdigest(), "none"
 
     def __init__(self, dimensions: int = 32):
         if not 1 <= dimensions <= 2000:
@@ -67,6 +71,7 @@ class FakeEmbeddingProvider:
 
 class OpenAIEmbeddingProvider:
     provider, version = "openai", "embeddings-v1"
+    revision, contract, normalization = "embeddings-v1", hashlib.sha256(b"openai-legacy-v1").hexdigest(), "none"
 
     def __init__(self, model: str, dimensions: int, api_key: str, *, allow_paid: bool = False,
                  cost_per_million: float | None = None, transport: httpx.BaseTransport | None = None,
@@ -128,4 +133,11 @@ def configured_provider() -> EmbeddingProvider:
     if config.embedding_provider == "openai":
         return OpenAIEmbeddingProvider(config.embedding_model, config.embedding_dimensions,
             config.embedding_api_key.get_secret_value(), allow_paid=config.embedding_allow_paid)
+    if config.embedding_provider == "local":
+        from app.modules.ingestion.local_embeddings import LocalEmbeddingProvider
+        return LocalEmbeddingProvider(model=config.embedding_model, dimensions=config.embedding_dimensions,
+            revision=config.embedding_local_revision, root=config.embedding_local_path,
+            model_sha256=config.embedding_local_model_sha256, tokenizer_sha256=config.embedding_local_tokenizer_sha256,
+            tokenizer_revision=config.embedding_local_tokenizer_revision or None,
+            enabled=config.embedding_local_enabled)
     raise EmbeddingError("embedding_provider_disabled")

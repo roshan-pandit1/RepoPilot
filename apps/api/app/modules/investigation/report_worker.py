@@ -67,6 +67,9 @@ def process_report(job_id: str, factory=None, github=None, model=None):
         installation = db.get(Installation, repo.installation_id) if repo else None
         parent = db.get(InvestigationJob, task.investigation_id)
         snapshot = db.get(CodeSnapshot, task.snapshot_id)
+        if (parent and parent.issue_origin_repository_id is not None) or (snapshot and snapshot.inventory_coverage == 'PARTIAL_INVENTORY'):
+            terminal(db, task, 'failed', 'scoped_inference_approval_required')
+            return
         if (not user or not repo or not repo.enabled or repo.tenant_id != task.tenant_id
                 or not installation or not installation.active or installation.tenant_id != task.tenant_id
                 or not parent or parent.user_id != task.user_id or parent.tenant_id != task.tenant_id
@@ -102,7 +105,8 @@ def process_report(job_id: str, factory=None, github=None, model=None):
     def fail(state, code):
         with factory.begin() as db:
             task = db.scalar(select(InvestigationReportJob).where(InvestigationReportJob.id == job_id).with_for_update())
-            if task and task.status == 'running' and task.lease_token == lease:
+            if (task and task.status == 'running' and task.lease_token == lease
+                    and task.lease_expires_at and utc(task.lease_expires_at) > now()):
                 if state == 'queued' and task.attempts >= 5:
                     state, code = 'failed', 'attempts_exhausted'
                 terminal(db, task, state, code)
@@ -128,10 +132,12 @@ def process_report(job_id: str, factory=None, github=None, model=None):
                 or not parent or parent.status != 'completed' or parent.operation != 'code_evidence'
                 or parent.user_id != identity.user_id or parent.tenant_id != identity.tenant_id
                 or parent.repository_id != repo_id or parent.snapshot_id != snapshot_id
+                or parent.issue_origin_repository_id is not None
                 or parent.snapshot_commit_sha != commit or parent.source_repository_name != repo_name
                 or parent.issue_id != issue_id or parent.issue_number != issue_number
                 or utc(parent.issue_updated_at) != updated
-                or not snapshot or not snapshot.published or snapshot.tenant_id != identity.tenant_id
+                or not snapshot or not snapshot.published or snapshot.inventory_coverage == 'PARTIAL_INVENTORY'
+                or snapshot.tenant_id != identity.tenant_id
                 or snapshot.repository_id != repo_id or snapshot.commit_sha != commit):
             raise ModelError('authorization_revoked')
         return parent, snapshot

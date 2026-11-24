@@ -1,0 +1,2 @@
+def lookup(records, tenant, item):
+    return records.get(item)

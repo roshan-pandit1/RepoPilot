@@ -1,0 +1,16 @@
+{
+  "case_id": "REPLACE",
+  "reviewer_reference": "REPLACE",
+  "defect": "uncertain",
+  "file": "REPLACE",
+  "start_line": null,
+  "end_line": null,
+  "category": null,
+  "severity_rationale": "",
+  "evidence_reason": "",
+  "actionability": "uncertain",
+  "false_positive_reason": "",
+  "independent": false,
+  "disagreement": "",
+  "adjudicator_reference": ""
+}

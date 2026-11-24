@@ -1,0 +1,3 @@
+export function Content({ value }: { value: string }) {
+  return <div dangerouslySetInnerHTML={{ __html: value }} />;
+}

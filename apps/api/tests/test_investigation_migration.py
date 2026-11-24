@@ -84,6 +84,7 @@ def test_postgres_legacy_job_survives_migration():
     admin = create_engine(url, hide_parameters=True)
     scoped_url = url.update_query_dict({'options': f'-csearch_path={schema},public'})
     env = {**os.environ, 'APP_ENV': 'test', 'DATABASE_URL': scoped_url.render_as_string(hide_password=False),
+           'ALEMBIC_VERSION_TABLE_SCHEMA': schema,
            'GITHUB_WEBHOOK_SECRET': 'fixture-' + 'x' * 40, 'DEMO_AUTH_ENABLED': 'false',
            'GITHUB_OAUTH_ENABLED': 'false', 'EMBEDDING_PROVIDER': 'disabled'}
     api = Path(__file__).resolve().parents[1]
@@ -135,9 +136,16 @@ def test_postgres_legacy_job_survives_migration():
             db.execute(text("INSERT INTO investigation_experiments(id,tenant_id,enabled,mode,provider,model,budget_microusd,investigation_budget_microusd,max_input_tokens,max_output_tokens,max_concurrent,max_requests,pricing_checked_at,expires_at,created_at) VALUES ('fixture-exp',1,true,'simulated','openai','fixture-model',10000000,6000000,1050000,2048,1,1,'2026-01-01','2030-01-01','2026-01-01')"))
             db.execute(text("INSERT INTO investigation_provider_selections(job_id,repository_id,tenant_id,experiment_id) VALUES ('report-job',20,1,'fixture-exp')"))
             db.execute(text("INSERT INTO investigation_token_counts(id,job_id,experiment_id,investigation_id,snapshot_id,repository_id,tenant_id,source_commit,fixture_id,mode,provider,model,account_sha256,project_sha256,generation_sha256,count_sha256,manifest_sha256,binding_sha256,pricing_policy,max_output_tokens,max_input_tokens,status,created_at,expires_at) VALUES ('sim-count','report-job','fixture-exp','v4c','snap',20,1,'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa','fixture','simulated','openai','fixture-model','account','project','generation','count','manifest','binding','fixture',2048,16384,'ready','2026-01-01','2030-01-01')"))
+            db.execute(text("INSERT INTO embedding_cache(id,repository_id,tenant_id,content_hash,provider,model,model_version,dimensions,vector,status,created_at) VALUES ('old-cache',20,1,'old-hash','fake','fixture','1',2,CAST('[1,0]' AS vector),'ready','2026-01-01')"))
+            db.execute(text("INSERT INTO chunk_embeddings(chunk_id,cache_id,repository_id,tenant_id) VALUES ('chunk','old-cache',20,1)"))
         subprocess.run([sys.executable, '-m', 'alembic', 'upgrade', 'head'], cwd=api, env=env,
                        capture_output=True, text=True, check=True)
         with scoped.connect() as db:
+            assert tuple(db.execute(text("SELECT indexing_mode,unsupported_count FROM code_snapshots WHERE id='snap'")).one()) == (None, None)
+            assert tuple(db.execute(text("SELECT language,parser_version,parser_status,import_ranges FROM indexed_files WHERE id='file'")).one()) == (None, None, None, None)
+            assert db.execute(text("SELECT symbol_kind FROM code_chunks WHERE id='chunk'")).scalar_one() is None
+            assert tuple(db.execute(text("SELECT provider,model_revision,representation_contract,normalization FROM embedding_cache WHERE id='old-cache'")).one()) == ('fake', None, None, None)
+            assert db.execute(text("SELECT chunk_fingerprint FROM chunk_embeddings WHERE chunk_id='chunk'")).scalar_one() is None
             assert tuple(db.execute(text("SELECT status,attempts FROM investigation_report_jobs WHERE id='report-job'")).one()) == ('completed', 1)
             assert tuple(db.execute(text("SELECT provider,model,snapshot_id FROM investigation_reports WHERE id='report'")).one()) == ('mock', 'deterministic-v1', 'snap')
             assert db.execute(text("SELECT payload FROM investigation_reports WHERE id='report'")).scalar_one()['summary'] == 'Legacy fixture'

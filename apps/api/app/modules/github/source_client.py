@@ -9,7 +9,7 @@ from urllib.parse import quote
 
 import httpx
 
-from app.modules.github.client import GitHubFailure
+from app.modules.github.client import GitHubFailure, github_http_failure
 
 _SHA = re.compile(r"[0-9a-f]{40}\Z")
 
@@ -26,6 +26,10 @@ class GitHubSourceClient:
         self.transport = transport
         self.deadline = time.monotonic() + max_seconds
         self._trees: dict[tuple[str, str], str] = {}
+        # Git trees are immutable. Keep a bounded per-client cache, scoped to the
+        # repository and a token fingerprint, so one review does not repeatedly
+        # spend its GitHub request budget walking the same directory trees.
+        self._tree_cache: dict[tuple[str, str, str], dict] = {}
 
     @staticmethod
     def _repo(full_name: str) -> str:
@@ -42,11 +46,11 @@ class GitHubSourceClient:
             raise GitHubFailure("github_time_budget_exceeded")
         self.remaining -= 1
         try:
-            with httpx.Client(timeout=10, follow_redirects=False, transport=self.transport) as client:
+            with httpx.Client(timeout=10, follow_redirects=False, transport=self.transport, trust_env=False) as client:
                 with client.stream("GET", "https://api.github.com" + path, params=params,
                                    headers={"Accept": "application/vnd.github+json",
                                             "Authorization": "Bearer " + token,
-                                            "X-GitHub-Api-Version": "2022-11-28"}) as response:
+                                            "X-GitHub-Api-Version": "2022-11-28", "User-Agent": "RepoPilot-ReadOnly/1"}) as response:
                     response.raise_for_status()
                     body = bytearray()
                     for chunk in response.iter_bytes():
@@ -60,10 +64,9 @@ class GitHubSourceClient:
                 raise ValueError("invalid response")
             return result
         except httpx.HTTPStatusError as exc:
-            if exc.response.status_code == 429 or (exc.response.status_code == 403 and
-                    exc.response.headers.get("x-ratelimit-remaining") == "0"):
-                raise GitHubFailure("github_rate_limited") from None
-            raise GitHubFailure("github_request_failed") from None
+            raise github_http_failure(exc.response.status_code, exc.response.headers) from None
+        except (httpx.TimeoutException, httpx.NetworkError):
+            raise GitHubFailure("github_temporarily_unavailable") from None
         except (httpx.HTTPError, ValueError, TypeError):
             raise GitHubFailure("github_request_failed") from None
 
@@ -89,6 +92,61 @@ class GitHubSourceClient:
             raise GitHubFailure("github_commit_not_resolved")
         return self._get(self._repo(full_name) + "/git/trees/" + tree, token,
                          params={"recursive": "1"})
+
+    def is_ancestor(self, token: str, full_name: str, commit_sha: str, head_sha: str) -> bool:
+        """Verify a pinned commit is in the explicitly resolved branch history."""
+        if not isinstance(commit_sha, str) or not _SHA.fullmatch(commit_sha) or not isinstance(head_sha, str) or not _SHA.fullmatch(head_sha):
+            raise GitHubFailure("github_commit_invalid")
+        if (full_name, commit_sha) not in self._trees or (full_name, head_sha) not in self._trees:
+            raise GitHubFailure("github_commit_not_resolved")
+        if commit_sha == head_sha:
+            return True
+        data = self._get(self._repo(full_name) + "/compare/" + commit_sha + "..." + head_sha, token)
+        base, merge = data.get("base_commit"), data.get("merge_base_commit")
+        return (isinstance(base, dict) and base.get("sha") == commit_sha and isinstance(merge, dict)
+                and merge.get("sha") == commit_sha and data.get("status") == "ahead"
+                and type(data.get("behind_by")) is int and data["behind_by"] == 0)
+
+    def tree_file(self, token: str, full_name: str, commit_sha: str, path: str) -> dict:
+        """Resolve one regular file through nonrecursive trees bound to a resolved commit."""
+        tree_sha = self._trees.get((full_name, commit_sha))
+        if not tree_sha:
+            raise GitHubFailure("github_commit_not_resolved")
+        if (not isinstance(path, str) or not path or len(path) > 512 or path.startswith("/")
+                or "\\" in path or "\x00" in path or any(x in {"", ".", ".."} for x in path.split("/"))
+                or len(path.split("/")) > 32):
+            raise GitHubFailure("github_path_invalid")
+        parts = path.split("/")
+        for index, part in enumerate(parts):
+            token_fingerprint = hashlib.sha256(token.encode("utf-8")).hexdigest()
+            cache_key = (full_name, tree_sha, token_fingerprint)
+            data = self._tree_cache.get(cache_key)
+            if data is None:
+                data = self._get(self._repo(full_name) + "/git/trees/" + tree_sha, token)
+            entries = data.get("tree")
+            if (data.get("sha") != tree_sha or data.get("truncated") is not False
+                    or not isinstance(entries, list) or len(entries) > 10000):
+                raise GitHubFailure("github_tree_invalid")
+            if cache_key not in self._tree_cache and len(self._tree_cache) < 16:
+                self._tree_cache[cache_key] = data
+            matches = [entry for entry in entries if isinstance(entry, dict) and entry.get("path") == part]
+            if len(matches) != 1:
+                raise GitHubFailure("github_path_unavailable")
+            entry = matches[0]
+            sha = entry.get("sha")
+            if not isinstance(sha, str) or not _SHA.fullmatch(sha):
+                raise GitHubFailure("github_tree_invalid")
+            if index < len(parts) - 1:
+                if entry.get("type") != "tree" or entry.get("mode") != "040000":
+                    raise GitHubFailure("github_path_unavailable")
+                tree_sha = sha
+            else:
+                size = entry.get("size")
+                if (entry.get("type") != "blob" or entry.get("mode") not in {"100644", "100755"}
+                        or type(size) is not int or not 0 <= size <= self.max_file_bytes):
+                    raise GitHubFailure("github_path_unavailable")
+                return {"path": path, "sha": sha, "size": size}
+        raise GitHubFailure("github_path_unavailable")
 
     def blob(self, token: str, full_name: str, sha: str, expected_size: int) -> bytes:
         if not _SHA.fullmatch(sha) or isinstance(expected_size, bool) or not 0 <= expected_size <= self.max_file_bytes:

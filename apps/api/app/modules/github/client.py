@@ -1,4 +1,5 @@
 """Narrow GitHub App user-token client, replaceable in tests."""
+from datetime import datetime, timedelta, timezone
 from typing import Protocol
 from urllib.parse import quote
 
@@ -8,7 +9,58 @@ from app.core.config import get_settings
 
 
 class GitHubFailure(Exception):
-    """Sanitized upstream failure: never include tokens, codes, or response bodies."""
+    """Sanitized upstream failure with optional validated retry eligibility."""
+
+    def __init__(self, code: str, *, retry_at: datetime | None = None):
+        super().__init__(code)
+        self.retry_at = retry_at
+
+
+def github_http_failure(status: int, headers, *, now: datetime | None = None) -> GitHubFailure:
+    """Honor bounded GitHub reset metadata; never derive retries from response text."""
+    code = classify_github_status(status, headers)
+    current = now or datetime.now(timezone.utc)
+    if code not in {"github_rate_limited", "github_secondary_rate_limited"}:
+        return GitHubFailure(code)
+    candidates = []
+    reset = headers.get("x-ratelimit-reset")
+    after = headers.get("retry-after")
+    if headers.get("x-ratelimit-remaining") == "0":
+        if not isinstance(reset, str) or not reset.isascii() or not reset.isdigit() or len(reset) > 12:
+            return GitHubFailure(code)
+        try:
+            candidates.append(datetime.fromtimestamp(int(reset), timezone.utc) + timedelta(seconds=1))
+        except (ValueError, OverflowError, OSError):
+            return GitHubFailure(code)
+    if after is not None:
+        if not isinstance(after, str) or not after.isascii() or not after.isdigit() or len(after) > 6:
+            return GitHubFailure(code)
+        candidates.append(current + timedelta(seconds=int(after) + 1))
+    if not candidates:
+        return GitHubFailure(code)
+    retry_at = max(candidates + [current + timedelta(seconds=60)])
+    if retry_at <= current or retry_at > current + timedelta(hours=24):
+        return GitHubFailure(code)
+    return GitHubFailure(code, retry_at=retry_at)
+
+
+def classify_github_status(status: int, headers) -> str:
+    """Return a fixed, non-sensitive failure code; never inspect response bodies."""
+    if status == 401:
+        return "github_authentication_failed"
+    if status in (403, 429) and headers.get("x-ratelimit-remaining") == "0":
+        return "github_rate_limited"
+    if status in (403, 429) and headers.get("retry-after") is not None:
+        return "github_secondary_rate_limited"
+    if status == 429:
+        return "github_rate_limited"
+    if status == 403:
+        return "github_permission_denied"
+    if status == 404:
+        return "github_not_found"
+    if status >= 500:
+        return "github_temporarily_unavailable"
+    return "github_request_failed"
 
 
 class GitHubClient(Protocol):
@@ -22,7 +74,7 @@ class GitHubClient(Protocol):
 class HttpGitHubClient:
     def _request(self, method: str, url: str, **kwargs) -> dict:
         try:
-            with httpx.Client(timeout=10, follow_redirects=False) as client:
+            with httpx.Client(timeout=10, follow_redirects=False, trust_env=False) as client:
                 response = client.request(method, url, **kwargs)
                 response.raise_for_status()
                 result = response.json()
@@ -76,7 +128,7 @@ class HttpGitHubClient:
             raise GitHubFailure("github_repository_invalid")
         path = "/repos/" + "/".join(quote(part, safe="") for part in parts) + "/issues"
         try:
-            with httpx.Client(timeout=10, follow_redirects=False) as client:
+            with httpx.Client(timeout=10, follow_redirects=False, trust_env=False) as client:
                 response = client.get("https://api.github.com" + path,
                     params={"state": "all", "per_page": 100, "page": 1},
                     headers={"Accept": "application/vnd.github+json", "Authorization": "Bearer " + token,

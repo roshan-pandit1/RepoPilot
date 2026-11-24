@@ -11,7 +11,7 @@ from cryptography.fernet import Fernet
 from sqlalchemy import create_engine, event, select
 from sqlalchemy.engine import make_url
 
-from app.evaluation.provider_harness import (CASE_ID, COMMIT, DATASET_HASH, EXPECTED_PATH, load_fixture,
+from app.evaluation.provider_harness import (CASE_ID, COMMIT, DATASET_HASH, EXPECTED_PATH, SUPPORTED_REVISIONS, load_fixture,
     network_fence, preview_payload, safe_url)
 from app.modules.investigation.openai_provider import build_responses_payload
 from app.modules.investigation.report_model import model_request
@@ -46,6 +46,12 @@ def test_network_fence_blocks_dns_and_direct_connections():
 def test_reviewed_budget_covers_maximum_request():
     assert upper_cost(INPUT_WINDOW, OUTPUT_LIMIT) == 5_815_551
     assert upper_cost(INPUT_WINDOW, OUTPUT_LIMIT) < 6_000_000 < 10_000_000
+
+
+def test_disposable_evaluation_harness_uses_explicit_reviewed_revisions():
+    assert {"0018", "0019", "0020"} <= SUPPORTED_REVISIONS
+    # New schema heads must be reviewed; never inherit authorization automatically.
+    assert "0021" not in SUPPORTED_REVISIONS
 
 
 def test_fixture_uses_the_reviewed_committed_source():
@@ -86,7 +92,7 @@ def test_fixture_workflow_with_fake_sqlite_retrieval(tmp_path, monkeypatch):
     env = {**os.environ, 'APP_ENV': 'test', 'DATABASE_URL': raw_url,
            'GITHUB_WEBHOOK_SECRET': 'fixture-' + 'x' * 40, 'GITHUB_OAUTH_ENABLED': 'false',
            'DEMO_AUTH_ENABLED': 'false', 'EMBEDDING_PROVIDER': 'disabled'}
-    subprocess.run([sys.executable, '-m', 'alembic', 'upgrade', 'head'], cwd=root / 'apps/api',
+    subprocess.run([sys.executable, '-m', 'alembic', 'upgrade', '0020'], cwd=root / 'apps/api',
                    env=env, capture_output=True, text=True, check=True)
     for name, value in {'APP_ENV': 'test', 'DATABASE_URL': raw_url, 'DEMO_AUTH_ENABLED': 'false',
         'GITHUB_WEBHOOK_SECRET': 'fixture-' + 'x' * 40, 'GITHUB_OAUTH_ENABLED': 'true',

@@ -4,7 +4,7 @@ import time
 
 import httpx
 
-from app.modules.github.client import GitHubFailure, HttpGitHubClient
+from app.modules.github.client import GitHubFailure, HttpGitHubClient, github_http_failure
 from app.modules.github.source_client import GitHubSourceClient
 
 
@@ -19,15 +19,12 @@ class IssueContextClient(HttpGitHubClient):
             raise GitHubFailure("github_budget_exceeded")
         self.remaining -= 1
         try:
-            with httpx.Client(timeout=10, follow_redirects=False, transport=self.transport) as client:
+            with httpx.Client(timeout=10, follow_redirects=False, transport=self.transport, trust_env=False) as client:
                 with client.stream("GET", "https://api.github.com" + path, params=params,
                     headers={"Accept": "application/vnd.github+json", "Authorization": "Bearer " + token,
-                             "X-GitHub-Api-Version": "2022-11-28"}) as response:
-                    if response.status_code == 404:
-                        raise GitHubFailure("github_not_found")
-                    if response.status_code == 429 or (response.status_code == 403 and
-                            response.headers.get("x-ratelimit-remaining") == "0"):
-                        raise GitHubFailure("github_rate_limited")
+                             "X-GitHub-Api-Version": "2022-11-28", "User-Agent": "RepoPilot-ReadOnly/1"}) as response:
+                    if response.is_error:
+                        raise github_http_failure(response.status_code, response.headers)
                     response.raise_for_status()
                     body = bytearray()
                     for chunk in response.iter_bytes():
@@ -35,6 +32,8 @@ class IssueContextClient(HttpGitHubClient):
                             raise GitHubFailure("github_response_limit")
                         body.extend(chunk)
             return json.loads(body)
+        except (httpx.TimeoutException, httpx.NetworkError):
+            raise GitHubFailure("github_temporarily_unavailable") from None
         except (httpx.HTTPError, ValueError, TypeError, RecursionError):
             raise GitHubFailure("github_request_failed") from None
 
@@ -43,6 +42,10 @@ class IssueContextClient(HttpGitHubClient):
         if not isinstance(result, dict):
             raise GitHubFailure("github_response_invalid")
         return result
+
+    def repository(self, token, full_name):
+        """Fetch metadata used to verify an authorized fork’s direct public parent."""
+        return self._get(GitHubSourceClient._repo(full_name), token)
 
     def issue(self, token, full_name, number):
         return self._get(GitHubSourceClient._repo(full_name) + f"/issues/{number}", token)

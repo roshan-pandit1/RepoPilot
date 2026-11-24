@@ -6,7 +6,7 @@ import json
 from sqlalchemy import func, select, text
 
 from app.domain.models import (CodeChunk, CodeSnapshot, IndexedFile, InvestigationEvidence,
-                               InvestigationEvidenceManifest, SnapshotPublication, now)
+                               InvestigationEvidenceManifest, InvestigationJob, PartialSnapshotScope, Repository, SnapshotPublication, now)
 from app.modules.ingestion.citations import github_citation
 from app.modules.ingestion.keyword_search import keyword_statement
 from app.modules.auth.session import utc
@@ -42,11 +42,92 @@ def fingerprint_chunk(chunk, file):
                chunk.symbol, chunk.start_line, chunk.end_line, chunk.source_text]
     return sha256(json.dumps(payload, ensure_ascii=True, separators=(",", ":")).encode()).hexdigest()
 
-def validate_snapshot(db, *, snapshot_id, repository_id, tenant_id, commit, lock=False):
-    snapshot = db.scalar(select(CodeSnapshot).where(CodeSnapshot.id == snapshot_id,
+def _validate_partial_snapshot(db, snapshot, *, job_id, lock=False):
+    """Verify a scoped partial inventory against its owner, manifest and all bytes."""
+    from app.modules.ingestion.code_chunking import SourceChunk
+    from app.modules.ingestion.code_collect import CollectedFile, Collection
+    from app.modules.ingestion.code_snapshot import Candidate as SourceCandidate, SnapshotPlan
+    from app.modules.ingestion.partial_snapshot import PartialSnapshotError, verify_partial_manifest
+
+    if not isinstance(job_id, str) or not job_id or snapshot.published is not False:
+        raise SnapshotUnavailable()
+    job_stmt = select(InvestigationJob).where(InvestigationJob.id == job_id,
+        InvestigationJob.snapshot_id == snapshot.id, InvestigationJob.repository_id == snapshot.repository_id,
+        InvestigationJob.tenant_id == snapshot.tenant_id, InvestigationJob.snapshot_commit_sha == snapshot.commit_sha)
+    scope_stmt = select(PartialSnapshotScope).where(PartialSnapshotScope.job_id == job_id,
+        PartialSnapshotScope.snapshot_id == snapshot.id, PartialSnapshotScope.repository_id == snapshot.repository_id,
+        PartialSnapshotScope.tenant_id == snapshot.tenant_id,
+        PartialSnapshotScope.manifest_sha256 == snapshot.inventory_manifest_sha256)
+    repo_stmt = select(Repository).where(Repository.id == snapshot.repository_id, Repository.tenant_id == snapshot.tenant_id)
+    job = db.scalar(job_stmt.with_for_update() if lock else job_stmt)
+    if not job:
+        raise SnapshotUnavailable()
+    if lock:
+        snapshot = db.scalar(select(CodeSnapshot).where(CodeSnapshot.id == snapshot.id,
+            CodeSnapshot.repository_id == job.repository_id, CodeSnapshot.tenant_id == job.tenant_id,
+            CodeSnapshot.commit_sha == job.snapshot_commit_sha).with_for_update().execution_options(populate_existing=True))
+        if not snapshot or snapshot.inventory_coverage != "PARTIAL_INVENTORY" or snapshot.published is not False:
+            raise SnapshotUnavailable()
+    scope = db.scalar(scope_stmt.with_for_update() if lock else scope_stmt)
+    repository = db.scalar(repo_stmt)
+    if not scope or not repository or job.source_repository_name != repository.full_name:
+        raise SnapshotUnavailable()
+    publication_stmt = select(SnapshotPublication).where(SnapshotPublication.snapshot_id == snapshot.id,
+        SnapshotPublication.repository_id == snapshot.repository_id, SnapshotPublication.tenant_id == snapshot.tenant_id)
+    publication = db.scalar(publication_stmt.with_for_update() if lock else publication_stmt)
+    if (not publication or publication.commit_sha != snapshot.commit_sha or publication.revoked_at is not None
+            or publication.revocation_reason is not None
+            or (publication.file_count, publication.chunk_count, publication.skipped_count)
+            != (snapshot.file_count, snapshot.chunk_count, snapshot.skipped_count)):
+        raise SnapshotUnavailable()
+    manifest = snapshot.inventory_manifest
+    if not isinstance(manifest, dict) or not isinstance(manifest.get("files"), list):
+        raise SnapshotUnavailable()
+    try:
+        candidates = tuple(SourceCandidate(row["path"], row["git_blob_sha1"], row["byte_length"])
+                           for row in manifest["files"])
+        plan = SnapshotPlan(snapshot.commit_sha, candidates, multilingual=True)
+        stmt = select(IndexedFile).where(IndexedFile.snapshot_id == snapshot.id,
+            IndexedFile.repository_id == snapshot.repository_id, IndexedFile.tenant_id == snapshot.tenant_id
+        ).order_by(IndexedFile.path)
+        files = db.scalars(stmt.with_for_update() if lock else stmt).all()
+        if len(files) != snapshot.file_count or len(files) != len(candidates) or snapshot.skipped_count != 0:
+            raise PartialSnapshotError("partial_inventory_invalid")
+        collected, count, total = [], 0, 0
+        for file in files:
+            chunks_stmt = select(CodeChunk).where(CodeChunk.file_id == file.id).order_by(CodeChunk.start_line)
+            chunks = db.scalars(chunks_stmt.with_for_update() if lock else chunks_stmt).all()
+            if any(c.repository_id != snapshot.repository_id or c.tenant_id != snapshot.tenant_id for c in chunks):
+                raise PartialSnapshotError("partial_source_identity_invalid")
+            count += len(chunks)
+            if type(file.source_byte_length) is not int:
+                raise PartialSnapshotError("partial_source_identity_invalid")
+            total += file.source_byte_length
+            collected.append(CollectedFile(file.path, file.content_hash,
+                tuple(SourceChunk(c.start_line, c.end_line, c.symbol, c.source_text, c.symbol_kind) for c in chunks),
+                file.language, file.parser_version, file.parser_status, file.import_ranges,
+                file.source_byte_length, file.source_encoding, file.source_normalization, file.source_coverage))
+        if count != snapshot.chunk_count:
+            raise PartialSnapshotError("partial_inventory_invalid")
+        verify_partial_manifest(expected_manifest=manifest, expected_sha256=snapshot.inventory_manifest_sha256,
+            repository_id=snapshot.repository_id, tenant_id=snapshot.tenant_id,
+            repository_full_name=repository.full_name, plan=plan,
+            collection=Collection(tuple(collected), 0, total))
+    except (KeyError, TypeError, ValueError, AttributeError, UnicodeError, PartialSnapshotError):
+        raise SnapshotUnavailable() from None
+    return snapshot
+
+
+def validate_snapshot(db, *, snapshot_id, repository_id, tenant_id, commit, lock=False, job_id=None):
+    stmt = select(CodeSnapshot).where(CodeSnapshot.id == snapshot_id,
         CodeSnapshot.repository_id == repository_id, CodeSnapshot.tenant_id == tenant_id,
-        CodeSnapshot.commit_sha == commit, CodeSnapshot.published.is_(True)))
+        CodeSnapshot.commit_sha == commit)
+    snapshot = db.scalar(stmt)
     if not snapshot:
+        raise SnapshotUnavailable()
+    if snapshot.inventory_coverage == "PARTIAL_INVENTORY":
+        return _validate_partial_snapshot(db, snapshot, job_id=job_id, lock=lock)
+    if not snapshot.published:
         raise SnapshotUnavailable()
     stmt = select(SnapshotPublication).where(SnapshotPublication.snapshot_id == snapshot.id)
     publication = db.scalar(stmt.with_for_update() if lock else stmt)
@@ -60,7 +141,7 @@ def validate_snapshot(db, *, snapshot_id, repository_id, tenant_id, commit, lock
 
 
 def retrieve_candidates(factory, *, queries, snapshot_id, repository_id, tenant_id, commit,
-                        full_name, per_query_limit, evidence_limit, ranking_context=None):
+                        full_name, per_query_limit, evidence_limit, ranking_context=None, job_id=None):
     """Run shared SQL against one snapshot; return IDs and metadata, never store source text."""
     if not 1 <= per_query_limit <= 20 or not 1 <= evidence_limit <= 30 or len(queries) > 3:
         raise ValueError("invalid_evidence_budget")
@@ -71,7 +152,7 @@ def retrieve_candidates(factory, *, queries, snapshot_id, repository_id, tenant_
     for order, query in enumerate(queries):
         with factory() as db:
             validate_snapshot(db, snapshot_id=snapshot_id, repository_id=repository_id,
-                              tenant_id=tenant_id, commit=commit)
+                              tenant_id=tenant_id, commit=commit, job_id=job_id)
             if db.bind.dialect.name != "postgresql":
                 raise InvalidEvidence("postgresql_required")
             db.execute(text("SET LOCAL statement_timeout = '3s'"))
@@ -169,9 +250,22 @@ def readable_snapshot(db, job, *, allow_historical=False, lock=False):
     stmt = select(CodeSnapshot).where(CodeSnapshot.id == job.snapshot_id,
         CodeSnapshot.repository_id == job.repository_id, CodeSnapshot.tenant_id == job.tenant_id,
         CodeSnapshot.commit_sha == job.snapshot_commit_sha)
-    snapshot = db.scalar(stmt.with_for_update() if lock else stmt)
+    snapshot = db.scalar(stmt)
     if not snapshot:
         raise SnapshotUnavailable()
+    if snapshot.inventory_coverage == "PARTIAL_INVENTORY":
+        validate_snapshot(db, snapshot_id=snapshot.id, repository_id=job.repository_id,
+            tenant_id=job.tenant_id, commit=job.snapshot_commit_sha, job_id=job.id, lock=lock)
+        if job.status == "completed":
+            manifest = db.get(InvestigationEvidenceManifest, job.id)
+            if not manifest:
+                raise SnapshotUnavailable()
+            load_verified_evidence(db, job, snapshot)
+        return snapshot
+    if lock:
+        snapshot = db.scalar(stmt.with_for_update().execution_options(populate_existing=True))
+        if not snapshot or snapshot.inventory_coverage == "PARTIAL_INVENTORY":
+            raise SnapshotUnavailable()
     publication_stmt = select(SnapshotPublication).where(SnapshotPublication.snapshot_id == snapshot.id)
     publication = db.scalar(publication_stmt.with_for_update() if lock else publication_stmt)
     if publication and (publication.repository_id != job.repository_id or publication.tenant_id != job.tenant_id

@@ -25,6 +25,7 @@ DATASET_HASH = '416cbf9e46b9399cf78d118f581a882d16cf512da439d352d3af29674c447bf6
 CASE_ID = 'signature_exact'
 REPOSITORY = 'roshan-pandit1/RepoPilot'
 EXPECTED_PATH = 'apps/api/app/modules/github/security.py'
+SUPPORTED_REVISIONS = frozenset(('0010', '0011', '0012', '0013', '0014', '0015', '0016', '0017', '0018', '0019', '0020'))
 
 
 def require(condition, reason):
@@ -208,7 +209,7 @@ def _evaluate(root, url, run_id, output, summary):
         with engine.connect() as db:
             database = db.execute(text('select current_database()')).scalar_one()
             revision = db.execute(text('select version_num from alembic_version')).scalar_one()
-            require(database == url.database and revision in ('0010', '0011', '0012', '0013'), 'wrong_database_or_revision')
+            require(database == url.database and revision in SUPPORTED_REVISIONS, 'wrong_database_or_revision')
             preparer = engine.dialect.identifier_preparer
             for table in inspect(db).get_table_names(schema='public'):
                 if table != 'alembic_version':

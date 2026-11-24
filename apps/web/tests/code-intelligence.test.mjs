@@ -11,10 +11,14 @@ import * as jsxRuntime from "react/jsx-runtime";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const source = fs.readFileSync(path.join(root, "components/code-intelligence.tsx"), "utf8");
+const uiSource = fs.readFileSync(path.join(root, "components/ui.tsx"), "utf8");
+const uiLoaded = { exports: {} };
+vm.runInNewContext(ts.transpileModule(uiSource, { compilerOptions: { module: ts.ModuleKind.CommonJS, jsx: ts.JsxEmit.ReactJSX } }).outputText,
+  { module: uiLoaded, exports: uiLoaded.exports, require: name => name === "react/jsx-runtime" ? jsxRuntime : (() => { throw new Error(name); })() });
 const compiled = ts.transpileModule(source, { compilerOptions: { module: ts.ModuleKind.CommonJS, jsx: ts.JsxEmit.ReactJSX } }).outputText;
 const loaded = { exports: {} };
 const context = vm.createContext({ module: loaded, exports: loaded.exports, URL, AbortController,
-  require: name => name === "react" ? React : name === "react/jsx-runtime" ? jsxRuntime : (() => { throw new Error(name); })() });
+  require: name => name === "react" ? React : name === "react/jsx-runtime" ? jsxRuntime : name === "./ui" ? uiLoaded.exports : (() => { throw new Error(name); })() });
 new vm.Script(compiled).runInContext(context);
 const { IndexSummary, SearchResults, CodeIntelligence, messageFor, EmbeddingSummary, SearchNotice, createSearchGate } = loaded.exports;
 const render = (component, props) => renderToStaticMarkup(React.createElement(component, props));
@@ -28,6 +32,7 @@ test("index status distinguishes empty, queued, published, partial and failures"
   const published = render(IndexSummary, { status: { ...base, status: "completed", commit_sha: "a".repeat(40), file_count: 40, chunk_count: 278 } });
   assert.match(published, /Indexed files/); assert.match(published, /278/);
   assert.match(render(IndexSummary, { status: { ...base, status: "partial", skipped_count: 2 } }), /2 files were skipped/);
+  assert.match(render(IndexSummary, { status: { ...base, parser_fallback_count: 1 } }), /1 indexed file uses line-based fallback/);
   assert.match(render(IndexSummary, { status: { ...base, status: "failed" } }), /Indexing did not complete/);
   assert.match(render(IndexSummary, { status: { ...base, status: "cancelled" } }), /Indexing stopped/);
 });
@@ -36,6 +41,7 @@ test("initial rendering and access failures provide actionable guidance", () => 
   const html = render(CodeIntelligence, { repository: { id: "1", full_name: "alice/project", enabled: true } });
   assert.match(html, /Loading indexing status/);
   assert.match(html, /Search indexed code/);
+  assert.match(html, /Rule-based analysis supports Python only/);
   assert.match(html, /<option value="keyword" selected="">Keyword/);
   assert.match(html, /<option value="semantic">Semantic/);
   assert.match(html, /<option value="hybrid">Hybrid/);
@@ -76,6 +82,8 @@ test("search results escape untrusted source and only link to matching GitHub ci
   const safe = render(SearchResults, { repository, results: [item] });
   assert.match(safe, /&lt;script&gt;/); assert.doesNotMatch(safe, /<script>/);
   assert.match(safe, /View source/); assert.match(safe, /#L3-L4/);
+  const typescript = { ...item, path: "src/example.ts", url: `https://github.com/alice/project/blob/${sha}/src/example.ts#L3-L4` };
+  assert.match(render(SearchResults, { repository, results: [typescript] }), /src\/example.ts#L3-L4/);
   const malicious = render(SearchResults, { repository, results: [{ ...item, url: "javascript:alert(1)" }] });
   assert.match(malicious, /Citation unavailable/); assert.doesNotMatch(malicious, /href="javascript:/);
 });

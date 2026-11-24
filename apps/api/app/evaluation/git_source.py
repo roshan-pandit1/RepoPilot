@@ -1,7 +1,9 @@
 """Test-only, bounded reader of a single local Git commit; never executes source."""
 import re
 import os
+import select
 import subprocess
+import time
 from pathlib import Path
 
 
@@ -36,11 +38,32 @@ class GitSource:
     def _git(self, *args):
         # Do not pass application credentials or Git configuration into the local reader.
         env = {'PATH': os.environ.get('PATH', os.defpath), 'LC_ALL': 'C'}
-        env.update(GIT_TERMINAL_PROMPT='0', GIT_NO_LAZY_FETCH='1', GIT_ALLOW_PROTOCOL='',
+        env.update(GIT_TERMINAL_PROMPT='0', GIT_NO_LAZY_FETCH='1', GIT_NO_REPLACE_OBJECTS='1', GIT_ALLOW_PROTOCOL='',
                    GIT_CONFIG_NOSYSTEM='1', GIT_CONFIG_GLOBAL=os.devnull,
                    GIT_CONFIG_COUNT='1', GIT_CONFIG_KEY_0='protocol.allow', GIT_CONFIG_VALUE_0='never')
-        return subprocess.run(["git", "-C", str(self.repo), *args], check=True,
-                              stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=30, env=env).stdout
+        command = ["git", "-C", str(self.repo), *args]
+        deadline, limit, output = time.monotonic() + 30, 4_000_000, bytearray()
+        with subprocess.Popen(command, stdin=subprocess.DEVNULL, stdout=subprocess.PIPE,
+                              stderr=subprocess.DEVNULL, env=env) as process:
+            try:
+                while True:
+                    remaining = deadline - time.monotonic()
+                    if remaining <= 0 or not select.select([process.stdout], [], [], max(0, remaining))[0]:
+                        raise subprocess.TimeoutExpired(command, 30)
+                    block = os.read(process.stdout.fileno(), min(65536, limit + 1 - len(output)))
+                    if not block:
+                        break
+                    output.extend(block)
+                    if len(output) > limit:
+                        raise ValueError("Git output exceeds limit")
+                code = process.wait(timeout=max(0.001, deadline - time.monotonic()))
+                if code:
+                    raise subprocess.CalledProcessError(code, command)
+            finally:
+                if process.poll() is None:
+                    process.kill()
+                    process.wait()
+        return bytes(output)
 
     def _name(self, full_name):
         if full_name != self.full_name:

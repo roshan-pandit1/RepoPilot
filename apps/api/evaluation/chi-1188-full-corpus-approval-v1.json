@@ -1,0 +1,83 @@
+{
+  "version": "chi-1188-full-corpus-approval-request-v1",
+  "status": "NOT_APPROVED",
+  "purpose": "Request a separate, bounded collection of the eligible source corpus for a pilot; this file grants no permission.",
+  "repository": {
+    "full_name": "go-chi/chi",
+    "repository_id": 44344606,
+    "commit": "3d1777a1ef8881f7d1da0b02c76ca8f0a29cd2bc",
+    "root_tree": "7c01dddb05b4c19847a3d6259a3f4d519e3b27fb",
+    "commit_tree_relation": "Retained metadata only; independently rehash the raw commit object before claiming verified Git provenance.",
+    "license_spdx": "MIT",
+    "license_git_blob_sha1": "d99f02ffac5185e2550770d33333a67e2cf2092b",
+    "license_sha256": "a2d51b7515acfaff2f7a88688650f2fc4fd99561383e72bba2305e3db59a1647"
+  },
+  "issue": {
+    "number": 1188,
+    "issue_id": 5552950835,
+    "context_version": "issue-context-v1",
+    "context_sha256": "61d54f284c13e89445d1b5ff0c4761a67d32190157b4dcc49b716ef67e4469e7",
+    "reuse_retained_context_only": true,
+    "split": "pilot_development"
+  },
+  "source_selection": {
+    "policy": "eligible_source_path(multilingual=True, exclude_generated=True)",
+    "extensions": [".c", ".cc", ".cpp", ".cs", ".go", ".h", ".hpp", ".java", ".js", ".jsx", ".mjs", ".py", ".rs", ".ts", ".tsx"],
+    "include_eligible_tests": true,
+    "record_every_exclusion": true,
+    "tree_metadata_covers_all_paths": true,
+    "eligible_source_bytes_only": true,
+    "complete_claim": "Complete eligible corpus under the declared selection policy, not a complete repository checkout.",
+    "actual_recursive_file_count": null,
+    "actual_decoded_source_bytes": null
+  },
+  "proposed_limits": {
+    "http_response_body_bytes": 104857600,
+    "per_metadata_response_body_bytes": 16777216,
+    "per_decoded_source_file_bytes": 100000,
+    "aggregate_decoded_source_bytes": 5000000,
+    "tree_entries": 10000,
+    "eligible_files": 1000,
+    "pilot_chunks": 5000,
+    "retention_days_before_review": 30
+  },
+  "private_storage": {
+    "parent": "/Users/roshan/Library/Application Support/RepoPilot/benchmarks/source-selection-v1",
+    "directory_pattern": "chi-1188-full-corpus-<UTC>-<random>",
+    "directory_mode": "0700",
+    "file_mode": "0600",
+    "overwrite_existing": false,
+    "automatic_deletion": false,
+    "cleanup_requires_separate_approval": true
+  },
+  "proposed_request_scope": {
+    "exact_pinned_commit_and_tree_objects": "NOT_APPROVED",
+    "recursive_tree_metadata": "NOT_APPROVED",
+    "eligible_blobs_at_exact_commit": "NOT_APPROVED",
+    "retain_private_verified_git_and_source_objects": "NOT_APPROVED",
+    "source_downloads_from_other_revisions_or_repositories": "NOT_APPROVED",
+    "new_issue_bodies_or_comments": "NOT_APPROVED",
+    "pull_request_patches_or_diffs": "NOT_APPROVED",
+    "parse_or_chunk_real_source": "NOT_APPROVED",
+    "execute_repository_code": "NOT_APPROVED",
+    "real_model_inference_or_embeddings": "NOT_APPROVED",
+    "real_retrieval_benchmark": "NOT_APPROVED",
+    "normal_database_access_or_migration": "NOT_APPROVED",
+    "external_inference_or_paid_calls": "NOT_APPROVED",
+    "github_writes_or_deployment": "NOT_APPROVED"
+  },
+  "failure_policy": "Stop on unverifiable commit/tree/blob identity, incomplete tree, unsafe path or unsupported mode, unexpected source, source exclusion that would make the eligible corpus incomplete, or any limit violation; do not silently accept a partial corpus. Record and exclude symlinks and gitlinks without following them.",
+  "known_tooling_gaps": [
+    "The existing GitSource reader requests sizes for every blob and can fail when an excluded blob is absent; the requested scope does not authorize downloading excluded blobs.",
+    "The retrieval capture runner accepts only its registered synthetic fixture.",
+    "The provenance wrapper expects nonempty development and held-out inputs; a single pilot issue is not a held-out dataset."
+  ],
+  "independent_review": {
+    "recorded_human_labels": 0,
+    "submission_scope_checked": "No submissions were found in the packet directories; submissions elsewhere are unknown.",
+    "reviewer_assignments": "NOT_PROVIDED",
+    "current_packet_scope": "five-file partial subset",
+    "transfer_to_full_corpus_is_automatic": false,
+    "held_out": false
+  }
+}

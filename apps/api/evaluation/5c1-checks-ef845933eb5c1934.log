@@ -1,0 +1,34 @@
+New disposable container: repopilot-5c1-checks-ef845933eb5c1934; database: repopilot_5b2b_ef845933eb5c1934; run: ef845933eb5c1934
+Test source fingerprint before: 7178ef337c22312027c503f8540ec4e258ecf00a49d5f0a22f7ac0ef7b1832cf 148; Git HEAD: 102324ee074c1a46c8e7b48c8cf11f4d2f4096bf
+Confirmed empty dedicated database: repopilot_5b2b_ef845933eb5c1934; host port=63480
+........................................................................ [ 11%]
+........................................................................ [ 22%]
+........................................................................ [ 33%]
+........................................................................ [ 45%]
+........................................................................ [ 56%]
+............ssssssssss.................................................. [ 67%]
+...................................F.................................... [ 78%]
+........................................................................ [ 90%]
+..............................................................           [100%]Disposable verification incomplete: failed, skipped or missing required cases.
+
+=================================== FAILURES ===================================
+_______________ test_fixture_workflow_with_fake_sqlite_retrieval _______________
+tests/test_provider_harness.py:123: in test_fixture_workflow_with_fake_sqlite_retrieval
+    provider_harness._evaluate(root, make_url(raw_url), 'a' * 16, tmp_path / 'result',
+app/evaluation/provider_harness.py:211: in _evaluate
+    require(database == url.database and revision in ('0010', '0011', '0012', '0013'), 'wrong_database_or_revision')
+app/evaluation/provider_harness.py:32: in require
+    raise ValueError(reason)
+E   ValueError: wrong_database_or_revision
+=========================== short test summary info ============================
+SKIPPED [2] tests/test_language_analysis.py:24: optional parser tree_sitter_javascript is not installed
+SKIPPED [2] tests/test_language_analysis.py:24: optional parser tree_sitter_typescript is not installed
+SKIPPED [1] tests/test_language_analysis.py:24: optional parser tree_sitter_java is not installed
+SKIPPED [1] tests/test_language_analysis.py:24: optional parser tree_sitter_go is not installed
+SKIPPED [1] tests/test_language_analysis.py:24: optional parser tree_sitter_rust is not installed
+SKIPPED [1] tests/test_language_analysis.py:24: optional parser tree_sitter_c is not installed
+SKIPPED [1] tests/test_language_analysis.py:24: optional parser tree_sitter_cpp is not installed
+SKIPPED [1] tests/test_language_analysis.py:24: optional parser tree_sitter_c_sharp is not installed
+FAILED tests/test_provider_harness.py::test_fixture_workflow_with_fake_sqlite_retrieval
+1 failed, 627 passed, 10 skipped in 158.16s (0:02:38)
+Script final exit status: 1; run: ef845933eb5c1934; log: /Volumes/Samsung SSD/Project/RepoPilot/apps/api/evaluation/5c1-checks-ef845933eb5c1934.log

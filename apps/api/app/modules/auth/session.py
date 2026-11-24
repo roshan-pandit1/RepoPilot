@@ -24,7 +24,9 @@ def cipher() -> Fernet:
 
 
 def utc(value: datetime) -> datetime:
-    return value.replace(tzinfo=timezone.utc) if value.tzinfo is None else value
+    if value.tzinfo is None:
+        return value.replace(tzinfo=timezone.utc)
+    return value.astimezone(timezone.utc)
 
 
 @dataclass(frozen=True)
